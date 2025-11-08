@@ -29,6 +29,10 @@ export default function ChallengeDetail() {
           src={challenge.imageUrl}
           alt={challenge.title}
           className="h-72 w-full rounded-lg object-cover"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = 'https://via.placeholder.com/600x400/10b981/ffffff?text=' + encodeURIComponent(challenge.title);
+          }}
         />
         <div>
           <p className="text-sm font-medium text-emerald-700">{challenge.category}</p>

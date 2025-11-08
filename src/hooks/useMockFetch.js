@@ -24,7 +24,7 @@ export function useMockFetch(factory, delayMs = 700) {
     return () => {
       active = false
     }
-  }, [factory, delayMs])
+  }, []) // Remove dependencies to prevent re-runs
 
   return { data, loading, error }
 }

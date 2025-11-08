@@ -10,9 +10,9 @@ import { mockTips } from '../data/mockTips.js'
 import { mockEvents } from '../data/mockEvents.js'
 
 export default function Home() {
-  const { data: challenges, loading: loadingChallenges } = useMockFetch(() => mockChallenges.slice(0, 3), 700)
-  const { data: tips, loading: loadingTips } = useMockFetch(() => mockTips.slice(0, 3), 800)
-  const { data: events, loading: loadingEvents } = useMockFetch(() => mockEvents.slice(0, 3), 900)
+  const { data: challenges, loading: loadingChallenges } = useMockFetch(() => mockChallenges.slice(0, 3), 500)
+  const { data: tips, loading: loadingTips } = useMockFetch(() => mockTips.slice(0, 3), 600)
+  const { data: events, loading: loadingEvents } = useMockFetch(() => mockEvents.slice(0, 3), 700)
   return (
     <div className="space-y-12">
       <section className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-emerald-50 to-teal-50">

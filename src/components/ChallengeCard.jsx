@@ -10,6 +10,10 @@ export default function ChallengeCard({ challenge }) {
         alt={challenge.title}
         className="h-40 w-full object-cover"
         loading="lazy"
+        onError={(e) => {
+          e.target.onerror = null;
+          e.target.src = 'https://via.placeholder.com/400x300/10b981/ffffff?text=' + encodeURIComponent(challenge.title);
+        }}
       />
       <CardHeader className="border-b">
         <p className="text-xs font-medium text-emerald-700">{challenge.category}</p>

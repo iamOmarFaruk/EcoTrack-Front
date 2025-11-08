@@ -38,7 +38,7 @@ export const mockChallenges = [
     category: 'Energy Conservation',
     participants: 612,
     duration: '10 days',
-    imageUrl: 'https://images.unsplash.com/photo-1581092589536-69521a62644a?q=80&w=1200&auto=format&fit=crop',
+    imageUrl: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?q=80&w=1200&auto=format&fit=crop',
     description: 'Find and fix energy leaks at home.',
     impactMetric: 'kWh reduced',
     startDate: '2025-04-01',
