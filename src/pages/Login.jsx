@@ -36,7 +36,7 @@ export default function Login() {
   return (
     <div className="mx-auto max-w-sm">
       <h1 className="text-2xl font-semibold">Login to EcoTrack</h1>
-      <p className="mt-1 text-sm text-slate-600">Use the demo account to continue.</p>
+      <p className="mt-1 text-sm text-slate-900">Use the demo account to continue.</p>
       <form onSubmit={handleSubmit(onSubmit)} className="mt-6 grid gap-4">
         <div>
           <label className="mb-1 block text-sm font-medium">Email</label>

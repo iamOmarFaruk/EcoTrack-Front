@@ -16,7 +16,7 @@
     height: 100%;
   }
   body {
-    @apply bg-white text-slate-800 antialiased;
+    @apply bg-white text-slate-900 antialiased font-sans;
   }
 }
 

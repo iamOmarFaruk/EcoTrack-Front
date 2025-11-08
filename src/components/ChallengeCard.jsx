@@ -20,8 +20,8 @@ export default function ChallengeCard({ challenge }) {
         <h3 className="mt-1 line-clamp-1 text-lg font-semibold">{challenge.title}</h3>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        <p className="line-clamp-2 text-sm text-slate-600">{challenge.description}</p>
-        <div className="mt-auto flex items-center justify-between text-xs text-slate-600">
+        <p className="line-clamp-2 text-sm text-slate-900">{challenge.description}</p>
+        <div className="mt-auto flex items-center justify-between text-xs text-slate-900">
           <span>Participants: {challenge.participants}</span>
           <span>{challenge.impactMetric}</span>
         </div>

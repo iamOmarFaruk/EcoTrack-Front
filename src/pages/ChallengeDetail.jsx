@@ -17,7 +17,7 @@ export default function ChallengeDetail() {
   if (!challenge) {
     return (
       <div className="text-center">
-        <p className="text-slate-600">Challenge not found.</p>
+        <p className="text-slate-900">Challenge not found.</p>
         <Button as={Link} to="/challenges" className="mt-4">Back to Challenges</Button>
       </div>
     )
@@ -39,7 +39,7 @@ export default function ChallengeDetail() {
           <p className="text-sm font-medium text-emerald-700">{challenge.category}</p>
           <h1 className="mt-1 text-3xl font-bold tracking-tight">{challenge.title}</h1>
           <p className="mt-3 text-slate-700">{challenge.description}</p>
-          <dl className="mt-6 grid grid-cols-2 gap-4 text-sm text-slate-600">
+          <dl className="mt-6 grid grid-cols-2 gap-4 text-sm text-slate-900">
             <div>
               <dt className="font-medium text-slate-900">Participants</dt>
               <dd>{challenge.participants}</dd>

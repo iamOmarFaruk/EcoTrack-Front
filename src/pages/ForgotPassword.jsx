@@ -24,7 +24,7 @@ export default function ForgotPassword() {
   return (
     <div className="mx-auto max-w-sm">
       <h1 className="text-2xl font-semibold">Forgot Password</h1>
-      <p className="mt-1 text-sm text-slate-600">We’ll send a reset link to your email.</p>
+      <p className="mt-1 text-sm text-slate-900">We’ll send a reset link to your email.</p>
       <form onSubmit={handleSubmit(onSubmit)} className="mt-6 grid gap-4">
         <div>
           <label className="mb-1 block text-sm font-medium">Email</label>

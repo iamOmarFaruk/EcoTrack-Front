@@ -16,7 +16,7 @@ export default function Events() {
     <div className="space-y-4">
       <div>
         <h1 className="text-2xl font-semibold">Events</h1>
-        <p className="mt-1 text-slate-600">Upcoming eco events near you.</p>
+        <p className="mt-1 text-slate-900">Upcoming eco events near you.</p>
       </div>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {events?.map((e, i) => (

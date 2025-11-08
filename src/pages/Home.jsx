@@ -30,7 +30,7 @@ export default function Home() {
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
             Make sustainability your daily habit.
           </h1>
-          <p className="mt-3 max-w-prose text-slate-600">
+          <p className="mt-3 max-w-prose text-slate-900">
             Join eco challenges, learn from tips, and track your impact with a clean, fast UI.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">

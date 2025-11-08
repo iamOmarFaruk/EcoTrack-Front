@@ -11,7 +11,7 @@ export default function EventCard({ event }) {
         <p className="mt-1 text-xs text-slate-500">
           {formatDate(event.date)} • {event.location}
         </p>
-        <p className="mt-2 line-clamp-3 text-sm text-slate-600">{event.description}</p>
+        <p className="mt-2 line-clamp-3 text-sm text-slate-900">{event.description}</p>
         <Button
           className="mt-auto h-9 self-start"
           onClick={() => toast.success('Joined event (mock)!')}

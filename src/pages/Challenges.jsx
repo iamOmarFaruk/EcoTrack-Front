@@ -27,10 +27,10 @@ export default function Challenges() {
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Challenges</h1>
-          <p className="mt-1 text-slate-600">Browse and filter eco challenges.</p>
+          <p className="mt-1 text-slate-900">Browse and filter eco challenges.</p>
         </div>
         <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-600">Category</label>
+          <label className="text-sm text-slate-900">Category</label>
           <select
             className="rounded-md border px-3 py-2 text-sm"
             value={category}

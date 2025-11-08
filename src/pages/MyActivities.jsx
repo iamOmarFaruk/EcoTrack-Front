@@ -11,10 +11,10 @@ export default function MyActivities() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold">My Activities</h1>
-        <p className="mt-1 text-slate-600">Your joined challenges and progress.</p>
+        <p className="mt-1 text-slate-900">Your joined challenges and progress.</p>
       </div>
       {joined.length === 0 ? (
-        <p className="text-slate-600">You haven’t joined any challenges yet.</p>
+        <p className="text-slate-900">You haven’t joined any challenges yet.</p>
       ) : (
         <div className="grid gap-6 md:grid-cols-2">
           {joined.map((c) => (
@@ -38,7 +38,7 @@ export default function MyActivities() {
                 <div className="h-2 w-full rounded bg-slate-200">
                   <div className="h-2 rounded bg-emerald-600" style={{ width: '42%' }} />
                 </div>
-                <p className="mt-1 text-xs text-slate-600">Progress: 42%</p>
+                <p className="mt-1 text-xs text-slate-900">Progress: 42%</p>
               </div>
             </div>
           ))}

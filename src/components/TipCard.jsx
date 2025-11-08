@@ -12,9 +12,9 @@ export default function TipCard({ tip }) {
         <p className="mt-1 text-xs text-slate-500">
           {tip.authorName} • {formatDate(tip.createdAt)}
         </p>
-        <p className="mt-2 line-clamp-3 text-sm text-slate-600">{tip.content}</p>
+        <p className="mt-2 line-clamp-3 text-sm text-slate-900">{tip.content}</p>
         <div className="mt-auto flex items-center justify-between pt-4">
-          <span className="text-xs text-slate-600">Upvotes: {upvotes}</span>
+          <span className="text-xs text-slate-900">Upvotes: {upvotes}</span>
           <Button className="h-8 px-3 text-xs" onClick={() => setUpvotes((n) => n + 1)}>Upvote</Button>
         </div>
       </CardContent>

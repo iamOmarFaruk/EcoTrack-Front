@@ -23,7 +23,7 @@ export default function Navbar() {
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <Logo className="h-8 w-8" />
-          <span className="text-lg font-semibold">EcoTrack</span>
+          <span className="text-lg font-semibold text-slate-900">EcoTrack</span>
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
@@ -33,8 +33,8 @@ export default function Navbar() {
               to={item.to}
               className={({ isActive }) =>
                 clsx(
-                  'text-sm font-medium transition-colors hover:text-emerald-600',
-                  isActive ? 'text-emerald-700' : 'text-slate-600'
+                  'text-sm font-bold transition-colors hover:text-emerald-700',
+                  isActive ? 'text-emerald-800' : 'text-slate-900'
                 )
               }
             >
@@ -46,13 +46,13 @@ export default function Navbar() {
         <div className="hidden items-center gap-3 md:flex">
           {!auth.isLoggedIn ? (
             <>
-              <Link to="/login" className="text-sm text-slate-700 hover:text-emerald-700">Login</Link>
+              <Link to="/login" className="text-sm text-slate-900 hover:text-emerald-800">Login</Link>
               <Button as={Link} to="/register">Register</Button>
             </>
           ) : (
             <div className="flex items-center gap-3">
-              <Link to="/my-activities" className="text-sm text-slate-700 hover:text-emerald-700">My Activities</Link>
-              <button onClick={logout} className="rounded-md border px-3 py-1.5 text-sm hover:bg-slate-50">Logout</button>
+              <Link to="/my-activities" className="text-sm text-slate-900 hover:text-emerald-800">My Activities</Link>
+              <button onClick={logout} className="rounded-md border px-3 py-1.5 text-sm text-slate-900 hover:bg-slate-50">Logout</button>
             </div>
           )}
         </div>
@@ -80,8 +80,8 @@ export default function Navbar() {
               onClick={() => setOpen(false)}
               className={({ isActive }) =>
                 clsx(
-                  'rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-emerald-50',
-                  isActive ? 'text-emerald-700' : 'text-slate-700'
+                  'rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-emerald-50',
+                  isActive ? 'text-emerald-800' : 'text-slate-900'
                 )
               }
             >
@@ -91,13 +91,13 @@ export default function Navbar() {
           <div className="mt-2 grid gap-1">
             {!auth.isLoggedIn ? (
               <>
-                <Link to="/login" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm hover:bg-emerald-50">Login</Link>
+                <Link to="/login" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50">Login</Link>
                 <Button as={Link} to="/register" onClick={() => setOpen(false)} className="w-full">Register</Button>
               </>
             ) : (
               <>
-                <Link to="/my-activities" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm hover:bg-emerald-50">My Activities</Link>
-                <button onClick={() => { logout(); setOpen(false) }} className="rounded-md px-3 py-2 text-left text-sm hover:bg-emerald-50">Logout</button>
+                <Link to="/my-activities" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50">My Activities</Link>
+                <button onClick={() => { logout(); setOpen(false) }} className="rounded-md px-3 py-2 text-left text-sm text-slate-900 hover:bg-emerald-50">Logout</button>
               </>
             )}
           </div>
