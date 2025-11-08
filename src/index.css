@@ -6,6 +6,12 @@
   :root {
     --radius: 0.5rem;
   }
+  html {
+    /* Reserve space for the vertical scrollbar to prevent layout shift
+       between pages that do and don't overflow */
+    overflow-y: scroll; /* broad browser fallback */
+    scrollbar-gutter: stable both-edges; /* modern browsers */
+  }
   html, body, #root {
     height: 100%;
   }
