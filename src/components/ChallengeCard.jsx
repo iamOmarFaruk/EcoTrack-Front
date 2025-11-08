@@ -25,7 +25,7 @@ export default function ChallengeCard({ challenge }) {
           <span>Participants: {challenge.participants}</span>
           <span>{challenge.impactMetric}</span>
         </div>
-        <Button as={Link} to={`/challenges/${challenge._id}`} className="h-9">View</Button>
+        <Button as={Link} to={`/challenges/${challenge._id}`} className="h-9 self-start">View</Button>
       </CardContent>
     </Card>
   )

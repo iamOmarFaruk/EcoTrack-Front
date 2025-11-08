@@ -13,7 +13,7 @@ export default function EventCard({ event }) {
         </p>
         <p className="mt-2 line-clamp-3 text-sm text-slate-600">{event.description}</p>
         <Button
-          className="mt-auto h-9"
+          className="mt-auto h-9 self-start"
           onClick={() => toast.success('Joined event (mock)!')}
         >
           Join
