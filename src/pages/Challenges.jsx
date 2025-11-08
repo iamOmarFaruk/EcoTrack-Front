@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react'
 import { useMockFetch } from '../hooks/useMockFetch.js'
+import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { mockChallenges } from '../data/mockChallenges.js'
 import ChallengeCard from '../components/ChallengeCard.jsx'
-import Skeleton from '../components/Skeleton.jsx'
+import EcoLoader from '../components/EcoLoader.jsx'
 
 export default function Challenges() {
+  useDocumentTitle('Challenges')
   const { data: challenges, loading } = useMockFetch(() => mockChallenges, 800)
   const categories = useMemo(
     () => ['All', ...Array.from(new Set((challenges ?? []).map((c) => c.category)))],
@@ -15,6 +17,10 @@ export default function Challenges() {
     () => (category === 'All' ? challenges ?? [] : (challenges ?? []).filter((c) => c.category === category)),
     [challenges, category]
   )
+
+  if (loading) {
+    return <EcoLoader />
+  }
 
   return (
     <div className="space-y-6">
@@ -38,10 +44,7 @@ export default function Challenges() {
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {loading && Array.from({ length: 6 }).map((_, i) => (
-          <Skeleton key={i} className="h-56 w-full" />
-        ))}
-        {!loading && filtered.map((c) => (
+        {filtered.map((c) => (
           <ChallengeCard key={c._id} challenge={c} />
         ))}
       </div>

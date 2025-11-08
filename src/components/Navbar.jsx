@@ -3,6 +3,7 @@ import { Menu } from 'lucide-react'
 import { useState } from 'react'
 import clsx from 'clsx'
 import { useAuth } from '../context/AuthContext.jsx'
+import Logo from './Logo.jsx'
 
 const navItems = [
   { to: '/', label: 'Home' },
@@ -20,7 +21,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-emerald-500" />
+          <Logo className="h-8 w-8" />
           <span className="text-lg font-semibold">EcoTrack</span>
         </Link>
 

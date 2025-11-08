@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Button from '../components/ui/Button.jsx'
 import toast from 'react-hot-toast'
 import { Link, useNavigate } from 'react-router-dom'
+import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 
 const passwordRules = z.string()
   .min(6, 'Min 6 characters')
@@ -19,6 +20,7 @@ const schema = z.object({
 })
 
 export default function Register() {
+  useDocumentTitle('Register')
   const navigate = useNavigate()
   const { register, handleSubmit, formState: { errors, isSubmitting }, watch } = useForm({
     resolver: zodResolver(schema),

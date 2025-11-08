@@ -5,6 +5,7 @@ import Button from '../components/ui/Button.jsx'
 import toast from 'react-hot-toast'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useNavigate, Link } from 'react-router-dom'
+import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -12,6 +13,7 @@ const schema = z.object({
 })
 
 export default function Login() {
+  useDocumentTitle('Login')
   const { login } = useAuth()
   const navigate = useNavigate()
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({

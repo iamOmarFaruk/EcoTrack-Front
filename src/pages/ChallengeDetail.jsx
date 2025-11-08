@@ -2,12 +2,13 @@ import { useParams, Link } from 'react-router-dom'
 import { useMemo } from 'react'
 import { mockChallenges } from '../data/mockChallenges.js'
 import Button from '../components/ui/Button.jsx'
-import toast from 'react-hot-toast'
 import ChallengeCard from '../components/ChallengeCard.jsx'
+import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 
 export default function ChallengeDetail() {
   const { id } = useParams()
   const challenge = useMemo(() => mockChallenges.find((c) => c._id === id), [id])
+  useDocumentTitle(challenge ? challenge.title : 'Challenge Details')
   const related = useMemo(
     () => mockChallenges.filter((c) => c._id !== id).slice(0, 3),
     [id]

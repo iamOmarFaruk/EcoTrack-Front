@@ -1,4 +1,7 @@
+import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
+
 export default function About() {
+  useDocumentTitle('About')
   return (
     <div className="prose max-w-none">
       <h1>About EcoTrack</h1>

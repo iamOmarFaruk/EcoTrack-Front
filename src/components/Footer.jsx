@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Github, Twitter, Mail } from 'lucide-react'
+import Logo from './Logo.jsx'
 
 export default function Footer() {
   return (
@@ -7,7 +8,7 @@ export default function Footer() {
       <div className="container grid gap-6 py-10 md:grid-cols-3">
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-emerald-500" />
+            <Logo className="h-8 w-8" />
             <span className="text-lg font-semibold">EcoTrack</span>
           </div>
           <p className="text-sm text-slate-600">

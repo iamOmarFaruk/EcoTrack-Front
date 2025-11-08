@@ -4,15 +4,25 @@ import ChallengeCard from '../components/ChallengeCard.jsx'
 import TipCard from '../components/TipCard.jsx'
 import EventCard from '../components/EventCard.jsx'
 import Skeleton from '../components/Skeleton.jsx'
+import EcoLoader from '../components/EcoLoader.jsx'
 import { useMockFetch } from '../hooks/useMockFetch.js'
+import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { mockChallenges } from '../data/mockChallenges.js'
 import { mockTips } from '../data/mockTips.js'
 import { mockEvents } from '../data/mockEvents.js'
 
 export default function Home() {
+  useDocumentTitle('Home')
   const { data: challenges, loading: loadingChallenges } = useMockFetch(() => mockChallenges.slice(0, 3), 500)
   const { data: tips, loading: loadingTips } = useMockFetch(() => mockTips.slice(0, 3), 600)
   const { data: events, loading: loadingEvents } = useMockFetch(() => mockEvents.slice(0, 3), 700)
+  
+  const isInitialLoading = loadingChallenges && loadingTips && loadingEvents
+
+  if (isInitialLoading) {
+    return <EcoLoader />
+  }
+
   return (
     <div className="space-y-12">
       <section className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-emerald-50 to-teal-50">

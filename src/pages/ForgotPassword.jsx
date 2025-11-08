@@ -3,12 +3,14 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Button from '../components/ui/Button.jsx'
 import toast from 'react-hot-toast'
+import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email'),
 })
 
 export default function ForgotPassword() {
+  useDocumentTitle('Forgot Password')
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm({
     resolver: zodResolver(schema),
   })

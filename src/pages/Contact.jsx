@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import toast from 'react-hot-toast'
 import Button from '../components/ui/Button.jsx'
+import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 
 const schema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -11,6 +12,7 @@ const schema = z.object({
 })
 
 export default function Contact() {
+  useDocumentTitle('Contact Us')
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm({
     resolver: zodResolver(schema),
   })

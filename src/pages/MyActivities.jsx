@@ -1,7 +1,9 @@
 import { useAuth } from '../context/AuthContext.jsx'
 import { mockChallenges } from '../data/mockChallenges.js'
+import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 
 export default function MyActivities() {
+  useDocumentTitle('My Activities')
   const { auth } = useAuth()
   const joined = (auth.userChallenges ?? []).map((id) => mockChallenges.find((c) => c._id === id)).filter(Boolean)
 
