@@ -1,6 +1,6 @@
 import { Link, NavLink } from 'react-router-dom'
 import { Menu } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import clsx from 'clsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import Logo from './Logo.jsx'
@@ -18,9 +18,42 @@ const navItems = [
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const { auth, logout } = useAuth()
+  const [isHidden, setIsHidden] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const lastScrollYRef = useRef(0)
+
+  useEffect(() => {
+    lastScrollYRef.current = window.scrollY || 0
+
+    const handleScroll = () => {
+      const currentY = window.scrollY || 0
+      setIsScrolled(currentY > 2)
+
+      const scrollingDown = currentY > lastScrollYRef.current
+      const shouldHide = scrollingDown && currentY > 80
+      setIsHidden(shouldHide && !open)
+
+      lastScrollYRef.current = currentY
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [open])
+
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur">
-      <div className="container flex h-16 items-center justify-between">
+    <header
+      className={clsx(
+        'sticky top-0 z-40 w-full border-b backdrop-blur transition-transform duration-300 ease-out',
+        isScrolled ? 'bg-white/80 shadow-sm' : 'bg-white/60',
+        isHidden ? '-translate-y-full' : 'translate-y-0'
+      )}
+    >
+      <div
+        className={clsx(
+          'container flex items-center justify-between transition-all duration-300',
+          isScrolled ? 'h-14' : 'h-16'
+        )}
+      >
         <Link to="/" className="flex items-center gap-2">
           <Logo className="h-8 w-8" />
           <span className="text-lg font-semibold text-slate-900">EcoTrack</span>

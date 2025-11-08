@@ -6,7 +6,7 @@ export default function PublicLayout() {
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
-      <main className="container flex-1 py-8">
+      <main className="container flex-1 py-8 pt-24">
         <Outlet />
       </main>
       <Footer />
