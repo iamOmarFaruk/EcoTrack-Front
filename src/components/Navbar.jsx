@@ -1,5 +1,4 @@
 import { Link, NavLink } from 'react-router-dom'
-import { Menu } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import clsx from 'clsx'
 import { useAuth } from '../context/AuthContext.jsx'
@@ -66,8 +65,8 @@ export default function Navbar() {
               to={item.to}
               className={({ isActive }) =>
                 clsx(
-                  'text-sm font-bold transition-colors hover:text-emerald-700',
-                  isActive ? 'text-emerald-800' : 'text-slate-900'
+                  'text-sm font-bold transition-colors hover:text-emerald-700 link-underline-sweep',
+                  isActive ? 'text-emerald-800 link-underline-sweep--active' : 'text-slate-900'
                 )
               }
             >
@@ -93,30 +92,54 @@ export default function Navbar() {
         <button
           className="inline-flex h-10 w-10 items-center justify-center rounded-md border md:hidden"
           onClick={() => setOpen((v) => !v)}
-          aria-label="Toggle menu"
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          aria-expanded={open}
+          aria-controls="mobile-menu"
         >
-          <Menu className="h-5 w-5" />
+          <div className="relative h-5 w-5" aria-hidden="true">
+            <span
+              className={clsx(
+                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-slate-900 transition-transform duration-300 ease-out',
+                open ? 'translate-y-0 rotate-45' : '-translate-y-2 rotate-0'
+              )}
+            />
+            <span
+              className={clsx(
+                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-slate-900 transition-all duration-300 ease-out',
+                open ? 'opacity-0 scale-x-0' : 'opacity-100 scale-x-100'
+              )}
+            />
+            <span
+              className={clsx(
+                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-slate-900 transition-transform duration-300 ease-out',
+                open ? 'translate-y-0 -rotate-45' : 'translate-y-2 rotate-0'
+              )}
+            />
+          </div>
         </button>
       </div>
 
       <div
+        id="mobile-menu"
         className={clsx(
-          'border-b md:hidden',
-          open ? 'block' : 'hidden'
+          'border-b md:hidden mobile-menu',
+          open ? 'mobile-menu--open' : 'mobile-menu--closed'
         )}
       >
         <div className="container grid gap-2 py-3">
-          {navItems.map((item) => (
+          {navItems.map((item, idx) => (
             <NavLink
               key={item.to}
               to={item.to}
               onClick={() => setOpen(false)}
               className={({ isActive }) =>
                 clsx(
-                  'rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-emerald-50',
+                  'rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-emerald-50 mobile-menu-item',
+                  open && 'mobile-menu-item--open',
                   isActive ? 'text-emerald-800' : 'text-slate-900'
                 )
               }
+              style={{ transitionDelay: `${idx * 50}ms` }}
             >
               {item.label}
             </NavLink>
@@ -124,13 +147,41 @@ export default function Navbar() {
           <div className="mt-2 grid gap-1">
             {!auth.isLoggedIn ? (
               <>
-                <Link to="/login" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50">Login</Link>
-                <Button as={Link} to="/register" onClick={() => setOpen(false)} className="w-full">Register</Button>
+                <Link
+                  to="/login"
+                  onClick={() => setOpen(false)}
+                  className={clsx('rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  style={{ transitionDelay: `${navItems.length * 50}ms` }}
+                >
+                  Login
+                </Link>
+                <Button
+                  as={Link}
+                  to="/register"
+                  onClick={() => setOpen(false)}
+                  className={clsx('w-full mobile-menu-item', open && 'mobile-menu-item--open')}
+                  style={{ transitionDelay: `${navItems.length * 50 + 50}ms` }}
+                >
+                  Register
+                </Button>
               </>
             ) : (
               <>
-                <Link to="/my-activities" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50">My Activities</Link>
-                <button onClick={() => { logout(); setOpen(false) }} className="rounded-md px-3 py-2 text-left text-sm text-slate-900 hover:bg-emerald-50">Logout</button>
+                <Link
+                  to="/my-activities"
+                  onClick={() => setOpen(false)}
+                  className={clsx('rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  style={{ transitionDelay: `${navItems.length * 50}ms` }}
+                >
+                  My Activities
+                </Link>
+                <button
+                  onClick={() => { logout(); setOpen(false) }}
+                  className={clsx('rounded-md px-3 py-2 text-left text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  style={{ transitionDelay: `${navItems.length * 50 + 50}ms` }}
+                >
+                  Logout
+                </button>
               </>
             )}
           </div>
