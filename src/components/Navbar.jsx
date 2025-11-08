@@ -4,6 +4,7 @@ import { useState } from 'react'
 import clsx from 'clsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import Logo from './Logo.jsx'
+import Button from './ui/Button.jsx'
 
 const navItems = [
   { to: '/', label: 'Home' },
@@ -46,7 +47,7 @@ export default function Navbar() {
           {!auth.isLoggedIn ? (
             <>
               <Link to="/login" className="text-sm text-slate-700 hover:text-emerald-700">Login</Link>
-              <Link to="/register" className="text-sm text-slate-700 hover:text-emerald-700">Register</Link>
+              <Button as={Link} to="/register">Register</Button>
             </>
           ) : (
             <div className="flex items-center gap-3">
@@ -91,7 +92,7 @@ export default function Navbar() {
             {!auth.isLoggedIn ? (
               <>
                 <Link to="/login" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm hover:bg-emerald-50">Login</Link>
-                <Link to="/register" onClick={() => setOpen(false)} className="rounded-md px-3 py-2 text-sm hover:bg-emerald-50">Register</Link>
+                <Button as={Link} to="/register" onClick={() => setOpen(false)} className="w-full">Register</Button>
               </>
             ) : (
               <>
