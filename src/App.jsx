@@ -21,6 +21,7 @@ import JoinChallenge from './pages/JoinChallenge.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import './index.css'
+import PrivacyToast from './components/PrivacyToast.jsx'
 
 export default function App() {
   return (
@@ -77,6 +78,7 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster position="top-right" />
+        <PrivacyToast />
       </BrowserRouter>
     </AuthProvider>
   )
