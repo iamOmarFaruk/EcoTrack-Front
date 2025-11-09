@@ -14,7 +14,26 @@ import { mockEvents } from '../data/mockEvents.js'
 
 export default function Home() {
   useDocumentTitle('Home')
-  const { data: challenges, loading: loadingChallenges } = useMockFetch(() => mockChallenges.slice(0, 3), 500)
+  const { data: challenges, loading: loadingChallenges } = useMockFetch(() => {
+    const now = new Date()
+    const MS_PER_DAY = 24 * 60 * 60 * 1000
+    const parseDays = (duration) => {
+      const n = Number.parseInt(duration)
+      return Number.isFinite(n) ? n : 0
+    }
+    const ongoing = mockChallenges.filter((c) => {
+      const start = new Date(c.startDate)
+      const days = parseDays(c.duration)
+      if (days <= 0) return true
+      const end = new Date(start.getTime() + days * MS_PER_DAY)
+      return now >= start && now <= end
+    })
+    const source = ongoing.length
+      ? ongoing
+      : [...mockChallenges].sort((a, b) => (b.participants || 0) - (a.participants || 0))
+    // Limit to 4–6 items; prefer up to 6
+    return source.slice(0, 6)
+  }, 500)
   const { data: tips, loading: loadingTips } = useMockFetch(() => mockTips.slice(0, 3), 600)
   const { data: events, loading: loadingEvents } = useMockFetch(() => mockEvents.slice(0, 3), 700)
   
@@ -33,9 +52,9 @@ export default function Home() {
       <CommunityStats />
 
       <section>
-        <SectionHeading title="Featured Challenges" subtitle="A few to get you started" />
+        <SectionHeading title="Active Challenges" subtitle="Happening right now" />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {loadingChallenges && Array.from({ length: 3 }).map((_, i) => (
+          {loadingChallenges && Array.from({ length: 6 }).map((_, i) => (
             <Skeleton key={i} className="h-56 w-full" />
           ))}
           {!loadingChallenges && challenges?.map((c) => (
