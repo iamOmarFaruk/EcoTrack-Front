@@ -5,8 +5,12 @@ import TipCard from '../components/TipCard.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 
 export default function Tips() {
-  useDocumentTitle('Eco Tips')
-  const { data: tips, loading } = useMockFetch(() => mockTips, 700)
+  useDocumentTitle('Recent Tips')
+  const { data: tips, loading } = useMockFetch(() => {
+    return [...mockTips]
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 5)
+  }, 700)
   
   if (loading) {
     return <EcoLoader />
@@ -15,12 +19,12 @@ export default function Tips() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-semibold">Eco Tips</h1>
-        <p className="mt-1 text-slate-900">Helpful, upvotable suggestions.</p>
+        <h1 className="text-2xl font-semibold">Recent Tips</h1>
+        <p className="mt-1 text-slate-900">Latest 5 community tips</p>
       </div>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {tips?.map((t, i) => (
-          <TipCard key={i} tip={t} />
+          <TipCard key={i} tip={t} showContent={false} showActions={true} />
         ))}
       </div>
     </div>

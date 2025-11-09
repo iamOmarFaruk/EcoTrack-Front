@@ -64,13 +64,13 @@ export default function Home() {
       </section>
 
       <section>
-        <SectionHeading title="Eco Tips" subtitle="Practical, bite-sized advice" />
+        <SectionHeading title="Recent Tips" subtitle="Practical, bite-sized advice" />
         <div className="grid gap-6 md:grid-cols-3">
           {loadingTips && Array.from({ length: 3 }).map((_, i) => (
             <Skeleton key={i} className="h-40 w-full" />
           ))}
           {!loadingTips && tips?.map((t, i) => (
-            <TipCard key={i} tip={t} />
+            <TipCard key={i} tip={t} showActions={true} />
           ))}
         </div>
       </section>
