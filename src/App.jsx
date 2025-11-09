@@ -15,6 +15,7 @@ import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import ForgotPassword from './pages/ForgotPassword.jsx'
 import MyActivities from './pages/MyActivities.jsx'
+import Profile from './pages/Profile.jsx'
 import AddChallenge from './pages/AddChallenge.jsx'
 import JoinChallenge from './pages/JoinChallenge.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
@@ -40,6 +41,14 @@ export default function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
           </Route>
           <Route element={<DashboardLayout />}>
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
             <Route
               path="/my-activities"
               element={
