@@ -5,6 +5,7 @@ import TipCard from '../components/TipCard.jsx'
 import EventCard from '../components/EventCard.jsx'
 import Skeleton from '../components/Skeleton.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
+import CommunityStats from '../components/CommunityStats.jsx'
 import { useMockFetch } from '../hooks/useMockFetch.js'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { mockChallenges } from '../data/mockChallenges.js'
@@ -28,6 +29,8 @@ export default function Home() {
       <div className="full-bleed">
         <Hero slides={mockChallenges.slice(0, 5)} effect="creative" />
       </div>
+
+      <CommunityStats />
 
       <section>
         <SectionHeading title="Featured Challenges" subtitle="A few to get you started" />

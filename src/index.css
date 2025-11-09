@@ -6,6 +6,10 @@
   :root {
     --radius: 0.5rem;
   }
+  /* Consistent vertical rhythm for all sections */
+  section {
+    @apply py-6 md:py-8;
+  }
   html {
     /* Reserve space for the vertical scrollbar to prevent layout shift
        between pages that do and don't overflow */
@@ -149,5 +153,9 @@
   .hero-swiper .swiper-pagination-bullet-active {
     background: #10b981; /* emerald-500 */
     border-color: #ffffff;
+  }
+  /* Remove default section padding for the full-bleed hero */
+  .hero-swiper {
+    @apply py-0;
   }
 }
