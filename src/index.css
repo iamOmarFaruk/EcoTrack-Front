@@ -20,6 +20,7 @@
   body {
     @apply bg-white text-slate-900 antialiased font-sans;
     box-sizing: border-box;
+    overflow-x: hidden; /* avoid horizontal scrollbars from full-bleed/3D effects */
   }
   *, *::before, *::after {
     box-sizing: border-box;
@@ -94,5 +95,59 @@
   .mobile-menu-item--open {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@layer components {
+  /* Make a section span the full viewport width even inside a centered container */
+  .full-bleed {
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    width: 100vw;
+    max-width: 100vw;
+  }
+
+  /* Subtle themed overrides for Swiper navigation/pagination inside dark hero */
+  .hero-swiper :is(.swiper-button-next, .swiper-button-prev) {
+    color: white;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    width: 44px;
+    height: 44px;
+    border-radius: 0; /* remove circle */
+    background: transparent; /* remove circle */
+    backdrop-filter: none;
+    border: none;
+    box-shadow: none;
+    outline: none;
+    top: 50%;
+    transform: translateY(-50%) translateY(4px);
+    opacity: 0;
+    transition: opacity 180ms ease, transform 180ms ease;
+    z-index: 20;
+  }
+  .hero-swiper .swiper-button-prev { left: 12px; }
+  .hero-swiper .swiper-button-next { right: 12px; }
+  .hero-swiper:hover :is(.swiper-button-next, .swiper-button-prev),
+  .hero-swiper :is(.swiper-button-next, .swiper-button-prev):focus-visible {
+    opacity: 1;
+    transform: translateY(-50%) translateY(0);
+  }
+  /* Hide arrows on small screens */
+  @media (max-width: 768px) {
+    .hero-swiper :is(.swiper-button-next, .swiper-button-prev) {
+      display: none !important;
+    }
+  }
+  .hero-swiper .swiper-pagination-bullet {
+    width: 10px;
+    height: 10px;
+    margin: 0 4px !important;
+    background: transparent;
+    border: 2px solid rgba(255,255,255,0.55);
+    opacity: 1;
+  }
+  .hero-swiper .swiper-pagination-bullet-active {
+    background: #10b981; /* emerald-500 */
+    border-color: #ffffff;
   }
 }

@@ -1,4 +1,4 @@
-import Button from '../components/ui/Button.jsx'
+import Hero from '../components/Hero.jsx'
 import SectionHeading from '../components/SectionHeading.jsx'
 import ChallengeCard from '../components/ChallengeCard.jsx'
 import TipCard from '../components/TipCard.jsx'
@@ -25,20 +25,9 @@ export default function Home() {
 
   return (
     <div className="space-y-12">
-      <section className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-emerald-50 to-teal-50">
-        <div className="p-10 md:p-16">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
-            Make sustainability your daily habit.
-          </h1>
-          <p className="mt-3 max-w-prose text-slate-900">
-            Join eco challenges, learn from tips, and track your impact with a clean, fast UI.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Button href="/challenges" as="a">Browse Challenges</Button>
-            <Button variant="secondary" href="/about" as="a">Learn More</Button>
-          </div>
-        </div>
-      </section>
+      <div className="full-bleed">
+        <Hero slides={mockChallenges.slice(0, 5)} effect="creative" />
+      </div>
 
       <section>
         <SectionHeading title="Featured Challenges" subtitle="A few to get you started" />

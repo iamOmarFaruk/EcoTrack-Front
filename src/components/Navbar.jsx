@@ -39,8 +39,9 @@ export default function Navbar() {
       const currentY = window.scrollY || 0
       setIsScrolled(currentY > 2)
 
+      const HIDE_THRESHOLD = 24
       const scrollingDown = currentY > lastScrollYRef.current
-      const shouldHide = scrollingDown && currentY > 80
+      const shouldHide = scrollingDown && currentY > HIDE_THRESHOLD
       setIsHidden(shouldHide && !open)
 
       lastScrollYRef.current = currentY
