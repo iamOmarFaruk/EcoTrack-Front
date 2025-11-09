@@ -10,13 +10,19 @@
     /* Reserve space for the vertical scrollbar to prevent layout shift
        between pages that do and don't overflow */
     overflow-y: scroll; /* broad browser fallback */
-    scrollbar-gutter: stable both-edges; /* modern browsers */
+    scrollbar-gutter: stable; /* avoid left gutter; keeps layout stable */
   }
   html, body, #root {
     height: 100%;
+    margin: 0;
+    padding: 0;
   }
   body {
     @apply bg-white text-slate-900 antialiased font-sans;
+    box-sizing: border-box;
+  }
+  *, *::before, *::after {
+    box-sizing: border-box;
   }
 }
 
