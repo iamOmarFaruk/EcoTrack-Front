@@ -16,10 +16,12 @@
     overflow-y: scroll; /* broad browser fallback */
     scrollbar-gutter: stable; /* avoid left gutter; keeps layout stable */
   }
-  html, body, #root {
-    height: 100%;
+  html, body {
     margin: 0;
     padding: 0;
+  }
+  #root {
+    min-height: 100vh;
   }
   body {
     @apply bg-white text-slate-900 antialiased font-sans;

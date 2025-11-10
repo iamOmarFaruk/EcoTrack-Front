@@ -17,9 +17,8 @@ const navItems = [
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const { auth, logout } = useAuth()
-  const [isHidden, setIsHidden] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
-  const lastScrollYRef = useRef(0)
+  const [show, setShow] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
   const [profileOpen, setProfileOpen] = useState(false)
   const profileRef = useRef(null)
 
@@ -32,24 +31,28 @@ export default function Navbar() {
     .join('')
     .toUpperCase()
 
+  // Simple scroll handler
   useEffect(() => {
-    lastScrollYRef.current = window.scrollY || 0
-
-    const handleScroll = () => {
-      const currentY = window.scrollY || 0
-      setIsScrolled(currentY > 2)
-
-      const HIDE_THRESHOLD = 24
-      const scrollingDown = currentY > lastScrollYRef.current
-      const shouldHide = scrollingDown && currentY > HIDE_THRESHOLD
-      setIsHidden(shouldHide && !open)
-
-      lastScrollYRef.current = currentY
+    const controlNavbar = () => {
+      const currentScrollY = window.scrollY
+      
+      if (currentScrollY < 80) {
+        // Always show at top
+        setShow(true)
+      } else if (currentScrollY > lastScrollY) {
+        // Scrolling down - hide
+        setShow(false)
+      } else {
+        // Scrolling up - show
+        setShow(true)
+      }
+      
+      setLastScrollY(currentScrollY)
     }
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [open])
+    window.addEventListener('scroll', controlNavbar)
+    return () => window.removeEventListener('scroll', controlNavbar)
+  }, [lastScrollY])
 
   useEffect(() => {
     const onKey = (e) => {
@@ -71,17 +74,11 @@ export default function Navbar() {
   return (
     <header
       className={clsx(
-        'sticky top-0 z-40 w-full border-b backdrop-blur transition-transform duration-300 ease-out',
-        isScrolled ? 'bg-white/80 shadow-sm' : 'bg-white/60',
-        isHidden ? '-translate-y-full' : 'translate-y-0'
+        'fixed top-0 left-0 right-0 z-40 w-full border-b bg-white/95 shadow-sm backdrop-blur transition-transform duration-300',
+        show ? 'translate-y-0' : '-translate-y-full'
       )}
     >
-      <div
-        className={clsx(
-          'container flex items-center justify-between transition-all duration-300',
-          isScrolled ? 'h-14' : 'h-16'
-        )}
-      >
+      <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <Logo className="h-8 w-8" />
           <span className="text-lg font-semibold text-slate-900">EcoTrack</span>
