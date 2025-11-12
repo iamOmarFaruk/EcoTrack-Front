@@ -37,17 +37,17 @@ export default function Contact() {
       <form onSubmit={handleSubmit(onSubmit)} className="mt-6 grid gap-4">
         <div>
           <label className="mb-1 block text-sm font-medium">Name</label>
-          <input className="w-full rounded-md border px-3 py-2" placeholder="Your name" {...register('name')} />
+          <input className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" placeholder="Your name" {...register('name')} />
           {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
         </div>
         <div>
           <label className="mb-1 block text-sm font-medium">Email</label>
-          <input className="w-full rounded-md border px-3 py-2" placeholder="you@example.com" {...register('email')} />
+          <input className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" placeholder="you@example.com" {...register('email')} />
           {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
         </div>
         <div>
           <label className="mb-1 block text-sm font-medium">Message</label>
-          <textarea className="w-full rounded-md border px-3 py-2" rows="5" placeholder="Write your message..." {...register('message')} />
+          <textarea className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" rows="5" placeholder="Write your message..." {...register('message')} />
           {errors.message && <p className="mt-1 text-sm text-red-600">{errors.message.message}</p>}
         </div>
         <Button type="submit" className="h-10" disabled={isSubmitting}>
