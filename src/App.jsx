@@ -17,6 +17,7 @@ import Register from './pages/Register.jsx'
 import ForgotPassword from './pages/ForgotPassword.jsx'
 import MyActivities from './pages/MyActivities.jsx'
 import Profile from './pages/Profile.jsx'
+import Settings from './pages/Settings.jsx'
 import AddChallenge from './pages/AddChallenge.jsx'
 import JoinChallenge from './pages/JoinChallenge.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
@@ -50,6 +51,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <Settings />
               </ProtectedRoute>
             }
           />
