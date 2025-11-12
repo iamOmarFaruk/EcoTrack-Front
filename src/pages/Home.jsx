@@ -7,6 +7,7 @@ import { ChallengeCardSkeleton, TipCardSkeleton, EventCardSkeleton } from '../co
 import EcoLoader from '../components/EcoLoader.jsx'
 import CommunityStats from '../components/CommunityStats.jsx'
 import LazySection from '../components/LazySection.jsx'
+import HowItWorks from '../components/HowItWorks.jsx'
 import { useMockFetch } from '../hooks/useMockFetch.js'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver.js'
@@ -174,6 +175,8 @@ export default function Home() {
           </ul>
         </div>
       </section>
+
+      <HowItWorks />
     </div>
   )
 }
