@@ -4,6 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import toast from 'react-hot-toast'
 import Button from '../components/ui/Button.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
+import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
+import EcoLoader from '../components/EcoLoader.jsx'
 
 const schema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -13,6 +15,7 @@ const schema = z.object({
 
 export default function Contact() {
   useDocumentTitle('Contact Us')
+  const isLoading = useMinimumLoading(300)
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm({
     resolver: zodResolver(schema),
   })
@@ -21,6 +24,10 @@ export default function Contact() {
     await new Promise((r) => setTimeout(r, 800))
     toast.success('Message sent! We will get back to you soon.')
     reset()
+  }
+
+  if (isLoading) {
+    return <EcoLoader />
   }
 
   return (

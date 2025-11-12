@@ -1,11 +1,18 @@
 import { useAuth } from '../context/AuthContext.jsx'
 import { mockChallenges } from '../data/mockChallenges.js'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
+import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
+import EcoLoader from '../components/EcoLoader.jsx'
 
 export default function MyActivities() {
   useDocumentTitle('My Activities')
+  const isLoading = useMinimumLoading(300)
   const { auth } = useAuth()
   const joined = (auth.userChallenges ?? []).map((id) => mockChallenges.find((c) => c._id === id)).filter(Boolean)
+
+  if (isLoading) {
+    return <EcoLoader />
+  }
 
   return (
     <div className="space-y-6">

@@ -6,6 +6,8 @@ import toast from 'react-hot-toast'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useNavigate, Link } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
+import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
+import EcoLoader from '../components/EcoLoader.jsx'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -14,6 +16,7 @@ const schema = z.object({
 
 export default function Login() {
   useDocumentTitle('Login')
+  const isLoading = useMinimumLoading(300)
   const { login } = useAuth()
   const navigate = useNavigate()
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
@@ -31,6 +34,10 @@ export default function Login() {
     } catch (e) {
       toast.error('Invalid credentials (use admin@eco.com / admin)')
     }
+  }
+
+  if (isLoading) {
+    return <EcoLoader />
   }
 
   return (

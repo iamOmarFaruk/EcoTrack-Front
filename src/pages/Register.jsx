@@ -5,6 +5,8 @@ import Button from '../components/ui/Button.jsx'
 import toast from 'react-hot-toast'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
+import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
+import EcoLoader from '../components/EcoLoader.jsx'
 
 const passwordRules = z.string()
   .min(6, 'Min 6 characters')
@@ -21,6 +23,7 @@ const schema = z.object({
 
 export default function Register() {
   useDocumentTitle('Register')
+  const isLoading = useMinimumLoading(300)
   const navigate = useNavigate()
   const { register, handleSubmit, formState: { errors, isSubmitting }, watch } = useForm({
     resolver: zodResolver(schema),
@@ -39,6 +42,10 @@ export default function Register() {
     { ok: /[a-z]/.test(pwd), label: 'At least 1 lowercase letter' },
     { ok: /[^A-Za-z0-9]/.test(pwd), label: 'At least 1 special character' },
   ]
+
+  if (isLoading) {
+    return <EcoLoader />
+  }
 
   return (
     <div className="mx-auto max-w-sm">

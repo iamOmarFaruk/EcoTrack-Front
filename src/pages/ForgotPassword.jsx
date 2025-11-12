@@ -4,6 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Button from '../components/ui/Button.jsx'
 import toast from 'react-hot-toast'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
+import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
+import EcoLoader from '../components/EcoLoader.jsx'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -11,6 +13,7 @@ const schema = z.object({
 
 export default function ForgotPassword() {
   useDocumentTitle('Forgot Password')
+  const isLoading = useMinimumLoading(300)
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm({
     resolver: zodResolver(schema),
   })
@@ -19,6 +22,10 @@ export default function ForgotPassword() {
     await new Promise((r) => setTimeout(r, 800))
     toast.success('Password reset email sent (mock).')
     reset()
+  }
+
+  if (isLoading) {
+    return <EcoLoader />
   }
 
   return (

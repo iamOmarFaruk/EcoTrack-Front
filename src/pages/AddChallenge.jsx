@@ -4,6 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Button from '../components/ui/Button.jsx'
 import toast from 'react-hot-toast'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
+import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
+import EcoLoader from '../components/EcoLoader.jsx'
 
 const schema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -19,6 +21,7 @@ const schema = z.object({
 
 export default function AddChallenge() {
   useDocumentTitle('Create Challenge')
+  const isLoading = useMinimumLoading(300)
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm({
     resolver: zodResolver(schema),
   })
@@ -27,6 +30,10 @@ export default function AddChallenge() {
     await new Promise((r) => setTimeout(r, 900))
     toast.success('Challenge created (mock).')
     reset()
+  }
+
+  if (isLoading) {
+    return <EcoLoader />
   }
 
   return (

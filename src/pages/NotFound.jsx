@@ -1,9 +1,16 @@
 import Button from '../components/ui/Button.jsx'
 import { Link } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
+import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
+import EcoLoader from '../components/EcoLoader.jsx'
 
 export default function NotFound() {
   useDocumentTitle('404 - Not Found')
+  const isLoading = useMinimumLoading(300)
+  
+  if (isLoading) {
+    return <EcoLoader />
+  }
   
   return (
     <div className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center px-4 text-center">

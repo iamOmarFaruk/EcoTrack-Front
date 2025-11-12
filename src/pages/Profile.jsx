@@ -1,7 +1,10 @@
 import SectionHeading from '../components/SectionHeading.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
+import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
+import EcoLoader from '../components/EcoLoader.jsx'
 
 export default function Profile() {
+  const isLoading = useMinimumLoading(300)
   const { auth } = useAuth()
   const user = auth.user ?? { name: 'Eco User', email: 'user@example.com', avatarUrl: '' }
 
@@ -12,6 +15,10 @@ export default function Profile() {
     .slice(0, 2)
     .join('')
     .toUpperCase()
+
+  if (isLoading) {
+    return <EcoLoader />
+  }
 
   return (
     <div className="max-w-2xl">
