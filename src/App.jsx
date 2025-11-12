@@ -40,6 +40,7 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="*" element={<NotFound />} />
           </Route>
           <Route element={<DashboardLayout />}>
           <Route
@@ -75,7 +76,6 @@ export default function App() {
               }
             />
           </Route>
-          <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster position="top-right" />
         <PrivacyToast />

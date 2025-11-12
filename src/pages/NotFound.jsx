@@ -4,11 +4,50 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 
 export default function NotFound() {
   useDocumentTitle('404 - Not Found')
+  
   return (
-    <div className="mx-auto max-w-md text-center">
-      <h1 className="text-4xl font-bold tracking-tight text-slate-900">404</h1>
-      <p className="mt-2 text-slate-900">The page you’re looking for doesn’t exist.</p>
-      <Button as={Link} to="/" className="mt-6">Go Home</Button>
+    <div className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center px-4 text-center">
+      <div className="mx-auto max-w-lg">
+        {/* Error content */}
+        <div className="space-y-6">
+          <h1 className="text-6xl font-bold tracking-tight text-slate-900">
+            4<span className="text-emerald-500">0</span>4
+          </h1>
+          <h2 className="text-2xl font-semibold text-slate-700">
+            Oops! Page Not Found
+          </h2>
+          <p className="text-lg text-slate-600 leading-relaxed">
+            Looks like this page got lost in the forest. 🌿<br />
+            Don't worry, we'll help you find your way back home.
+          </p>
+        </div>
+        
+        {/* Action buttons */}
+        <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+          <Button as={Link} to="/" className="min-w-[140px]">
+            Go Home
+          </Button>
+          <Button 
+            as={Link} 
+            to="/challenges" 
+            variant="secondary" 
+            className="min-w-[140px]"
+          >
+            View Challenges
+          </Button>
+        </div>
+        
+        {/* Additional help text */}
+        <p className="mt-6 text-sm text-slate-500">
+          If you believe this is an error, please{' '}
+          <Link 
+            to="/contact" 
+            className="text-emerald-600 hover:text-emerald-700 underline"
+          >
+            contact us
+          </Link>
+        </p>
+      </div>
     </div>
   )
 }
