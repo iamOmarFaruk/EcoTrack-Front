@@ -1,7 +1,7 @@
 import { useMockFetch } from '../hooks/useMockFetch.js'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { mockTips } from '../data/mockTips.js'
-import TipCard from '../components/TipCard.jsx'
+import LazyTipCard from '../components/LazyTipCard.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 
 export default function Tips() {
@@ -24,7 +24,7 @@ export default function Tips() {
       </div>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {tips?.map((t, i) => (
-          <TipCard key={i} tip={t} showContent={false} showActions={true} />
+          <LazyTipCard key={i} tip={t} showContent={false} showActions={true} />
         ))}
       </div>
     </div>

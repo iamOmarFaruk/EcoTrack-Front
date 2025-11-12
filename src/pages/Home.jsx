@@ -1,11 +1,12 @@
 import Hero from '../components/Hero.jsx'
 import SectionHeading from '../components/SectionHeading.jsx'
-import ChallengeCard from '../components/ChallengeCard.jsx'
-import TipCard from '../components/TipCard.jsx'
-import EventCard from '../components/EventCard.jsx'
-import Skeleton from '../components/Skeleton.jsx'
+import LazyChallengeCard from '../components/LazyChallengeCard.jsx'
+import LazyTipCard from '../components/LazyTipCard.jsx'
+import LazyEventCard from '../components/LazyEventCard.jsx'
+import { ChallengeCardSkeleton, TipCardSkeleton, EventCardSkeleton } from '../components/Skeleton.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import CommunityStats from '../components/CommunityStats.jsx'
+import LazySection from '../components/LazySection.jsx'
 import { useMockFetch } from '../hooks/useMockFetch.js'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { mockChallenges } from '../data/mockChallenges.js'
@@ -55,10 +56,16 @@ export default function Home() {
         <SectionHeading title="Active Challenges" subtitle="Happening right now" />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {loadingChallenges && Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-56 w-full" />
+            <LazySection 
+              key={i} 
+              fallback={<ChallengeCardSkeleton />}
+              minimumLoadingTime={2000}
+            >
+              <div style={{ display: 'none' }}>Loading...</div>
+            </LazySection>
           ))}
           {!loadingChallenges && challenges?.map((c) => (
-            <ChallengeCard key={c._id} challenge={c} />
+            <LazyChallengeCard key={c._id} challenge={c} />
           ))}
         </div>
       </section>
@@ -67,10 +74,16 @@ export default function Home() {
         <SectionHeading title="Recent Tips" subtitle="Practical, bite-sized advice" />
         <div className="grid gap-6 md:grid-cols-3">
           {loadingTips && Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-40 w-full" />
+            <LazySection 
+              key={i} 
+              fallback={<TipCardSkeleton />}
+              minimumLoadingTime={2000}
+            >
+              <div style={{ display: 'none' }}>Loading...</div>
+            </LazySection>
           ))}
           {!loadingTips && tips?.map((t, i) => (
-            <TipCard key={i} tip={t} showActions={true} />
+            <LazyTipCard key={i} tip={t} showActions={true} />
           ))}
         </div>
       </section>
@@ -79,10 +92,16 @@ export default function Home() {
         <SectionHeading title="Upcoming Events" subtitle="Join the community" />
         <div className="grid gap-6 md:grid-cols-3">
           {loadingEvents && Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-40 w-full" />
+            <LazySection 
+              key={i} 
+              fallback={<EventCardSkeleton />}
+              minimumLoadingTime={2000}
+            >
+              <div style={{ display: 'none' }}>Loading...</div>
+            </LazySection>
           ))}
           {!loadingEvents && events?.map((e, i) => (
-            <EventCard key={i} event={e} />
+            <LazyEventCard key={i} event={e} />
           ))}
         </div>
       </section>

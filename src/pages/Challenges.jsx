@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { useMockFetch } from '../hooks/useMockFetch.js'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { mockChallenges } from '../data/mockChallenges.js'
-import ChallengeCard from '../components/ChallengeCard.jsx'
+import LazyChallengeCard from '../components/LazyChallengeCard.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 
 export default function Challenges() {
@@ -45,7 +45,7 @@ export default function Challenges() {
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map((c) => (
-          <ChallengeCard key={c._id} challenge={c} />
+          <LazyChallengeCard key={c._id} challenge={c} />
         ))}
       </div>
     </div>

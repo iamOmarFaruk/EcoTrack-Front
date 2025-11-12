@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import SectionHeading from './SectionHeading.jsx'
 import { Card, CardContent } from './ui/Card.jsx'
-import Skeleton from './Skeleton.jsx'
+import LazySection from './LazySection.jsx'
+import { CommunityStatsCardSkeleton } from './Skeleton.jsx'
 import { useMockFetch } from '../hooks/useMockFetch.js'
 import { mockCommunityStatsList } from '../data/mockStats.js'
 
@@ -95,25 +96,41 @@ export default function CommunityStats() {
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {loading &&
           Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-28 w-full" />
+            <LazySection
+              key={i}
+              fallback={<CommunityStatsCardSkeleton />}
+              minimumLoadingTime={2000}
+            >
+              <div style={{ display: 'none' }}>Hidden while loading</div>
+            </LazySection>
           ))}
 
         {!loading &&
           stats?.map((item) => (
-            <Card key={item.key} className="h-full">
-              <CardContent className="flex h-full items-center gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100">
-                  <span className="text-xl" aria-hidden="true">{item.icon}</span>
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xs text-slate-500">{item.label}</p>
-                  <p className="truncate text-xl font-extrabold tracking-tight text-slate-900">
-                    <AnimatedNumber value={item.value} isActive={inView} />{' '}
-                    <span className="text-xs font-semibold text-slate-500 align-middle">{item.unit}</span>
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <LazySection
+              key={item.key}
+              fallback={<CommunityStatsCardSkeleton />}
+              minimumLoadingTime={2000}
+              intersectionOptions={{
+                threshold: 0.1,
+                rootMargin: '50px'
+              }}
+            >
+              <Card className="h-full">
+                <CardContent className="flex h-full items-center gap-4">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100">
+                    <span className="text-xl" aria-hidden="true">{item.icon}</span>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs text-slate-500">{item.label}</p>
+                    <p className="truncate text-xl font-extrabold tracking-tight text-slate-900">
+                      <AnimatedNumber value={item.value} isActive={inView} />{' '}
+                      <span className="text-xs font-semibold text-slate-500 align-middle">{item.unit}</span>
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </LazySection>
           ))}
       </div>
     </section>

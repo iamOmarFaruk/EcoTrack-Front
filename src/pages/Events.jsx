@@ -1,7 +1,7 @@
 import { useMockFetch } from '../hooks/useMockFetch.js'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { mockEvents } from '../data/mockEvents.js'
-import EventCard from '../components/EventCard.jsx'
+import LazyEventCard from '../components/LazyEventCard.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 
 export default function Events() {
@@ -20,7 +20,7 @@ export default function Events() {
       </div>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {events?.map((e, i) => (
-          <EventCard key={i} event={e} />
+          <LazyEventCard key={i} event={e} />
         ))}
       </div>
     </div>
