@@ -4,6 +4,7 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { mockChallenges } from '../data/mockChallenges.js'
 import LazyChallengeCard from '../components/LazyChallengeCard.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
+import SubpageHero from '../components/SubpageHero.jsx'
 
 export default function Challenges() {
   useDocumentTitle('Challenges')
@@ -23,30 +24,44 @@ export default function Challenges() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Challenges</h1>
-          <p className="mt-1 text-slate-900">Browse and filter eco challenges.</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-900">Category</label>
-          <select
-            className="rounded-md border px-3 py-2 text-sm"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
-        </div>
+    <div className="space-y-8">
+      {/* Hero Section */}
+      <div className="full-bleed -mt-8">
+        <SubpageHero
+          title="Eco Challenges"
+          subtitle="Join our community challenges and make a positive impact on the environment"
+          backgroundImage="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2070&auto=format&fit=crop"
+          height="medium"
+          overlayIntensity="medium"
+        />
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((c) => (
-          <LazyChallengeCard key={c._id} challenge={c} />
-        ))}
+      {/* Content Section */}
+      <div className="space-y-6">
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h2 className="text-2xl font-semibold">Browse Challenges</h2>
+            <p className="mt-1 text-slate-900">Find and join challenges that match your interests.</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-slate-900">Category</label>
+            <select
+              className="rounded-md border px-3 py-2 text-sm"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((c) => (
+            <LazyChallengeCard key={c._id} challenge={c} />
+          ))}
+        </div>
       </div>
     </div>
   )

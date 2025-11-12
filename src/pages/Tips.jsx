@@ -3,6 +3,7 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { mockTips } from '../data/mockTips.js'
 import LazyTipCard from '../components/LazyTipCard.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
+import SubpageHero from '../components/SubpageHero.jsx'
 
 export default function Tips() {
   useDocumentTitle('Recent Tips')
@@ -17,15 +18,29 @@ export default function Tips() {
   }
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-2xl font-semibold">Recent Tips</h1>
-        <p className="mt-1 text-slate-900">Latest 5 community tips</p>
+    <div className="space-y-8">
+      {/* Hero Section */}
+      <div className="full-bleed -mt-8">
+        <SubpageHero
+          title="Eco Tips"
+          subtitle="Discover practical tips and advice from our eco-conscious community"
+          backgroundImage="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop"
+          height="medium"
+          overlayIntensity="medium"
+        />
       </div>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {tips?.map((t, i) => (
-          <LazyTipCard key={i} tip={t} showContent={false} showActions={true} />
-        ))}
+
+      {/* Content Section */}
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-semibold">Latest Tips</h2>
+          <p className="mt-1 text-slate-900">Recent community-shared sustainability tips and advice.</p>
+        </div>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {tips?.map((t, i) => (
+            <LazyTipCard key={i} tip={t} showContent={false} showActions={true} />
+          ))}
+        </div>
       </div>
     </div>
   )
