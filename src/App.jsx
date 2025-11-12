@@ -8,6 +8,7 @@ import Challenges from './pages/Challenges.jsx'
 import ChallengeDetail from './pages/ChallengeDetail.jsx'
 import Tips from './pages/Tips.jsx'
 import Events from './pages/Events.jsx'
+import EventDetail from './pages/EventDetail.jsx'
 import About from './pages/About.jsx'
 import Contact from './pages/Contact.jsx'
 import NotFound from './pages/NotFound.jsx'
@@ -35,6 +36,7 @@ export default function App() {
             <Route path="/challenges/:id" element={<ChallengeDetail />} />
             <Route path="/tips" element={<Tips />} />
             <Route path="/events" element={<Events />} />
+            <Route path="/events/:id" element={<EventDetail />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />

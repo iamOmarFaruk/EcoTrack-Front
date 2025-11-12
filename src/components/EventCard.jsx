@@ -1,9 +1,15 @@
+import { useNavigate } from 'react-router-dom'
 import Button from './ui/Button.jsx'
 import { Card, CardContent } from './ui/Card.jsx'
 import { formatDate } from '../utils/formatDate.js'
-import toast from 'react-hot-toast'
 
 export default function EventCard({ event }) {
+  const navigate = useNavigate()
+
+  const handleViewDetails = () => {
+    navigate(`/events/${event.id}`)
+  }
+
   return (
     <Card className="h-full">
       <CardContent className="flex h-full flex-col">
@@ -14,9 +20,9 @@ export default function EventCard({ event }) {
         <p className="mt-2 line-clamp-3 text-sm text-slate-900">{event.description}</p>
         <Button
           className="mt-4 h-9 self-start"
-          onClick={() => toast.success('Joined event (mock)!')}
+          onClick={handleViewDetails}
         >
-          Join
+          View Details
         </Button>
       </CardContent>
     </Card>
