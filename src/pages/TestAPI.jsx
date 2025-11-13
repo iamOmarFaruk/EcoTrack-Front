@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { challengeApi } from '../services/api.js'
 import { mockChallenges } from '../data/mockChallenges.js'
+import { apiConfig } from '../config/env'
 
 export default function TestAPI() {
   const [data, setData] = useState(null)
@@ -48,7 +49,7 @@ export default function TestAPI() {
         <h1 className="text-2xl font-bold mb-4">Testing Backend API</h1>
         <div className="flex items-center space-x-2">
           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-emerald-500"></div>
-          <span>Loading data from http://localhost:5001/api/challenges...</span>
+          <span>Loading data from {apiConfig.baseUrl}/challenges...</span>
         </div>
       </div>
     )
@@ -62,7 +63,7 @@ export default function TestAPI() {
           <h2 className="text-red-800 font-semibold">Error fetching data:</h2>
           <p className="text-red-700 mt-1">{error}</p>
           <p className="text-sm text-red-600 mt-2">
-            Make sure your backend is running on http://localhost:5001
+            Make sure your backend is running on {apiConfig.baseUrl.replace('/api', '')}
           </p>
         </div>
         
@@ -93,7 +94,7 @@ export default function TestAPI() {
         <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
           <h2 className="text-green-800 font-semibold">✅ Connected to Backend</h2>
           <p className="text-green-700 mt-1">
-            Data fetched from: <code className="bg-green-100 px-2 py-1 rounded">http://localhost:5001/api/challenges</code>
+            Data fetched from: <code className="bg-green-100 px-2 py-1 rounded">{apiConfig.baseUrl}/challenges</code>
           </p>
         </div>
       )}

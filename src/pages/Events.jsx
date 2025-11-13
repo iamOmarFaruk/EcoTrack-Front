@@ -4,6 +4,7 @@ import { mockEvents } from '../data/mockEvents.js'
 import LazyEventCard from '../components/LazyEventCard.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import SubpageHero from '../components/SubpageHero.jsx'
+import { defaultImages } from '../config/env'
 
 export default function Events() {
   useDocumentTitle('Events')
@@ -20,7 +21,7 @@ export default function Events() {
         <SubpageHero
           title="Eco Events"
           subtitle="Join community events and connect with like-minded environmental advocates"
-          backgroundImage="https://images.unsplash.com/photo-1530587191325-3db32d826c18?q=80&w=2070&auto=format&fit=crop"
+          backgroundImage={defaultImages.eventsHero}
           height="medium"
           overlayIntensity="medium"
         />

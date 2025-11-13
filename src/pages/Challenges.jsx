@@ -7,6 +7,7 @@ import LazyChallengeCard from '../components/LazyChallengeCard.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import SubpageHero from '../components/SubpageHero.jsx'
 import Button from '../components/ui/Button.jsx'
+import { defaultImages } from '../config/env'
 import toast from 'react-hot-toast'
 
 export default function Challenges() {
@@ -136,7 +137,7 @@ export default function Challenges() {
           <SubpageHero
             title="Eco Challenges"
             subtitle="Join our community challenges and make a positive impact on the environment"
-            backgroundImage="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2070&auto=format&fit=crop"
+            backgroundImage={defaultImages.challengesHero}
             height="medium"
             overlayIntensity="medium"
           />
@@ -191,7 +192,7 @@ export default function Challenges() {
         <SubpageHero
           title="Eco Challenges"
           subtitle="Join our community challenges and make a positive impact on the environment"
-          backgroundImage="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2070&auto=format&fit=crop"
+          backgroundImage={defaultImages.challengesHero}
           height="medium"
           overlayIntensity="medium"
         />

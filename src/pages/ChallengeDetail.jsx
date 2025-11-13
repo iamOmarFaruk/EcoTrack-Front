@@ -6,6 +6,7 @@ import Button from '../components/ui/Button.jsx'
 import ChallengeCard from '../components/ChallengeCard.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
+import { utils } from '../config/env'
 import toast from 'react-hot-toast'
 
 export default function ChallengeDetail() {
@@ -183,7 +184,7 @@ export default function ChallengeDetail() {
           className="h-64 sm:h-72 w-full rounded-lg object-cover"
           onError={(e) => {
             e.target.onerror = null;
-            e.target.src = 'https://via.placeholder.com/600x400/10b981/ffffff?text=' + encodeURIComponent(challenge.title);
+            e.target.src = utils.getPlaceholderImage(600, 400, challenge.title);
           }}
         />
         <div>

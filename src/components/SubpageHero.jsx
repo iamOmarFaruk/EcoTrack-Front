@@ -1,9 +1,10 @@
 import clsx from 'clsx'
+import { defaultImages } from '../config/env'
 
 export default function SubpageHero({
   title,
   subtitle,
-  backgroundImage = 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2070&auto=format&fit=crop',
+  backgroundImage = defaultImages.hero,
   overlayIntensity = 'medium',
   height = 'medium',
   children,

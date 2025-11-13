@@ -14,6 +14,7 @@ import { useIntersectionObserver } from '../hooks/useIntersectionObserver.js'
 import { mockChallenges } from '../data/mockChallenges.js'
 import { mockTips } from '../data/mockTips.js'
 import { mockEvents } from '../data/mockEvents.js'
+import { defaultImages } from '../config/env'
 
 export default function Home() {
   useDocumentTitle('Home')
@@ -120,7 +121,7 @@ export default function Home() {
         {/* Left Image */}
         <div className="order-1">
           <img
-            src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&h=500&q=80"
+            src={defaultImages.homeFeature}
             alt="Hands holding a small plant seedling with soil"
             className={`w-full h-80 sm:h-96 lg:h-[28rem] object-cover rounded-2xl shadow-lg transition-all duration-1000 ease-out ${
               isWhyGoGreenVisible 

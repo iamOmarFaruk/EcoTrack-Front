@@ -1,5 +1,7 @@
 // API Service Layer for EcoTrack Frontend
-const API_BASE_URL = 'http://localhost:5001/api'
+import { apiConfig } from '../config/env.js'
+
+const API_BASE_URL = apiConfig.baseUrl
 
 class ApiError extends Error {
   constructor(message, status, data) {

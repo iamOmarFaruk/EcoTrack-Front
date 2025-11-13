@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import Button from './ui/Button.jsx'
 import { Card, CardContent, CardHeader } from './ui/Card.jsx'
+import { utils } from '../config/env'
 
 export default function ChallengeCard({ challenge }) {
   return (
@@ -12,7 +13,7 @@ export default function ChallengeCard({ challenge }) {
         loading="lazy"
         onError={(e) => {
           e.target.onerror = null;
-          e.target.src = 'https://via.placeholder.com/400x300/10b981/ffffff?text=' + encodeURIComponent(challenge.title);
+          e.target.src = utils.getPlaceholderImage(400, 300, challenge.title);
         }}
       />
       <CardHeader className="border-b">
