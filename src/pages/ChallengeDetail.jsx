@@ -25,11 +25,11 @@ export default function ChallengeDetail() {
 
   return (
     <div className="space-y-10">
-      <article className="grid gap-6 md:grid-cols-2">
+      <article className="grid gap-6 lg:grid-cols-2">
         <img
           src={challenge.imageUrl}
           alt={challenge.title}
-          className="h-72 w-full rounded-lg object-cover"
+          className="h-64 sm:h-72 w-full rounded-lg object-cover"
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = 'https://via.placeholder.com/600x400/10b981/ffffff?text=' + encodeURIComponent(challenge.title);
@@ -37,9 +37,9 @@ export default function ChallengeDetail() {
         />
         <div>
           <p className="text-sm font-medium text-emerald-700">{challenge.category}</p>
-          <h1 className="mt-1 text-3xl font-bold tracking-tight">{challenge.title}</h1>
+          <h1 className="mt-1 text-2xl sm:text-3xl font-bold tracking-tight">{challenge.title}</h1>
           <p className="mt-3 text-slate-700">{challenge.description}</p>
-          <dl className="mt-6 grid grid-cols-2 gap-4 text-sm text-slate-900">
+          <dl className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-900">
             <div>
               <dt className="font-medium text-slate-900">Participants</dt>
               <dd>{challenge.participants}</dd>
@@ -57,9 +57,9 @@ export default function ChallengeDetail() {
               <dd>{challenge.startDate}</dd>
             </div>
           </dl>
-          <div className="mt-6 flex gap-3">
-            <Button as={Link} to={`/challenges/join/${challenge._id}`}>Join Challenge</Button>
-            <Button variant="secondary" as={Link} to="/challenges">Back</Button>
+          <div className="mt-6 flex flex-col sm:flex-row gap-3">
+            <Button as={Link} to={`/challenges/join/${challenge._id}`} className="w-full sm:w-auto">Join Challenge</Button>
+            <Button variant="secondary" as={Link} to="/challenges" className="w-full sm:w-auto">Back</Button>
           </div>
         </div>
       </article>

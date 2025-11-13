@@ -5,15 +5,15 @@ export function Card({ className, ...props }) {
 }
 
 export function CardHeader({ className, ...props }) {
-  return <div className={clsx('p-4 border-b', className)} {...props} />
+  return <div className={clsx('p-3 sm:p-4 border-b', className)} {...props} />
 }
 
 export function CardContent({ className, ...props }) {
-  return <div className={clsx('p-4', className)} {...props} />
+  return <div className={clsx('p-3 sm:p-4', className)} {...props} />
 }
 
 export function CardFooter({ className, ...props }) {
-  return <div className={clsx('p-4 border-t', className)} {...props} />
+  return <div className={clsx('p-3 sm:p-4 border-t', className)} {...props} />
 }
 
 

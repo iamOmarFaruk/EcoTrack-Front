@@ -33,8 +33,8 @@ export default function Tips() {
       {/* Content Section */}
       <div className="space-y-6">
         <div>
-          <h2 className="text-2xl font-semibold">Latest Tips</h2>
-          <p className="mt-1 text-slate-900">Recent community-shared sustainability tips and advice.</p>
+          <h2 className="text-xl sm:text-2xl font-semibold">Latest Tips</h2>
+          <p className="mt-1 text-sm sm:text-base text-slate-900">Recent community-shared sustainability tips and advice.</p>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {tips?.map((t, i) => (

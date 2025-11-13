@@ -80,8 +80,8 @@ export default function Navbar() {
     >
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <Logo className="h-8 w-8" />
-          <span className="text-lg font-semibold text-slate-900">EcoTrack</span>
+          <Logo className="h-7 w-7 sm:h-8 sm:w-8" />
+          <span className="text-base sm:text-lg font-semibold text-slate-900">EcoTrack</span>
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">

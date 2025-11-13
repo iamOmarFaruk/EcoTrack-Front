@@ -38,15 +38,15 @@ export default function Challenges() {
 
       {/* Content Section */}
       <div className="space-y-6">
-        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <div className="flex flex-col gap-4 sm:gap-3 md:flex-row md:items-end md:justify-between">
           <div>
-            <h2 className="text-2xl font-semibold">Browse Challenges</h2>
-            <p className="mt-1 text-slate-900">Find and join challenges that match your interests.</p>
+            <h2 className="text-xl sm:text-2xl font-semibold">Browse Challenges</h2>
+            <p className="mt-1 text-sm sm:text-base text-slate-900">Find and join challenges that match your interests.</p>
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-sm text-slate-900">Category</label>
+            <label className="text-sm text-slate-900 whitespace-nowrap">Category</label>
             <select
-              className="rounded-md border px-3 py-2 text-sm"
+              className="flex-1 sm:flex-initial rounded-md border px-3 py-2 text-sm min-w-0"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
             >

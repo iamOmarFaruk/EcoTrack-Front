@@ -27,6 +27,12 @@
     @apply bg-white text-slate-900 antialiased font-sans;
     box-sizing: border-box;
     overflow-x: hidden; /* avoid horizontal scrollbars from full-bleed/3D effects */
+    /* Improve mobile touch scrolling */
+    -webkit-overflow-scrolling: touch;
+    /* Prevent text size adjustment on mobile */
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
   *, *::before, *::after {
     box-sizing: border-box;
@@ -59,6 +65,11 @@
 }
 
 @layer components {
+  /* Responsive container padding utility */
+  .container {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+  
   .link-underline-sweep {
     position: relative;
     text-decoration: none;

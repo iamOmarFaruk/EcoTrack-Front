@@ -39,7 +39,7 @@ export default function AddChallenge() {
   return (
     <div className="mx-auto max-w-2xl">
       <h1 className="text-2xl font-semibold">Create Challenge</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="md:col-span-2">
           <label className="mb-1 block text-sm font-medium">Title</label>
           <input className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" {...register('title')} />
@@ -69,7 +69,7 @@ export default function AddChallenge() {
           <input className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" placeholder="e.g., CO₂ saved" {...register('impactMetric')} />
           {errors.impactMetric && <p className="mt-1 text-sm text-red-600">{errors.impactMetric.message}</p>}
         </div>
-        <div className="md:col-span-2">
+        <div className="sm:col-span-2">
           <label className="mb-1 block text-sm font-medium">Image URL</label>
           <input className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" placeholder="https://..." {...register('imageUrl')} />
           {errors.imageUrl && <p className="mt-1 text-sm text-red-600">{errors.imageUrl.message}</p>}
@@ -84,12 +84,12 @@ export default function AddChallenge() {
           <input type="date" className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" {...register('endDate')} />
           {errors.endDate && <p className="mt-1 text-sm text-red-600">{errors.endDate.message}</p>}
         </div>
-        <div className="md:col-span-2">
+        <div className="sm:col-span-2">
           <label className="mb-1 block text-sm font-medium">Description</label>
           <textarea rows="4" className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" {...register('description')} />
           {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>}
         </div>
-        <div className="md:col-span-2">
+        <div className="sm:col-span-2">
           <Button type="submit" className="h-10" disabled={isSubmitting}>
             {isSubmitting ? 'Creating...' : 'Create Challenge'}
           </Button>

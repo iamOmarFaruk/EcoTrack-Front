@@ -1,7 +1,7 @@
 import clsx from 'clsx'
 
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 transform-gpu focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 disabled:pointer-events-none disabled:opacity-50 shadow-lg'
+  'inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 sm:px-4 sm:py-2 text-sm font-semibold transition-all duration-200 transform-gpu focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 disabled:pointer-events-none disabled:opacity-50 shadow-lg min-h-[44px] touch-manipulation'
 
 const variants = {
   primary:
