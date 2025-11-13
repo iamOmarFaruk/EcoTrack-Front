@@ -145,6 +145,16 @@ export default function Navbar() {
                   >
                     My Activities
                   </Link>
+                  <hr className="my-1 border-gray-200" />
+                  <Link
+                    to="/challenges/add"
+                    onClick={() => setProfileOpen(false)}
+                    className="block px-3 py-2 text-sm text-emerald-700 font-medium hover:bg-emerald-50"
+                    role="menuitem"
+                  >
+                    ✨ Create Challenge
+                  </Link>
+                  <hr className="my-1 border-gray-200" />
                   <Link
                     to="/settings"
                     onClick={() => setProfileOpen(false)}
@@ -261,17 +271,25 @@ export default function Navbar() {
                   My Activities
                 </Link>
                 <Link
+                  to="/challenges/add"
+                  onClick={() => setOpen(false)}
+                  className={clsx('rounded-md px-3 py-2 text-sm text-emerald-700 font-medium hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  style={{ transitionDelay: `${navItems.length * 50 + 100}ms` }}
+                >
+                  ✨ Create Challenge
+                </Link>
+                <Link
                   to="/settings"
                   onClick={() => setOpen(false)}
                   className={clsx('rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
-                  style={{ transitionDelay: `${navItems.length * 50 + 100}ms` }}
+                  style={{ transitionDelay: `${navItems.length * 50 + 150}ms` }}
                 >
                   Settings
                 </Link>
                 <button
                   onClick={() => { logout(); setOpen(false) }}
                   className={clsx('rounded-md px-3 py-2 text-left text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
-                  style={{ transitionDelay: `${navItems.length * 50 + 150}ms` }}
+                  style={{ transitionDelay: `${navItems.length * 50 + 200}ms` }}
                 >
                   Logout
                 </button>

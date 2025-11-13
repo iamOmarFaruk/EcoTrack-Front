@@ -1,13 +1,17 @@
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useMockFetch } from '../hooks/useMockFetch.js'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
+import { useAuth } from '../context/AuthContext.jsx'
 import { mockChallenges } from '../data/mockChallenges.js'
 import LazyChallengeCard from '../components/LazyChallengeCard.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import SubpageHero from '../components/SubpageHero.jsx'
+import Button from '../components/ui/Button.jsx'
 
 export default function Challenges() {
   useDocumentTitle('Challenges')
+  const { auth } = useAuth()
   const { data: challenges, loading } = useMockFetch(() => mockChallenges, 800)
   const categories = useMemo(
     () => ['All', ...Array.from(new Set((challenges ?? []).map((c) => c.category)))],
@@ -43,23 +47,37 @@ export default function Challenges() {
             <h2 className="text-xl sm:text-2xl font-semibold">Browse Challenges</h2>
             <p className="mt-1 text-sm sm:text-base text-slate-900">Find and join challenges that match your interests.</p>
           </div>
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-slate-900 whitespace-nowrap">Category</label>
-            <select
-              className="flex-1 sm:flex-initial rounded-md border pl-3 pr-8 py-2 text-sm min-w-0 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white appearance-none"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
-                backgroundPosition: 'right 8px center',
-                backgroundRepeat: 'no-repeat',
-                backgroundSize: '16px 16px'
-              }}
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-slate-900 whitespace-nowrap">Category</label>
+              <select
+                className="flex-1 sm:flex-initial rounded-md border pl-3 pr-8 py-2 text-sm min-w-0 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white appearance-none"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
+                  backgroundPosition: 'right 8px center',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: '16px 16px'
+                }}
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+            {auth.isLoggedIn && (
+              <Button
+                as={Link}
+                to="/challenges/add"
+                className="flex items-center gap-2 whitespace-nowrap"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Create Challenge
+              </Button>
+            )}
           </div>
         </div>
 
