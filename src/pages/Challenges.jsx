@@ -46,7 +46,13 @@ export default function Challenges() {
           <div className="flex items-center gap-2">
             <label className="text-sm text-slate-900 whitespace-nowrap">Category</label>
             <select
-              className="flex-1 sm:flex-initial rounded-md border px-3 py-2 text-sm min-w-0"
+              className="flex-1 sm:flex-initial rounded-md border pl-3 pr-8 py-2 text-sm min-w-0 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white appearance-none"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
+                backgroundPosition: 'right 8px center',
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: '16px 16px'
+              }}
               value={category}
               onChange={(e) => setCategory(e.target.value)}
             >
