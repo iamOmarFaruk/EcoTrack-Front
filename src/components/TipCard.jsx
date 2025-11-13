@@ -2,14 +2,24 @@ import Button from './ui/Button.jsx'
 import { Card, CardContent, CardHeader, CardFooter } from './ui/Card.jsx'
 import { useState } from 'react'
 import { formatDate } from '../utils/formatDate.js'
+import { useAuth } from '../context/AuthContext.jsx'
+import { useUserTips } from '../hooks/useUserTips.js'
 
-export default function TipCard({ tip, showContent = true, showActions = true }) {
+export default function TipCard({ tip, showContent = true, showActions = true, onEdit, onDelete, onLoginRequired }) {
+  const { user } = useAuth()
+  const { canModifyTip, updateTipUpvotes } = useUserTips()
   const initialUpvotes = Number.isFinite(Number(tip?.upvotes)) ? Number(tip.upvotes) : 0
   const [upvotes, setUpvotes] = useState(initialUpvotes)
   const [flyingThumbs, setFlyingThumbs] = useState([])
 
   const handleUpvote = () => {
-    setUpvotes((n) => n + 1)
+    const newUpvotes = upvotes + 1
+    setUpvotes(newUpvotes)
+    
+    // Update in localStorage if it's a user-created tip
+    if (tip.isUserCreated) {
+      updateTipUpvotes(tip.id, newUpvotes)
+    }
     
     // Create a new flying thumb with a unique id
     const newThumb = {
@@ -25,6 +35,21 @@ export default function TipCard({ tip, showContent = true, showActions = true })
     }, 1000)
   }
 
+  const handleEdit = () => {
+    if (onEdit && canModifyTip(tip)) {
+      onEdit(tip)
+    }
+  }
+
+  const handleDelete = () => {
+    if (onDelete && canModifyTip(tip)) {
+      onDelete(tip.id)
+    }
+  }
+
+  const canEdit = user && canModifyTip(tip)
+  const isOwnTip = user && tip.authorId === user.uid
+
   return (
     <Card className="h-full overflow-hidden flex flex-col">
       <CardHeader className="flex items-center gap-3">
@@ -35,9 +60,35 @@ export default function TipCard({ tip, showContent = true, showActions = true })
             (tip.authorName || '?').charAt(0).toUpperCase()
           )}
         </div>
-        <div className="min-w-0">
-          <div className="truncate text-xs font-medium text-slate-900">{tip.authorName}</div>
-          <div className="truncate text-[11px] text-slate-500">{formatDate(tip.createdAt)}</div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between">
+            <div className="min-w-0">
+              <div className="truncate text-xs font-medium text-slate-900">{tip.authorName}</div>
+              <div className="truncate text-[11px] text-slate-500">{formatDate(tip.createdAt)}</div>
+            </div>
+            {canEdit && (
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={handleEdit}
+                  className="p-1 text-slate-400 hover:text-slate-600 transition-colors"
+                  title="Edit tip"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="p-1 text-slate-400 hover:text-red-500 transition-colors"
+                  title="Delete tip"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent className="flex-1">
@@ -70,9 +121,24 @@ export default function TipCard({ tip, showContent = true, showActions = true })
             </svg>
           ))}
         </span>
-        <Button className="h-8 px-3 text-xs shadow-none" type="button" onClick={handleUpvote}>
-          Upvote
-        </Button>
+        {user ? (
+          isOwnTip ? (
+            <span className="text-xs text-slate-400 font-medium">
+              Your tip
+            </span>
+          ) : (
+            <Button className="h-8 px-3 text-xs shadow-none" type="button" onClick={handleUpvote}>
+              Upvote
+            </Button>
+          )
+        ) : (
+          <button
+            onClick={onLoginRequired}
+            className="text-xs text-emerald-600 hover:text-emerald-700 font-medium underline-offset-2 hover:underline transition-colors"
+          >
+            Log in to upvote
+          </button>
+        )}
         
         <style>{`
           @keyframes flyUp {
