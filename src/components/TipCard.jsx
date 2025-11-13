@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardFooter } from './ui/Card.jsx'
 import { useState } from 'react'
 import { formatDate } from '../utils/formatDate.js'
 
-export default function TipCard({ tip, showContent = true }) {
+export default function TipCard({ tip, showContent = true, showActions = true }) {
   const initialUpvotes = Number.isFinite(Number(tip?.upvotes)) ? Number(tip.upvotes) : 0
   const [upvotes, setUpvotes] = useState(initialUpvotes)
   const [flyingThumbs, setFlyingThumbs] = useState([])

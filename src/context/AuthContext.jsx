@@ -38,6 +38,28 @@ export function AuthProvider({ children }) {
           setUserProfile(backendProfile)
         } catch (error) {
           console.warn('Failed to get backend profile:', error)
+          // Fallback to Firebase user info if backend fails
+          // Create a mock profile structure similar to what backend would return
+          setUserProfile({
+            ...userInfo,
+            id: userInfo.uid,
+            joinedChallenges: [],
+            createdChallenges: [],
+            completedChallenges: [],
+            totalPoints: 0,
+            level: 1,
+            joinedAt: new Date().toISOString(),
+            preferences: {
+              notifications: true,
+              privacy: 'public'
+            },
+            stats: {
+              challengesCompleted: 0,
+              challengesJoined: 0,
+              challengesCreated: 0,
+              totalPoints: 0
+            }
+          })
         }
       } else {
         setUser(null)
@@ -53,14 +75,6 @@ export function AuthProvider({ children }) {
     async function login({ email, password }) {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password)
-        
-        // Sync with backend
-        try {
-          await authApi.login({ email, firebaseUid: userCredential.user.uid })
-        } catch (backendError) {
-          console.warn('Backend login sync failed:', backendError)
-        }
-        
         return userCredential.user
       } catch (error) {
         const err = new Error(getFirebaseErrorMessage(error))
@@ -78,18 +92,6 @@ export function AuthProvider({ children }) {
           displayName: name,
           photoURL: photoUrl || null,
         })
-
-        // Register with backend
-        try {
-          await authApi.register({
-            firebaseUid: userCredential.user.uid,
-            email: userCredential.user.email,
-            name: name,
-            avatarUrl: photoUrl || null
-          })
-        } catch (backendError) {
-          console.warn('Backend registration failed:', backendError)
-        }
         
         return userCredential.user
       } catch (error) {
@@ -102,24 +104,6 @@ export function AuthProvider({ children }) {
     async function loginWithGoogle() {
       try {
         const result = await signInWithPopup(auth, googleProvider)
-        
-        // Register/login with backend
-        try {
-          await authApi.register({
-            firebaseUid: result.user.uid,
-            email: result.user.email,
-            name: result.user.displayName,
-            avatarUrl: result.user.photoURL
-          })
-        } catch (backendError) {
-          // If registration fails, try login
-          try {
-            await authApi.login({ email: result.user.email, firebaseUid: result.user.uid })
-          } catch (loginError) {
-            console.warn('Backend sync failed:', loginError)
-          }
-        }
-        
         return result.user
       } catch (error) {
         const err = new Error(getFirebaseErrorMessage(error))
@@ -130,13 +114,6 @@ export function AuthProvider({ children }) {
 
     async function logout() {
       try {
-        // Logout from backend first
-        try {
-          await authApi.logout()
-        } catch (backendError) {
-          console.warn('Backend logout failed:', backendError)
-        }
-        
         await signOut(auth)
       } catch (error) {
         const err = new Error(getFirebaseErrorMessage(error))
@@ -223,7 +200,14 @@ export function AuthProvider({ children }) {
           return 'Authentication cancelled.'
         case 'auth/cancelled-popup-request':
           return 'Authentication cancelled.'
+        case 'auth/popup-blocked':
+          return 'Popup was blocked by browser. Please allow popups and try again.'
+        case 'auth/operation-not-allowed':
+          return 'Google sign-in is not enabled. Please contact support.'
+        case 'auth/invalid-credential':
+          return 'Invalid credentials. Please try again.'
         default:
+          console.warn('Firebase Auth Error:', error)
           return error.message || 'An error occurred during authentication.'
       }
     }

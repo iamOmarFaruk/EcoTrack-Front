@@ -20,4 +20,9 @@ export const auth = getAuth(app);
 // Initialize Google Auth Provider
 export const googleProvider = new GoogleAuthProvider();
 
+// Configure Google provider to avoid popup issues
+googleProvider.setCustomParameters({
+  prompt: 'select_account'
+});
+
 export default app;

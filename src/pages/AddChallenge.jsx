@@ -35,7 +35,8 @@ const schema = z.object({
 export default function AddChallenge() {
   useDocumentTitle('Create New Challenge - EcoTrack')
   const isLoading = useMinimumLoading(300)
-  const { user } = useAuth()
+  const { auth } = useAuth()
+  const user = auth.user
   const navigate = useNavigate()
   const [imagePreview, setImagePreview] = useState('')
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset, watch, setValue } = useForm({
@@ -62,7 +63,19 @@ export default function AddChallenge() {
 
   const onSubmit = async (data) => {
     try {
-      // Create the challenge data
+      // Get current Firebase user directly
+      const { auth: firebaseAuth } = await import('../config/firebase.js')
+      const currentUser = firebaseAuth.currentUser
+      const token = currentUser ? await currentUser.getIdToken() : null
+      
+      // Use Firebase user data as primary source
+      const userData = user || {
+        uid: currentUser?.uid,
+        email: currentUser?.email,
+        name: currentUser?.displayName || currentUser?.email
+      }
+      
+      // Create the challenge data with user information
       const challengeData = {
         title: data.title,
         category: data.category,
@@ -73,10 +86,32 @@ export default function AddChallenge() {
         imageUrl: data.imageUrl,
         startDate: data.startDate,
         endDate: data.endDate,
+        // Include user identification from Firebase directly
+        createdBy: userData.email,
+        createdById: userData.uid,
+        creatorName: userData.name || userData.email,
       }
+      
+      console.log('=== CHALLENGE CREATION DEBUG ===')
+      console.log('Firebase current user:', currentUser)
+      console.log('Context user data:', user)
+      console.log('Final user data:', userData)
+      console.log('Challenge data to be sent:', challengeData)
+      console.log('Auth token exists:', !!token)
+      console.log('Form data received:', data)
+      
+      // Validate that we have required user data
+      if (!userData.uid || !userData.email) {
+        throw new Error('User authentication data is missing. Please try logging out and logging in again.')
+      }
+      
+      console.log('🚀 SUBMITTING CHALLENGE DATA TO BACKEND:')
+      console.log(JSON.stringify(challengeData, null, 2))
       
       // Send to backend API
       const newChallenge = await challengeApi.create(challengeData)
+      
+      console.log('✅ Backend response:', newChallenge)
       
       toast.success('🎉 Challenge created successfully!')
       reset()
@@ -86,8 +121,8 @@ export default function AddChallenge() {
       navigate('/challenges')
       
     } catch (error) {
+      console.error('=== CHALLENGE CREATION ERROR ===', error)
       toast.error(error.message || 'Failed to create challenge. Please try again.')
-      console.error('Error creating challenge:', error)
     }
   }
 

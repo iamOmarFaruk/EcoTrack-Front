@@ -19,6 +19,9 @@ const variants = {
   outline:
     // Outline style for secondary actions
     'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 active:shadow-md',
+  destructive:
+    // Red gradient for destructive actions
+    'bg-gradient-to-b from-red-500 via-red-600 to-red-700 text-white ring-1 ring-red-500/20 hover:from-red-500 hover:via-red-600 hover:to-red-800 hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 active:shadow-md',
   ghost:
     'text-emerald-700 hover:bg-emerald-50',
 }

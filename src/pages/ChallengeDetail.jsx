@@ -1,19 +1,45 @@
 import { useParams, Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { challengeApi } from '../services/api.js'
+import { useAuth } from '../context/AuthContext.jsx'
 import Button from '../components/ui/Button.jsx'
 import ChallengeCard from '../components/ChallengeCard.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
+import toast from 'react-hot-toast'
 
 export default function ChallengeDetail() {
   const { id } = useParams()
+  const { auth } = useAuth()
   const [challenge, setChallenge] = useState(null)
   const [relatedChallenges, setRelatedChallenges] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   
   useDocumentTitle(challenge ? challenge.title : 'Challenge Details')
+
+  // Check if current user is the creator of the challenge
+  const isOwner = challenge && auth.user && (
+    challenge.createdBy === auth.user.email ||
+    challenge.createdBy === auth.user.uid ||
+    challenge.createdById === auth.user.uid
+  )
+
+  const handleDeleteChallenge = async () => {
+    if (!window.confirm('Are you sure you want to delete this challenge? This action cannot be undone.')) {
+      return
+    }
+
+    try {
+      await challengeApi.delete(id)
+      toast.success('Challenge deleted successfully!')
+      // Navigate back to challenges page
+      window.location.href = '/challenges'
+    } catch (error) {
+      console.error('Error deleting challenge:', error)
+      toast.error('Failed to delete challenge. Please try again.')
+    }
+  }
 
   useEffect(() => {
     const fetchChallenge = async () => {
@@ -55,6 +81,8 @@ export default function ChallengeDetail() {
           participants: challengeData.participants || 'No data',
           createdAt: challengeData.createdAt || 'No data',
           updatedAt: challengeData.updatedAt || 'No data',
+          createdBy: challengeData.createdBy || 'No data',
+          createdById: challengeData.createdById || challengeData.userId,
           isActive: challengeData.isActive
         }
 
@@ -189,8 +217,38 @@ export default function ChallengeDetail() {
             </div>
           </dl>
           <div className="mt-6 flex flex-col sm:flex-row gap-3">
-            <Button as={Link} to={`/challenges/join/${challenge._id}`} className="w-full sm:w-auto">Join Challenge</Button>
-            <Button variant="secondary" as={Link} to="/challenges" className="w-full sm:w-auto">Back</Button>
+            {isOwner ? (
+              // Owner can edit and delete
+              <>
+                <Button 
+                  as={Link} 
+                  to={`/challenges/edit/${challenge._id}`} 
+                  className="w-full sm:w-auto"
+                >
+                  Edit Challenge
+                </Button>
+                <Button 
+                  onClick={handleDeleteChallenge}
+                  variant="destructive" 
+                  className="w-full sm:w-auto"
+                >
+                  Delete Challenge
+                </Button>
+              </>
+            ) : auth.isLoggedIn ? (
+              // Other users can join
+              <Button as={Link} to={`/challenges/join/${challenge._id}`} className="w-full sm:w-auto">
+                Join Challenge
+              </Button>
+            ) : (
+              // Not logged in - prompt to login
+              <Button as={Link} to="/login" className="w-full sm:w-auto">
+                Login to Join Challenge
+              </Button>
+            )}
+            <Button variant="secondary" as={Link} to="/challenges" className="w-full sm:w-auto">
+              Back
+            </Button>
           </div>
         </div>
       </article>

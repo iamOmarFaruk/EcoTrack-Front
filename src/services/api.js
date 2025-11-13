@@ -63,6 +63,15 @@ async function makeRequest(endpoint, options = {}) {
     if (error instanceof ApiError) {
       throw error
     }
+    
+    // Check if it's a network error (backend not running)
+    if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+      throw new ApiError('Backend server not available', 503, { 
+        original: error,
+        isNetworkError: true 
+      })
+    }
+    
     throw new ApiError('Network error occurred', 0, { original: error })
   }
 }
