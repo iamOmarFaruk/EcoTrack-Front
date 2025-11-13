@@ -1,7 +1,13 @@
 import clsx from 'clsx'
 
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 sm:px-4 sm:py-2 text-sm font-semibold transition-all duration-200 transform-gpu focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 disabled:pointer-events-none disabled:opacity-50 shadow-lg min-h-[44px] touch-manipulation'
+  'inline-flex items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all duration-200 transform-gpu focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 disabled:pointer-events-none disabled:opacity-50 shadow-lg touch-manipulation'
+
+const sizes = {
+  sm: 'px-2 py-1.5 text-xs min-h-[36px]',
+  md: 'px-3 py-2 sm:px-4 sm:py-2 min-h-[44px]',
+  lg: 'px-4 py-3 sm:px-6 sm:py-3 text-base min-h-[50px]',
+}
 
 const variants = {
   primary:
@@ -17,8 +23,8 @@ const variants = {
     'text-emerald-700 hover:bg-emerald-50',
 }
 
-export default function Button({ as: Comp = 'button', variant = 'primary', className, ...props }) {
-  return <Comp className={clsx(base, variants[variant], className)} {...props} />
+export default function Button({ as: Comp = 'button', variant = 'primary', size = 'md', className, ...props }) {
+  return <Comp className={clsx(base, variants[variant], sizes[size], className)} {...props} />
 }
 
 

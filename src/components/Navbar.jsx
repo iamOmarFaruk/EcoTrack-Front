@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import Logo from './Logo.jsx'
 import Button from './ui/Button.jsx'
+import ProfileAvatar from './ProfileAvatar.jsx'
 
 const navItems = [
   { to: '/', label: 'Home' },
@@ -23,13 +24,6 @@ export default function Navbar() {
   const profileRef = useRef(null)
 
   const userName = auth.user?.name || 'Eco User'
-  const userInitials = userName
-    .split(' ')
-    .map((n) => n[0])
-    .filter(Boolean)
-    .slice(0, 2)
-    .join('')
-    .toUpperCase()
 
   // Simple scroll handler
   useEffect(() => {
@@ -118,17 +112,7 @@ export default function Navbar() {
                   profileOpen && 'bg-slate-50'
                 )}
               >
-                {auth.user?.avatarUrl ? (
-                  <img
-                    src={auth.user.avatarUrl}
-                    alt={userName}
-                    className="h-8 w-8 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-600 text-xs font-bold uppercase text-white">
-                    {userInitials}
-                  </div>
-                )}
+                <ProfileAvatar user={auth.user} size="md" />
                 <span className="text-sm font-medium text-slate-900">{userName}</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -160,6 +144,14 @@ export default function Navbar() {
                     role="menuitem"
                   >
                     My Activities
+                  </Link>
+                  <Link
+                    to="/settings"
+                    onClick={() => setProfileOpen(false)}
+                    className="block px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50"
+                    role="menuitem"
+                  >
+                    Settings
                   </Link>
                   <button
                     onClick={() => { logout(); setProfileOpen(false) }}
@@ -268,10 +260,18 @@ export default function Navbar() {
                 >
                   My Activities
                 </Link>
+                <Link
+                  to="/settings"
+                  onClick={() => setOpen(false)}
+                  className={clsx('rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  style={{ transitionDelay: `${navItems.length * 50 + 100}ms` }}
+                >
+                  Settings
+                </Link>
                 <button
                   onClick={() => { logout(); setOpen(false) }}
                   className={clsx('rounded-md px-3 py-2 text-left text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
-                  style={{ transitionDelay: `${navItems.length * 50 + 100}ms` }}
+                  style={{ transitionDelay: `${navItems.length * 50 + 150}ms` }}
                 >
                   Logout
                 </button>

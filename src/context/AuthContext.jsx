@@ -98,6 +98,28 @@ export function AuthProvider({ children }) {
       }
     }
 
+    async function updateUserProfile({ displayName, photoURL }) {
+      try {
+        if (auth.currentUser) {
+          await updateProfile(auth.currentUser, {
+            displayName: displayName || auth.currentUser.displayName,
+            photoURL: photoURL || auth.currentUser.photoURL,
+          })
+          
+          // Update local state
+          setUser(prevUser => ({
+            ...prevUser,
+            name: displayName || prevUser.name,
+            avatarUrl: photoURL || prevUser.avatarUrl,
+          }))
+        }
+      } catch (error) {
+        const err = new Error(getFirebaseErrorMessage(error))
+        err.code = error.code
+        throw err
+      }
+    }
+
     function joinChallenge(challengeId) {
       setUserChallenges((prev) => {
         const set = new Set(prev ?? [])
@@ -144,6 +166,7 @@ export function AuthProvider({ children }) {
       loginWithGoogle,
       logout, 
       resetPassword,
+      updateUserProfile,
       joinChallenge 
     }
   }, [user, loading, userChallenges])
