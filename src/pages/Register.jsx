@@ -8,6 +8,7 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
+import { useEffect } from 'react'
 
 const passwordRules = z.string()
   .min(6, 'Min 6 characters')
@@ -25,11 +26,20 @@ const schema = z.object({
 export default function Register() {
   useDocumentTitle('Register')
   const isLoading = useMinimumLoading(300)
-  const { register: registerUser, loginWithGoogle, loading } = useAuth()
+  const { register: registerUser, loginWithGoogle, loading, auth } = useAuth()
   const navigate = useNavigate()
   const { register, handleSubmit, formState: { errors, isSubmitting }, watch } = useForm({
     resolver: zodResolver(schema),
   })
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (!loading && auth.isLoggedIn) {
+      const redirectTo = sessionStorage.getItem('redirectTo') || '/'
+      sessionStorage.removeItem('redirectTo')
+      navigate(redirectTo, { replace: true })
+    }
+  }, [auth.isLoggedIn, loading, navigate])
 
   const onSubmit = async (values) => {
     try {

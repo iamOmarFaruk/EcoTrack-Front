@@ -7,7 +7,8 @@ import { useAuth } from '../context/AuthContext.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
 import EcoLoader from '../components/EcoLoader.jsx'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -16,10 +17,18 @@ const schema = z.object({
 export default function ForgotPassword() {
   useDocumentTitle('Forgot Password')
   const isLoading = useMinimumLoading(300)
-  const { resetPassword, loading } = useAuth()
+  const { resetPassword, loading, auth } = useAuth()
+  const navigate = useNavigate()
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm({
     resolver: zodResolver(schema),
   })
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (!loading && auth.isLoggedIn) {
+      navigate('/', { replace: true })
+    }
+  }, [auth.isLoggedIn, loading, navigate])
 
   const onSubmit = async (values) => {
     try {

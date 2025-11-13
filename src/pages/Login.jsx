@@ -8,6 +8,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
 import EcoLoader from '../components/EcoLoader.jsx'
+import { useEffect } from 'react'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -17,12 +18,21 @@ const schema = z.object({
 export default function Login() {
   useDocumentTitle('Login')
   const isLoading = useMinimumLoading(300)
-  const { login, loginWithGoogle, loading } = useAuth()
+  const { login, loginWithGoogle, loading, auth } = useAuth()
   const navigate = useNavigate()
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
     defaultValues: { email: '', password: '' },
   })
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (!loading && auth.isLoggedIn) {
+      const redirectTo = sessionStorage.getItem('redirectTo') || '/'
+      sessionStorage.removeItem('redirectTo')
+      navigate(redirectTo, { replace: true })
+    }
+  }, [auth.isLoggedIn, loading, navigate])
 
   const onSubmit = async (values) => {
     try {
