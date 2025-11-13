@@ -38,28 +38,70 @@ export function AuthProvider({ children }) {
           setUserProfile(backendProfile)
         } catch (error) {
           console.warn('Failed to get backend profile:', error)
-          // Fallback to Firebase user info if backend fails
-          // Create a mock profile structure similar to what backend would return
-          setUserProfile({
-            ...userInfo,
-            id: userInfo.uid,
-            joinedChallenges: [],
-            createdChallenges: [],
-            completedChallenges: [],
-            totalPoints: 0,
-            level: 1,
-            joinedAt: new Date().toISOString(),
-            preferences: {
-              notifications: true,
-              privacy: 'public'
-            },
-            stats: {
-              challengesCompleted: 0,
-              challengesJoined: 0,
-              challengesCreated: 0,
-              totalPoints: 0
+          
+          // If user doesn't exist in MongoDB, try to create them
+          if (error.status === 404) {
+            try {
+              const userData = {
+                firebaseId: firebaseUser.uid,
+                name: firebaseUser.displayName || 'User',
+                email: firebaseUser.email,
+                imageUrl: firebaseUser.photoURL || null
+              }
+              
+              await authApi.register(userData)
+              console.log('User retroactively saved to MongoDB')
+              
+              // Try to get the profile again
+              const newBackendProfile = await authApi.getProfile()
+              setUserProfile(newBackendProfile)
+            } catch (retroError) {
+              console.warn('Failed to retroactively save user to MongoDB:', retroError)
+              // Fallback to Firebase user info if all else fails
+              setUserProfile({
+                ...userInfo,
+                id: userInfo.uid,
+                joinedChallenges: [],
+                createdChallenges: [],
+                completedChallenges: [],
+                totalPoints: 0,
+                level: 1,
+                joinedAt: new Date().toISOString(),
+                preferences: {
+                  notifications: true,
+                  privacy: 'public'
+                },
+                stats: {
+                  challengesCompleted: 0,
+                  challengesJoined: 0,
+                  challengesCreated: 0,
+                  totalPoints: 0
+                }
+              })
             }
-          })
+          } else {
+            // Other errors - use fallback profile
+            setUserProfile({
+              ...userInfo,
+              id: userInfo.uid,
+              joinedChallenges: [],
+              createdChallenges: [],
+              completedChallenges: [],
+              totalPoints: 0,
+              level: 1,
+              joinedAt: new Date().toISOString(),
+              preferences: {
+                notifications: true,
+                privacy: 'public'
+              },
+              stats: {
+                challengesCompleted: 0,
+                challengesJoined: 0,
+                challengesCreated: 0,
+                totalPoints: 0
+              }
+            })
+          }
         }
       } else {
         setUser(null)
@@ -93,6 +135,23 @@ export function AuthProvider({ children }) {
           photoURL: photoUrl || null,
         })
         
+        // Save user data to MongoDB database
+        try {
+          const userData = {
+            firebaseId: userCredential.user.uid,
+            name: name,
+            email: email,
+            imageUrl: photoUrl || null
+          }
+          
+          await authApi.register(userData)
+          console.log('User data saved to MongoDB successfully')
+        } catch (mongoError) {
+          console.error('Failed to save user data to MongoDB:', mongoError)
+          // Don't throw the error - Firebase registration was successful
+          // We'll handle this gracefully
+        }
+        
         return userCredential.user
       } catch (error) {
         const err = new Error(getFirebaseErrorMessage(error))
@@ -104,6 +163,25 @@ export function AuthProvider({ children }) {
     async function loginWithGoogle() {
       try {
         const result = await signInWithPopup(auth, googleProvider)
+        
+        // Check if this is a new user and save to MongoDB if needed
+        if (result._tokenResponse?.isNewUser) {
+          try {
+            const userData = {
+              firebaseId: result.user.uid,
+              name: result.user.displayName || 'Google User',
+              email: result.user.email,
+              imageUrl: result.user.photoURL || null
+            }
+            
+            await authApi.register(userData)
+            console.log('Google user data saved to MongoDB successfully')
+          } catch (mongoError) {
+            console.error('Failed to save Google user data to MongoDB:', mongoError)
+            // Don't throw the error - Firebase authentication was successful
+          }
+        }
+        
         return result.user
       } catch (error) {
         const err = new Error(getFirebaseErrorMessage(error))
