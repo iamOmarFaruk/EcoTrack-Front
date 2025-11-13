@@ -43,14 +43,25 @@ async function makeRequest(endpoint, options = {}) {
   }
 
   try {
+    console.log('=== API REQUEST DEBUG ===')
+    console.log('Method:', config.method || 'GET')
+    console.log('URL:', url)
+    console.log('Request body:', config.body)
+    
     const response = await fetch(url, config)
+    
+    console.log('Response status:', response.status)
+    console.log('Response ok:', response.ok)
+    console.log('Response headers:', Object.fromEntries(response.headers.entries()))
     
     if (!response.ok) {
       let errorData
       try {
         errorData = await response.json()
+        console.log('Error response body:', errorData)
       } catch {
-        errorData = { message: 'An error occurred' }
+        errorData = { message: `HTTP ${response.status}` }
+        console.log('No JSON error response body')
       }
       throw new ApiError(
         errorData.message || `HTTP ${response.status}`,
@@ -59,8 +70,24 @@ async function makeRequest(endpoint, options = {}) {
       )
     }
 
-    const data = await response.json()
-    return data
+    // For successful responses
+    try {
+      const responseText = await response.text()
+      console.log('Raw response text:', responseText)
+      
+      if (!responseText) {
+        console.log('Empty response - treating as success')
+        return { success: true }
+      }
+      
+      const data = JSON.parse(responseText)
+      console.log('Parsed response data:', data)
+      return data
+    } catch (parseError) {
+      console.log('JSON parse error:', parseError)
+      console.log('Treating as successful empty response')
+      return { success: true }
+    }
   } catch (error) {
     if (error instanceof ApiError) {
       throw error

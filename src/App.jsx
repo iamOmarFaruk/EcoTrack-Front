@@ -19,6 +19,7 @@ import MyActivities from './pages/MyActivities.jsx'
 import Profile from './pages/Profile.jsx'
 import Settings from './pages/Settings.jsx'
 import AddChallenge from './pages/AddChallenge.jsx'
+import EditChallenge from './pages/EditChallenge.jsx'
 import JoinChallenge from './pages/JoinChallenge.jsx'
 import TestAPI from './pages/TestAPI.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
@@ -77,6 +78,14 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <AddChallenge />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/challenges/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <EditChallenge />
                 </ProtectedRoute>
               }
             />
