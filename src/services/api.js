@@ -247,6 +247,51 @@ export const userApi = {
   }
 }
 
+// Tips API calls
+export const tipsApi = {
+  // Get all tips with optional filtering
+  async getAll(filters = {}) {
+    const queryString = new URLSearchParams(filters).toString()
+    const endpoint = `/tips${queryString ? `?${queryString}` : ''}`
+    return makeRequest(endpoint)
+  },
+
+  // Get specific tip by ID
+  async getById(id) {
+    return makeRequest(`/tips/${id}`)
+  },
+
+  // Create new tip
+  async create(tipData) {
+    return makeRequest('/tips', {
+      method: 'POST',
+      body: JSON.stringify(tipData)
+    })
+  },
+
+  // Update tip (user can only update their own)
+  async update(id, tipData) {
+    return makeRequest(`/tips/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(tipData)
+    })
+  },
+
+  // Delete tip (user can only delete their own)
+  async delete(id) {
+    return makeRequest(`/tips/${id}`, {
+      method: 'DELETE'
+    })
+  },
+
+  // Upvote a tip (unlimited voting)
+  async upvote(id) {
+    return makeRequest(`/tips/${id}/upvote`, {
+      method: 'POST'
+    })
+  }
+}
+
 // Community API calls
 export const communityApi = {
   // Get community stats
@@ -270,5 +315,6 @@ export default {
   auth: authApi,
   challenges: challengeApi,
   user: userApi,
-  community: communityApi
+  community: communityApi,
+  tips: tipsApi
 }

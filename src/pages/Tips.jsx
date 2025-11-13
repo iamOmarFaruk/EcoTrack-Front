@@ -1,8 +1,6 @@
-import { useMockFetch } from '../hooks/useMockFetch.js'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useUserTips } from '../hooks/useUserTips.js'
-import { mockTips } from '../data/mockTips.js'
 import LazyTipCard from '../components/LazyTipCard.jsx'
 import TipModal from '../components/TipModal.jsx'
 import LoginModal from '../components/LoginModal.jsx'
@@ -14,19 +12,10 @@ import { useState } from 'react'
 export default function Tips() {
   useDocumentTitle('Recent Tips')
   const { user } = useAuth()
-  const { getAllTipsForDisplay, addTip, updateTip, deleteTip } = useUserTips()
+  const { tips, loading, error, addTip, updateTip, deleteTip, upvoteTip, canModifyTip } = useUserTips()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingTip, setEditingTip] = useState(null)
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
-  
-  const { data: mockTipsData, loading } = useMockFetch(() => {
-    return [...mockTips]
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .slice(0, 5)
-  }, 700)
-
-  // Combine mock tips with user tips
-  const allTips = getAllTipsForDisplay(mockTipsData || [])
   
   const handleAddTip = () => {
     setEditingTip(null)
@@ -38,18 +27,22 @@ export default function Tips() {
     setIsModalOpen(true)
   }
 
-  const handleDeleteTip = (tipId) => {
+  const handleDeleteTip = async (tipId) => {
     if (window.confirm('Are you sure you want to delete this tip?')) {
-      deleteTip(tipId)
+      try {
+        await deleteTip(tipId)
+      } catch (error) {
+        alert('Failed to delete tip: ' + error.message)
+      }
     }
   }
 
   const handleSubmitTip = async (tipData) => {
     try {
       if (editingTip) {
-        updateTip(editingTip.id, tipData)
+        await updateTip(editingTip.id, tipData)
       } else {
-        addTip(tipData)
+        await addTip(tipData)
       }
       setIsModalOpen(false)
       setEditingTip(null)
@@ -59,12 +52,46 @@ export default function Tips() {
     }
   }
 
+  const handleUpvote = async (tipId) => {
+    try {
+      await upvoteTip(tipId)
+    } catch (error) {
+      console.error('Error upvoting tip:', error)
+      alert('Failed to upvote tip: ' + error.message)
+    }
+  }
+
   const handleLoginRequired = () => {
     setIsLoginModalOpen(true)
   }
   
   if (loading) {
     return <EcoLoader />
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-8">
+        <div className="full-bleed -mt-8">
+          <SubpageHero
+            title="Eco Tips"
+            subtitle="Discover practical tips and advice from our eco-conscious community"
+            backgroundImage="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop"
+            height="medium"
+            overlayIntensity="medium"
+          />
+        </div>
+        <div className="text-center py-8">
+          <p className="text-red-600">Error loading tips: {error}</p>
+          <Button 
+            onClick={() => window.location.reload()} 
+            className="mt-4"
+          >
+            Try Again
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -116,18 +143,42 @@ export default function Tips() {
         )}
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {allTips?.map((t, i) => (
+          {tips?.map((tip) => (
             <LazyTipCard 
-              key={t.id || i} 
-              tip={t} 
-              showContent={false} 
+              key={tip.id} 
+              tip={tip} 
+              showContent={true} 
               showActions={true}
               onEdit={handleEditTip}
               onDelete={handleDeleteTip}
+              onUpvote={handleUpvote}
               onLoginRequired={handleLoginRequired}
+              canModify={canModifyTip(tip)}
             />
           ))}
         </div>
+
+        {tips?.length === 0 && !loading && (
+          <div className="text-center py-12">
+            <svg className="mx-auto h-12 w-12 text-slate-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 48 48">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h32l-3 18H11L8 12zm0 0l-2-7m14 25v8m0-8l3 3m-3-3l-3 3" />
+            </svg>
+            <h3 className="text-lg font-medium text-slate-900 mb-2">No tips shared yet</h3>
+            <p className="text-slate-600 mb-4">Be the first to share an eco-friendly tip with the community!</p>
+            {user ? (
+              <Button onClick={handleAddTip} className="mx-auto">
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Share Your First Tip
+              </Button>
+            ) : (
+              <Button onClick={handleLoginRequired} className="mx-auto">
+                Login to Share Tips
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Tip Modal */}

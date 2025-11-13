@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react'
 import Button from './ui/Button.jsx'
-import { useAuth } from '../context/AuthContext.jsx'
 
 export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) {
-  const { user } = useAuth()
   const [formData, setFormData] = useState({
     title: '',
     content: ''
@@ -77,15 +75,7 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
     
     try {
       const tipData = {
-        ...formData,
-        id: editTip?.id || Date.now().toString(),
-        authorId: user.uid,
-        authorName: user.name,
-        authorAvatar: user.avatarUrl,
-        createdAt: editTip?.createdAt || new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        upvotes: editTip?.upvotes || 0,
-        isUserCreated: true
+        ...formData
       }
       
       await onSubmit(tipData)

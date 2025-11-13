@@ -1,93 +1,120 @@
+import React, { useState } from 'react'
 import Button from './ui/Button.jsx'
 import { Card, CardContent, CardHeader, CardFooter } from './ui/Card.jsx'
-import { useState } from 'react'
 import { formatDate } from '../utils/formatDate.js'
 import { useAuth } from '../context/AuthContext.jsx'
-import { useUserTips } from '../hooks/useUserTips.js'
 
-export default function TipCard({ tip, showContent = true, showActions = true, onEdit, onDelete, onLoginRequired }) {
+export default function TipCard({ 
+  tip, 
+  showContent = true, 
+  showActions = true, 
+  onEdit, 
+  onDelete, 
+  onUpvote, 
+  onLoginRequired, 
+  canModify = false 
+}) {
   const { user } = useAuth()
-  const { canModifyTip, updateTipUpvotes } = useUserTips()
   const initialUpvotes = Number.isFinite(Number(tip?.upvotes)) ? Number(tip.upvotes) : 0
   const [upvotes, setUpvotes] = useState(initialUpvotes)
   const [flyingThumbs, setFlyingThumbs] = useState([])
+  const [isUpvoting, setIsUpvoting] = useState(false)
 
-  const handleUpvote = () => {
-    const newUpvotes = upvotes + 1
-    setUpvotes(newUpvotes)
+  const handleUpvote = async () => {
+    if (isUpvoting) return
     
-    // Update in localStorage if it's a user-created tip
-    if (tip.isUserCreated) {
-      updateTipUpvotes(tip.id, newUpvotes)
+    setIsUpvoting(true)
+    try {
+      if (onUpvote) {
+        await onUpvote(tip.id)
+        // The parent component will update the tip data, so we don't need to manually update upvotes here
+      }
+      
+      // Create a new flying thumb with a unique id for animation
+      const newThumb = {
+        id: Date.now() + Math.random(),
+        startX: Math.random() * 20 - 10, // Random horizontal offset
+      }
+      
+      setFlyingThumbs((prev) => [...prev, newThumb])
+      
+      // Remove the thumb after animation completes
+      setTimeout(() => {
+        setFlyingThumbs((prev) => prev.filter((thumb) => thumb.id !== newThumb.id))
+      }, 1000)
+    } catch (error) {
+      console.error('Error upvoting tip:', error)
+    } finally {
+      setIsUpvoting(false)
     }
-    
-    // Create a new flying thumb with a unique id
-    const newThumb = {
-      id: Date.now() + Math.random(),
-      startX: Math.random() * 20 - 10, // Random horizontal offset
-    }
-    
-    setFlyingThumbs((prev) => [...prev, newThumb])
-    
-    // Remove the thumb after animation completes
-    setTimeout(() => {
-      setFlyingThumbs((prev) => prev.filter((thumb) => thumb.id !== newThumb.id))
-    }, 1000)
   }
 
   const handleEdit = () => {
-    if (onEdit && canModifyTip(tip)) {
+    if (onEdit && isOwnTip) {
       onEdit(tip)
     }
   }
 
   const handleDelete = () => {
-    if (onDelete && canModifyTip(tip)) {
+    if (onDelete && isOwnTip) {
       onDelete(tip.id)
     }
   }
 
-  const canEdit = user && canModifyTip(tip)
-  const isOwnTip = user && tip.authorId === user.uid
+  const isOwnTip = user && (
+    tip.authorId === user.uid || 
+    tip.author?.uid === user.uid || 
+    tip.author?.id === user.uid ||
+    tip.author?.firebaseId === user.uid ||
+    tip.firebaseId === user.uid ||
+    // Also check by author name as a fallback
+    (tip.authorName && user.name && tip.authorName.toLowerCase() === user.name.toLowerCase()) ||
+    (tip.authorName && user.displayName && tip.authorName.toLowerCase() === user.displayName.toLowerCase())
+  )
+
+  // Get display name and avatar with proper fallbacks
+  const getAuthorInfo = () => {
+    // For own tips, prioritize current user data to ensure fresh info
+    if (isOwnTip && user) {
+      return {
+        name: user.name || user.displayName || tip.authorName || 'You',
+        avatar: user.avatarUrl || user.photoURL || tip.authorImage || tip.authorAvatar
+      }
+    }
+    
+    // For other users' tips, use tip data
+    const authorName = tip.authorName || tip.author?.name || 'Anonymous'
+    const authorAvatar = tip.authorImage || tip.authorAvatar || tip.author?.avatarUrl || tip.author?.imageUrl
+    
+    return {
+      name: authorName,
+      avatar: authorAvatar
+    }
+  }
+
+  const authorInfo = getAuthorInfo()
+
+  // Update local upvotes state when tip prop changes
+  React.useEffect(() => {
+    setUpvotes(Number.isFinite(Number(tip?.upvotes)) ? Number(tip.upvotes) : 0)
+  }, [tip?.upvotes])
 
   return (
     <Card className="h-full overflow-hidden flex flex-col">
       <CardHeader className="flex items-center gap-3">
         <div className="h-10 w-10 overflow-hidden rounded-full bg-slate-200 flex items-center justify-center text-xs font-medium text-slate-600">
-          {tip.authorAvatar ? (
-            <img src={tip.authorAvatar} alt={tip.authorName} loading="lazy" className="h-full w-full object-cover" />
+          {authorInfo.avatar ? (
+            <img src={authorInfo.avatar} alt={authorInfo.name} loading="lazy" className="h-full w-full object-cover" />
           ) : (
-            (tip.authorName || '?').charAt(0).toUpperCase()
+            (authorInfo.name.charAt(0).toUpperCase())
           )}
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between">
             <div className="min-w-0">
-              <div className="truncate text-xs font-medium text-slate-900">{tip.authorName}</div>
+              <div className="truncate text-xs font-medium text-slate-900">{authorInfo.name}</div>
               <div className="truncate text-[11px] text-slate-500">{formatDate(tip.createdAt)}</div>
             </div>
-            {canEdit && (
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={handleEdit}
-                  className="p-1 text-slate-400 hover:text-slate-600 transition-colors"
-                  title="Edit tip"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                </button>
-                <button
-                  onClick={handleDelete}
-                  className="p-1 text-slate-400 hover:text-red-500 transition-colors"
-                  title="Delete tip"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
-              </div>
-            )}
           </div>
         </div>
       </CardHeader>
@@ -123,12 +150,36 @@ export default function TipCard({ tip, showContent = true, showActions = true, o
         </span>
         {user ? (
           isOwnTip ? (
-            <span className="text-xs text-slate-400 font-medium">
-              Your tip
-            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleEdit}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md transition-colors"
+                title="Edit tip"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Edit
+              </button>
+              <button
+                onClick={handleDelete}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded-md transition-colors"
+                title="Delete tip"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Delete
+              </button>
+            </div>
           ) : (
-            <Button className="h-8 px-3 text-xs shadow-none" type="button" onClick={handleUpvote}>
-              Upvote
+            <Button 
+              className="h-8 px-3 text-xs shadow-none" 
+              type="button" 
+              onClick={handleUpvote}
+              disabled={isUpvoting}
+            >
+              {isUpvoting ? 'Upvoting...' : 'Upvote'}
             </Button>
           )
         ) : (
