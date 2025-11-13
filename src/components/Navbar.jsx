@@ -17,7 +17,7 @@ const navItems = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
-  const { auth, logout } = useAuth()
+  const { auth, logout, loading } = useAuth()
   const [show, setShow] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
   const [profileOpen, setProfileOpen] = useState(false)
@@ -96,7 +96,11 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
-          {!auth.isLoggedIn ? (
+          {loading ? (
+            <div className="flex items-center gap-2">
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent"></div>
+            </div>
+          ) : !auth.isLoggedIn ? (
             <>
               <Link to="/login" className="text-sm text-slate-900 hover:text-emerald-800">Login</Link>
               <Button as={Link} to="/register">Register</Button>
@@ -144,15 +148,6 @@ export default function Navbar() {
                     role="menuitem"
                   >
                     My Activities
-                  </Link>
-                  <hr className="my-1 border-gray-200" />
-                  <Link
-                    to="/challenges/add"
-                    onClick={() => setProfileOpen(false)}
-                    className="block px-3 py-2 text-sm text-emerald-700 font-medium hover:bg-emerald-50"
-                    role="menuitem"
-                  >
-                    ✨ Create Challenge
                   </Link>
                   <hr className="my-1 border-gray-200" />
                   <Link
@@ -232,7 +227,12 @@ export default function Navbar() {
             </NavLink>
           ))}
           <div className="mt-2 grid gap-1">
-            {!auth.isLoggedIn ? (
+            {loading ? (
+              <div className="flex items-center justify-center gap-2 py-3">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent"></div>
+                <span className="text-sm text-slate-600">Loading...</span>
+              </div>
+            ) : !auth.isLoggedIn ? (
               <>
                 <Link
                   to="/login"
@@ -271,25 +271,17 @@ export default function Navbar() {
                   My Activities
                 </Link>
                 <Link
-                  to="/challenges/add"
-                  onClick={() => setOpen(false)}
-                  className={clsx('rounded-md px-3 py-2 text-sm text-emerald-700 font-medium hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
-                  style={{ transitionDelay: `${navItems.length * 50 + 100}ms` }}
-                >
-                  ✨ Create Challenge
-                </Link>
-                <Link
                   to="/settings"
                   onClick={() => setOpen(false)}
                   className={clsx('rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
-                  style={{ transitionDelay: `${navItems.length * 50 + 150}ms` }}
+                  style={{ transitionDelay: `${navItems.length * 50 + 100}ms` }}
                 >
                   Settings
                 </Link>
                 <button
                   onClick={() => { logout(); setOpen(false) }}
                   className={clsx('rounded-md px-3 py-2 text-left text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
-                  style={{ transitionDelay: `${navItems.length * 50 + 200}ms` }}
+                  style={{ transitionDelay: `${navItems.length * 50 + 150}ms` }}
                 >
                   Logout
                 </button>
