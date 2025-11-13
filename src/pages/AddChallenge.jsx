@@ -2,12 +2,14 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Button from '../components/ui/Button.jsx'
 import toast from 'react-hot-toast'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
+import { challengeApi } from '../services/api.js'
 
 const schema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters').max(100, 'Title must be less than 100 characters'),
@@ -34,6 +36,7 @@ export default function AddChallenge() {
   useDocumentTitle('Create New Challenge - EcoTrack')
   const isLoading = useMinimumLoading(300)
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [imagePreview, setImagePreview] = useState('')
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset, watch, setValue } = useForm({
     resolver: zodResolver(schema),
@@ -59,25 +62,31 @@ export default function AddChallenge() {
 
   const onSubmit = async (data) => {
     try {
-      await new Promise((r) => setTimeout(r, 1200)) // Simulate API call
-      
-      // Here you would typically send the data to your backend
+      // Create the challenge data
       const challengeData = {
-        ...data,
-        _id: `c${Date.now()}`, // Generate temporary ID
-        participants: 0, // New challenge starts with 0 participants
-        createdBy: user.uid,
-        createdAt: new Date().toISOString(),
+        title: data.title,
+        category: data.category,
+        description: data.description,
+        duration: data.duration,
+        target: data.target,
+        impactMetric: data.impactMetric,
+        imageUrl: data.imageUrl,
+        startDate: data.startDate,
+        endDate: data.endDate,
       }
       
-      console.log('Challenge created:', challengeData)
+      // Send to backend API
+      const newChallenge = await challengeApi.create(challengeData)
       
-      toast.success('🎉 Challenge created successfully! It will be reviewed before going live.')
+      toast.success('🎉 Challenge created successfully!')
       reset()
       setImagePreview('')
       
+      // Navigate to the new challenge or challenges page
+      navigate('/challenges')
+      
     } catch (error) {
-      toast.error('Failed to create challenge. Please try again.')
+      toast.error(error.message || 'Failed to create challenge. Please try again.')
       console.error('Error creating challenge:', error)
     }
   }

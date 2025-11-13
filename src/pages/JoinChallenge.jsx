@@ -11,9 +11,19 @@ export default function JoinChallenge() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    joinChallenge(id)
-    toast.success('Joined challenge!')
-    navigate('/my-activities', { replace: true })
+    const handleJoinChallenge = async () => {
+      try {
+        await joinChallenge(id)
+        toast.success('Successfully joined the challenge!')
+        navigate('/my-activities', { replace: true })
+      } catch (error) {
+        console.error('Error joining challenge:', error)
+        toast.error(error.message || 'Failed to join challenge. Please try again.')
+        navigate('/challenges', { replace: true })
+      }
+    }
+
+    handleJoinChallenge()
   }, [id, joinChallenge, navigate])
 
   return null

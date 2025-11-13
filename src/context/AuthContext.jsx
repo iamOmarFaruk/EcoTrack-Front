@@ -10,6 +10,7 @@ import {
 } from 'firebase/auth'
 import { auth, googleProvider } from '../config/firebase.js'
 import { useLocalStorage } from '../hooks/useLocalStorage.js'
+import { authApi, challengeApi } from '../services/api.js'
 
 const AuthContext = createContext(null)
 
@@ -17,19 +18,30 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [userChallenges, setUserChallenges] = useLocalStorage('eco_user_challenges', [])
+  const [userProfile, setUserProfile] = useState(null)
 
   // Listen for authentication state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        setUser({
+        const userInfo = {
           uid: firebaseUser.uid,
           name: firebaseUser.displayName || 'User',
           email: firebaseUser.email,
           avatarUrl: firebaseUser.photoURL || '',
-        })
+        }
+        setUser(userInfo)
+        
+        // Sync with backend
+        try {
+          const backendProfile = await authApi.getProfile()
+          setUserProfile(backendProfile)
+        } catch (error) {
+          console.warn('Failed to get backend profile:', error)
+        }
       } else {
         setUser(null)
+        setUserProfile(null)
       }
       setLoading(false)
     })
@@ -41,6 +53,14 @@ export function AuthProvider({ children }) {
     async function login({ email, password }) {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password)
+        
+        // Sync with backend
+        try {
+          await authApi.login({ email, firebaseUid: userCredential.user.uid })
+        } catch (backendError) {
+          console.warn('Backend login sync failed:', backendError)
+        }
+        
         return userCredential.user
       } catch (error) {
         const err = new Error(getFirebaseErrorMessage(error))
@@ -58,6 +78,18 @@ export function AuthProvider({ children }) {
           displayName: name,
           photoURL: photoUrl || null,
         })
+
+        // Register with backend
+        try {
+          await authApi.register({
+            firebaseUid: userCredential.user.uid,
+            email: userCredential.user.email,
+            name: name,
+            avatarUrl: photoUrl || null
+          })
+        } catch (backendError) {
+          console.warn('Backend registration failed:', backendError)
+        }
         
         return userCredential.user
       } catch (error) {
@@ -70,6 +102,24 @@ export function AuthProvider({ children }) {
     async function loginWithGoogle() {
       try {
         const result = await signInWithPopup(auth, googleProvider)
+        
+        // Register/login with backend
+        try {
+          await authApi.register({
+            firebaseUid: result.user.uid,
+            email: result.user.email,
+            name: result.user.displayName,
+            avatarUrl: result.user.photoURL
+          })
+        } catch (backendError) {
+          // If registration fails, try login
+          try {
+            await authApi.login({ email: result.user.email, firebaseUid: result.user.uid })
+          } catch (loginError) {
+            console.warn('Backend sync failed:', loginError)
+          }
+        }
+        
         return result.user
       } catch (error) {
         const err = new Error(getFirebaseErrorMessage(error))
@@ -80,6 +130,13 @@ export function AuthProvider({ children }) {
 
     async function logout() {
       try {
+        // Logout from backend first
+        try {
+          await authApi.logout()
+        } catch (backendError) {
+          console.warn('Backend logout failed:', backendError)
+        }
+        
         await signOut(auth)
       } catch (error) {
         const err = new Error(getFirebaseErrorMessage(error))
@@ -120,12 +177,30 @@ export function AuthProvider({ children }) {
       }
     }
 
-    function joinChallenge(challengeId) {
-      setUserChallenges((prev) => {
-        const set = new Set(prev ?? [])
-        set.add(challengeId)
-        return Array.from(set)
-      })
+    async function joinChallenge(challengeId) {
+      try {
+        await challengeApi.join(challengeId)
+        setUserChallenges((prev) => {
+          const set = new Set(prev ?? [])
+          set.add(challengeId)
+          return Array.from(set)
+        })
+      } catch (error) {
+        console.error('Failed to join challenge:', error)
+        throw error
+      }
+    }
+
+    async function leaveChallenge(challengeId) {
+      try {
+        await challengeApi.leave(challengeId)
+        setUserChallenges((prev) => {
+          return (prev ?? []).filter(id => id !== challengeId)
+        })
+      } catch (error) {
+        console.error('Failed to leave challenge:', error)
+        throw error
+      }
     }
 
     function getFirebaseErrorMessage(error) {
@@ -156,9 +231,11 @@ export function AuthProvider({ children }) {
     return { 
       user,
       loading,
+      userProfile,
       auth: {
         isLoggedIn: !!user,
         user,
+        userProfile,
         userChallenges,
       },
       login, 
@@ -167,9 +244,10 @@ export function AuthProvider({ children }) {
       logout, 
       resetPassword,
       updateUserProfile,
-      joinChallenge 
+      joinChallenge,
+      leaveChallenge
     }
-  }, [user, loading, userChallenges])
+  }, [user, loading, userChallenges, userProfile])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
