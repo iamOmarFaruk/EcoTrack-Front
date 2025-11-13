@@ -10,6 +10,9 @@ const variants = {
   secondary:
     // Subtle light surface with similar 3D behavior
     'bg-gradient-to-b from-white via-slate-50 to-slate-100 text-slate-900 border border-slate-200 hover:to-slate-200 hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 active:shadow-md',
+  outline:
+    // Outline style for secondary actions
+    'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 active:shadow-md',
   ghost:
     'text-emerald-700 hover:bg-emerald-50',
 }

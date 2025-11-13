@@ -3,9 +3,11 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Button from '../components/ui/Button.jsx'
 import toast from 'react-hot-toast'
+import { useAuth } from '../context/AuthContext.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
 import EcoLoader from '../components/EcoLoader.jsx'
+import { Link } from 'react-router-dom'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -14,24 +16,29 @@ const schema = z.object({
 export default function ForgotPassword() {
   useDocumentTitle('Forgot Password')
   const isLoading = useMinimumLoading(300)
+  const { resetPassword, loading } = useAuth()
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm({
     resolver: zodResolver(schema),
   })
 
-  const onSubmit = async () => {
-    await new Promise((r) => setTimeout(r, 800))
-    toast.success('Password reset email sent (mock).')
-    reset()
+  const onSubmit = async (values) => {
+    try {
+      await resetPassword(values.email)
+      toast.success('Password reset email sent! Check your inbox.')
+      reset()
+    } catch (e) {
+      toast.error(e.message)
+    }
   }
 
-  if (isLoading) {
+  if (isLoading || loading) {
     return <EcoLoader />
   }
 
   return (
     <div className="mx-auto max-w-sm">
       <h1 className="text-2xl font-semibold">Forgot Password</h1>
-      <p className="mt-1 text-sm text-slate-900">We’ll send a reset link to your email.</p>
+      <p className="mt-1 text-sm text-slate-900">We'll send a reset link to your email address.</p>
       <form onSubmit={handleSubmit(onSubmit)} className="mt-6 grid gap-4">
         <div>
           <label className="mb-1 block text-sm font-medium">Email</label>
@@ -42,6 +49,11 @@ export default function ForgotPassword() {
           {isSubmitting ? 'Sending...' : 'Send Reset Link'}
         </Button>
       </form>
+      
+      <div className="mt-4 text-center text-sm">
+        Remember your password?{' '}
+        <Link to="/login" className="text-slate-700 hover:text-emerald-700 font-medium">Sign In</Link>
+      </div>
     </div>
   )
 }

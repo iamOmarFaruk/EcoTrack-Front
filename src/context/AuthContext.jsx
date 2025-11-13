@@ -1,51 +1,152 @@
-import { createContext, useContext, useMemo } from 'react'
+import { createContext, useContext, useMemo, useEffect, useState } from 'react'
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signInWithPopup, 
+  signOut, 
+  onAuthStateChanged,
+  updateProfile,
+  sendPasswordResetEmail
+} from 'firebase/auth'
+import { auth, googleProvider } from '../config/firebase.js'
 import { useLocalStorage } from '../hooks/useLocalStorage.js'
-import { fakeDelay } from '../utils/fakeDelay.js'
 
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [auth, setAuth] = useLocalStorage('eco_auth', {
-    isLoggedIn: false,
-    user: null,
-    userChallenges: [],
-  })
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [userChallenges, setUserChallenges] = useLocalStorage('eco_user_challenges', [])
+
+  // Listen for authentication state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setUser({
+          uid: firebaseUser.uid,
+          name: firebaseUser.displayName || 'User',
+          email: firebaseUser.email,
+          avatarUrl: firebaseUser.photoURL || '',
+        })
+      } else {
+        setUser(null)
+      }
+      setLoading(false)
+    })
+
+    return () => unsubscribe()
+  }, [])
 
   const value = useMemo(() => {
     async function login({ email, password }) {
-      await fakeDelay(800)
-      const valid = (email === 'admin@eco.com' && password === 'admin')
-      if (!valid) {
-        const err = new Error('Invalid credentials')
-        err.code = 'INVALID_CREDENTIALS'
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password)
+        return userCredential.user
+      } catch (error) {
+        const err = new Error(getFirebaseErrorMessage(error))
+        err.code = error.code
         throw err
       }
-      setAuth({
-        isLoggedIn: true,
-        user: { name: 'Eco Admin', email: 'admin@eco.com', avatarUrl: '' },
-        userChallenges: auth.userChallenges ?? [],
-      })
-      return true
     }
 
-    function logout() {
-      setAuth({
-        isLoggedIn: false,
-        user: null,
-        userChallenges: [],
-      })
+    async function register({ name, email, password, photoUrl }) {
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+        
+        // Update the user profile with display name and photo URL
+        await updateProfile(userCredential.user, {
+          displayName: name,
+          photoURL: photoUrl || null,
+        })
+        
+        return userCredential.user
+      } catch (error) {
+        const err = new Error(getFirebaseErrorMessage(error))
+        err.code = error.code
+        throw err
+      }
+    }
+
+    async function loginWithGoogle() {
+      try {
+        const result = await signInWithPopup(auth, googleProvider)
+        return result.user
+      } catch (error) {
+        const err = new Error(getFirebaseErrorMessage(error))
+        err.code = error.code
+        throw err
+      }
+    }
+
+    async function logout() {
+      try {
+        await signOut(auth)
+      } catch (error) {
+        const err = new Error(getFirebaseErrorMessage(error))
+        err.code = error.code
+        throw err
+      }
+    }
+
+    async function resetPassword(email) {
+      try {
+        await sendPasswordResetEmail(auth, email)
+      } catch (error) {
+        const err = new Error(getFirebaseErrorMessage(error))
+        err.code = error.code
+        throw err
+      }
     }
 
     function joinChallenge(challengeId) {
-      setAuth((prev) => {
-        const set = new Set(prev.userChallenges ?? [])
+      setUserChallenges((prev) => {
+        const set = new Set(prev ?? [])
         set.add(challengeId)
-        return { ...prev, userChallenges: Array.from(set) }
+        return Array.from(set)
       })
     }
 
-    return { auth, login, logout, joinChallenge }
-  }, [auth, setAuth])
+    function getFirebaseErrorMessage(error) {
+      switch (error.code) {
+        case 'auth/user-not-found':
+          return 'No account found with this email address.'
+        case 'auth/wrong-password':
+          return 'Incorrect password.'
+        case 'auth/email-already-in-use':
+          return 'An account already exists with this email address.'
+        case 'auth/weak-password':
+          return 'Password should be at least 6 characters long.'
+        case 'auth/invalid-email':
+          return 'Invalid email address.'
+        case 'auth/user-disabled':
+          return 'This account has been disabled.'
+        case 'auth/too-many-requests':
+          return 'Too many failed attempts. Please try again later.'
+        case 'auth/popup-closed-by-user':
+          return 'Authentication cancelled.'
+        case 'auth/cancelled-popup-request':
+          return 'Authentication cancelled.'
+        default:
+          return error.message || 'An error occurred during authentication.'
+      }
+    }
+
+    return { 
+      user,
+      loading,
+      auth: {
+        isLoggedIn: !!user,
+        user,
+        userChallenges,
+      },
+      login, 
+      register,
+      loginWithGoogle,
+      logout, 
+      resetPassword,
+      joinChallenge 
+    }
+  }, [user, loading, userChallenges])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
