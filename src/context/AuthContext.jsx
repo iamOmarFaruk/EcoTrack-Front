@@ -40,7 +40,7 @@ export function AuthProvider({ children }) {
           console.warn('Failed to get backend profile:', error)
           
           // If user doesn't exist in MongoDB, try to create them
-          if (error.status === 404) {
+          if (error.status === 404 || error.data?.isNetworkError) {
             try {
               const userData = {
                 firebaseId: firebaseUser.uid,
@@ -49,6 +49,7 @@ export function AuthProvider({ children }) {
                 imageUrl: firebaseUser.photoURL || null
               }
               
+              console.log('Attempting retroactive user creation:', userData)
               await authApi.register(userData)
               console.log('User retroactively saved to MongoDB')
               
@@ -137,17 +138,19 @@ export function AuthProvider({ children }) {
         
         // Save user data to MongoDB database
         try {
-          const userData = {
-            firebaseId: userCredential.user.uid,
-            name: name,
-            email: email,
-            imageUrl: photoUrl || null
+          // Get the Firebase ID token
+          const idToken = await userCredential.user.getIdToken()
+          
+          const requestData = {
+            idToken: idToken
           }
           
-          await authApi.register(userData)
+          console.log('Attempting to save user data to MongoDB')
+          await authApi.register(requestData)
           console.log('User data saved to MongoDB successfully')
         } catch (mongoError) {
           console.error('Failed to save user data to MongoDB:', mongoError)
+          console.error('Error details:', mongoError.message, mongoError.status)
           // Don't throw the error - Firebase registration was successful
           // We'll handle this gracefully
         }
@@ -164,22 +167,23 @@ export function AuthProvider({ children }) {
       try {
         const result = await signInWithPopup(auth, googleProvider)
         
-        // Check if this is a new user and save to MongoDB if needed
-        if (result._tokenResponse?.isNewUser) {
-          try {
-            const userData = {
-              firebaseId: result.user.uid,
-              name: result.user.displayName || 'Google User',
-              email: result.user.email,
-              imageUrl: result.user.photoURL || null
-            }
-            
-            await authApi.register(userData)
-            console.log('Google user data saved to MongoDB successfully')
-          } catch (mongoError) {
-            console.error('Failed to save Google user data to MongoDB:', mongoError)
-            // Don't throw the error - Firebase authentication was successful
+        // Always try to save Google user to MongoDB
+        // The backend will handle duplicate checks and extract user info from token
+        try {
+          // Get the Firebase ID token
+          const idToken = await result.user.getIdToken()
+          
+          const requestData = {
+            idToken: idToken
           }
+          
+          console.log('Attempting to save Google user data to MongoDB')
+          await authApi.register(requestData)
+          console.log('Google user data saved to MongoDB successfully')
+        } catch (mongoError) {
+          console.error('Failed to save Google user data to MongoDB:', mongoError)
+          console.error('Error details:', mongoError.message, mongoError.status)
+          // Don't throw the error - Firebase authentication was successful
         }
         
         return result.user
