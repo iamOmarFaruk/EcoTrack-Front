@@ -48,24 +48,24 @@ export default function Challenges() {
         // Transform API data to match component expectations
         const transformedChallenges = challengesData.map(challenge => ({
           _id: challenge._id || challenge.id,
-          title: challenge.title,
-          description: challenge.description,
-          category: formatCategory(challenge.category),
-          difficulty: challenge.difficultyLevel,
-          duration: challenge.duration,
-          carbonImpact: challenge.carbonImpact,
+          title: challenge.title || 'No data',
+          description: challenge.description || 'No data',
+          category: challenge.category ? formatCategory(challenge.category) : 'No data',
+          difficulty: challenge.difficultyLevel || 'No data',
+          duration: challenge.duration || 'No data',
+          carbonImpact: challenge.carbonImpact || 'No data',
           isActive: challenge.isActive,
-          startDate: challenge.startDate,
-          endDate: challenge.endDate,
+          startDate: challenge.startDate || 'No data',
+          endDate: challenge.endDate || 'No data',
           goals: challenge.goals || [],
           tips: challenge.tips || [],
           rewards: challenge.rewards || { points: 0, badges: [] },
-          // Add missing fields with defaults
-          participants: Math.floor(Math.random() * 1000) + 100, // TODO: Get real participant count from API
-          imageUrl: getImageForCategory(challenge.category),
-          impactMetric: getImpactMetricForCategory(challenge.category),
-          createdAt: challenge.createdAt,
-          updatedAt: challenge.updatedAt
+          // Use only real API data
+          participants: challenge.participants || 'No data',
+          imageUrl: challenge.imageUrl || 'No data',
+          impactMetric: challenge.impactMetric || 'No data',
+          createdAt: challenge.createdAt || 'No data',
+          updatedAt: challenge.updatedAt || 'No data'
         }))
         
         setChallenges(transformedChallenges)
@@ -111,31 +111,7 @@ export default function Challenges() {
     ).join(' ')
   }
 
-  // Helper function to get appropriate image for category
-  const getImageForCategory = (category) => {
-    const categoryImages = {
-      'waste-reduction': 'https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?q=80&w=1200&auto=format&fit=crop',
-      'energy-conservation': 'https://images.unsplash.com/photo-1498146831523-fbe41acdc5ad?q=80&w=1200&auto=format&fit=crop',
-      'food': 'https://images.unsplash.com/photo-1505577058444-a3dab90d4253?q=80&w=1200&auto=format&fit=crop',
-      'water': 'https://images.unsplash.com/photo-1521207418485-99c705420785?q=80&w=1200&auto=format&fit=crop',
-      'community': 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=1200&auto=format&fit=crop',
-      'transportation': 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=1200&auto=format&fit=crop'
-    }
-    return categoryImages[category] || 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=1200&auto=format&fit=crop'
-  }
 
-  // Helper function to get impact metric for category
-  const getImpactMetricForCategory = (category) => {
-    const impactMetrics = {
-      'waste-reduction': 'Plastic items avoided',
-      'energy-conservation': 'kWh saved',
-      'food': 'CO₂ reduced',
-      'water': 'Liters saved',
-      'community': 'Impact points',
-      'transportation': 'CO₂ saved'
-    }
-    return impactMetrics[category] || 'Environmental impact'
-  }
 
   const categories = useMemo(
     () => ['All', ...Array.from(new Set((challenges ?? []).map((c) => c.category)))],

@@ -23,7 +23,6 @@ export default function ChallengeCard({ challenge }) {
         <p className="line-clamp-2 text-sm text-slate-900">{challenge.description}</p>
         <div className="mt-auto flex items-center justify-between text-xs text-slate-900">
           <span>Participants: {challenge.participants}</span>
-          <span>{challenge.impactMetric}</span>
         </div>
         <Button as={Link} to={`/challenges/${challenge._id}`} className="h-9 self-start">View</Button>
       </CardContent>
