@@ -27,19 +27,65 @@ export default function ChallengeDetail() {
   )
 
   const handleDeleteChallenge = async () => {
-    if (!window.confirm('Are you sure you want to delete this challenge? This action cannot be undone.')) {
-      return
-    }
-
-    try {
-      await challengeApi.delete(id)
-      toast.success('Challenge deleted successfully!')
-      // Navigate back to challenges page
-      window.location.href = '/challenges'
-    } catch (error) {
-      console.error('Error deleting challenge:', error)
-      toast.error('Failed to delete challenge. Please try again.')
-    }
+    // Create a professional confirmation toast
+    toast((t) => (
+      <div className="flex flex-col gap-3 p-2">
+        <div className="flex items-start gap-3">
+          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+            <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <h3 className="text-sm font-medium text-gray-900">Delete Challenge</h3>
+            <p className="text-sm text-gray-600 mt-1">
+              Are you sure you want to delete this challenge? This action cannot be undone.
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-2 justify-end">
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={async () => {
+              toast.dismiss(t.id)
+              try {
+                // Show loading state
+                const loadingToast = toast.loading('Deleting challenge...')
+                
+                await challengeApi.delete(id)
+                
+                toast.dismiss(loadingToast)
+                toast.success('🎉 Challenge deleted successfully!')
+                
+                // Navigate back to challenges page
+                window.location.href = '/challenges'
+              } catch (error) {
+                console.error('Error deleting challenge:', error)
+                toast.error('❌ Failed to delete challenge. Please try again.')
+              }
+            }}
+            className="px-3 py-1.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    ), {
+      duration: Infinity, // Keep open until user makes a choice
+      position: 'top-center',
+      style: {
+        maxWidth: '400px',
+        padding: '16px',
+        borderRadius: '12px',
+        border: '1px solid #e5e7eb',
+        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+      },
+    })
   }
 
   useEffect(() => {
