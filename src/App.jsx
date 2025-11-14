@@ -21,7 +21,6 @@ import Settings from './pages/Settings.jsx'
 import AddChallenge from './pages/AddChallenge.jsx'
 import EditChallenge from './pages/EditChallenge.jsx'
 import JoinChallenge from './pages/JoinChallenge.jsx'
-import TestAPI from './pages/TestAPI.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import './index.css'
@@ -45,7 +44,6 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/test-api" element={<TestAPI />} />
             <Route path="*" element={<NotFound />} />
           </Route>
           <Route element={<DashboardLayout />}>

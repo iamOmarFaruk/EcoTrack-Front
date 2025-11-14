@@ -10,7 +10,6 @@ import {
   sendPasswordResetEmail
 } from 'firebase/auth'
 import { auth, googleProvider } from '../config/firebase.js'
-import { useLocalStorage } from '../hooks/useLocalStorage.js'
 import { authApi, challengeApi } from '../services/api.js'
 
 const AuthContext = createContext(null)
@@ -27,7 +26,7 @@ async function hashEmail(email) {
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [userChallenges, setUserChallenges] = useLocalStorage('eco_user_challenges', [])
+  const [userChallenges, setUserChallenges] = useState([])
   const [userProfile, setUserProfile] = useState(null)
 
   // Listen for authentication state changes
@@ -60,6 +59,26 @@ export function AuthProvider({ children }) {
         try {
           const backendProfile = await authApi.getProfile()
           setUserProfile(backendProfile)
+          
+          // Fetch user's joined challenges
+          try {
+            const challengesResponse = await challengeApi.getJoinedChallenges()
+            let joinedChallenges = []
+            
+            // Handle different response structures
+            if (Array.isArray(challengesResponse)) {
+              joinedChallenges = challengesResponse.map(c => c._id || c.id)
+            } else if (challengesResponse?.data && Array.isArray(challengesResponse.data)) {
+              joinedChallenges = challengesResponse.data.map(c => c._id || c.id)
+            } else if (challengesResponse?.challenges && Array.isArray(challengesResponse.challenges)) {
+              joinedChallenges = challengesResponse.challenges.map(c => c._id || c.id)
+            }
+            
+            setUserChallenges(joinedChallenges)
+          } catch (challengesError) {
+            // If fetching challenges fails, set empty array
+            setUserChallenges([])
+          }
         } catch (error) {
           
           // If user doesn't exist in MongoDB, try to create them
@@ -260,12 +279,24 @@ export function AuthProvider({ children }) {
 
     async function joinChallenge(challengeId) {
       try {
-        await challengeApi.join(challengeId)
+        const response = await challengeApi.join(challengeId)
+        
+        // Update state based on successful API call
         setUserChallenges((prev) => {
           const set = new Set(prev ?? [])
           set.add(challengeId)
           return Array.from(set)
         })
+        
+        // Optionally refresh user profile to get updated stats
+        try {
+          const updatedProfile = await authApi.getProfile()
+          setUserProfile(updatedProfile)
+        } catch (profileError) {
+          // Profile update is optional, don't throw error
+        }
+        
+        return response
       } catch (error) {
         throw error
       }
@@ -273,10 +304,22 @@ export function AuthProvider({ children }) {
 
     async function leaveChallenge(challengeId) {
       try {
-        await challengeApi.leave(challengeId)
+        const response = await challengeApi.leave(challengeId)
+        
+        // Update state based on successful API call
         setUserChallenges((prev) => {
           return (prev ?? []).filter(id => id !== challengeId)
         })
+        
+        // Optionally refresh user profile to get updated stats
+        try {
+          const updatedProfile = await authApi.getProfile()
+          setUserProfile(updatedProfile)
+        } catch (profileError) {
+          // Profile update is optional, don't throw error
+        }
+        
+        return response
       } catch (error) {
         throw error
       }
@@ -330,7 +373,28 @@ export function AuthProvider({ children }) {
       resetPassword,
       updateUserProfile,
       joinChallenge,
-      leaveChallenge
+      leaveChallenge,
+      getUserJoinedChallenges: async () => {
+        try {
+          const challengesResponse = await challengeApi.getJoinedChallenges()
+          let joinedChallenges = []
+          
+          // Handle different response structures
+          if (Array.isArray(challengesResponse)) {
+            joinedChallenges = challengesResponse.map(c => c._id || c.id)
+          } else if (challengesResponse?.data && Array.isArray(challengesResponse.data)) {
+            joinedChallenges = challengesResponse.data.map(c => c._id || c.id)
+          } else if (challengesResponse?.challenges && Array.isArray(challengesResponse.challenges)) {
+            joinedChallenges = challengesResponse.challenges.map(c => c._id || c.id)
+          }
+          
+          setUserChallenges(joinedChallenges)
+          return joinedChallenges
+        } catch (error) {
+          setUserChallenges([])
+          throw error
+        }
+      }
     }
   }, [user, loading, userChallenges, userProfile])
 
