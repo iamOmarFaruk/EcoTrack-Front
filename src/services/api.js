@@ -104,6 +104,39 @@ export const tipsApi = {
   upvote: (id) => httpClient.post(`/tips/${id}/upvote`)
 }
 
+// Event API calls
+export const eventApi = {
+  // Get all events with pagination and search (Public)
+  getAll: (filters = {}) => httpClient.get('/events', { params: filters }),
+
+  // Get specific event by ID (Public, optional auth for isJoined/isCreator)
+  getById: (id) => httpClient.get(`/events/${id}`),
+
+  // Create new event (Authenticated)
+  create: (eventData) => httpClient.post('/events', eventData),
+
+  // Update event - creator only (Authenticated)
+  update: (id, eventData) => httpClient.put(`/events/${id}`, eventData),
+
+  // Delete event - creator only (Authenticated)
+  delete: (id) => httpClient.delete(`/events/${id}`),
+
+  // Join an event (Authenticated)
+  join: (id) => httpClient.post(`/events/${id}/join`),
+
+  // Leave an event (Authenticated)
+  leave: (id) => httpClient.post(`/events/${id}/leave`),
+
+  // Get events created by logged-in user (Authenticated)
+  getMyEvents: () => httpClient.get('/events/my-events'),
+
+  // Get events joined by logged-in user (Authenticated)
+  getMyJoined: (status = 'upcoming') => httpClient.get('/events/my-joined', { params: { status } }),
+
+  // Get participant list for an event (Public)
+  getParticipants: (id) => httpClient.get(`/events/${id}/participants`)
+}
+
 // Community API calls
 export const communityApi = {
   // Get community stats
@@ -122,5 +155,6 @@ export default {
   challenges: challengeApi,
   user: userApi,
   community: communityApi,
-  tips: tipsApi
+  tips: tipsApi,
+  events: eventApi
 }

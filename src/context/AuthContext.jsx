@@ -10,7 +10,7 @@ import {
   sendPasswordResetEmail
 } from 'firebase/auth'
 import { auth, googleProvider } from '../config/firebase.js'
-import { authApi, challengeApi } from '../services/api.js'
+import { authApi, challengeApi, eventApi } from '../services/api.js'
 
 const AuthContext = createContext(null)
 
@@ -27,6 +27,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [userChallenges, setUserChallenges] = useState([])
+  const [userEvents, setUserEvents] = useState([])
   const [userProfile, setUserProfile] = useState(null)
 
   // Listen for authentication state changes
@@ -81,6 +82,26 @@ export function AuthProvider({ children }) {
             // If fetching challenges fails, set empty array
             setUserChallenges([])
           }
+
+          // Fetch user's joined events
+          try {
+            const eventsResponse = await eventApi.getMyJoined('upcoming')
+            let joinedEvents = []
+            
+            // Handle different response structures
+            if (Array.isArray(eventsResponse)) {
+              joinedEvents = eventsResponse.map(e => e._id || e.id)
+            } else if (eventsResponse?.data?.events && Array.isArray(eventsResponse.data.events)) {
+              joinedEvents = eventsResponse.data.events.map(e => e._id || e.id)
+            } else if (eventsResponse?.events && Array.isArray(eventsResponse.events)) {
+              joinedEvents = eventsResponse.events.map(e => e._id || e.id)
+            }
+            
+            setUserEvents(joinedEvents)
+          } catch (eventsError) {
+            // If fetching events fails, set empty array
+            setUserEvents([])
+          }
         } catch (error) {
           console.error('Failed to fetch user data:', error)
           // Fallback to Firebase user info if backend fails
@@ -111,6 +132,7 @@ export function AuthProvider({ children }) {
       } else {
         setUser(null)
         setUserProfile(null)
+        setUserEvents([])
       }
       setLoading(false)
     })
@@ -279,6 +301,38 @@ export function AuthProvider({ children }) {
       }
     }
 
+    async function joinEvent(eventId) {
+      try {
+        const response = await eventApi.join(eventId)
+        
+        // Update state based on successful API call
+        setUserEvents((prev) => {
+          const set = new Set(prev ?? [])
+          set.add(eventId)
+          return Array.from(set)
+        })
+        
+        return response
+      } catch (error) {
+        throw error
+      }
+    }
+
+    async function leaveEvent(eventId) {
+      try {
+        const response = await eventApi.leave(eventId)
+        
+        // Update state based on successful API call
+        setUserEvents((prev) => {
+          return (prev ?? []).filter(id => id !== eventId)
+        })
+        
+        return response
+      } catch (error) {
+        throw error
+      }
+    }
+
     function getFirebaseErrorMessage(error) {
       switch (error.code) {
         case 'auth/user-not-found':
@@ -319,6 +373,7 @@ export function AuthProvider({ children }) {
         user,
         userProfile,
         userChallenges,
+        userEvents,
       },
       login, 
       register,
@@ -328,6 +383,8 @@ export function AuthProvider({ children }) {
       updateUserProfile,
       joinChallenge,
       leaveChallenge,
+      joinEvent,
+      leaveEvent,
       getUserJoinedChallenges: async () => {
         try {
           const challengesResponse = await challengeApi.getJoinedChallenges()
@@ -348,9 +405,30 @@ export function AuthProvider({ children }) {
           setUserChallenges([])
           throw error
         }
+      },
+      getUserJoinedEvents: async () => {
+        try {
+          const eventsResponse = await eventApi.getMyJoined('upcoming')
+          let joinedEvents = []
+          
+          // Handle different response structures
+          if (Array.isArray(eventsResponse)) {
+            joinedEvents = eventsResponse.map(e => e._id || e.id)
+          } else if (eventsResponse?.data?.events && Array.isArray(eventsResponse.data.events)) {
+            joinedEvents = eventsResponse.data.events.map(e => e._id || e.id)
+          } else if (eventsResponse?.events && Array.isArray(eventsResponse.events)) {
+            joinedEvents = eventsResponse.events.map(e => e._id || e.id)
+          }
+          
+          setUserEvents(joinedEvents)
+          return joinedEvents
+        } catch (error) {
+          setUserEvents([])
+          throw error
+        }
       }
     }
-  }, [user, loading, userChallenges, userProfile])
+  }, [user, loading, userChallenges, userEvents, userProfile])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

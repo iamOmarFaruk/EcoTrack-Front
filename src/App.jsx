@@ -9,6 +9,9 @@ import ChallengeDetail from './pages/ChallengeDetail.jsx'
 import Tips from './pages/Tips.jsx'
 import Events from './pages/Events.jsx'
 import EventDetail from './pages/EventDetail.jsx'
+import AddEvent from './pages/AddEvent.jsx'
+import EditEvent from './pages/EditEvent.jsx'
+import MyEvents from './pages/MyEvents.jsx'
 import About from './pages/About.jsx'
 import Contact from './pages/Contact.jsx'
 import NotFound from './pages/NotFound.jsx'
@@ -92,6 +95,30 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <JoinChallenge />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/events/add"
+              element={
+                <ProtectedRoute>
+                  <AddEvent />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/events/:id/edit"
+              element={
+                <ProtectedRoute>
+                  <EditEvent />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/events/my-events"
+              element={
+                <ProtectedRoute>
+                  <MyEvents />
                 </ProtectedRoute>
               }
             />

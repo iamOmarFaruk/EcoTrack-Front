@@ -1,36 +1,132 @@
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
-import { mockEvents } from '../data/mockEvents.js'
+import { eventApi } from '../services/api.js'
 import { formatDate } from '../utils/formatDate.js'
 import Button from '../components/ui/Button.jsx'
 import { Card, CardContent } from '../components/ui/Card.jsx'
 import SubpageHero from '../components/SubpageHero.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import NotFound from './NotFound.jsx'
+import { useAuth } from '../context/AuthContext.jsx'
 import toast from 'react-hot-toast'
 
 export default function EventDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { user, joinEvent, leaveEvent, auth } = useAuth()
   
-  const event = mockEvents.find(e => e.id === id)
+  const [event, setEvent] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [notFound, setNotFound] = useState(false)
+  const [isJoining, setIsJoining] = useState(false)
+  const [isLeaving, setIsLeaving] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   
-  useDocumentTitle(event ? event.title : 'Event Not Found')
+  useDocumentTitle(event ? event.title : 'Event Details')
 
-  if (!event) {
-    return <NotFound />
+  useEffect(() => {
+    fetchEvent()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id])
+
+  const fetchEvent = async () => {
+    try {
+      setLoading(true)
+      const response = await eventApi.getById(id)
+      const eventData = response?.data?.event || response?.event || response
+      
+      if (!eventData) {
+        setNotFound(true)
+        return
+      }
+      
+      setEvent(eventData)
+    } catch (error) {
+      console.error('Error fetching event:', error)
+      if (error.status === 404) {
+        setNotFound(true)
+      } else {
+        toast.error('Failed to load event')
+      }
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleJoinEvent = () => {
-    toast.success(`Successfully joined "${event.title}"!`)
-    // Here you could add logic to actually join the event
+  const handleJoinEvent = async () => {
+    if (!user) {
+      toast.error('Please log in to join this event')
+      navigate('/login')
+      return
+    }
+
+    setIsJoining(true)
+    try {
+      await joinEvent(event.id || event._id)
+      toast.success(`Successfully joined "${event.title}"!`)
+      // Refresh event data
+      await fetchEvent()
+    } catch (error) {
+      toast.error(error.message || 'Failed to join event')
+    } finally {
+      setIsJoining(false)
+    }
+  }
+
+  const handleLeaveEvent = async () => {
+    setIsLeaving(true)
+    try {
+      await leaveEvent(event.id || event._id)
+      toast.success(`You have left "${event.title}"`)
+      // Refresh event data
+      await fetchEvent()
+    } catch (error) {
+      toast.error(error.message || 'Failed to leave event')
+    } finally {
+      setIsLeaving(false)
+    }
+  }
+
+  const handleEditEvent = () => {
+    navigate(`/events/${event.id || event._id}/edit`)
+  }
+
+  const handleDeleteEvent = async () => {
+    if (!confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
+      return
+    }
+
+    setIsDeleting(true)
+    try {
+      await eventApi.delete(event.id || event._id)
+      toast.success('Event deleted successfully')
+      navigate('/events/my-events')
+    } catch (error) {
+      toast.error(error.message || 'Failed to delete event')
+      setIsDeleting(false)
+    }
   }
 
   const handleGoBack = () => {
     navigate('/events')
   }
 
+  if (loading) {
+    return <EcoLoader />
+  }
+
+  if (notFound || !event) {
+    return <NotFound />
+  }
+
   const progressPercentage = Math.round((event.registeredParticipants / event.capacity) * 100)
+  const spotsRemaining = event.capacity - event.registeredParticipants
+  const isCreator = user && event.createdBy === user.uid
+  const isJoined = auth?.userEvents?.includes(event._id || event.id)
+  const isFull = progressPercentage >= 100
+  const isCancelled = event.status === 'cancelled'
+  const isPast = new Date(event.date) < new Date()
 
   return (
     <div className="space-y-8">
@@ -94,44 +190,120 @@ export default function EventDetail() {
 
         {/* Event Info Sidebar */}
         <div className="space-y-6">
-          {/* Join Event Card */}
-          <Card className="border-green-200 bg-green-50">
-            <CardContent className="space-y-4">
-              <div className="text-center">
-                <h3 className="text-lg font-semibold text-green-900">Join This Event</h3>
-                <p className="text-sm text-green-700 mt-1">
-                  Be part of the change in your community
-                </p>
-              </div>
-              
-              {/* Capacity Progress */}
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Participants</span>
-                  <span className="font-medium">
-                    {event.registeredParticipants} / {event.capacity}
-                  </span>
+          {/* Join Event Card or Creator Controls */}
+          {isCreator ? (
+            <Card className="border-blue-200 bg-blue-50">
+              <CardContent className="space-y-4">
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-blue-900">Event Management</h3>
+                  <p className="text-sm text-blue-700 mt-1">
+                    You are the organizer of this event
+                  </p>
                 </div>
-                <div className="w-full bg-green-200 rounded-full h-2">
-                  <div 
-                    className="bg-green-600 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${progressPercentage}%` }}
-                  ></div>
+                
+                {/* Capacity Progress */}
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-600">Participants</span>
+                    <span className="font-medium">
+                      {event.registeredParticipants} / {event.capacity}
+                    </span>
+                  </div>
+                  <div className="w-full bg-blue-200 rounded-full h-2">
+                    <div 
+                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${progressPercentage}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-xs text-blue-600 text-center">
+                    {spotsRemaining} spots remaining
+                  </p>
                 </div>
-                <p className="text-xs text-green-600 text-center">
-                  {event.capacity - event.registeredParticipants} spots remaining
-                </p>
-              </div>
 
-              <Button 
-                className="w-full bg-green-600 hover:bg-green-700" 
-                onClick={handleJoinEvent}
-                disabled={progressPercentage >= 100}
-              >
-                {progressPercentage >= 100 ? 'Event Full' : 'Join This Event'}
-              </Button>
-            </CardContent>
-          </Card>
+                <div className="space-y-2">
+                  <Button 
+                    className="w-full bg-blue-600 hover:bg-blue-700" 
+                    onClick={handleEditEvent}
+                  >
+                    Edit Event
+                  </Button>
+                  <Button 
+                    className="w-full bg-red-600 hover:bg-red-700" 
+                    onClick={handleDeleteEvent}
+                    disabled={isDeleting}
+                  >
+                    {isDeleting ? 'Deleting...' : 'Delete Event'}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="border-green-200 bg-green-50">
+              <CardContent className="space-y-4">
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-green-900">
+                    {isJoined ? 'You\'re Registered!' : 'Join This Event'}
+                  </h3>
+                  <p className="text-sm text-green-700 mt-1">
+                    {isJoined ? 'See you at the event!' : 'Be part of the change in your community'}
+                  </p>
+                </div>
+                
+                {/* Status Badges */}
+                {(isCancelled || isPast) && (
+                  <div className="text-center">
+                    {isCancelled && (
+                      <span className="inline-block px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
+                        Event Cancelled
+                      </span>
+                    )}
+                    {isPast && !isCancelled && (
+                      <span className="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
+                        Event Ended
+                      </span>
+                    )}
+                  </div>
+                )}
+                
+                {/* Capacity Progress */}
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-slate-600">Participants</span>
+                    <span className="font-medium">
+                      {event.registeredParticipants} / {event.capacity}
+                    </span>
+                  </div>
+                  <div className="w-full bg-green-200 rounded-full h-2">
+                    <div 
+                      className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${progressPercentage}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-xs text-green-600 text-center">
+                    {spotsRemaining} spots remaining
+                  </p>
+                </div>
+
+                {isJoined ? (
+                  <Button 
+                    className="w-full bg-red-600 hover:bg-red-700" 
+                    onClick={handleLeaveEvent}
+                    disabled={isLeaving || isPast}
+                  >
+                    {isLeaving ? 'Leaving...' : 'Leave Event'}
+                  </Button>
+                ) : (
+                  <Button 
+                    className="w-full bg-green-600 hover:bg-green-700" 
+                    onClick={handleJoinEvent}
+                    disabled={isFull || isCancelled || isPast || isJoining}
+                  >
+                    {isJoining ? 'Joining...' : isFull ? 'Event Full' : isCancelled ? 'Event Cancelled' : isPast ? 'Event Ended' : 'Join This Event'}
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Event Information Card */}
           <Card>

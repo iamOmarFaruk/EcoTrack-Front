@@ -1,0 +1,563 @@
+import { useState, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
+import { eventApi } from '../services/api.js'
+import Button from '../components/ui/Button.jsx'
+import { Card, CardContent } from '../components/ui/Card.jsx'
+import SubpageHero from '../components/SubpageHero.jsx'
+import EcoLoader from '../components/EcoLoader.jsx'
+import NotFound from './NotFound.jsx'
+import { defaultImages } from '../config/env.js'
+import toast from 'react-hot-toast'
+import { useAuth } from '../context/AuthContext.jsx'
+
+export default function EditEvent() {
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const { user } = useAuth()
+
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    detailedDescription: '',
+    date: '',
+    location: '',
+    organizer: '',
+    capacity: '',
+    duration: '',
+    requirements: '',
+    benefits: '',
+    image: '',
+    status: 'active'
+  })
+
+  const [errors, setErrors] = useState({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [event, setEvent] = useState(null)
+  const [notFound, setNotFound] = useState(false)
+  const [notAuthorized, setNotAuthorized] = useState(false)
+
+  useDocumentTitle(event ? `Edit ${event.title}` : 'Edit Event')
+
+  useEffect(() => {
+    fetchEvent()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id])
+
+  const fetchEvent = async () => {
+    try {
+      setLoading(true)
+      const response = await eventApi.getById(id)
+      const eventData = response?.data?.event || response?.event || response
+
+      if (!eventData) {
+        setNotFound(true)
+        return
+      }
+
+      // Check if user is the creator
+      if (eventData.createdBy !== user?.uid) {
+        setNotAuthorized(true)
+        return
+      }
+
+      setEvent(eventData)
+
+      // Convert ISO date to datetime-local format
+      const eventDate = new Date(eventData.date)
+      const localDate = new Date(eventDate.getTime() - eventDate.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 16)
+
+      setFormData({
+        title: eventData.title || '',
+        description: eventData.description || '',
+        detailedDescription: eventData.detailedDescription || '',
+        date: localDate,
+        location: eventData.location || '',
+        organizer: eventData.organizer || '',
+        capacity: eventData.capacity || '',
+        duration: eventData.duration || '',
+        requirements: eventData.requirements || '',
+        benefits: eventData.benefits || '',
+        image: eventData.image || '',
+        status: eventData.status || 'active'
+      })
+    } catch (error) {
+      console.error('Error fetching event:', error)
+      if (error.status === 404) {
+        setNotFound(true)
+      } else if (error.status === 403) {
+        setNotAuthorized(true)
+      } else {
+        toast.error('Failed to load event')
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+    // Clear error for this field
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }))
+    }
+  }
+
+  const validateForm = () => {
+    const newErrors = {}
+
+    // Title validation (3-100 chars)
+    if (!formData.title.trim()) {
+      newErrors.title = 'Title is required'
+    } else if (formData.title.length < 3 || formData.title.length > 100) {
+      newErrors.title = 'Title must be between 3 and 100 characters'
+    }
+
+    // Description validation (10-200 chars)
+    if (!formData.description.trim()) {
+      newErrors.description = 'Short description is required'
+    } else if (formData.description.length < 10 || formData.description.length > 200) {
+      newErrors.description = 'Description must be between 10 and 200 characters'
+    }
+
+    // Detailed description validation (50-2000 chars)
+    if (!formData.detailedDescription.trim()) {
+      newErrors.detailedDescription = 'Detailed description is required'
+    } else if (formData.detailedDescription.length < 50 || formData.detailedDescription.length > 2000) {
+      newErrors.detailedDescription = 'Detailed description must be between 50 and 2000 characters'
+    }
+
+    // Date validation
+    if (!formData.date) {
+      newErrors.date = 'Event date is required'
+    }
+
+    // Location validation (3-100 chars)
+    if (!formData.location.trim()) {
+      newErrors.location = 'Location is required'
+    } else if (formData.location.length < 3 || formData.location.length > 100) {
+      newErrors.location = 'Location must be between 3 and 100 characters'
+    }
+
+    // Organizer validation (3-100 chars)
+    if (!formData.organizer.trim()) {
+      newErrors.organizer = 'Organizer name is required'
+    } else if (formData.organizer.length < 3 || formData.organizer.length > 100) {
+      newErrors.organizer = 'Organizer name must be between 3 and 100 characters'
+    }
+
+    // Capacity validation (1-10000, cannot be less than current participants)
+    if (!formData.capacity) {
+      newErrors.capacity = 'Capacity is required'
+    } else if (formData.capacity < 1 || formData.capacity > 10000) {
+      newErrors.capacity = 'Capacity must be between 1 and 10000'
+    } else if (event && formData.capacity < event.registeredParticipants) {
+      newErrors.capacity = `Cannot reduce capacity below current participant count (${event.registeredParticipants})`
+    }
+
+    // Duration validation (3-50 chars)
+    if (!formData.duration.trim()) {
+      newErrors.duration = 'Duration is required'
+    } else if (formData.duration.length < 3 || formData.duration.length > 50) {
+      newErrors.duration = 'Duration must be between 3 and 50 characters'
+    }
+
+    // Requirements validation (10-500 chars)
+    if (!formData.requirements.trim()) {
+      newErrors.requirements = 'Requirements are required'
+    } else if (formData.requirements.length < 10 || formData.requirements.length > 500) {
+      newErrors.requirements = 'Requirements must be between 10 and 500 characters'
+    }
+
+    // Benefits validation (10-500 chars)
+    if (!formData.benefits.trim()) {
+      newErrors.benefits = 'Benefits are required'
+    } else if (formData.benefits.length < 10 || formData.benefits.length > 500) {
+      newErrors.benefits = 'Benefits must be between 10 and 500 characters'
+    }
+
+    // Image validation (optional, but must be valid Unsplash URL if provided)
+    if (formData.image && !formData.image.includes('unsplash.com')) {
+      newErrors.image = 'Image must be a valid Unsplash URL or leave empty for default'
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    if (!validateForm()) {
+      toast.error('Please fix the form errors')
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      // Prepare data for API - only send changed fields
+      const eventData = {
+        ...formData,
+        capacity: parseInt(formData.capacity),
+        date: new Date(formData.date).toISOString(),
+        image: formData.image || undefined
+      }
+
+      const response = await eventApi.update(id, eventData)
+      const updatedEvent = response?.data?.event || response?.event
+
+      toast.success('Event updated successfully!')
+      
+      // Navigate to the event detail page
+      if (updatedEvent?.id) {
+        navigate(`/events/${updatedEvent.id}`)
+      } else {
+        navigate(`/events/${id}`)
+      }
+    } catch (error) {
+      console.error('Error updating event:', error)
+      
+      // Handle validation errors from backend
+      if (error.data?.error?.details) {
+        const backendErrors = {}
+        error.data.error.details.forEach(err => {
+          backendErrors[err.field] = err.message
+        })
+        setErrors(backendErrors)
+        toast.error('Please fix the validation errors')
+      } else {
+        toast.error(error.message || 'Failed to update event')
+      }
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleCancel = () => {
+    navigate(`/events/${id}`)
+  }
+
+  if (loading) {
+    return <EcoLoader />
+  }
+
+  if (notFound) {
+    return <NotFound />
+  }
+
+  if (notAuthorized) {
+    return (
+      <div className="space-y-8">
+        <div className="full-bleed -mt-8">
+          <SubpageHero
+            title="Access Denied"
+            subtitle="You don't have permission to edit this event"
+            backgroundImage={defaultImages.eventsHero}
+            height="medium"
+            overlayIntensity="medium"
+          />
+        </div>
+        <div className="text-center">
+          <Button onClick={() => navigate('/events')}>Back to Events</Button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-8">
+      {/* Hero Section */}
+      <div className="full-bleed -mt-8">
+        <SubpageHero
+          title="Edit Event"
+          subtitle={event?.title || 'Update event details'}
+          backgroundImage={event?.image || defaultImages.eventsHero}
+          height="medium"
+          overlayIntensity="medium"
+        />
+      </div>
+
+      {/* Form Section */}
+      <div className="max-w-4xl mx-auto">
+        <Card>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Event Status */}
+              <div>
+                <label htmlFor="status" className="block text-sm font-medium text-slate-900 mb-2">
+                  Event Status
+                </label>
+                <select
+                  id="status"
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                >
+                  <option value="active">Active</option>
+                  <option value="cancelled">Cancelled</option>
+                  <option value="completed">Completed</option>
+                </select>
+                <p className="mt-1 text-xs text-slate-500">
+                  Current participants: {event?.registeredParticipants || 0}
+                </p>
+              </div>
+
+              {/* Title */}
+              <div>
+                <label htmlFor="title" className="block text-sm font-medium text-slate-900 mb-2">
+                  Event Title <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                    errors.title ? 'border-red-500' : 'border-slate-300'
+                  }`}
+                  placeholder="e.g., City Tree Planting Marathon"
+                />
+                {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
+                <p className="mt-1 text-xs text-slate-500">{formData.title.length}/100 characters</p>
+              </div>
+
+              {/* Short Description */}
+              <div>
+                <label htmlFor="description" className="block text-sm font-medium text-slate-900 mb-2">
+                  Short Description <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                    errors.description ? 'border-red-500' : 'border-slate-300'
+                  }`}
+                  placeholder="Brief description for event cards (10-200 characters)"
+                />
+                {errors.description && <p className="mt-1 text-sm text-red-500">{errors.description}</p>}
+                <p className="mt-1 text-xs text-slate-500">{formData.description.length}/200 characters</p>
+              </div>
+
+              {/* Detailed Description */}
+              <div>
+                <label htmlFor="detailedDescription" className="block text-sm font-medium text-slate-900 mb-2">
+                  Detailed Description <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  id="detailedDescription"
+                  name="detailedDescription"
+                  value={formData.detailedDescription}
+                  onChange={handleChange}
+                  rows={6}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                    errors.detailedDescription ? 'border-red-500' : 'border-slate-300'
+                  }`}
+                  placeholder="Full description with all details about the event (50-2000 characters)"
+                />
+                {errors.detailedDescription && <p className="mt-1 text-sm text-red-500">{errors.detailedDescription}</p>}
+                <p className="mt-1 text-xs text-slate-500">{formData.detailedDescription.length}/2000 characters</p>
+              </div>
+
+              {/* Date and Location Row */}
+              <div className="grid gap-6 md:grid-cols-2">
+                {/* Date */}
+                <div>
+                  <label htmlFor="date" className="block text-sm font-medium text-slate-900 mb-2">
+                    Event Date & Time <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="datetime-local"
+                    id="date"
+                    name="date"
+                    value={formData.date}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                      errors.date ? 'border-red-500' : 'border-slate-300'
+                    }`}
+                  />
+                  {errors.date && <p className="mt-1 text-sm text-red-500">{errors.date}</p>}
+                </div>
+
+                {/* Location */}
+                <div>
+                  <label htmlFor="location" className="block text-sm font-medium text-slate-900 mb-2">
+                    Location <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                      errors.location ? 'border-red-500' : 'border-slate-300'
+                    }`}
+                    placeholder="e.g., Central Park, New York"
+                  />
+                  {errors.location && <p className="mt-1 text-sm text-red-500">{errors.location}</p>}
+                </div>
+              </div>
+
+              {/* Organizer and Duration Row */}
+              <div className="grid gap-6 md:grid-cols-2">
+                {/* Organizer */}
+                <div>
+                  <label htmlFor="organizer" className="block text-sm font-medium text-slate-900 mb-2">
+                    Organizer Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="organizer"
+                    name="organizer"
+                    value={formData.organizer}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                      errors.organizer ? 'border-red-500' : 'border-slate-300'
+                    }`}
+                    placeholder="e.g., Green Earth Foundation"
+                  />
+                  {errors.organizer && <p className="mt-1 text-sm text-red-500">{errors.organizer}</p>}
+                </div>
+
+                {/* Duration */}
+                <div>
+                  <label htmlFor="duration" className="block text-sm font-medium text-slate-900 mb-2">
+                    Duration <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="duration"
+                    name="duration"
+                    value={formData.duration}
+                    onChange={handleChange}
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                      errors.duration ? 'border-red-500' : 'border-slate-300'
+                    }`}
+                    placeholder="e.g., 4 hours"
+                  />
+                  {errors.duration && <p className="mt-1 text-sm text-red-500">{errors.duration}</p>}
+                </div>
+              </div>
+
+              {/* Capacity */}
+              <div>
+                <label htmlFor="capacity" className="block text-sm font-medium text-slate-900 mb-2">
+                  Maximum Capacity <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="number"
+                  id="capacity"
+                  name="capacity"
+                  value={formData.capacity}
+                  onChange={handleChange}
+                  min={event?.registeredParticipants || 1}
+                  max="10000"
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                    errors.capacity ? 'border-red-500' : 'border-slate-300'
+                  }`}
+                  placeholder="e.g., 100"
+                />
+                {errors.capacity && <p className="mt-1 text-sm text-red-500">{errors.capacity}</p>}
+                <p className="mt-1 text-xs text-slate-500">
+                  Cannot be less than current participants ({event?.registeredParticipants || 0})
+                </p>
+              </div>
+
+              {/* Requirements */}
+              <div>
+                <label htmlFor="requirements" className="block text-sm font-medium text-slate-900 mb-2">
+                  Requirements <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  id="requirements"
+                  name="requirements"
+                  value={formData.requirements}
+                  onChange={handleChange}
+                  rows={3}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                    errors.requirements ? 'border-red-500' : 'border-slate-300'
+                  }`}
+                  placeholder="What participants need to bring or prepare (10-500 characters)"
+                />
+                {errors.requirements && <p className="mt-1 text-sm text-red-500">{errors.requirements}</p>}
+                <p className="mt-1 text-xs text-slate-500">{formData.requirements.length}/500 characters</p>
+              </div>
+
+              {/* Benefits */}
+              <div>
+                <label htmlFor="benefits" className="block text-sm font-medium text-slate-900 mb-2">
+                  Benefits <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  id="benefits"
+                  name="benefits"
+                  value={formData.benefits}
+                  onChange={handleChange}
+                  rows={3}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                    errors.benefits ? 'border-red-500' : 'border-slate-300'
+                  }`}
+                  placeholder="What participants will receive or gain (10-500 characters)"
+                />
+                {errors.benefits && <p className="mt-1 text-sm text-red-500">{errors.benefits}</p>}
+                <p className="mt-1 text-xs text-slate-500">{formData.benefits.length}/500 characters</p>
+              </div>
+
+              {/* Image URL */}
+              <div>
+                <label htmlFor="image" className="block text-sm font-medium text-slate-900 mb-2">
+                  Event Image URL (Optional)
+                </label>
+                <input
+                  type="url"
+                  id="image"
+                  name="image"
+                  value={formData.image}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                    errors.image ? 'border-red-500' : 'border-slate-300'
+                  }`}
+                  placeholder="https://images.unsplash.com/photo-..."
+                />
+                {errors.image && <p className="mt-1 text-sm text-red-500">{errors.image}</p>}
+                <p className="mt-1 text-xs text-slate-500">
+                  Must be an Unsplash URL. Leave empty for default image.
+                </p>
+              </div>
+
+              {/* Form Actions */}
+              <div className="flex gap-4 pt-4">
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex-1 bg-green-600 hover:bg-green-700"
+                >
+                  {isSubmitting ? 'Updating Event...' : 'Update Event'}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleCancel}
+                  disabled={isSubmitting}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}
