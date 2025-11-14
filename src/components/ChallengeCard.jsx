@@ -23,7 +23,11 @@ export default function ChallengeCard({ challenge }) {
       <CardContent className="flex flex-col gap-3">
         <p className="line-clamp-2 text-sm text-slate-900">{challenge.description}</p>
         <div className="mt-auto flex items-center justify-between text-xs text-slate-900">
-          <span>Participants: {challenge.participants}</span>
+          <span>
+            {challenge.participants > 0
+              ? `${challenge.participants} people joined already`
+              : 'No people joined yet'}
+          </span>
         </div>
         <Button as={Link} to={`/challenges/${challenge._id}`} className="h-9 self-start">View</Button>
       </CardContent>

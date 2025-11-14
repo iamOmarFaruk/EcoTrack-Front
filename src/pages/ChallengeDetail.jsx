@@ -240,7 +240,11 @@ export default function ChallengeDetail() {
           <dl className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-900">
             <div>
               <dt className="font-medium text-slate-900">Participants</dt>
-              <dd>{challenge.participants}</dd>
+              <dd>
+                {challenge.participants > 0
+                  ? `${challenge.participants} people joined already`
+                  : 'No people joined yet'}
+              </dd>
             </div>
             <div>
               <dt className="font-medium text-slate-900">Duration</dt>
