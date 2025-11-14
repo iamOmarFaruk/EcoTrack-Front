@@ -40,6 +40,7 @@ export function useUserTips() {
           ? Number(tip.upvoteCount)
           : (Number.isFinite(Number(tip.upvotes)) ? Number(tip.upvotes) : 0),
         createdAt: tip.createdAt || new Date().toISOString(),
+        updatedAt: tip.updatedAt || tip.createdAt || new Date().toISOString(),
         authorName: tip.authorName || tip.author?.name || 'Anonymous',
         authorImage: tip.authorImage || tip.authorAvatar || tip.author?.avatarUrl || tip.author?.imageUrl,
         // Handle case where tip.author is a string (Firebase UID) or an object
@@ -81,6 +82,7 @@ export function useUserTips() {
           ? Number(tipData.upvoteCount)
           : (Number.isFinite(Number(tipData.upvotes)) ? Number(tipData.upvotes) : 0),
         createdAt: tipData.createdAt || new Date().toISOString(),
+        updatedAt: tipData.updatedAt || tipData.createdAt || new Date().toISOString(),
         authorName: tipData.authorName || tipData.author?.name || 'Anonymous',
         authorImage: tipData.authorImage || tipData.authorAvatar || tipData.author?.avatarUrl || tipData.author?.imageUrl,
         // Handle case where tipData.author is a string (Firebase UID) or an object
@@ -140,7 +142,8 @@ export function useUserTips() {
         // Add firebaseId to ensure our isOwnTip logic works
         firebaseId: newTip.firebaseId || user.uid,
         upvotes: Number.isFinite(Number(newTip.upvotes)) ? Number(newTip.upvotes) : 0,
-        createdAt: newTip.createdAt || new Date().toISOString()
+        createdAt: newTip.createdAt || new Date().toISOString(),
+        updatedAt: newTip.updatedAt || newTip.createdAt || new Date().toISOString()
       }
       
       // Add to local state
@@ -199,7 +202,8 @@ export function useUserTips() {
         authorName: originalTip?.authorName || user.name || user.displayName || 'Anonymous',
         authorImage: originalTip?.authorImage || user.avatarUrl || user.photoURL || null,
         firebaseId: updatedTip.firebaseId || originalTip?.firebaseId || user.uid,
-        upvotes: Number.isFinite(Number(updatedTip.upvotes)) ? Number(updatedTip.upvotes) : (originalTip?.upvotes || 0)
+        upvotes: Number.isFinite(Number(updatedTip.upvotes)) ? Number(updatedTip.upvotes) : (originalTip?.upvotes || 0),
+        updatedAt: updatedTip.updatedAt || new Date().toISOString()
       }
 
       // Update local state

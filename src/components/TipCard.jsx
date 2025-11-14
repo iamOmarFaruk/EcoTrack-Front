@@ -86,6 +86,7 @@ export default function TipCard({
   }
 
   const authorInfo = getAuthorInfo()
+  const isEdited = tip.updatedAt && tip.updatedAt !== tip.createdAt
 
   // Sync local upvotes state with tip prop changes (for optimistic updates)
   React.useEffect(() => {
@@ -107,7 +108,14 @@ export default function TipCard({
           <div className="flex items-center justify-between">
             <div className="min-w-0">
               <div className="truncate text-xs font-medium text-slate-900">{authorInfo.name}</div>
-              <div className="truncate text-[11px] text-slate-500">{formatDate(tip.createdAt)}</div>
+              <div className="truncate text-[11px] text-slate-500 flex items-center gap-1">
+                <span>{formatDate(tip.createdAt)}</span>
+                {isEdited && (
+                  <span className="text-[11px] text-slate-400">
+                    (edited)
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
