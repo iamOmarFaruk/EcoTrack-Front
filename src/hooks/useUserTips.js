@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext.jsx'
 import { tipsApi } from '../services/api.js'
+import { apiConfig } from '../config/env.js'
 import toast from 'react-hot-toast'
 
 /**
@@ -35,7 +36,10 @@ export function useUserTips() {
         id: tip.id || tip._id,
         title: tip.title || '',
         content: tip.content || '',
-        upvotes: Number.isFinite(Number(tip.upvotes)) ? Number(tip.upvotes) : 0,
+        // Prefer backend's upvoteCount, fallback to upvotes, then 0
+        upvotes: Number.isFinite(Number(tip.upvoteCount))
+          ? Number(tip.upvoteCount)
+          : (Number.isFinite(Number(tip.upvotes)) ? Number(tip.upvotes) : 0),
         createdAt: tip.createdAt || new Date().toISOString(),
         authorName: tip.authorName || tip.author?.name || 'Anonymous',
         authorImage: tip.authorImage || tip.authorAvatar || tip.author?.avatarUrl || tip.author?.imageUrl,
@@ -73,7 +77,10 @@ export function useUserTips() {
         id: tipData.id || tipData._id,
         title: tipData.title || '',
         content: tipData.content || '',
-        upvotes: Number.isFinite(Number(tipData.upvotes)) ? Number(tipData.upvotes) : 0,
+        // Prefer backend's upvoteCount, fallback to upvotes, then 0
+        upvotes: Number.isFinite(Number(tipData.upvoteCount))
+          ? Number(tipData.upvoteCount)
+          : (Number.isFinite(Number(tipData.upvotes)) ? Number(tipData.upvotes) : 0),
         createdAt: tipData.createdAt || new Date().toISOString(),
         authorName: tipData.authorName || tipData.author?.name || 'Anonymous',
         authorImage: tipData.authorImage || tipData.authorAvatar || tipData.author?.avatarUrl || tipData.author?.imageUrl,
@@ -232,11 +239,35 @@ export function useUserTips() {
     }
   }
 
-  // Upvote a tip
+  // Upvote a tip with optimistic UI update and server sync
   const upvoteTip = async (tipId) => {
+    // Find the original tip before any updates
+    const originalTip = tips.find(tip => tip.id === tipId)
+    if (!originalTip) {
+      throw new Error('Tip not found')
+    }
+
+    // Store original upvote count for rollback
+    const originalUpvotes = originalTip.upvotes
+
     try {
       setError(null)
+      
+      // OPTIMISTIC UPDATE: Immediately increment the upvote count in the UI
+      setTips(prevTips => 
+        prevTips.map(tip => 
+          tip.id === tipId 
+            ? { ...tip, upvotes: tip.upvotes + 1 } 
+            : tip
+        )
+      )
+      
+      // SYNC WITH SERVER: Send upvote to backend database
+      console.log(`🔄 Syncing upvote with server for tip ${tipId}...`)
+      console.log(`📡 Request URL: ${apiConfig.baseUrl}/tips/${tipId}/upvote`)
       const response = await tipsApi.upvote(tipId)
+      console.log('✅ Server upvote response:', response)
+      console.log('📝 Full response data:', JSON.stringify(response, null, 2))
       
       // Handle different API response structures
       let updatedTip = response.data
@@ -245,24 +276,42 @@ export function useUserTips() {
       } else if (response.data?.data) {
         updatedTip = response.data.data
       }
-
-      // Find the original tip to preserve its data
-      const originalTip = tips.find(tip => tip.id === tipId)
       
-      // Create enhanced tip with preserved data
+      // Extract the actual upvote count from server response
+      const serverUpvotes = updatedTip?.upvotes ?? updatedTip?.upvoteCount ?? null
+      
+      console.log(`📊 Server upvote count: ${serverUpvotes}, Local count: ${originalUpvotes + 1}`)
+      
+      // Update with actual server data to ensure sync
       const enhancedTip = {
         ...originalTip,
         ...updatedTip,
-        // Ensure upvotes is properly handled
-        upvotes: Number.isFinite(Number(updatedTip.upvotes)) ? Number(updatedTip.upvotes) : (originalTip?.upvotes || 0)
+        id: originalTip.id, // Preserve the original ID
+        // ALWAYS use server's upvote count to stay in sync with database
+        upvotes: Number.isFinite(Number(serverUpvotes)) 
+          ? Number(serverUpvotes) 
+          : originalUpvotes + 1
       }
 
-      // Update local state with new vote count
+      // Sync local state with server response (this updates the database value)
       setTips(prevTips => 
         prevTips.map(tip => tip.id === tipId ? enhancedTip : tip)
       )
+      
+      console.log('✅ Upvote synced successfully with database')
       return enhancedTip
     } catch (err) {
+      console.error('❌ Failed to sync upvote with server:', err)
+      
+      // ROLLBACK: Restore original upvote count on error
+      setTips(prevTips => 
+        prevTips.map(tip => 
+          tip.id === tipId 
+            ? { ...tip, upvotes: originalUpvotes } 
+            : tip
+        )
+      )
+      
       setError(err.message)
       throw err
     }

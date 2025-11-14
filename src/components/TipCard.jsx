@@ -24,26 +24,27 @@ export default function TipCard({
     if (isUpvoting) return
     
     setIsUpvoting(true)
+    
+    // Immediate visual feedback with flying animation
+    const newThumb = {
+      id: Date.now() + Math.random(),
+      startX: Math.random() * 20 - 10, // Random horizontal offset
+    }
+    
+    setFlyingThumbs((prev) => [...prev, newThumb])
+    
+    // Remove the thumb after animation completes
+    setTimeout(() => {
+      setFlyingThumbs((prev) => prev.filter((thumb) => thumb.id !== newThumb.id))
+    }, 1000)
+    
     try {
       if (onUpvote) {
+        // The parent hook will handle optimistic update and server sync
         await onUpvote(tip.id)
-        // The parent component will update the tip data, so we don't need to manually update upvotes here
       }
-      
-      // Create a new flying thumb with a unique id for animation
-      const newThumb = {
-        id: Date.now() + Math.random(),
-        startX: Math.random() * 20 - 10, // Random horizontal offset
-      }
-      
-      setFlyingThumbs((prev) => [...prev, newThumb])
-      
-      // Remove the thumb after animation completes
-      setTimeout(() => {
-        setFlyingThumbs((prev) => prev.filter((thumb) => thumb.id !== newThumb.id))
-      }, 1000)
     } catch (error) {
-      // Error is handled by parent component
+      // Error is handled by parent component with toast
     } finally {
       setIsUpvoting(false)
     }
@@ -86,9 +87,10 @@ export default function TipCard({
 
   const authorInfo = getAuthorInfo()
 
-  // Update local upvotes state when tip prop changes
+  // Sync local upvotes state with tip prop changes (for optimistic updates)
   React.useEffect(() => {
-    setUpvotes(Number.isFinite(Number(tip?.upvotes)) ? Number(tip.upvotes) : 0)
+    const newUpvotes = Number.isFinite(Number(tip?.upvotes)) ? Number(tip.upvotes) : 0
+    setUpvotes(newUpvotes)
   }, [tip?.upvotes])
 
   return (
