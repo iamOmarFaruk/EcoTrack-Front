@@ -29,16 +29,16 @@ export default function ChallengeDetail() {
   const handleDeleteChallenge = async () => {
     // Create a professional confirmation toast
     toast((t) => (
-      <div className="flex flex-col gap-3 p-2">
+      <div className="flex flex-col gap-3 p-2 text-white">
         <div className="flex items-start gap-3">
-          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
-            <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center">
+            <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
           <div className="flex-1">
-            <h3 className="text-sm font-medium text-gray-900">Delete Challenge</h3>
-            <p className="text-sm text-gray-600 mt-1">
+            <h3 className="text-sm font-medium text-white">Delete Challenge</h3>
+            <p className="text-sm text-gray-100 mt-1">
               Are you sure you want to delete this challenge? This action cannot be undone.
             </p>
           </div>
