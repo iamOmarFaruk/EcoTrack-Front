@@ -2,7 +2,6 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Button from '../components/ui/Button.jsx'
-import toast from 'react-hot-toast'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useNavigate, Link } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
@@ -37,24 +36,20 @@ export default function Login() {
   const onSubmit = async (values) => {
     try {
       await login(values)
-      toast.success('Welcome back!')
       const redirectTo = sessionStorage.getItem('redirectTo') || '/'
       sessionStorage.removeItem('redirectTo')
       navigate(redirectTo, { replace: true })
     } catch (e) {
-      toast.error(e.message)
     }
   }
 
   const handleGoogleLogin = async () => {
     try {
       await loginWithGoogle()
-      toast.success('Welcome back!')
       const redirectTo = sessionStorage.getItem('redirectTo') || '/'
       sessionStorage.removeItem('redirectTo')
       navigate(redirectTo, { replace: true })
     } catch (e) {
-      toast.error(e.message)
     }
   }
 

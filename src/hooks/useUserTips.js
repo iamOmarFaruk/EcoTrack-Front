@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext.jsx'
 import { tipsApi } from '../services/api.js'
-import { apiConfig } from '../config/env.js'
 import toast from 'react-hot-toast'
 
 /**
@@ -148,7 +147,7 @@ export function useUserTips() {
       setTips(prevTips => [enhancedTip, ...prevTips])
       
       // Show success message
-      toast.success('Tip shared successfully! 🌿')
+      toast.success('Tip shared successfully!')
       
       return enhancedTip
     } catch (err) {
@@ -209,7 +208,7 @@ export function useUserTips() {
       )
       
       // Show success message
-      toast.success('Tip updated successfully! 📝')
+      toast.success('Tip updated successfully!')
       
       return enhancedTip
     } catch (err) {
@@ -263,11 +262,7 @@ export function useUserTips() {
       )
       
       // SYNC WITH SERVER: Send upvote to backend database
-      console.log(`🔄 Syncing upvote with server for tip ${tipId}...`)
-      console.log(`📡 Request URL: ${apiConfig.baseUrl}/tips/${tipId}/upvote`)
       const response = await tipsApi.upvote(tipId)
-      console.log('✅ Server upvote response:', response)
-      console.log('📝 Full response data:', JSON.stringify(response, null, 2))
       
       // Handle different API response structures
       let updatedTip = response.data
@@ -279,8 +274,6 @@ export function useUserTips() {
       
       // Extract the actual upvote count from server response
       const serverUpvotes = updatedTip?.upvotes ?? updatedTip?.upvoteCount ?? null
-      
-      console.log(`📊 Server upvote count: ${serverUpvotes}, Local count: ${originalUpvotes + 1}`)
       
       // Update with actual server data to ensure sync
       const enhancedTip = {
@@ -298,11 +291,8 @@ export function useUserTips() {
         prevTips.map(tip => tip.id === tipId ? enhancedTip : tip)
       )
       
-      console.log('✅ Upvote synced successfully with database')
       return enhancedTip
     } catch (err) {
-      console.error('❌ Failed to sync upvote with server:', err)
-      
       // ROLLBACK: Restore original upvote count on error
       setTips(prevTips => 
         prevTips.map(tip => 
@@ -312,7 +302,8 @@ export function useUserTips() {
         )
       )
       
-      setError(err.message)
+      setError('Failed to upvote tip. Please try again.')
+      toast.error('Failed to upvote tip. Please try again.')
       throw err
     }
   }

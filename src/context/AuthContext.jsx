@@ -1,4 +1,5 @@
 import { createContext, useContext, useMemo, useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
@@ -137,10 +138,12 @@ export function AuthProvider({ children }) {
     async function login({ email, password }) {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password)
+        toast.success('Welcome back!')
         return userCredential.user
       } catch (error) {
         const err = new Error(getFirebaseErrorMessage(error))
         err.code = error.code
+        toast.error(err.message)
         throw err
       }
     }
@@ -170,10 +173,12 @@ export function AuthProvider({ children }) {
           // We'll handle this gracefully
         }
         
+        toast.success('Account created successfully! Welcome to EcoTrack!')
         return userCredential.user
       } catch (error) {
         const err = new Error(getFirebaseErrorMessage(error))
         err.code = error.code
+        toast.error(err.message)
         throw err
       }
     }
@@ -197,10 +202,12 @@ export function AuthProvider({ children }) {
           // Don't throw the error - Firebase authentication was successful
         }
         
+        toast.success('Welcome back!')
         return result.user
       } catch (error) {
         const err = new Error(getFirebaseErrorMessage(error))
         err.code = error.code
+        toast.error(err.message)
         throw err
       }
     }
@@ -208,9 +215,11 @@ export function AuthProvider({ children }) {
     async function logout() {
       try {
         await signOut(auth)
+        toast.success('You have been logged out.')
       } catch (error) {
         const err = new Error(getFirebaseErrorMessage(error))
         err.code = error.code
+        toast.error(err.message)
         throw err
       }
     }
@@ -218,9 +227,11 @@ export function AuthProvider({ children }) {
     async function resetPassword(email) {
       try {
         await sendPasswordResetEmail(auth, email)
+        toast.success('Password reset email sent! Check your inbox.')
       } catch (error) {
         const err = new Error(getFirebaseErrorMessage(error))
         err.code = error.code
+        toast.error(err.message)
         throw err
       }
     }

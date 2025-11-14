@@ -100,7 +100,7 @@ export default function AddChallenge() {
       // Send to backend API
       const newChallenge = await challengeApi.create(challengeData)
       
-      toast.success('🎉 Challenge created successfully!')
+      toast.success('Challenge created successfully!')
       reset()
       setImagePreview('')
       

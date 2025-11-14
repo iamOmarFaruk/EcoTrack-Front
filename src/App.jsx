@@ -99,7 +99,36 @@ export default function App() {
             />
           </Route>
         </Routes>
-        <Toaster position="top-right" />
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            duration: 1000,
+            style: {
+              background: '#022c22',
+              color: '#ecfdf5',
+              borderRadius: '9999px',
+              padding: '12px 20px',
+              boxShadow:
+                '0 20px 25px -5px rgba(6, 78, 59, 0.4), 0 10px 10px -5px rgba(6, 78, 59, 0.3)',
+            },
+            // Ensure only the built-in left icon appears; no extra right icons
+            success: {
+              iconTheme: {
+                primary: '#22c55e',
+                secondary: '#022c22',
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: '#f97373',
+                secondary: '#022c22',
+              },
+            },
+          }}
+          containerStyle={{
+            top: 16,
+          }}
+        />
         <PrivacyToast />
       </BrowserRouter>
     </AuthProvider>

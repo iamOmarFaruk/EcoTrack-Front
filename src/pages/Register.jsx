@@ -2,7 +2,6 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Button from '../components/ui/Button.jsx'
-import toast from 'react-hot-toast'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
@@ -44,24 +43,20 @@ export default function Register() {
   const onSubmit = async (values) => {
     try {
       await registerUser(values)
-      toast.success('Account created successfully! Welcome to EcoTrack!')
       const redirectTo = sessionStorage.getItem('redirectTo') || '/'
       sessionStorage.removeItem('redirectTo')
       navigate(redirectTo, { replace: true })
     } catch (e) {
-      toast.error(e.message)
     }
   }
 
   const handleGoogleSignup = async () => {
     try {
       await loginWithGoogle()
-      toast.success('Account created successfully! Welcome to EcoTrack!')
       const redirectTo = sessionStorage.getItem('redirectTo') || '/'
       sessionStorage.removeItem('redirectTo')
       navigate(redirectTo, { replace: true })
     } catch (e) {
-      toast.error(e.message)
     }
   }
 

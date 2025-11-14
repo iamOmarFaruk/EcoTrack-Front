@@ -175,7 +175,7 @@ export default function EditChallenge() {
       try {
         const result = await challengeApi.update(id, data)
 
-        toast.success('🎉 Challenge updated successfully!')
+        toast.success('Challenge updated successfully!')
         navigate(`/challenges/${id}`)
       } catch (updateError) {
         // Check if the update actually worked despite the error
@@ -200,7 +200,7 @@ export default function EditChallenge() {
           // Check if the title matches what we just tried to update
           if (challengeData && challengeData.title === data.title) {
 
-            toast.success('🎉 Challenge updated successfully!')
+            toast.success('Challenge updated successfully!')
             navigate(`/challenges/${id}`)
             return // Exit the function successfully
           }
@@ -233,7 +233,7 @@ export default function EditChallenge() {
       } else {
         // If no error status or it's a successful status, treat as success
 
-        toast.success('🎉 Challenge updated successfully!')
+        toast.success('Challenge updated successfully!')
         navigate(`/challenges/${id}`)
       }
     }

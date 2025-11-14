@@ -60,13 +60,13 @@ export default function ChallengeDetail() {
                 await challengeApi.delete(id)
                 
                 toast.dismiss(loadingToast)
-                toast.success('🎉 Challenge deleted successfully!')
+                toast.success('Challenge deleted successfully!')
                 
                 // Navigate back to challenges page
                 window.location.href = '/challenges'
               } catch (error) {
 
-                toast.error('❌ Failed to delete challenge. Please try again.')
+                toast.error('Failed to delete challenge. Please try again.')
               }
             }}
             className="px-3 py-1.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
