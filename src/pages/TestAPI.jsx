@@ -18,19 +18,16 @@ export default function TestAPI() {
         
         // Fetch data from your backend
         const response = await challengeApi.getAll()
-        console.log('API Response:', response)
         
         // Check if we got valid data
         if (response && (Array.isArray(response) || Array.isArray(response.challenges))) {
           setData(response)
         } else {
-          console.warn('API returned unexpected format:', response)
           setData(mockChallenges)
           setUsingMockData(true)
           setError('API returned unexpected format, showing mock data')
         }
       } catch (err) {
-        console.error('API Error:', err)
         setError(`${err.message} (Status: ${err.status || 'Unknown'})`)
         // Use mock data as fallback
         setData(mockChallenges)

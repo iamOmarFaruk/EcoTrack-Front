@@ -14,6 +14,15 @@ import { authApi, challengeApi } from '../services/api.js'
 
 const AuthContext = createContext(null)
 
+// Helper function to hash email for Gravatar
+async function hashEmail(email) {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(email.toLowerCase().trim())
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -24,11 +33,25 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
+        // Ensure we capture Google photoURL properly, with fallback to generic Google avatar
+        let avatarUrl = firebaseUser.photoURL || ''
+        
+        // If no photoURL but it's a Google account, try to construct a basic avatar
+        if (!avatarUrl && firebaseUser.providerData.some(provider => provider.providerId === 'google.com')) {
+          // Use Google's default avatar service with the user's email
+          const email = firebaseUser.email
+          if (email) {
+            // Use Gravatar as fallback which often has Google profile pictures
+            const emailHash = await hashEmail(email)
+            avatarUrl = `https://www.gravatar.com/avatar/${emailHash}?d=identicon&s=80`
+          }
+        }
+        
         const userInfo = {
           uid: firebaseUser.uid,
           name: firebaseUser.displayName || 'User',
           email: firebaseUser.email,
-          avatarUrl: firebaseUser.photoURL || '',
+          avatarUrl: avatarUrl,
         }
         setUser(userInfo)
         
@@ -37,7 +60,6 @@ export function AuthProvider({ children }) {
           const backendProfile = await authApi.getProfile()
           setUserProfile(backendProfile)
         } catch (error) {
-          console.warn('Failed to get backend profile:', error)
           
           // If user doesn't exist in MongoDB, try to create them
           if (error.status === 404 || error.data?.isNetworkError) {
@@ -46,18 +68,15 @@ export function AuthProvider({ children }) {
                 firebaseId: firebaseUser.uid,
                 name: firebaseUser.displayName || 'User',
                 email: firebaseUser.email,
-                imageUrl: firebaseUser.photoURL || null
+                imageUrl: avatarUrl || null
               }
               
-              console.log('Attempting retroactive user creation:', userData)
               await authApi.register(userData)
-              console.log('User retroactively saved to MongoDB')
               
               // Try to get the profile again
               const newBackendProfile = await authApi.getProfile()
               setUserProfile(newBackendProfile)
             } catch (retroError) {
-              console.warn('Failed to retroactively save user to MongoDB:', retroError)
               // Fallback to Firebase user info if all else fails
               setUserProfile({
                 ...userInfo,
@@ -145,12 +164,8 @@ export function AuthProvider({ children }) {
             idToken: idToken
           }
           
-          console.log('Attempting to save user data to MongoDB')
           await authApi.register(requestData)
-          console.log('User data saved to MongoDB successfully')
         } catch (mongoError) {
-          console.error('Failed to save user data to MongoDB:', mongoError)
-          console.error('Error details:', mongoError.message, mongoError.status)
           // Don't throw the error - Firebase registration was successful
           // We'll handle this gracefully
         }
@@ -177,12 +192,8 @@ export function AuthProvider({ children }) {
             idToken: idToken
           }
           
-          console.log('Attempting to save Google user data to MongoDB')
           await authApi.register(requestData)
-          console.log('Google user data saved to MongoDB successfully')
         } catch (mongoError) {
-          console.error('Failed to save Google user data to MongoDB:', mongoError)
-          console.error('Error details:', mongoError.message, mongoError.status)
           // Don't throw the error - Firebase authentication was successful
         }
         
@@ -245,7 +256,6 @@ export function AuthProvider({ children }) {
           return Array.from(set)
         })
       } catch (error) {
-        console.error('Failed to join challenge:', error)
         throw error
       }
     }
@@ -257,7 +267,6 @@ export function AuthProvider({ children }) {
           return (prev ?? []).filter(id => id !== challengeId)
         })
       } catch (error) {
-        console.error('Failed to leave challenge:', error)
         throw error
       }
     }
@@ -289,7 +298,6 @@ export function AuthProvider({ children }) {
         case 'auth/invalid-credential':
           return 'Invalid credentials. Please try again.'
         default:
-          console.warn('Firebase Auth Error:', error)
           return error.message || 'An error occurred during authentication.'
       }
     }

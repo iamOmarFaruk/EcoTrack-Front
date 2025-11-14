@@ -68,13 +68,7 @@ export default function EditChallenge() {
         setLoading(true)
         setError(null)
         
-        console.log('=== FETCHING CHALLENGE FOR EDIT ===')
-        console.log('Challenge ID:', id)
-        console.log('Current user:', user)
-
         const challengeResponse = await challengeApi.getById(id)
-        
-        console.log('Raw challenge response:', challengeResponse)
         
         let challengeData = null
         if (challengeResponse && challengeResponse.data && challengeResponse.data.challenge) {
@@ -85,7 +79,7 @@ export default function EditChallenge() {
           challengeData = challengeResponse
         }
 
-        console.log('Processed challenge data:', challengeData)
+
 
         if (!challengeData) {
           throw new Error('Challenge not found')
@@ -98,13 +92,7 @@ export default function EditChallenge() {
           challengeData.createdById === user.uid
         )
 
-        console.log('Ownership check:', {
-          isOwner,
-          challengeCreatedBy: challengeData.createdBy,
-          challengeCreatedById: challengeData.createdById,
-          userEmail: user?.email,
-          userUid: user?.uid
-        })
+
 
         if (!isOwner) {
           toast.error('You can only edit challenges you created')
@@ -136,8 +124,6 @@ export default function EditChallenge() {
           endDate: formatDate(challengeData.endDate)
         }
 
-        console.log('Form data to be populated:', formData)
-
         // Set form values
         Object.keys(formData).forEach(key => {
           setValue(key, formData[key])
@@ -148,12 +134,8 @@ export default function EditChallenge() {
           setImagePreview(formData.imageUrl)
         }
 
-        console.log('✅ Challenge data loaded and form populated successfully')
-
       } catch (error) {
-        console.error('=== ERROR FETCHING CHALLENGE FOR EDIT ===', error)
-        console.error('Error status:', error.status)
-        console.error('Error data:', error.data)
+
         if (error.status === 404) {
           setError({ type: 'not-found', message: 'Challenge not found.' })
         } else if (error.status === 0) {
@@ -178,21 +160,10 @@ export default function EditChallenge() {
       const currentUser = firebaseAuth.currentUser
       const token = currentUser ? await currentUser.getIdToken() : null
       
-      console.log('=== CHALLENGE UPDATE DEBUG ===')
-      console.log('Challenge ID:', id)
-      console.log('Update data:', data)
-      console.log('Current user:', currentUser?.email)
-      console.log('Has auth token:', !!token)
-      console.log('API Base URL:', import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api')
-      console.log('Full URL will be:', `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api'}/challenges/${id}`)
-      
       // First, verify the challenge still exists
-      console.log('🔍 Verifying challenge exists before update...')
       try {
         const existingChallenge = await challengeApi.getById(id)
-        console.log('✅ Challenge found:', existingChallenge)
       } catch (verifyError) {
-        console.error('❌ Challenge verification failed:', verifyError)
         if (verifyError.status === 404) {
           toast.error('Challenge not found. It may have been deleted.')
           navigate('/challenges')
@@ -203,12 +174,12 @@ export default function EditChallenge() {
       // Update the challenge
       try {
         const result = await challengeApi.update(id, data)
-        console.log('✅ Challenge updated successfully:', result)
+
         toast.success('🎉 Challenge updated successfully!')
         navigate(`/challenges/${id}`)
       } catch (updateError) {
         // Check if the update actually worked despite the error
-        console.log('Update failed, but checking if data was actually saved...')
+
         
         try {
           // Wait a moment for the backend to process
@@ -228,13 +199,13 @@ export default function EditChallenge() {
           
           // Check if the title matches what we just tried to update
           if (challengeData && challengeData.title === data.title) {
-            console.log('✅ Data was actually saved successfully despite 404 error')
+
             toast.success('🎉 Challenge updated successfully!')
             navigate(`/challenges/${id}`)
             return // Exit the function successfully
           }
         } catch (verifyError) {
-          console.log('Could not verify if update was successful:', verifyError)
+
         }
         
         // If we get here, the update actually failed
@@ -242,10 +213,7 @@ export default function EditChallenge() {
       }
       
     } catch (error) {
-      console.error('=== CHALLENGE UPDATE ERROR ===', error)
-      console.error('Error status:', error.status)
-      console.error('Error data:', error.data)
-      console.error('Full error object:', error)
+
       
       // Only show error if it's actually an error
       if (error.status && error.status >= 400) {
@@ -264,7 +232,7 @@ export default function EditChallenge() {
         toast.error(errorMessage)
       } else {
         // If no error status or it's a successful status, treat as success
-        console.log('🤔 Caught in error block but might be successful')
+
         toast.success('🎉 Challenge updated successfully!')
         navigate(`/challenges/${id}`)
       }

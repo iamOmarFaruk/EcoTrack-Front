@@ -43,34 +43,26 @@ export default function TipCard({
         setFlyingThumbs((prev) => prev.filter((thumb) => thumb.id !== newThumb.id))
       }, 1000)
     } catch (error) {
-      console.error('Error upvoting tip:', error)
+      // Error is handled by parent component
     } finally {
       setIsUpvoting(false)
     }
   }
 
   const handleEdit = () => {
-    if (onEdit && isOwnTip) {
+    if (onEdit && canModify) {
       onEdit(tip)
     }
   }
 
   const handleDelete = () => {
-    if (onDelete && isOwnTip) {
+    if (onDelete && canModify) {
       onDelete(tip.id)
     }
   }
 
-  const isOwnTip = user && (
-    tip.authorId === user.uid || 
-    tip.author?.uid === user.uid || 
-    tip.author?.id === user.uid ||
-    tip.author?.firebaseId === user.uid ||
-    tip.firebaseId === user.uid ||
-    // Also check by author name as a fallback
-    (tip.authorName && user.name && tip.authorName.toLowerCase() === user.name.toLowerCase()) ||
-    (tip.authorName && user.displayName && tip.authorName.toLowerCase() === user.displayName.toLowerCase())
-  )
+  // Use the passed canModify prop instead of internal logic for consistency
+  const isOwnTip = canModify
 
   // Get display name and avatar with proper fallbacks
   const getAuthorInfo = () => {

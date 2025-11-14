@@ -92,26 +92,13 @@ export default function AddChallenge() {
         creatorName: userData.name || userData.email,
       }
       
-      console.log('=== CHALLENGE CREATION DEBUG ===')
-      console.log('Firebase current user:', currentUser)
-      console.log('Context user data:', user)
-      console.log('Final user data:', userData)
-      console.log('Challenge data to be sent:', challengeData)
-      console.log('Auth token exists:', !!token)
-      console.log('Form data received:', data)
-      
       // Validate that we have required user data
       if (!userData.uid || !userData.email) {
         throw new Error('User authentication data is missing. Please try logging out and logging in again.')
       }
       
-      console.log('🚀 SUBMITTING CHALLENGE DATA TO BACKEND:')
-      console.log(JSON.stringify(challengeData, null, 2))
-      
       // Send to backend API
       const newChallenge = await challengeApi.create(challengeData)
-      
-      console.log('✅ Backend response:', newChallenge)
       
       toast.success('🎉 Challenge created successfully!')
       reset()
@@ -121,7 +108,6 @@ export default function AddChallenge() {
       navigate('/challenges')
       
     } catch (error) {
-      console.error('=== CHALLENGE CREATION ERROR ===', error)
       toast.error(error.message || 'Failed to create challenge. Please try again.')
     }
   }

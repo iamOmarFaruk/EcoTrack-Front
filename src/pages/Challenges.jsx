@@ -35,7 +35,7 @@ export default function Challenges() {
         } else if (response && response.data && Array.isArray(response.data.challenges)) {
           challengesData = response.data.challenges
         } else {
-          console.warn('API returned unexpected format:', response)
+
           throw new Error('Invalid response format from server')
         }
 
@@ -71,7 +71,7 @@ export default function Challenges() {
         
         setChallenges(transformedChallenges)
       } catch (error) {
-        console.error('Error fetching challenges:', error)
+
         
         // Set specific error messages based on error type
         if (error.status === 0) {

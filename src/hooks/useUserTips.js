@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext.jsx'
 import { tipsApi } from '../services/api.js'
+import toast from 'react-hot-toast'
 
 /**
  * Custom hook for managing tips using the backend API
@@ -17,8 +18,6 @@ export function useUserTips() {
     setError(null)
     try {
       const response = await tipsApi.getAll(filters)
-      console.log('API response for fetching tips:', response)
-      
       // Handle different API response structures
       let tipsData = response.data
       if (response.data?.tips) {
@@ -40,17 +39,15 @@ export function useUserTips() {
         createdAt: tip.createdAt || new Date().toISOString(),
         authorName: tip.authorName || tip.author?.name || 'Anonymous',
         authorImage: tip.authorImage || tip.authorAvatar || tip.author?.avatarUrl || tip.author?.imageUrl,
-        authorId: tip.authorId || tip.author?.uid || tip.author?.id,
-        firebaseId: tip.firebaseId || tip.author?.firebaseId
+        // Handle case where tip.author is a string (Firebase UID) or an object
+        authorId: tip.authorId || (typeof tip.author === 'string' ? tip.author : tip.author?.uid || tip.author?.id),
+        firebaseId: tip.firebaseId || (typeof tip.author === 'string' ? tip.author : tip.author?.firebaseId)
       }))
-      
-      console.log('Enhanced tips for local state:', enhancedTips)
       
       setTips(enhancedTips)
       return enhancedTips
     } catch (err) {
       setError(err.message)
-      console.error('Error fetching tips:', err)
       return []
     } finally {
       setLoading(false)
@@ -70,9 +67,6 @@ export function useUserTips() {
         tipData = response.data.data
       }
       
-      console.log('API response for single tip:', response)
-      console.log('Parsed tip data:', tipData)
-      
       // Enhance tip data
       const enhancedTip = {
         ...tipData,
@@ -83,14 +77,14 @@ export function useUserTips() {
         createdAt: tipData.createdAt || new Date().toISOString(),
         authorName: tipData.authorName || tipData.author?.name || 'Anonymous',
         authorImage: tipData.authorImage || tipData.authorAvatar || tipData.author?.avatarUrl || tipData.author?.imageUrl,
-        authorId: tipData.authorId || tipData.author?.uid || tipData.author?.id,
-        firebaseId: tipData.firebaseId || tipData.author?.firebaseId
+        // Handle case where tipData.author is a string (Firebase UID) or an object
+        authorId: tipData.authorId || (typeof tipData.author === 'string' ? tipData.author : tipData.author?.uid || tipData.author?.id),
+        firebaseId: tipData.firebaseId || (typeof tipData.author === 'string' ? tipData.author : tipData.author?.firebaseId)
       }
       
       return enhancedTip
     } catch (err) {
       setError(err.message)
-      console.error('Error fetching tip:', err)
       throw err
     }
   }
@@ -108,7 +102,10 @@ export function useUserTips() {
       const tipWithAuthor = {
         ...tipData,
         authorName: user.name || user.displayName || 'Anonymous',
-        authorImage: user.avatarUrl || user.photoURL || null
+        authorImage: user.avatarUrl || user.photoURL || null,
+        // Also include additional image fields for backend compatibility
+        authorAvatar: user.avatarUrl || user.photoURL || null,
+        imageUrl: user.avatarUrl || user.photoURL || null
       }
       
       const response = await tipsApi.create(tipWithAuthor)
@@ -120,9 +117,6 @@ export function useUserTips() {
       } else if (response.data?.data) {
         newTip = response.data.data
       }
-      
-      console.log('API response for new tip:', response)
-      console.log('Parsed new tip:', newTip)
       
       // Ensure the new tip has all required fields
       const enhancedTip = {
@@ -136,21 +130,22 @@ export function useUserTips() {
         content: newTip.content || tipData.content || '',
         authorId: newTip.authorId || user.uid,
         authorName: newTip.authorName || user.name || user.displayName || 'Anonymous',
-        authorImage: newTip.authorImage || user.avatarUrl || user.photoURL || null,
+        authorImage: newTip.authorImage || newTip.authorAvatar || newTip.imageUrl || user.avatarUrl || user.photoURL || null,
         // Add firebaseId to ensure our isOwnTip logic works
         firebaseId: newTip.firebaseId || user.uid,
         upvotes: Number.isFinite(Number(newTip.upvotes)) ? Number(newTip.upvotes) : 0,
         createdAt: newTip.createdAt || new Date().toISOString()
       }
       
-      console.log('Enhanced tip for local state:', enhancedTip)
-      
       // Add to local state
       setTips(prevTips => [enhancedTip, ...prevTips])
+      
+      // Show success message
+      toast.success('Tip shared successfully! 🌿')
+      
       return enhancedTip
     } catch (err) {
       setError(err.message)
-      console.error('Error adding tip:', err)
       throw err
     }
   }
@@ -181,9 +176,6 @@ export function useUserTips() {
         updatedTip = response.data.data
       }
 
-      console.log('API response for updated tip:', response)
-      console.log('Parsed updated tip:', updatedTip)
-
       // Find the original tip in local state to preserve data
       const originalTip = tips.find(tip => tip.id === tipId)
       
@@ -204,16 +196,17 @@ export function useUserTips() {
         upvotes: Number.isFinite(Number(updatedTip.upvotes)) ? Number(updatedTip.upvotes) : (originalTip?.upvotes || 0)
       }
 
-      console.log('Enhanced updated tip for local state:', enhancedTip)
-
       // Update local state
       setTips(prevTips => 
         prevTips.map(tip => tip.id === tipId ? enhancedTip : tip)
       )
+      
+      // Show success message
+      toast.success('Tip updated successfully! 📝')
+      
       return enhancedTip
     } catch (err) {
       setError(err.message)
-      console.error('Error updating tip:', err)
       throw err
     }
   }
@@ -230,9 +223,11 @@ export function useUserTips() {
       
       // Remove from local state
       setTips(prevTips => prevTips.filter(tip => tip.id !== tipId))
+      
+      // Show success message
+      toast.success('Tip deleted successfully')
     } catch (err) {
       setError(err.message)
-      console.error('Error deleting tip:', err)
       throw err
     }
   }
@@ -250,9 +245,6 @@ export function useUserTips() {
       } else if (response.data?.data) {
         updatedTip = response.data.data
       }
-
-      console.log('API response for upvoted tip:', response)
-      console.log('Parsed upvoted tip:', updatedTip)
 
       // Find the original tip to preserve its data
       const originalTip = tips.find(tip => tip.id === tipId)
@@ -272,7 +264,6 @@ export function useUserTips() {
       return enhancedTip
     } catch (err) {
       setError(err.message)
-      console.error('Error upvoting tip:', err)
       throw err
     }
   }
@@ -281,17 +272,16 @@ export function useUserTips() {
   const canModifyTip = (tip) => {
     if (!user) return false
     
-    // Multiple ways the backend might identify the author
+    // Only use Firebase UID for ownership verification - never use display names for security
     return (
       tip.authorId === user.uid || 
       tip.author?.uid === user.uid || 
       tip.author?.id === user.uid ||
       tip.author?.firebaseId === user.uid ||
+      // Sometimes the backend stores the Firebase UID directly in the author field as a string
+      tip.author === user.uid ||
       // Sometimes the backend stores the Firebase UID directly
-      tip.firebaseId === user.uid ||
-      // Also check by author name as a fallback
-      (tip.authorName && user.name && tip.authorName.toLowerCase() === user.name.toLowerCase()) ||
-      (tip.authorName && user.displayName && tip.authorName.toLowerCase() === user.displayName.toLowerCase())
+      tip.firebaseId === user.uid
     )
   }
 

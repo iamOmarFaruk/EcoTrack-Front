@@ -65,7 +65,7 @@ export default function ChallengeDetail() {
                 // Navigate back to challenges page
                 window.location.href = '/challenges'
               } catch (error) {
-                console.error('Error deleting challenge:', error)
+
                 toast.error('❌ Failed to delete challenge. Please try again.')
               }
             }}
@@ -165,12 +165,12 @@ export default function ChallengeDetail() {
 
           setRelatedChallenges(related)
         } catch (relatedError) {
-          console.warn('Failed to fetch related challenges:', relatedError)
+
           setRelatedChallenges([])
         }
 
       } catch (error) {
-        console.error('Error fetching challenge:', error)
+
         if (error.status === 404) {
           setError({ type: 'not-found', message: 'Challenge not found.' })
         } else if (error.status === 0) {

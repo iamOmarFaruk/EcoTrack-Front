@@ -80,8 +80,7 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
       
       await onSubmit(tipData)
       onClose()
-    } catch (error) {
-      console.error('Error submitting tip:', error)
+    } catch {
       setErrors({ submit: 'Failed to save tip. Please try again.' })
     } finally {
       setIsSubmitting(false)
