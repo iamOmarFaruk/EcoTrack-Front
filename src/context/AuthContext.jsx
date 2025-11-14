@@ -55,10 +55,12 @@ export function AuthProvider({ children }) {
         }
         setUser(userInfo)
         
-        // Sync with backend
+        // Sync with backend - use /auth/me which auto-creates profile
         try {
-          const backendProfile = await authApi.getProfile()
-          setUserProfile(backendProfile)
+          const response = await authApi.getMe()
+          // response.data contains complete user data
+          const userData = response?.data || response
+          setUserProfile(userData)
           
           // Fetch user's joined challenges
           try {
@@ -80,68 +82,31 @@ export function AuthProvider({ children }) {
             setUserChallenges([])
           }
         } catch (error) {
-          
-          // If user doesn't exist in MongoDB, try to create them
-          if (error.status === 404 || error.data?.isNetworkError) {
-            try {
-              const userData = {
-                firebaseId: firebaseUser.uid,
-                name: firebaseUser.displayName || 'User',
-                email: firebaseUser.email,
-                imageUrl: avatarUrl || null
+          console.error('Failed to fetch user data:', error)
+          // Fallback to Firebase user info if backend fails
+          setUserProfile({
+            ...userInfo,
+            displayName: userInfo.name,
+            stats: {
+              challengesCompleted: 0,
+              challengesJoined: 0,
+              eventsAttended: 0,
+              tipsShared: 0,
+              streak: 0,
+              totalImpactPoints: 0
+            },
+            preferences: {
+              privacy: 'public',
+              notifications: {
+                email: true,
+                push: true,
+                challenges: true,
+                tips: true,
+                events: true
               }
-              
-              await authApi.register(userData)
-              
-              // Try to get the profile again
-              const newBackendProfile = await authApi.getProfile()
-              setUserProfile(newBackendProfile)
-            } catch (retroError) {
-              // Fallback to Firebase user info if all else fails
-              setUserProfile({
-                ...userInfo,
-                id: userInfo.uid,
-                joinedChallenges: [],
-                createdChallenges: [],
-                completedChallenges: [],
-                totalPoints: 0,
-                level: 1,
-                joinedAt: new Date().toISOString(),
-                preferences: {
-                  notifications: true,
-                  privacy: 'public'
-                },
-                stats: {
-                  challengesCompleted: 0,
-                  challengesJoined: 0,
-                  challengesCreated: 0,
-                  totalPoints: 0
-                }
-              })
-            }
-          } else {
-            // Other errors - use fallback profile
-            setUserProfile({
-              ...userInfo,
-              id: userInfo.uid,
-              joinedChallenges: [],
-              createdChallenges: [],
-              completedChallenges: [],
-              totalPoints: 0,
-              level: 1,
-              joinedAt: new Date().toISOString(),
-              preferences: {
-                notifications: true,
-                privacy: 'public'
-              },
-              stats: {
-                challengesCompleted: 0,
-                challengesJoined: 0,
-                challengesCreated: 0,
-                totalPoints: 0
-              }
-            })
-          }
+            },
+            joinedAt: new Date().toISOString()
+          })
         }
       } else {
         setUser(null)
@@ -177,19 +142,19 @@ export function AuthProvider({ children }) {
           photoURL: photoUrl || null,
         })
         
-        // Save user data to MongoDB database
+        // Backend will auto-create profile when /auth/me is called
+        // But we can optionally register with additional data
         try {
-          // Get the Firebase ID token
-          const idToken = await userCredential.user.getIdToken()
-          
           const requestData = {
-            idToken: idToken
+            displayName: name,
+            photoURL: photoUrl || null
           }
           
           await authApi.register(requestData)
         } catch (mongoError) {
           // Don't throw the error - Firebase registration was successful
-          // We'll handle this gracefully
+          // Profile will be auto-created on first /auth/me call
+          console.log('Backend registration skipped, will auto-create on first access')
         }
         
         toast.success('Account created successfully! Welcome to EcoTrack!')
@@ -206,21 +171,8 @@ export function AuthProvider({ children }) {
       try {
         const result = await signInWithPopup(auth, googleProvider)
         
-        // Always try to save Google user to MongoDB
-        // The backend will handle duplicate checks and extract user info from token
-        try {
-          // Get the Firebase ID token
-          const idToken = await result.user.getIdToken()
-          
-          const requestData = {
-            idToken: idToken
-          }
-          
-          await authApi.register(requestData)
-        } catch (mongoError) {
-          // Don't throw the error - Firebase authentication was successful
-        }
-        
+        // Backend will auto-create profile when /auth/me is called
+        // No need to explicitly register - the /auth/me endpoint handles this
         toast.success('Welcome back!')
         return result.user
       } catch (error) {
@@ -290,8 +242,9 @@ export function AuthProvider({ children }) {
         
         // Optionally refresh user profile to get updated stats
         try {
-          const updatedProfile = await authApi.getProfile()
-          setUserProfile(updatedProfile)
+          const meResponse = await authApi.getMe()
+          const userData = meResponse?.data || meResponse
+          setUserProfile(userData)
         } catch (profileError) {
           // Profile update is optional, don't throw error
         }
@@ -313,8 +266,9 @@ export function AuthProvider({ children }) {
         
         // Optionally refresh user profile to get updated stats
         try {
-          const updatedProfile = await authApi.getProfile()
-          setUserProfile(updatedProfile)
+          const meResponse = await authApi.getMe()
+          const userData = meResponse?.data || meResponse
+          setUserProfile(userData)
         } catch (profileError) {
           // Profile update is optional, don't throw error
         }

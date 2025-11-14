@@ -3,20 +3,21 @@ import httpClient, { ApiError } from './httpClient.js'
 
 // Authentication API calls
 export const authApi = {
-  // Register a new user
+  // Register a new user (Firebase user auto-creates in backend)
   register: (userData) => httpClient.post('/auth/register', userData),
 
-  // Login user
-  login: (credentials) => httpClient.post('/auth/login', credentials),
+  // Get complete user data (profile, stats, preferences, badges, rank)
+  // This is the RECOMMENDED endpoint - auto-creates profile if doesn't exist
+  getMe: () => httpClient.get('/auth/me'),
 
-  // Logout user
-  logout: () => httpClient.post('/auth/logout'),
-
-  // Get current user profile
+  // Get current user profile (database only, may return 404)
   getProfile: () => httpClient.get('/auth/profile'),
 
-  // Update user profile
-  updateProfile: (profileData) => httpClient.patch('/auth/profile', profileData)
+  // Verify Firebase token
+  verifyToken: (idToken) => httpClient.post('/auth/verify-token', { idToken }),
+
+  // Get Firebase user info
+  getUser: () => httpClient.get('/auth/user')
 }
 
 // Challenge API calls
@@ -60,17 +61,26 @@ export const challengeApi = {
 
 // User API calls
 export const userApi = {
-  // Get user by ID
+  // Get current user profile (auto-creates if doesn't exist)
+  getProfile: () => httpClient.get('/users/profile'),
+
+  // Update current user profile
+  updateProfile: (profileData) => httpClient.patch('/users/profile', profileData),
+
+  // Get public user profile by Firebase UID or MongoDB ID
   getById: (id) => httpClient.get(`/users/${id}`),
 
-  // Get user's activity summary
-  getActivities: () => httpClient.get('/user/activities'),
+  // Get user statistics
+  getStats: (id) => httpClient.get(`/users/${id}/stats`),
 
-  // Get user's stats
-  getStats: () => httpClient.get('/user/stats'),
+  // Get user's challenges
+  getChallenges: (id, status) => httpClient.get(`/users/${id}/challenges`, { params: { status } }),
 
-  // Update user preferences/settings
-  updateSettings: (settings) => httpClient.patch('/user/settings', settings)
+  // Get current user's joined challenges (my activities)
+  getMyActivities: (params = {}) => httpClient.get('/users/my-activities', { params }),
+
+  // Get public user's activities
+  getActivities: (id, params = {}) => httpClient.get(`/users/${id}/activities`, { params })
 }
 
 // Tips API calls
