@@ -17,12 +17,12 @@ const schema = z.object({
     errorMap: () => ({ message: 'Please select a category' })
   }),
   description: z.string().min(20, 'Description must be at least 20 characters').max(500, 'Description must be less than 500 characters'),
-  duration: z.string().min(1, 'Duration is required'),
   target: z.string().min(1, 'Target is required').max(100, 'Target must be less than 100 characters'),
   impactMetric: z.string().min(1, 'Impact metric is required').max(50, 'Impact metric must be less than 50 characters'),
   imageUrl: z.string().url('Please enter a valid image URL'),
   startDate: z.string().min(1, 'Start date is required'),
   endDate: z.string().min(1, 'End date is required'),
+  duration: z.string().min(1, 'Duration is required'),
 }).refine((data) => {
   const startDate = new Date(data.startDate)
   const endDate = new Date(data.endDate)
@@ -43,10 +43,13 @@ export default function AddChallenge() {
     resolver: zodResolver(schema),
     defaultValues: {
       category: 'Waste Reduction', // Set default category
+      duration: '',
     }
   })
 
   const watchedImageUrl = watch('imageUrl')
+  const watchedStartDate = watch('startDate')
+  const watchedEndDate = watch('endDate')
 
   // Update image preview when URL changes
   useEffect(() => {
@@ -60,6 +63,28 @@ export default function AddChallenge() {
       }
     }
   }, [watchedImageUrl, imagePreview])
+
+  // Auto-calculate duration based on start and end dates
+  useEffect(() => {
+    if (!watchedStartDate || !watchedEndDate) return
+
+    const start = new Date(watchedStartDate)
+    const end = new Date(watchedEndDate)
+    if (isNaN(start) || isNaN(end) || end <= start) return
+
+    const diffMs = end.getTime() - start.getTime()
+    const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24)) + 1
+
+    let durationLabel
+    if (diffDays % 7 === 0) {
+      const weeks = diffDays / 7
+      durationLabel = weeks === 1 ? '1 week' : `${weeks} weeks`
+    } else {
+      durationLabel = diffDays === 1 ? '1 day' : `${diffDays} days`
+    }
+
+    setValue('duration', durationLabel, { shouldValidate: true })
+  }, [watchedStartDate, watchedEndDate, setValue])
 
   const onSubmit = async (data) => {
     try {
@@ -138,11 +163,13 @@ export default function AddChallenge() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* Hidden duration field so it's included in form data */}
+        <input type="hidden" {...register('duration')} />
         {/* Basic Information */}
         <div className="bg-white p-6 rounded-lg border border-gray-200">
           <h2 className="text-xl font-semibold mb-4 text-gray-900">Basic Information</h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="sm:col-span-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-10">
+            <div className="sm:col-span-7">
               <label className="mb-2 block text-sm font-medium text-gray-700">Challenge Title *</label>
               <input 
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" 
@@ -152,27 +179,27 @@ export default function AddChallenge() {
               {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>}
             </div>
             
-            <div>
+            <div className="sm:col-span-3">
               <label className="mb-2 block text-sm font-medium text-gray-700">Category *</label>
-              <select className="w-full rounded-lg border border-gray-300 px-4 py-3 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" {...register('category')}>
+              <select
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 appearance-none"
+                style={{
+                  backgroundImage:
+                    "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e\")",
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 0.75rem center',
+                  backgroundSize: '1rem 1rem',
+                }}
+                {...register('category')}
+              >
                 {['Waste Reduction', 'Energy Conservation', 'Food', 'Water', 'Community'].map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
               {errors.category && <p className="mt-1 text-sm text-red-600">{errors.category.message}</p>}
             </div>
-            
-            <div>
-              <label className="mb-2 block text-sm font-medium text-gray-700">Duration *</label>
-              <input 
-                className="w-full rounded-lg border border-gray-300 px-4 py-3 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" 
-                placeholder="e.g., 7 days, 2 weeks, 1 month" 
-                {...register('duration')} 
-              />
-              {errors.duration && <p className="mt-1 text-sm text-red-600">{errors.duration.message}</p>}
-            </div>
 
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-10">
               <label className="mb-2 block text-sm font-medium text-gray-700">Description *</label>
               <textarea 
                 rows="4" 
@@ -238,6 +265,9 @@ export default function AddChallenge() {
               {errors.endDate && <p className="mt-1 text-sm text-red-600">{errors.endDate.message}</p>}
             </div>
           </div>
+          <p className="mt-3 text-sm text-gray-600">
+            Duration: <span className="font-medium">{watch('duration') || 'Select start and end dates to calculate'}</span>
+          </p>
         </div>
 
         {/* Image */}
