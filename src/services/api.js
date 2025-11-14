@@ -212,6 +212,11 @@ export const challengeApi = {
 
 // User API calls
 export const userApi = {
+  // Get user by ID
+  async getById(id) {
+    return makeRequest(`/users/${id}`)
+  },
+
   // Get user's activity summary
   async getActivities() {
     return makeRequest('/user/activities')
