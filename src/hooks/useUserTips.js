@@ -37,23 +37,30 @@ export function useUserTips() {
       const tipsArray = Array.isArray(tipsData) ? tipsData : Object.values(tipsData || {})
       
       // Enhance each tip with proper data structure
-      const enhancedTips = tipsArray.map(tip => ({
-        ...tip,
-        id: tip.id || tip._id,
-        title: tip.title || '',
-        content: tip.content || '',
-        // Prefer backend's upvoteCount, fallback to upvotes, then 0
-        upvotes: Number.isFinite(Number(tip.upvoteCount))
-          ? Number(tip.upvoteCount)
-          : (Number.isFinite(Number(tip.upvotes)) ? Number(tip.upvotes) : 0),
-        createdAt: tip.createdAt || new Date().toISOString(),
-        updatedAt: tip.updatedAt || tip.createdAt || new Date().toISOString(),
-        authorName: tip.authorName || tip.author?.name || 'Anonymous',
-        authorImage: tip.authorImage || tip.authorAvatar || tip.author?.avatarUrl || tip.author?.imageUrl,
-        // Handle case where tip.author is a string (Firebase UID) or an object
-        authorId: tip.authorId || (typeof tip.author === 'string' ? tip.author : tip.author?.uid || tip.author?.id),
-        firebaseId: tip.firebaseId || (typeof tip.author === 'string' ? tip.author : tip.author?.firebaseId)
-      }))
+      const enhancedTips = tipsArray.map(tip => {
+        // Verify we're using custom id, not MongoDB _id
+        if (!tip.id && tip._id) {
+          console.warn('⚠️ Tip is missing custom "id" field, falling back to MongoDB "_id":', tip._id)
+        }
+        
+        return {
+          ...tip,
+          id: tip.id || tip._id,
+          title: tip.title || '',
+          content: tip.content || '',
+          // Prefer backend's upvoteCount, fallback to upvotes, then 0
+          upvotes: Number.isFinite(Number(tip.upvoteCount))
+            ? Number(tip.upvoteCount)
+            : (Number.isFinite(Number(tip.upvotes)) ? Number(tip.upvotes) : 0),
+          createdAt: tip.createdAt || new Date().toISOString(),
+          updatedAt: tip.updatedAt || tip.createdAt || new Date().toISOString(),
+          authorName: tip.authorName || tip.author?.name || 'Anonymous',
+          authorImage: tip.authorImage || tip.authorAvatar || tip.author?.avatarUrl || tip.author?.imageUrl,
+          // Handle case where tip.author is a string (Firebase UID) or an object
+          authorId: tip.authorId || (typeof tip.author === 'string' ? tip.author : tip.author?.uid || tip.author?.id),
+          firebaseId: tip.firebaseId || (typeof tip.author === 'string' ? tip.author : tip.author?.firebaseId)
+        }
+      })
       
       setTips(enhancedTips)
       setPagination(paginationData)
@@ -87,9 +94,10 @@ export function useUserTips() {
       const tipsArray = Array.isArray(tipsData) ? tipsData : Object.values(tipsData || {})
       
       // Enhance each tip with proper data structure
-      const enhancedTips = tipsArray.map(tip => ({
-        ...tip,
-        id: tip.id || tip._id,
+      const enhancedTips = tipsArray.map(tip => {
+        return {
+          ...tip,
+          id: tip.id || tip._id,
         title: tip.title || '',
         content: tip.content || '',
         upvotes: Number.isFinite(Number(tip.upvoteCount))
@@ -101,7 +109,8 @@ export function useUserTips() {
         authorImage: tip.authorImage || tip.authorAvatar || tip.author?.avatarUrl || tip.author?.imageUrl,
         authorId: tip.authorId || (typeof tip.author === 'string' ? tip.author : tip.author?.uid || tip.author?.id),
         firebaseId: tip.firebaseId || (typeof tip.author === 'string' ? tip.author : tip.author?.firebaseId)
-      }))
+        }
+      })
       
       return enhancedTips
     } catch (err) {
@@ -329,36 +338,14 @@ export function useUserTips() {
       )
       
       // SYNC WITH SERVER: Send upvote to backend database
-      const response = await tipsApi.upvote(tipId)
+      await tipsApi.upvote(tipId)
       
-      // Handle different API response structures
-      let updatedTip = response.data
-      if (response.data?.tip) {
-        updatedTip = response.data.tip
-      } else if (response.data?.data) {
-        updatedTip = response.data.data
-      }
+      // The optimistic update already incremented the count
+      // Don't update state again here since it would reset to 0
+      // The optimistic update (originalUpvotes + 1) is already applied above
       
-      // Extract the actual upvote count from server response
-      const serverUpvotes = updatedTip?.upvotes ?? updatedTip?.upvoteCount ?? null
-      
-      // Update with actual server data to ensure sync
-      const enhancedTip = {
-        ...originalTip,
-        ...updatedTip,
-        id: originalTip.id, // Preserve the original ID
-        // ALWAYS use server's upvote count to stay in sync with database
-        upvotes: Number.isFinite(Number(serverUpvotes)) 
-          ? Number(serverUpvotes) 
-          : originalUpvotes + 1
-      }
-
-      // Sync local state with server response (this updates the database value)
-      setTips(prevTips => 
-        prevTips.map(tip => tip.id === tipId ? enhancedTip : tip)
-      )
-      
-      return enhancedTip
+      // Return the optimistically updated tip
+      return tips.find(tip => tip.id === tipId)
     } catch (err) {
       // ROLLBACK: Restore original upvote count on error
       setTips(prevTips => 
@@ -394,9 +381,11 @@ export function useUserTips() {
 
   // Get all tips for display
   const getAllTipsForDisplay = () => {
-    // Ensure tips is always an array before sorting
+    // Ensure tips is always an array
+    // Don't re-sort here - tips are already sorted by the API
+    // Re-sorting causes upvoted tips to jump around
     const tipsArray = Array.isArray(tips) ? tips : []
-    return tipsArray.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    return tipsArray
   }
 
   // Fetch tips on component mount

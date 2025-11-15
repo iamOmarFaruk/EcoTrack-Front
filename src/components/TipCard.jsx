@@ -86,7 +86,9 @@ export default function TipCard({
   }
 
   const authorInfo = getAuthorInfo()
-  const isEdited = tip.updatedAt && tip.updatedAt !== tip.createdAt
+  // Only show edited badge if timestamps are truly different (not just reference)
+  const isEdited = tip.updatedAt && tip.createdAt && 
+    new Date(tip.updatedAt).getTime() !== new Date(tip.createdAt).getTime()
 
   // Sync local upvotes state with tip prop changes (for optimistic updates)
   React.useEffect(() => {

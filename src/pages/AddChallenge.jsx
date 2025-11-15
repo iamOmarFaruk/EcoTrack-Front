@@ -379,29 +379,13 @@ export default function AddChallenge() {
                 </div>
               </div>
 
-              {/* Duration (Auto-calculated) */}
-              <div>
-                <label htmlFor="duration" className="block text-sm font-medium text-slate-900 mb-2">
-                  Duration <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="duration"
-                  name="duration"
-                  value={formData.duration}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                    errors.duration ? 'border-red-500' : 'border-slate-300'
-                  }`}
-                  placeholder="e.g., 7 days, 2 weeks (auto-calculated from dates)"
-                />
-                {errors.duration && <p className="mt-1 text-sm text-red-500">{errors.duration}</p>}
-                <p className="mt-1 text-xs text-slate-500">
-                  {formData.startDate && formData.endDate 
-                    ? 'Auto-calculated from dates (you can edit if needed)' 
-                    : 'Select start and end dates to auto-calculate'}
-                </p>
-              </div>
+              {/* Duration (Auto-calculated) - Hidden from UI but still sent to API */}
+              <input
+                type="hidden"
+                id="duration"
+                name="duration"
+                value={formData.duration}
+              />
 
               {/* Impact and CO2 */}
               <div className="grid gap-6 md:grid-cols-2">

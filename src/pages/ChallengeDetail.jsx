@@ -165,6 +165,7 @@ export default function ChallengeDetail() {
         // Transform challenge data to match new API structure
         const transformedChallenge = {
           _id: challengeData.id || challengeData._id,
+          id: challengeData.id || challengeData._id,
           title: challengeData.title || 'No data',
           description: challengeData.shortDescription || challengeData.description || 'No data',
           detailedDescription: challengeData.detailedDescription || '',
@@ -209,6 +210,7 @@ export default function ChallengeDetail() {
             .slice(0, 3)
             .map(challenge => ({
               _id: challenge.id || challenge._id,
+              id: challenge.id || challenge._id,
               title: challenge.title || 'No data',
               description: challenge.shortDescription || challenge.description || 'No data',
               category: challenge.category || 'No data',

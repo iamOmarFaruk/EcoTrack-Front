@@ -64,7 +64,7 @@ export default function Challenges() {
 
         // Transform API data to match component expectations
         const transformedChallenges = challengesData.map(challenge => ({
-          _id: challenge._id || challenge.id,
+          _id: challenge.id || challenge._id,
           title: challenge.title || 'No data',
           description: challenge.shortDescription || challenge.description || 'No data',
           category: challenge.category || 'No data',
