@@ -1,11 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { eventApi } from '../services/api.js'
 import Button from '../components/ui/Button.jsx'
 import { Card, CardContent } from '../components/ui/Card.jsx'
-import SubpageHero from '../components/SubpageHero.jsx'
-import { defaultImages } from '../config/env.js'
 import toast from 'react-hot-toast'
 import { useAuth } from '../context/AuthContext.jsx'
 
@@ -20,7 +18,6 @@ export default function AddEvent() {
     detailedDescription: '',
     date: '',
     location: '',
-    organizer: '',
     capacity: '',
     duration: '',
     requirements: '',
@@ -83,13 +80,6 @@ export default function AddEvent() {
       newErrors.location = 'Location must be between 3 and 100 characters'
     }
 
-    // Organizer validation (3-100 chars)
-    if (!formData.organizer.trim()) {
-      newErrors.organizer = 'Organizer name is required'
-    } else if (formData.organizer.length < 3 || formData.organizer.length > 100) {
-      newErrors.organizer = 'Organizer name must be between 3 and 100 characters'
-    }
-
     // Capacity validation (1-10000)
     if (!formData.capacity) {
       newErrors.capacity = 'Capacity is required'
@@ -118,9 +108,11 @@ export default function AddEvent() {
       newErrors.benefits = 'Benefits must be between 10 and 500 characters'
     }
 
-    // Image validation (optional, but must be valid Unsplash URL if provided)
-    if (formData.image && !formData.image.includes('unsplash.com')) {
-      newErrors.image = 'Image must be a valid Unsplash URL or leave empty for default'
+    // Image validation (required, must be valid Unsplash URL)
+    if (!formData.image.trim()) {
+      newErrors.image = 'Event image is required'
+    } else if (!formData.image.includes('unsplash.com')) {
+      newErrors.image = 'Image must be a valid Unsplash URL'
     }
 
     setErrors(newErrors)
@@ -136,6 +128,11 @@ export default function AddEvent() {
       return
     }
 
+    if (!user.name) {
+      toast.error('User profile is not complete. Please update your profile.')
+      return
+    }
+
     if (!validateForm()) {
       toast.error('Please fix the form errors')
       return
@@ -147,9 +144,9 @@ export default function AddEvent() {
       // Prepare data for API
       const eventData = {
         ...formData,
+        organizer: user.name,
         capacity: parseInt(formData.capacity),
-        date: new Date(formData.date).toISOString(),
-        image: formData.image || undefined // Send undefined if empty, backend will assign default
+        date: new Date(formData.date).toISOString()
       }
 
       const response = await eventApi.create(eventData)
@@ -187,20 +184,21 @@ export default function AddEvent() {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Hero Section */}
-      <div className="full-bleed -mt-8">
-        <SubpageHero
-          title="Create New Event"
-          subtitle="Organize an eco-friendly event and bring your community together"
-          backgroundImage={defaultImages.eventsHero}
-          height="medium"
-          overlayIntensity="medium"
-        />
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-12">
+      {/* Page Header */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-slate-900 mb-3">
+            Create New Event
+          </h1>
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            Organize an eco-friendly event and bring your community together
+          </p>
+        </div>
       </div>
 
       {/* Form Section */}
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <Card>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -215,7 +213,7 @@ export default function AddEvent() {
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                     errors.title ? 'border-red-500' : 'border-slate-300'
                   }`}
                   placeholder="e.g., City Tree Planting Marathon"
@@ -235,7 +233,7 @@ export default function AddEvent() {
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                     errors.description ? 'border-red-500' : 'border-slate-300'
                   }`}
                   placeholder="Brief description for event cards (10-200 characters)"
@@ -255,7 +253,7 @@ export default function AddEvent() {
                   value={formData.detailedDescription}
                   onChange={handleChange}
                   rows={6}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                     errors.detailedDescription ? 'border-red-500' : 'border-slate-300'
                   }`}
                   placeholder="Full description with all details about the event (50-2000 characters)"
@@ -277,7 +275,7 @@ export default function AddEvent() {
                     name="date"
                     value={formData.date}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                    className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                       errors.date ? 'border-red-500' : 'border-slate-300'
                     }`}
                   />
@@ -296,7 +294,7 @@ export default function AddEvent() {
                     name="location"
                     value={formData.location}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                    className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                       errors.location ? 'border-red-500' : 'border-slate-300'
                     }`}
                     placeholder="e.g., Central Park, New York"
@@ -305,46 +303,33 @@ export default function AddEvent() {
                 </div>
               </div>
 
-              {/* Organizer and Duration Row */}
-              <div className="grid gap-6 md:grid-cols-2">
-                {/* Organizer */}
-                <div>
-                  <label htmlFor="organizer" className="block text-sm font-medium text-slate-900 mb-2">
-                    Organizer Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="organizer"
-                    name="organizer"
-                    value={formData.organizer}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                      errors.organizer ? 'border-red-500' : 'border-slate-300'
-                    }`}
-                    placeholder="e.g., Green Earth Foundation"
-                  />
-                  {errors.organizer && <p className="mt-1 text-sm text-red-500">{errors.organizer}</p>}
-                </div>
-
-                {/* Duration */}
-                <div>
-                  <label htmlFor="duration" className="block text-sm font-medium text-slate-900 mb-2">
-                    Duration <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="duration"
-                    name="duration"
-                    value={formData.duration}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                      errors.duration ? 'border-red-500' : 'border-slate-300'
-                    }`}
-                    placeholder="e.g., 4 hours"
-                  />
-                  {errors.duration && <p className="mt-1 text-sm text-red-500">{errors.duration}</p>}
-                </div>
+              {/* Duration */}
+              <div>
+                <label htmlFor="duration" className="block text-sm font-medium text-slate-900 mb-2">
+                  Duration <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="duration"
+                  name="duration"
+                  value={formData.duration}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                    errors.duration ? 'border-red-500' : 'border-slate-300'
+                  }`}
+                  placeholder="e.g., 4 hours"
+                />
+                {errors.duration && <p className="mt-1 text-sm text-red-500">{errors.duration}</p>}
               </div>
+
+              {/* Organizer Info Display */}
+              {user?.name && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <p className="text-sm text-slate-600">
+                    <span className="font-medium text-slate-900">Organizer:</span> {user.name}
+                  </p>
+                </div>
+              )}
 
               {/* Capacity */}
               <div>
@@ -359,7 +344,7 @@ export default function AddEvent() {
                   onChange={handleChange}
                   min="1"
                   max="10000"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                     errors.capacity ? 'border-red-500' : 'border-slate-300'
                   }`}
                   placeholder="e.g., 100"
@@ -379,7 +364,7 @@ export default function AddEvent() {
                   value={formData.requirements}
                   onChange={handleChange}
                   rows={3}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                     errors.requirements ? 'border-red-500' : 'border-slate-300'
                   }`}
                   placeholder="What participants need to bring or prepare (10-500 characters)"
@@ -399,7 +384,7 @@ export default function AddEvent() {
                   value={formData.benefits}
                   onChange={handleChange}
                   rows={3}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                     errors.benefits ? 'border-red-500' : 'border-slate-300'
                   }`}
                   placeholder="What participants will receive or gain (10-500 characters)"
@@ -411,7 +396,7 @@ export default function AddEvent() {
               {/* Image URL */}
               <div>
                 <label htmlFor="image" className="block text-sm font-medium text-slate-900 mb-2">
-                  Event Image URL (Optional)
+                  Event Image URL <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="url"
@@ -419,15 +404,29 @@ export default function AddEvent() {
                   name="image"
                   value={formData.image}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                     errors.image ? 'border-red-500' : 'border-slate-300'
                   }`}
                   placeholder="https://images.unsplash.com/photo-..."
                 />
                 {errors.image && <p className="mt-1 text-sm text-red-500">{errors.image}</p>}
                 <p className="mt-1 text-xs text-slate-500">
-                  Must be an Unsplash URL. Leave empty for default image.
+                  Must be a valid Unsplash URL (e.g., from unsplash.com)
                 </p>
+                
+                {/* Image Preview */}
+                {formData.image && formData.image.includes('unsplash.com') && (
+                  <div className="mt-4 rounded-lg overflow-hidden border-2 border-slate-200">
+                    <img 
+                      src={formData.image} 
+                      alt="Event preview"
+                      className="w-full h-64 object-cover"
+                      onError={(e) => {
+                        e.target.style.display = 'none'
+                      }}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Form Actions */}

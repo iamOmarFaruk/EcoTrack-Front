@@ -47,6 +47,14 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route
+              path="/events/add"
+              element={
+                <ProtectedRoute>
+                  <AddEvent />
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<NotFound />} />
           </Route>
           <Route element={<DashboardLayout />}>
@@ -95,14 +103,6 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <JoinChallenge />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/events/add"
-              element={
-                <ProtectedRoute>
-                  <AddEvent />
                 </ProtectedRoute>
               }
             />

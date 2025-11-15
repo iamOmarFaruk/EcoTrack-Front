@@ -4,10 +4,8 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { eventApi } from '../services/api.js'
 import Button from '../components/ui/Button.jsx'
 import { Card, CardContent } from '../components/ui/Card.jsx'
-import SubpageHero from '../components/SubpageHero.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import NotFound from './NotFound.jsx'
-import { defaultImages } from '../config/env.js'
 import toast from 'react-hot-toast'
 import { useAuth } from '../context/AuthContext.jsx'
 
@@ -252,38 +250,54 @@ export default function EditEvent() {
 
   if (notAuthorized) {
     return (
-      <div className="space-y-8">
-        <div className="full-bleed -mt-8">
-          <SubpageHero
-            title="Access Denied"
-            subtitle="You don't have permission to edit this event"
-            backgroundImage={defaultImages.eventsHero}
-            height="medium"
-            overlayIntensity="medium"
-          />
-        </div>
-        <div className="text-center">
-          <Button onClick={() => navigate('/events')}>Back to Events</Button>
+      <div className="min-h-screen bg-gradient-to-b from-red-50 to-white py-12">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="bg-white rounded-2xl shadow-lg p-12">
+            <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h1 className="text-3xl font-bold text-slate-900 mb-3">Access Denied</h1>
+            <p className="text-lg text-slate-600 mb-8">
+              You don't have permission to edit this event
+            </p>
+            <Button onClick={() => navigate('/events')} className="bg-green-600 hover:bg-green-700">
+              Back to Events
+            </Button>
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-8">
-      {/* Hero Section */}
-      <div className="full-bleed -mt-8">
-        <SubpageHero
-          title="Edit Event"
-          subtitle={event?.title || 'Update event details'}
-          backgroundImage={event?.image || defaultImages.eventsHero}
-          height="medium"
-          overlayIntensity="medium"
-        />
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-12">
+      {/* Page Header */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+        <div className="text-center mb-6">
+          <h1 className="text-4xl font-bold text-slate-900 mb-3">
+            Edit Event
+          </h1>
+          <p className="text-lg text-slate-600">
+            {event?.title || 'Update event details'}
+          </p>
+        </div>
+        
+        {/* Current Event Image */}
+        {event?.image && (
+          <div className="mt-6 rounded-2xl overflow-hidden shadow-lg max-w-2xl mx-auto">
+            <img 
+              src={event.image} 
+              alt={event.title}
+              className="w-full h-64 object-cover"
+            />
+          </div>
+        )}
       </div>
 
       {/* Form Section */}
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <Card>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
