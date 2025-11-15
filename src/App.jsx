@@ -55,6 +55,14 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/events/:id/edit"
+              element={
+                <ProtectedRoute>
+                  <EditEvent />
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<NotFound />} />
           </Route>
           <Route element={<DashboardLayout />}>
@@ -103,14 +111,6 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <JoinChallenge />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/events/:id/edit"
-              element={
-                <ProtectedRoute>
-                  <EditEvent />
                 </ProtectedRoute>
               }
             />

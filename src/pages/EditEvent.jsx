@@ -141,13 +141,6 @@ export default function EditEvent() {
       newErrors.location = 'Location must be between 3 and 100 characters'
     }
 
-    // Organizer validation (3-100 chars)
-    if (!formData.organizer.trim()) {
-      newErrors.organizer = 'Organizer name is required'
-    } else if (formData.organizer.length < 3 || formData.organizer.length > 100) {
-      newErrors.organizer = 'Organizer name must be between 3 and 100 characters'
-    }
-
     // Capacity validation (1-10000, cannot be less than current participants)
     if (!formData.capacity) {
       newErrors.capacity = 'Capacity is required'
@@ -178,9 +171,18 @@ export default function EditEvent() {
       newErrors.benefits = 'Benefits must be between 10 and 500 characters'
     }
 
-    // Image validation (optional, but must be valid Unsplash URL if provided)
-    if (formData.image && !formData.image.includes('unsplash.com')) {
-      newErrors.image = 'Image must be a valid Unsplash URL or leave empty for default'
+    // Image validation (required, must be valid URL)
+    if (!formData.image.trim()) {
+      newErrors.image = 'Event image is required'
+    } else {
+      try {
+        new URL(formData.image)
+        if (!formData.image.startsWith('http://') && !formData.image.startsWith('https://')) {
+          newErrors.image = 'Image URL must start with http:// or https://'
+        }
+      } catch {
+        newErrors.image = 'Please enter a valid image URL'
+      }
     }
 
     setErrors(newErrors)
@@ -198,12 +200,12 @@ export default function EditEvent() {
     setIsSubmitting(true)
 
     try {
-      // Prepare data for API - only send changed fields
+      // Prepare data for API
       const eventData = {
         ...formData,
+        organizer: user.name,
         capacity: parseInt(formData.capacity),
-        date: new Date(formData.date).toISOString(),
-        image: formData.image || undefined
+        date: new Date(formData.date).toISOString()
       }
 
       const response = await eventApi.update(id, eventData)
@@ -275,25 +277,14 @@ export default function EditEvent() {
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-12">
       {/* Page Header */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-        <div className="text-center mb-6">
+        <div className="text-center">
           <h1 className="text-4xl font-bold text-slate-900 mb-3">
             Edit Event
           </h1>
-          <p className="text-lg text-slate-600">
-            {event?.title || 'Update event details'}
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+            Update your event details and settings
           </p>
         </div>
-        
-        {/* Current Event Image */}
-        {event?.image && (
-          <div className="mt-6 rounded-2xl overflow-hidden shadow-lg max-w-2xl mx-auto">
-            <img 
-              src={event.image} 
-              alt={event.title}
-              className="w-full h-64 object-cover"
-            />
-          </div>
-        )}
       </div>
 
       {/* Form Section */}
@@ -301,27 +292,6 @@ export default function EditEvent() {
         <Card>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Event Status */}
-              <div>
-                <label htmlFor="status" className="block text-sm font-medium text-slate-900 mb-2">
-                  Event Status
-                </label>
-                <select
-                  id="status"
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                >
-                  <option value="active">Active</option>
-                  <option value="cancelled">Cancelled</option>
-                  <option value="completed">Completed</option>
-                </select>
-                <p className="mt-1 text-xs text-slate-500">
-                  Current participants: {event?.registeredParticipants || 0}
-                </p>
-              </div>
-
               {/* Title */}
               <div>
                 <label htmlFor="title" className="block text-sm font-medium text-slate-900 mb-2">
@@ -333,7 +303,7 @@ export default function EditEvent() {
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                     errors.title ? 'border-red-500' : 'border-slate-300'
                   }`}
                   placeholder="e.g., City Tree Planting Marathon"
@@ -353,7 +323,7 @@ export default function EditEvent() {
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                     errors.description ? 'border-red-500' : 'border-slate-300'
                   }`}
                   placeholder="Brief description for event cards (10-200 characters)"
@@ -373,7 +343,7 @@ export default function EditEvent() {
                   value={formData.detailedDescription}
                   onChange={handleChange}
                   rows={6}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                     errors.detailedDescription ? 'border-red-500' : 'border-slate-300'
                   }`}
                   placeholder="Full description with all details about the event (50-2000 characters)"
@@ -395,7 +365,7 @@ export default function EditEvent() {
                     name="date"
                     value={formData.date}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                    className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                       errors.date ? 'border-red-500' : 'border-slate-300'
                     }`}
                   />
@@ -413,7 +383,7 @@ export default function EditEvent() {
                     name="location"
                     value={formData.location}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                    className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                       errors.location ? 'border-red-500' : 'border-slate-300'
                     }`}
                     placeholder="e.g., Central Park, New York"
@@ -422,45 +392,23 @@ export default function EditEvent() {
                 </div>
               </div>
 
-              {/* Organizer and Duration Row */}
-              <div className="grid gap-6 md:grid-cols-2">
-                {/* Organizer */}
-                <div>
-                  <label htmlFor="organizer" className="block text-sm font-medium text-slate-900 mb-2">
-                    Organizer Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="organizer"
-                    name="organizer"
-                    value={formData.organizer}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                      errors.organizer ? 'border-red-500' : 'border-slate-300'
-                    }`}
-                    placeholder="e.g., Green Earth Foundation"
-                  />
-                  {errors.organizer && <p className="mt-1 text-sm text-red-500">{errors.organizer}</p>}
-                </div>
-
-                {/* Duration */}
-                <div>
-                  <label htmlFor="duration" className="block text-sm font-medium text-slate-900 mb-2">
-                    Duration <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="duration"
-                    name="duration"
-                    value={formData.duration}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
-                      errors.duration ? 'border-red-500' : 'border-slate-300'
-                    }`}
-                    placeholder="e.g., 4 hours"
-                  />
-                  {errors.duration && <p className="mt-1 text-sm text-red-500">{errors.duration}</p>}
-                </div>
+              {/* Duration */}
+              <div>
+                <label htmlFor="duration" className="block text-sm font-medium text-slate-900 mb-2">
+                  Duration <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="duration"
+                  name="duration"
+                  value={formData.duration}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                    errors.duration ? 'border-red-500' : 'border-slate-300'
+                  }`}
+                  placeholder="e.g., 4 hours"
+                />
+                {errors.duration && <p className="mt-1 text-sm text-red-500">{errors.duration}</p>}
               </div>
 
               {/* Capacity */}
@@ -476,14 +424,14 @@ export default function EditEvent() {
                   onChange={handleChange}
                   min={event?.registeredParticipants || 1}
                   max="10000"
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                     errors.capacity ? 'border-red-500' : 'border-slate-300'
                   }`}
                   placeholder="e.g., 100"
                 />
                 {errors.capacity && <p className="mt-1 text-sm text-red-500">{errors.capacity}</p>}
                 <p className="mt-1 text-xs text-slate-500">
-                  Cannot be less than current participants ({event?.registeredParticipants || 0})
+                  Maximum participants (1-10000). Current participants: {event?.registeredParticipants || 0}
                 </p>
               </div>
 
@@ -498,7 +446,7 @@ export default function EditEvent() {
                   value={formData.requirements}
                   onChange={handleChange}
                   rows={3}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                     errors.requirements ? 'border-red-500' : 'border-slate-300'
                   }`}
                   placeholder="What participants need to bring or prepare (10-500 characters)"
@@ -518,7 +466,7 @@ export default function EditEvent() {
                   value={formData.benefits}
                   onChange={handleChange}
                   rows={3}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                     errors.benefits ? 'border-red-500' : 'border-slate-300'
                   }`}
                   placeholder="What participants will receive or gain (10-500 characters)"
@@ -530,7 +478,7 @@ export default function EditEvent() {
               {/* Image URL */}
               <div>
                 <label htmlFor="image" className="block text-sm font-medium text-slate-900 mb-2">
-                  Event Image URL (Optional)
+                  Event Image URL <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="url"
@@ -538,34 +486,47 @@ export default function EditEvent() {
                   name="image"
                   value={formData.image}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                     errors.image ? 'border-red-500' : 'border-slate-300'
                   }`}
-                  placeholder="https://images.unsplash.com/photo-..."
+                  placeholder="https://images.unsplash.com/photo-... or any valid image URL"
                 />
                 {errors.image && <p className="mt-1 text-sm text-red-500">{errors.image}</p>}
                 <p className="mt-1 text-xs text-slate-500">
-                  Must be an Unsplash URL. Leave empty for default image.
+                  Enter a valid landscape image URL (from Unsplash, Pexels, or any other source)
                 </p>
+                
+                {/* Image Preview */}
+                {formData.image && (formData.image.startsWith('http://') || formData.image.startsWith('https://')) && (
+                  <div className="mt-4 rounded-lg overflow-hidden border-2 border-green-200 shadow-md">
+                    <img 
+                      src={formData.image} 
+                      alt="Event preview"
+                      className="w-full h-64 object-cover"
+                      onError={(e) => {
+                        e.target.parentElement.innerHTML = '<div class="w-full h-64 bg-red-50 flex items-center justify-center"><p class="text-red-600 text-sm">Failed to load image. Please check the URL.</p></div>'
+                      }}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Form Actions */}
-              <div className="flex gap-4 pt-4">
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="flex-1 bg-green-600 hover:bg-green-700"
-                >
-                  {isSubmitting ? 'Updating Event...' : 'Update Event'}
-                </Button>
+              <div className="flex gap-4 pt-4 justify-end">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={handleCancel}
                   disabled={isSubmitting}
-                  className="flex-1"
                 >
                   Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  {isSubmitting ? 'Updating Event...' : 'Update Event'}
                 </Button>
               </div>
             </form>
