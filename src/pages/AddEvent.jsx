@@ -108,11 +108,18 @@ export default function AddEvent() {
       newErrors.benefits = 'Benefits must be between 10 and 500 characters'
     }
 
-    // Image validation (required, must be valid Unsplash URL)
+    // Image validation (required, must be valid URL)
     if (!formData.image.trim()) {
       newErrors.image = 'Event image is required'
-    } else if (!formData.image.includes('unsplash.com')) {
-      newErrors.image = 'Image must be a valid Unsplash URL'
+    } else {
+      try {
+        new URL(formData.image)
+        if (!formData.image.startsWith('http://') && !formData.image.startsWith('https://')) {
+          newErrors.image = 'Image URL must start with http:// or https://'
+        }
+      } catch {
+        newErrors.image = 'Please enter a valid image URL'
+      }
     }
 
     setErrors(newErrors)
@@ -322,15 +329,6 @@ export default function AddEvent() {
                 {errors.duration && <p className="mt-1 text-sm text-red-500">{errors.duration}</p>}
               </div>
 
-              {/* Organizer Info Display */}
-              {user?.name && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <p className="text-sm text-slate-600">
-                    <span className="font-medium text-slate-900">Organizer:</span> {user.name}
-                  </p>
-                </div>
-              )}
-
               {/* Capacity */}
               <div>
                 <label htmlFor="capacity" className="block text-sm font-medium text-slate-900 mb-2">
@@ -407,22 +405,22 @@ export default function AddEvent() {
                   className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
                     errors.image ? 'border-red-500' : 'border-slate-300'
                   }`}
-                  placeholder="https://images.unsplash.com/photo-..."
+                  placeholder="https://images.unsplash.com/photo-... or any valid image URL"
                 />
                 {errors.image && <p className="mt-1 text-sm text-red-500">{errors.image}</p>}
                 <p className="mt-1 text-xs text-slate-500">
-                  Must be a valid Unsplash URL (e.g., from unsplash.com)
+                  Enter a valid landscape image URL (from Unsplash, Pexels, or any other source)
                 </p>
                 
                 {/* Image Preview */}
-                {formData.image && formData.image.includes('unsplash.com') && (
-                  <div className="mt-4 rounded-lg overflow-hidden border-2 border-slate-200">
+                {formData.image && (formData.image.startsWith('http://') || formData.image.startsWith('https://')) && (
+                  <div className="mt-4 rounded-lg overflow-hidden border-2 border-green-200 shadow-md">
                     <img 
                       src={formData.image} 
                       alt="Event preview"
                       className="w-full h-64 object-cover"
                       onError={(e) => {
-                        e.target.style.display = 'none'
+                        e.target.parentElement.innerHTML = '<div class="w-full h-64 bg-red-50 flex items-center justify-center"><p class="text-red-600 text-sm">Failed to load image. Please check the URL.</p></div>'
                       }}
                     />
                   </div>
