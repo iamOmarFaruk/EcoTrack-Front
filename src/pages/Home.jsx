@@ -16,6 +16,9 @@ import { defaultImages } from '../config/env'
 import { useState, useEffect } from 'react'
 import { tipsApi, eventApi } from '../services/api.js'
 import { useAuth } from '../context/AuthContext.jsx'
+import TipModal from '../components/TipModal.jsx'
+import LoginModal from '../components/LoginModal.jsx'
+import toast from 'react-hot-toast'
 
 export default function Home() {
   useDocumentTitle('Home')
@@ -25,6 +28,11 @@ export default function Home() {
   // State for real tips from API
   const [tips, setTips] = useState([])
   const [loadingTips, setLoadingTips] = useState(true)
+  
+  // Modal states
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingTip, setEditingTip] = useState(null)
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   
   // State for real events from API
   const [events, setEvents] = useState([])
@@ -165,6 +173,162 @@ export default function Home() {
       tip.firebaseId === user.uid
     )
   }
+
+  // Handle edit tip
+  const handleEditTip = (tip) => {
+    setEditingTip(tip)
+    setIsModalOpen(true)
+  }
+
+  // Handle delete tip
+  const handleDeleteTip = async (tipId) => {
+    toast((t) => (
+      <div className="flex items-start gap-3">
+        <div className="flex-shrink-0">
+          <svg className="w-5 h-5 text-red-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div className="flex-1">
+          <h3 className="text-sm font-medium text-gray-900">Delete Tip</h3>
+          <p className="text-sm text-gray-600 mt-1 mb-3">
+            Are you sure you want to delete this tip? This action cannot be undone.
+          </p>
+          <div className="flex gap-2 justify-end">
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={async () => {
+                toast.dismiss(t.id)
+                try {
+                  await tipsApi.delete(tipId)
+                  setTips(prevTips => prevTips.filter(tip => tip.id !== tipId))
+                  toast.success('Tip deleted successfully')
+                } catch (error) {
+                  toast.error('Failed to delete tip: ' + error.message)
+                }
+              }}
+              className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    ), {
+      duration: Infinity,
+      style: {
+        background: '#fff',
+        border: '1px solid #fed7d7',
+        borderRadius: '8px',
+        padding: '16px',
+        maxWidth: '400px',
+      }
+    })
+  }
+
+  // Handle upvote tip
+  const handleUpvote = async (tipId) => {
+    const originalTip = tips.find(tip => tip.id === tipId)
+    if (!originalTip) return
+
+    try {
+      // Optimistic update
+      setTips(prevTips =>
+        prevTips.map(tip =>
+          tip.id === tipId ? { ...tip, upvotes: tip.upvotes + 1 } : tip
+        )
+      )
+
+      const response = await tipsApi.upvote(tipId)
+      
+      // Update with server response
+      let updatedTip = response.data
+      if (response.data?.tip) {
+        updatedTip = response.data.tip
+      } else if (response.data?.data?.tip) {
+        updatedTip = response.data.data.tip
+      } else if (response.data?.data) {
+        updatedTip = response.data.data
+      }
+
+      const serverUpvotes = updatedTip?.upvotes ?? updatedTip?.upvoteCount ?? null
+
+      setTips(prevTips =>
+        prevTips.map(tip =>
+          tip.id === tipId
+            ? {
+                ...tip,
+                ...updatedTip,
+                upvotes: Number.isFinite(Number(serverUpvotes))
+                  ? Number(serverUpvotes)
+                  : originalTip.upvotes + 1
+              }
+            : tip
+        )
+      )
+    } catch (error) {
+      // Rollback on error
+      setTips(prevTips =>
+        prevTips.map(tip =>
+          tip.id === tipId ? { ...tip, upvotes: originalTip.upvotes } : tip
+        )
+      )
+      toast.error('Failed to upvote tip: ' + error.message)
+    }
+  }
+
+  // Handle submit tip (for edit modal)
+  const handleSubmitTip = async (tipData) => {
+    try {
+      if (editingTip) {
+        const response = await tipsApi.update(editingTip.id, tipData)
+        
+        // Handle response
+        let updatedTip = response.data
+        if (response.data?.tip) {
+          updatedTip = response.data.tip
+        } else if (response.data?.data?.tip) {
+          updatedTip = response.data.data.tip
+        } else if (response.data?.data) {
+          updatedTip = response.data.data
+        }
+
+        // Update local state
+        setTips(prevTips =>
+          prevTips.map(tip =>
+            tip.id === editingTip.id
+              ? {
+                  ...tip,
+                  ...tipData,
+                  ...updatedTip,
+                  id: editingTip.id,
+                  upvotes: Number.isFinite(Number(updatedTip?.upvoteCount))
+                    ? Number(updatedTip.upvoteCount)
+                    : (Number.isFinite(Number(updatedTip?.upvotes)) ? Number(updatedTip.upvotes) : tip.upvotes)
+                }
+              : tip
+          )
+        )
+        
+        toast.success('Tip updated successfully!')
+      }
+      
+      setIsModalOpen(false)
+      setEditingTip(null)
+    } catch (error) {
+      throw error
+    }
+  }
+
+  // Handle login required
+  const handleLoginRequired = () => {
+    setIsLoginModalOpen(true)
+  }
   
   const isInitialLoading = loadingChallenges && loadingTips && loadingEvents
 
@@ -216,6 +380,10 @@ export default function Home() {
               tip={t} 
               showActions={true}
               canModify={canModifyTip(t)}
+              onEdit={handleEditTip}
+              onDelete={handleDeleteTip}
+              onUpvote={handleUpvote}
+              onLoginRequired={handleLoginRequired}
             />
           ))}
         </div>
@@ -300,8 +468,27 @@ export default function Home() {
       </section>
 
       <HowItWorks />
+
+      {/* Tip Modal */}
+      <TipModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false)
+          setEditingTip(null)
+        }}
+        onSubmit={handleSubmitTip}
+        editTip={editingTip}
+      />
+
+      {/* Login Modal */}
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+      />
     </div>
   )
 }
+
+
 
 

@@ -25,16 +25,15 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
     setErrors({})
   }, [editTip, isOpen])
 
-  // Close modal on ESC key
+  // Prevent body scroll when modal is open
   useEffect(() => {
-    const handleEsc = (e) => {
-      if (e.keyCode === 27) onClose()
-    }
     if (isOpen) {
-      document.addEventListener('keydown', handleEsc)
-      return () => document.removeEventListener('keydown', handleEsc)
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = 'unset'
+      }
     }
-  }, [isOpen, onClose])
+  }, [isOpen])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -50,14 +49,16 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
     
     if (!formData.title.trim()) {
       newErrors.title = 'Title is required'
+    } else if (formData.title.trim().length < 5) {
+      newErrors.title = 'Title must be at least 5 characters'
     } else if (formData.title.length > 100) {
       newErrors.title = 'Title must be less than 100 characters'
     }
     
     if (!formData.content.trim()) {
       newErrors.content = 'Content is required'
-    } else if (formData.content.length < 20) {
-      newErrors.content = 'Content must be at least 20 characters'
+    } else if (formData.content.trim().length < 20) {
+      newErrors.content = `Content must be at least 20 characters (currently ${formData.content.trim().length})`
     } else if (formData.content.length > 500) {
       newErrors.content = 'Content must be less than 500 characters'
     }
@@ -79,9 +80,16 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
       }
       
       await onSubmit(tipData)
+      // Only close modal on success
+      setFormData({ title: '', content: '' })
+      setErrors({})
       onClose()
-    } catch {
-      setErrors({ submit: 'Failed to save tip. Please try again.' })
+    } catch (error) {
+      // Keep modal open and show error
+      console.error('Error submitting tip:', error)
+      setErrors({ 
+        submit: error.message || 'Failed to save tip. Please try again.' 
+      })
     } finally {
       setIsSubmitting(false)
     }
@@ -90,15 +98,17 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Backdrop */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop - Don't close on click */}
       <div 
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={onClose}
       />
       
-      {/* Modal */}
-      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+      {/* Modal - Don't close when clicking inside */}
+      <div 
+        className="relative bg-white rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">

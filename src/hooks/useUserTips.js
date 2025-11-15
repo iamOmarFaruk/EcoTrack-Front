@@ -235,12 +235,19 @@ export function useUserTips() {
       let updatedTip = response.data
       if (response.data?.tip) {
         updatedTip = response.data.tip
+      } else if (response.data?.data?.tip) {
+        updatedTip = response.data.data.tip
       } else if (response.data?.data) {
         updatedTip = response.data.data
       }
 
       // Find the original tip in local state to preserve data
       const originalTip = tips.find(tip => tip.id === tipId)
+      
+      // If backend didn't return tip data, use original tip with updates
+      if (!updatedTip) {
+        updatedTip = {}
+      }
       
       // Ensure the updated tip retains proper identification and data
       const enhancedTip = {
@@ -252,12 +259,14 @@ export function useUserTips() {
         ...updatedTip,
         // Ensure essential fields are preserved
         id: tipId,
-        authorId: updatedTip.authorId || originalTip?.authorId || user.uid,
-        authorName: originalTip?.authorName || user.name || user.displayName || 'Anonymous',
-        authorImage: originalTip?.authorImage || user.avatarUrl || user.photoURL || null,
-        firebaseId: updatedTip.firebaseId || originalTip?.firebaseId || user.uid,
-        upvotes: Number.isFinite(Number(updatedTip.upvotes)) ? Number(updatedTip.upvotes) : (originalTip?.upvotes || 0),
-        updatedAt: updatedTip.updatedAt || new Date().toISOString()
+        authorId: updatedTip?.authorId || originalTip?.authorId || user.uid,
+        authorName: updatedTip?.authorName || originalTip?.authorName || user.name || user.displayName || 'Anonymous',
+        authorImage: updatedTip?.authorImage || originalTip?.authorImage || user.avatarUrl || user.photoURL || null,
+        firebaseId: updatedTip?.firebaseId || originalTip?.firebaseId || user.uid,
+        upvotes: Number.isFinite(Number(updatedTip?.upvoteCount)) 
+          ? Number(updatedTip.upvoteCount) 
+          : (Number.isFinite(Number(updatedTip?.upvotes)) ? Number(updatedTip.upvotes) : (originalTip?.upvotes || 0)),
+        updatedAt: updatedTip?.updatedAt || new Date().toISOString()
       }
 
       // Update local state
