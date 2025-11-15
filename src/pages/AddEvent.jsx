@@ -428,22 +428,21 @@ export default function AddEvent() {
               </div>
 
               {/* Form Actions */}
-              <div className="flex gap-4 pt-4">
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="flex-1 bg-green-600 hover:bg-green-700"
-                >
-                  {isSubmitting ? 'Creating Event...' : 'Create Event'}
-                </Button>
+              <div className="flex gap-4 pt-4 justify-end">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={handleCancel}
                   disabled={isSubmitting}
-                  className="flex-1"
                 >
                   Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  {isSubmitting ? 'Creating Event...' : 'Create Event'}
                 </Button>
               </div>
             </form>
