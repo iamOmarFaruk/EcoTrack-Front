@@ -16,15 +16,77 @@ export default function ChallengeDetail() {
   const [relatedChallenges, setRelatedChallenges] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [isJoining, setIsJoining] = useState(false)
+  const [isLeaving, setIsLeaving] = useState(false)
   
   useDocumentTitle(challenge ? challenge.title : 'Challenge Details')
 
   // Check if current user is the creator of the challenge
   const isOwner = challenge && auth.user && (
-    challenge.createdBy === auth.user.email ||
+    challenge.isCreator || 
     challenge.createdBy === auth.user.uid ||
     challenge.createdById === auth.user.uid
   )
+  
+  // Check if user has joined the challenge
+  const isJoined = challenge?.isJoined || false
+
+  const handleJoinChallenge = async () => {
+    if (!auth.isLoggedIn) {
+      toast.error('Please log in to join challenges')
+      return
+    }
+
+    setIsJoining(true)
+    try {
+      await challengeApi.join(id)
+      toast.success('Successfully joined the challenge!')
+      
+      // Refresh challenge data
+      const response = await challengeApi.getById(id)
+      const challengeData = response?.data || response
+      
+      setChallenge(prev => ({
+        ...prev,
+        isJoined: true,
+        participants: challengeData.registeredParticipants || (prev.participants + 1)
+      }))
+    } catch (error) {
+      console.error('Error joining challenge:', error)
+      if (error.message?.includes('already joined')) {
+        toast.error('You have already joined this challenge')
+      } else if (error.message?.includes('not active')) {
+        toast.error('This challenge is not currently active')
+      } else {
+        toast.error('Failed to join challenge. Please try again.')
+      }
+    } finally {
+      setIsJoining(false)
+    }
+  }
+
+  const handleLeaveChallenge = async () => {
+    setIsLeaving(true)
+    try {
+      await challengeApi.leave(id)
+      toast.success('Successfully left the challenge')
+      
+      // Refresh challenge data
+      const response = await challengeApi.getById(id)
+      const challengeData = response?.data || response
+      
+      setChallenge(prev => ({
+        ...prev,
+        isJoined: false,
+        participants: challengeData.registeredParticipants || Math.max(0, prev.participants - 1)
+      }))
+    } catch (error) {
+      console.error('Error leaving challenge:', error)
+      toast.error('Failed to leave challenge. Please try again.')
+    } finally {
+      setIsLeaving(false)
+    }
+  }
 
   const handleDeleteChallenge = async () => {
     // Create a professional confirmation toast
@@ -54,7 +116,6 @@ export default function ChallengeDetail() {
             onClick={async () => {
               toast.dismiss(t.id)
               try {
-                // Show loading state
                 const loadingToast = toast.loading('Deleting challenge...')
                 
                 await challengeApi.delete(id)
@@ -62,10 +123,9 @@ export default function ChallengeDetail() {
                 toast.dismiss(loadingToast)
                 toast.success('Challenge deleted successfully!')
                 
-                // Navigate back to challenges page
                 window.location.href = '/challenges'
               } catch (error) {
-
+                console.error('Error deleting challenge:', error)
                 toast.error('Failed to delete challenge. Please try again.')
               }
             }}
@@ -76,7 +136,7 @@ export default function ChallengeDetail() {
         </div>
       </div>
     ), {
-      duration: Infinity, // Keep open until user makes a choice
+      duration: Infinity,
       position: 'top-center',
       style: {
         maxWidth: '400px',
@@ -95,82 +155,78 @@ export default function ChallengeDetail() {
         setError(null)
 
         // Fetch the specific challenge
-        const challengeResponse = await challengeApi.getById(id)
-        
-        let challengeData = null
-        if (challengeResponse && challengeResponse.data && challengeResponse.data.challenge) {
-          challengeData = challengeResponse.data.challenge
-        } else if (challengeResponse && challengeResponse.challenge) {
-          challengeData = challengeResponse.challenge
-        } else if (challengeResponse) {
-          challengeData = challengeResponse
-        }
+        const response = await challengeApi.getById(id)
+        const challengeData = response?.data || response
 
         if (!challengeData) {
           throw new Error('Challenge not found')
         }
 
-        // Transform challenge data
+        // Transform challenge data to match new API structure
         const transformedChallenge = {
-          _id: challengeData._id || challengeData.id,
+          _id: challengeData.id || challengeData._id,
           title: challengeData.title || 'No data',
-          description: challengeData.description || 'No data',
+          description: challengeData.shortDescription || challengeData.description || 'No data',
+          detailedDescription: challengeData.detailedDescription || '',
           category: challengeData.category || 'No data',
-          difficulty: challengeData.difficulty || 'No data',
           duration: challengeData.duration || 'No data',
-          target: challengeData.target || 'No data',
           startDate: challengeData.startDate || 'No data',
           endDate: challengeData.endDate || 'No data',
-          instructions: challengeData.instructions || [],
-          tips: challengeData.tips || [],
-          imageUrl: challengeData.imageUrl || 'No data',
-          impactMetric: challengeData.impactMetric || 'No data',
-          participants: challengeData.participants || 'No data',
-          createdAt: challengeData.createdAt || 'No data',
-          updatedAt: challengeData.updatedAt || 'No data',
+          status: challengeData.status || 'active',
+          imageUrl: challengeData.image || challengeData.imageUrl || 'No data',
+          impactMetric: challengeData.impact || challengeData.impactMetric || 'No data',
+          co2Saved: challengeData.co2Saved || null,
+          participants: challengeData.registeredParticipants || challengeData.participants || 0,
+          isJoined: challengeData.isJoined || false,
+          isCreator: challengeData.isCreator || false,
+          featured: challengeData.featured || false,
           createdBy: challengeData.createdBy || 'No data',
           createdById: challengeData.createdById || challengeData.userId,
-          isActive: challengeData.isActive
+          createdAt: challengeData.createdAt || 'No data'
         }
 
         setChallenge(transformedChallenge)
 
-        // Fetch related challenges (all other challenges)
+        // Fetch related challenges in the same category
         try {
-          const allChallengesResponse = await challengeApi.getAll()
+          const params = {
+            category: challengeData.category,
+            limit: 4, // Get 4 to exclude current one
+            status: 'active'
+          }
+          const allChallengesResponse = await challengeApi.getAll(params)
           let allChallengesData = []
           
-          if (Array.isArray(allChallengesResponse)) {
+          if (allChallengesResponse?.data) {
+            allChallengesData = allChallengesResponse.data
+          } else if (Array.isArray(allChallengesResponse)) {
             allChallengesData = allChallengesResponse
-          } else if (allChallengesResponse && allChallengesResponse.data && Array.isArray(allChallengesResponse.data.challenges)) {
-            allChallengesData = allChallengesResponse.data.challenges
           }
 
           // Filter out current challenge and limit to 3
           const related = allChallengesData
-            .filter(c => (c._id || c.id) !== id)
+            .filter(c => (c.id || c._id) !== id)
             .slice(0, 3)
             .map(challenge => ({
-              _id: challenge._id || challenge.id,
+              _id: challenge.id || challenge._id,
               title: challenge.title || 'No data',
-              description: challenge.description || 'No data',
+              description: challenge.shortDescription || challenge.description || 'No data',
               category: challenge.category || 'No data',
-              difficulty: challenge.difficultyLevel || challenge.difficulty || 'No data',
               duration: challenge.duration || 'No data',
-              imageUrl: challenge.imageUrl || 'No data',
-              participants: challenge.participants || 'No data',
-              impactMetric: challenge.impactMetric || 'No data',
+              imageUrl: challenge.image || challenge.imageUrl || 'No data',
+              participants: challenge.registeredParticipants || challenge.participants || 0,
+              impactMetric: challenge.impact || challenge.impactMetric || 'No data',
               startDate: challenge.startDate || 'No data'
             }))
 
           setRelatedChallenges(related)
         } catch (relatedError) {
-
+          console.error('Error fetching related challenges:', relatedError)
           setRelatedChallenges([])
         }
 
       } catch (error) {
-
+        console.error('Error fetching challenge:', error)
         if (error.status === 404) {
           setError({ type: 'not-found', message: 'Challenge not found.' })
         } else if (error.status === 0) {
@@ -287,10 +343,27 @@ export default function ChallengeDetail() {
                 </Button>
               </>
             ) : auth.isLoggedIn ? (
-              // Other users can join
-              <Button as={Link} to={`/challenges/join/${challenge._id}`} className="w-full sm:w-auto">
-                Join Challenge
-              </Button>
+              // Other users can join or leave
+              <>
+                {isJoined ? (
+                  <Button 
+                    onClick={handleLeaveChallenge}
+                    disabled={isLeaving}
+                    variant="outline"
+                    className="w-full sm:w-auto"
+                  >
+                    {isLeaving ? 'Leaving...' : 'Leave Challenge'}
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={handleJoinChallenge}
+                    disabled={isJoining || challenge.status !== 'active'}
+                    className="w-full sm:w-auto"
+                  >
+                    {isJoining ? 'Joining...' : 'Join Challenge'}
+                  </Button>
+                )}
+              </>
             ) : (
               // Not logged in - prompt to login
               <Button as={Link} to="/login" className="w-full sm:w-auto">

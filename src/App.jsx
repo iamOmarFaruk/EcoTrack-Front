@@ -63,6 +63,22 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/challenges/edit/:id"
+              element={
+                <ProtectedRoute>
+                  <EditChallenge />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/challenges/add"
+              element={
+                <ProtectedRoute>
+                  <AddChallenge />
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<NotFound />} />
           </Route>
           <Route element={<DashboardLayout />}>
@@ -87,22 +103,6 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <MyActivities />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/challenges/add"
-              element={
-                <ProtectedRoute>
-                  <AddChallenge />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/challenges/edit/:id"
-              element={
-                <ProtectedRoute>
-                  <EditChallenge />
                 </ProtectedRoute>
               }
             />

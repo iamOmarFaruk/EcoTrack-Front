@@ -22,41 +22,42 @@ export const authApi = {
 
 // Challenge API calls
 export const challengeApi = {
-  // Get all challenges with optional filtering
+  // Get all challenges with pagination and filters (Public)
+  // Query params: page, limit, search, status (active/completed/cancelled), 
+  // category, featured (true/false), sortBy (startDate/endDate/participants/createdAt), order (asc/desc)
   getAll: (filters = {}) => httpClient.get('/challenges', { params: filters }),
 
-  // Get specific challenge by ID
+  // Get specific challenge by ID (Public, shows additional fields if authenticated)
   getById: (id) => httpClient.get(`/challenges/${id}`),
 
-  // Create new challenge
+  // Create new challenge (Authenticated)
+  // Required fields: category, title, shortDescription, image, duration, impact, startDate, endDate
+  // Optional: detailedDescription, co2Saved, featured
   create: (challengeData) => httpClient.post('/challenges', challengeData),
 
-  // Update challenge (user can only update their own)
-  update: (id, challengeData) => httpClient.patch(`/challenges/${id}`, challengeData),
+  // Update challenge - creator only (Authenticated)
+  // All fields optional, uses PUT method
+  update: (id, challengeData) => httpClient.put(`/challenges/${id}`, challengeData),
 
-  // Delete challenge (user can only delete their own)
+  // Delete challenge - creator only (Authenticated)
+  // Will be cancelled instead if has participants
   delete: (id) => httpClient.delete(`/challenges/${id}`),
 
-  // Join a challenge
-  join: (id) => httpClient.post(`/challenges/join/${id}`),
+  // Join a challenge (Authenticated)
+  join: (id) => httpClient.post(`/challenges/${id}/join`),
 
-  // Leave a challenge
-  leave: (id) => httpClient.post(`/challenges/leave/${id}`),
+  // Leave a challenge (Authenticated)
+  leave: (id) => httpClient.post(`/challenges/${id}/leave`),
 
-  // Get challenge participants
+  // Get participant count (Public, full list if creator)
   getParticipants: (id) => httpClient.get(`/challenges/${id}/participants`),
 
-  // Update progress on a challenge
-  updateProgress: (id, progressData) => httpClient.patch(`/challenges/${id}/progress`, progressData),
+  // Get challenges created by logged-in user (Authenticated)
+  getMyCreated: () => httpClient.get('/challenges/my/created'),
 
-  // Mark challenge as complete
-  markComplete: (id) => httpClient.post(`/challenges/${id}/complete`),
-
-  // Get user's own challenges (created by them)
-  getUserChallenges: () => httpClient.get('/challenges/my-challenges'),
-
-  // Get user's joined challenges
-  getJoinedChallenges: () => httpClient.get('/challenges/joined')
+  // Get challenges joined by logged-in user (Authenticated)
+  // Query params: status (joined/left), includeCompleted (boolean)
+  getMyJoined: (filters = {}) => httpClient.get('/challenges/my/joined', { params: filters })
 }
 
 // User API calls

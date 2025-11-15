@@ -17,6 +17,11 @@ export default function Challenges() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [category, setCategory] = useState('All')
+  const [pagination, setPagination] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [sortBy, setSortBy] = useState('createdAt')
+  const [order, setOrder] = useState('desc')
 
   // Fetch challenges from API
   useEffect(() => {
@@ -24,25 +29,36 @@ export default function Challenges() {
       try {
         setLoading(true)
         setError(null)
-        const response = await challengeApi.getAll()
-        let challengesData = []
         
-        // Handle different response structures
-        if (Array.isArray(response)) {
+        // Build query parameters
+        const params = {
+          page: currentPage,
+          limit: 12,
+          sortBy,
+          order
+        }
+        
+        if (searchQuery) params.search = searchQuery
+        if (category !== 'All') params.category = category
+        
+        const response = await challengeApi.getAll(params)
+        
+        // Handle new API response structure
+        let challengesData = []
+        let paginationData = null
+        
+        if (response && response.data) {
+          challengesData = response.data
+          paginationData = response.pagination
+        } else if (Array.isArray(response)) {
           challengesData = response
-        } else if (response && Array.isArray(response.challenges)) {
-          challengesData = response.challenges
-        } else if (response && response.data && Array.isArray(response.data.challenges)) {
-          challengesData = response.data.challenges
-        } else {
-
-          throw new Error('Invalid response format from server')
         }
 
         // Check if we have any challenges
-        if (challengesData.length === 0) {
+        if (challengesData.length === 0 && currentPage === 1) {
           setError({ type: 'no-data', message: 'No challenges available at the moment. Check back later for new environmental challenges!' })
           setChallenges([])
+          setPagination(null)
           return
         }
 
@@ -50,29 +66,24 @@ export default function Challenges() {
         const transformedChallenges = challengesData.map(challenge => ({
           _id: challenge._id || challenge.id,
           title: challenge.title || 'No data',
-          description: challenge.description || 'No data',
-          category: challenge.category ? formatCategory(challenge.category) : 'No data',
-          difficulty: challenge.difficultyLevel || 'No data',
+          description: challenge.shortDescription || challenge.description || 'No data',
+          category: challenge.category || 'No data',
           duration: challenge.duration || 'No data',
-          carbonImpact: challenge.carbonImpact || 'No data',
-          isActive: challenge.isActive,
           startDate: challenge.startDate || 'No data',
           endDate: challenge.endDate || 'No data',
-          goals: challenge.goals || [],
-          tips: challenge.tips || [],
-          rewards: challenge.rewards || { points: 0, badges: [] },
-          // Use only real API data
-          participants: challenge.participants || 'No data',
-          imageUrl: challenge.imageUrl || 'No data',
-          impactMetric: challenge.impactMetric || 'No data',
-          createdAt: challenge.createdAt || 'No data',
-          updatedAt: challenge.updatedAt || 'No data'
+          status: challenge.status || 'active',
+          imageUrl: challenge.image || challenge.imageUrl || 'No data',
+          participants: challenge.registeredParticipants || challenge.participants || 0,
+          impactMetric: challenge.impact || challenge.impactMetric || 'No data',
+          co2Saved: challenge.co2Saved || null,
+          featured: challenge.featured || false,
+          isJoined: challenge.isJoined || false,
+          isCreator: challenge.isCreator || false
         }))
         
         setChallenges(transformedChallenges)
+        setPagination(paginationData)
       } catch (error) {
-
-        
         // Set specific error messages based on error type
         if (error.status === 0) {
           setError({ 
@@ -96,32 +107,19 @@ export default function Challenges() {
           })
         }
         setChallenges([])
+        setPagination(null)
       } finally {
         setLoading(false)
       }
     }
 
     fetchChallenges()
-  }, [])
+  }, [currentPage, category, searchQuery, sortBy, order])
 
-  // Helper function to format category names
-  const formatCategory = (category) => {
-    if (!category) return 'General'
-    return category.split('-').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ')
-  }
-
-
-
+  // Define valid categories based on backend API
   const categories = useMemo(
-    () => ['All', ...Array.from(new Set((challenges ?? []).map((c) => c.category)))],
-    [challenges]
-  )
-  
-  const filtered = useMemo(
-    () => (category === 'All' ? challenges ?? [] : (challenges ?? []).filter((c) => c.category === category)),
-    [challenges, category]
+    () => ['All', 'Food', 'Waste Reduction', 'Energy Conservation', 'Water', 'Community'],
+    []
   )
 
   if (loading) {
@@ -200,29 +198,11 @@ export default function Challenges() {
 
       {/* Content Section */}
       <div className="space-y-6">
-        <div className="flex flex-col gap-4 sm:gap-3 md:flex-row md:items-end md:justify-between">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-semibold">Browse Challenges</h2>
-            <p className="mt-1 text-sm sm:text-base text-slate-900">Find and join challenges that match your interests.</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-slate-900 whitespace-nowrap">Category</label>
-              <select
-                className="flex-1 sm:flex-initial rounded-md border pl-3 pr-8 py-2 text-sm min-w-0 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white appearance-none"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
-                  backgroundPosition: 'right 8px center',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundSize: '16px 16px'
-                }}
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              >
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 sm:gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-semibold">Browse Challenges</h2>
+              <p className="mt-1 text-sm sm:text-base text-slate-900">Find and join challenges that match your interests.</p>
             </div>
             {auth.isLoggedIn && (
               <Button
@@ -237,11 +217,76 @@ export default function Challenges() {
               </Button>
             )}
           </div>
+
+          {/* Filters - Hidden for now */}
+          {/* <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder="Search challenges..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  setCurrentPage(1)
+                }}
+                className="w-full rounded-md border border-gray-300 pl-10 pr-4 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'/%3e%3c/svg%3e")`,
+                  backgroundPosition: 'left 12px center',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: '16px 16px'
+                }}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-slate-900 whitespace-nowrap">Category</label>
+              <select
+                className="flex-1 sm:flex-initial rounded-md border pl-3 pr-8 py-2 text-sm min-w-0 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white appearance-none"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
+                  backgroundPosition: 'right 8px center',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: '16px 16px'
+                }}
+                value={category}
+                onChange={(e) => {
+                  setCategory(e.target.value)
+                  setCurrentPage(1)
+                }}
+              >
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-slate-900 whitespace-nowrap">Sort by</label>
+              <select
+                className="flex-1 sm:flex-initial rounded-md border pl-3 pr-8 py-2 text-sm min-w-0 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white appearance-none"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
+                  backgroundPosition: 'right 8px center',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundSize: '16px 16px'
+                }}
+                value={sortBy}
+                onChange={(e) => {
+                  setSortBy(e.target.value)
+                  setCurrentPage(1)
+                }}
+              >
+                <option value="createdAt">Newest</option>
+                <option value="startDate">Start Date</option>
+                <option value="endDate">End Date</option>
+                <option value="participants">Most Popular</option>
+              </select>
+            </div>
+          </div> */}
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.length > 0 ? (
-            filtered.map((c) => (
+          {challenges.length > 0 ? (
+            challenges.map((c) => (
               <LazyChallengeCard key={c._id} challenge={c} />
             ))
           ) : (
@@ -253,21 +298,49 @@ export default function Challenges() {
               </div>
               <h3 className="text-lg font-medium text-slate-900 mb-2">No challenges found</h3>
               <p className="text-slate-600 mb-4">
-                {category === 'All' 
+                {category === 'All' && !searchQuery
                   ? 'No challenges are currently available.'
-                  : `No challenges found in the "${category}" category.`
+                  : `No challenges found matching your filters.`
                 }
               </p>
               <Button
-                onClick={() => setCategory('All')}
+                onClick={() => {
+                  setCategory('All')
+                  setSearchQuery('')
+                }}
                 variant="outline"
                 className="text-sm"
               >
-                View All Categories
+                Clear Filters
               </Button>
             </div>
           )}
         </div>
+
+        {/* Pagination */}
+        {pagination && pagination.pages > 1 && (
+          <div className="flex items-center justify-center gap-2 pt-4">
+            <Button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              variant="outline"
+              className="px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Previous
+            </Button>
+            <span className="px-4 py-2 text-slate-900">
+              Page {pagination.page} of {pagination.pages}
+            </span>
+            <Button
+              onClick={() => setCurrentPage(p => p + 1)}
+              disabled={currentPage >= pagination.pages}
+              variant="outline"
+              className="px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Next
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   )

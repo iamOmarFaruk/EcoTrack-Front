@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import SectionHeading from '../components/SectionHeading.jsx'
 import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
 import EcoLoader from '../components/EcoLoader.jsx'
-import { userApi } from '../services/api.js'
+import { challengeApi } from '../services/api.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import toast from 'react-hot-toast'
 
@@ -19,25 +19,84 @@ export default function MyActivities() {
 
   useEffect(() => {
     fetchActivities()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage, statusFilter])
 
   const fetchActivities = async () => {
     try {
       setLoading(true)
+      
+      // Use the new challenges API endpoints
       const params = {
         page: currentPage,
         limit: 12
       }
-      if (statusFilter !== 'all') {
-        params.status = statusFilter
-      }
-
-      const response = await userApi.getMyActivities(params)
-      const data = response?.data || response
       
-      setActivities(data?.activities || [])
-      setSummary(data?.summary || null)
-      setPagination(data?.pagination || null)
+      // Get joined challenges
+      const joinedResponse = await challengeApi.getMyJoined(params)
+      const joinedData = joinedResponse?.data || joinedResponse || []
+      
+      // Get created challenges
+      const createdResponse = await challengeApi.getMyCreated()
+      const createdData = createdResponse?.data || createdResponse || []
+      
+      // Transform data
+      const transformedJoined = Array.isArray(joinedData) ? joinedData.map(challenge => ({
+        _id: challenge.id || challenge._id,
+        challenge: {
+          _id: challenge.id || challenge._id,
+          title: challenge.title,
+          description: challenge.shortDescription || challenge.description,
+          category: challenge.category,
+          imageUrl: challenge.image || challenge.imageUrl,
+          impactMetric: challenge.impact || challenge.impactMetric
+        },
+        userProgress: {
+          status: challenge.status === 'completed' ? 'Completed' : 'Active',
+          progress: 0, // Backend doesn't provide this yet
+          impactAchieved: 0 // Backend doesn't provide this yet
+        }
+      })) : []
+      
+      const transformedCreated = Array.isArray(createdData) ? createdData.map(challenge => ({
+        _id: challenge.id || challenge._id,
+        challenge: {
+          _id: challenge.id || challenge._id,
+          title: challenge.title,
+          description: challenge.shortDescription || challenge.description,
+          category: challenge.category,
+          imageUrl: challenge.image || challenge.imageUrl,
+          impactMetric: challenge.impact || challenge.impactMetric
+        },
+        userProgress: {
+          status: 'Creator',
+          progress: 100,
+          impactAchieved: 0
+        }
+      })) : []
+      
+      // Combine activities
+      const allActivities = [...transformedCreated, ...transformedJoined]
+      
+      // Apply status filter
+      let filteredActivities = allActivities
+      if (statusFilter === 'active') {
+        filteredActivities = allActivities.filter(a => a.userProgress.status === 'Active' || a.userProgress.status === 'Creator')
+      } else if (statusFilter === 'completed') {
+        filteredActivities = allActivities.filter(a => a.userProgress.status === 'Completed')
+      }
+      
+      setActivities(filteredActivities)
+      
+      // Calculate summary
+      setSummary({
+        total: allActivities.length,
+        active: allActivities.filter(a => a.userProgress.status === 'Active' || a.userProgress.status === 'Creator').length,
+        completed: allActivities.filter(a => a.userProgress.status === 'Completed').length
+      })
+      
+      // Set pagination (simplified for now)
+      setPagination(joinedResponse?.pagination || null)
     } catch (error) {
       console.error('Failed to fetch activities:', error)
       toast.error('Failed to load your activities')
