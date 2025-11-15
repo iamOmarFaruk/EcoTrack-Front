@@ -79,17 +79,6 @@ export default function MyEvents() {
 
   return (
     <div className="space-y-8">
-      {/* Hero Section */}
-      <div className="full-bleed -mt-8">
-        <SubpageHero
-          title="My Events"
-          subtitle="Manage your events and track your registrations"
-          backgroundImage={defaultImages.eventsHero}
-          height="medium"
-          overlayIntensity="medium"
-        />
-      </div>
-
       {/* Tabs */}
       <div className="flex gap-2">
         <button
