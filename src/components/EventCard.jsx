@@ -11,7 +11,17 @@ export default function EventCard({ event }) {
   }
 
   return (
-    <Card className="h-full">
+    <Card className="h-full overflow-hidden">
+      {event.image && (
+        <div className="w-full h-48 overflow-hidden">
+          <img 
+            src={event.image} 
+            alt={event.title}
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
+        </div>
+      )}
       <CardContent className="flex h-full flex-col">
         <h3 className="text-base font-semibold">{event.title}</h3>
         <p className="mt-1 text-xs text-slate-500">

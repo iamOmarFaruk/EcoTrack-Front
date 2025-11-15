@@ -12,10 +12,9 @@ import { useMockFetch } from '../hooks/useMockFetch.js'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver.js'
 import { mockChallenges } from '../data/mockChallenges.js'
-import { mockEvents } from '../data/mockEvents.js'
 import { defaultImages } from '../config/env'
 import { useState, useEffect } from 'react'
-import { tipsApi } from '../services/api.js'
+import { tipsApi, eventApi } from '../services/api.js'
 import { useAuth } from '../context/AuthContext.jsx'
 
 export default function Home() {
@@ -26,6 +25,10 @@ export default function Home() {
   // State for real tips from API
   const [tips, setTips] = useState([])
   const [loadingTips, setLoadingTips] = useState(true)
+  
+  // State for real events from API
+  const [events, setEvents] = useState([])
+  const [loadingEvents, setLoadingEvents] = useState(true)
   
   // Intersection observer for Why Go Green section
   const [setWhyGoGreenRef, isWhyGoGreenVisible] = useIntersectionObserver({
@@ -54,7 +57,50 @@ export default function Home() {
     // Limit to 4–6 items; prefer up to 6
     return source.slice(0, 6)
   }, 500)
-  const { data: events, loading: loadingEvents } = useMockFetch(() => mockEvents.slice(0, 3), 700)
+
+  // Fetch 3 latest events from API
+  useEffect(() => {
+    const fetchUpcomingEvents = async () => {
+      try {
+        setLoadingEvents(true)
+        const response = await eventApi.getAll({ 
+          page: 1, 
+          limit: 3,
+          sortBy: 'createdAt',
+          order: 'desc'
+        })
+        
+        // Handle different API response structures
+        let eventsData = response.data
+        if (response.data?.events) {
+          eventsData = response.data.events
+        } else if (response.data?.data?.events) {
+          eventsData = response.data.data.events
+        } else if (response.data?.data) {
+          eventsData = response.data.data
+        }
+        
+        // Ensure we have an array
+        const eventsArray = Array.isArray(eventsData) ? eventsData : Object.values(eventsData || {})
+        
+        // Enhance events with proper data structure
+        const enhancedEvents = eventsArray.map(event => ({
+          ...event,
+          _id: event._id || event.id,
+          id: event.id || event._id
+        }))
+        
+        setEvents(enhancedEvents)
+      } catch (error) {
+        console.error('Error fetching events:', error)
+        setEvents([])
+      } finally {
+        setLoadingEvents(false)
+      }
+    }
+    
+    fetchUpcomingEvents()
+  }, [])
 
   // Fetch 3 most recent tips from API
   useEffect(() => {
