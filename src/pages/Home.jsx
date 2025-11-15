@@ -16,9 +16,12 @@ import { mockEvents } from '../data/mockEvents.js'
 import { defaultImages } from '../config/env'
 import { useState, useEffect } from 'react'
 import { tipsApi } from '../services/api.js'
+import { useAuth } from '../context/AuthContext.jsx'
 
 export default function Home() {
   useDocumentTitle('Home')
+  
+  const { user } = useAuth()
   
   // State for real tips from API
   const [tips, setTips] = useState([])
@@ -85,6 +88,10 @@ export default function Home() {
           upvotes: Number.isFinite(Number(tip.upvoteCount))
             ? Number(tip.upvoteCount)
             : (Number.isFinite(Number(tip.upvotes)) ? Number(tip.upvotes) : 0),
+          authorId: tip.authorId || (typeof tip.author === 'string' ? tip.author : tip.author?.uid || tip.author?.id),
+          authorName: tip.authorName || tip.author?.name || 'Anonymous',
+          authorImage: tip.authorImage || tip.authorAvatar || tip.author?.avatarUrl || tip.author?.imageUrl,
+          firebaseId: tip.firebaseId || (typeof tip.author === 'string' ? tip.author : tip.author?.firebaseId)
         }))
         
         setTips(enhancedTips)
@@ -98,6 +105,20 @@ export default function Home() {
     
     fetchRecentTips()
   }, [])
+
+  // Check if user can modify a tip (ownership check)
+  const canModifyTip = (tip) => {
+    if (!user) return false
+    
+    return (
+      tip.authorId === user.uid || 
+      tip.author?.uid === user.uid || 
+      tip.author?.id === user.uid ||
+      tip.author?.firebaseId === user.uid ||
+      tip.author === user.uid ||
+      tip.firebaseId === user.uid
+    )
+  }
   
   const isInitialLoading = loadingChallenges && loadingTips && loadingEvents
 
@@ -144,7 +165,12 @@ export default function Home() {
             </LazySection>
           ))}
           {!loadingTips && tips?.map((t, i) => (
-            <LazyTipCard key={i} tip={t} showActions={true} />
+            <LazyTipCard 
+              key={i} 
+              tip={t} 
+              showActions={true}
+              canModify={canModifyTip(t)}
+            />
           ))}
         </div>
       </section>
