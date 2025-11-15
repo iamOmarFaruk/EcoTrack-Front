@@ -19,11 +19,15 @@ export default function AddChallenge() {
     detailedDescription: '',
     image: '',
     duration: '',
-    impact: '',
-    co2Saved: '',
     startDate: '',
     endDate: '',
-    featured: false
+    featured: false,
+    communityImpact: {
+      co2SavedKg: 10,
+      plasticReducedKg: 5,
+      waterSavedL: 100,
+      energySavedKwh: 15
+    }
   })
 
   const [errors, setErrors] = useState({})
@@ -36,6 +40,17 @@ export default function AddChallenge() {
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }))
     }
+  }
+
+  const handleImpactChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      communityImpact: {
+        ...prev.communityImpact,
+        [name]: parseFloat(value) || 0
+      }
+    }))
   }
 
   // Auto-calculate duration based on start and end dates
@@ -108,16 +123,18 @@ export default function AddChallenge() {
       newErrors.duration = 'Duration must be between 2 and 50 characters'
     }
 
-    // Impact validation (3-100 chars, required)
-    if (!formData.impact.trim()) {
-      newErrors.impact = 'Impact metric is required'
-    } else if (formData.impact.length < 3 || formData.impact.length > 100) {
-      newErrors.impact = 'Impact metric must be between 3 and 100 characters'
+    // Community Impact validation (all fields must be non-negative)
+    if (formData.communityImpact.co2SavedKg < 0) {
+      newErrors.co2SavedKg = 'CO₂ saved must be a positive number'
     }
-
-    // CO2 saved validation (optional, 2-50 chars)
-    if (formData.co2Saved && (formData.co2Saved.length < 2 || formData.co2Saved.length > 50)) {
-      newErrors.co2Saved = 'CO₂ saved must be between 2 and 50 characters'
+    if (formData.communityImpact.plasticReducedKg < 0) {
+      newErrors.plasticReducedKg = 'Plastic reduced must be a positive number'
+    }
+    if (formData.communityImpact.waterSavedL < 0) {
+      newErrors.waterSavedL = 'Water saved must be a positive number'
+    }
+    if (formData.communityImpact.energySavedKwh < 0) {
+      newErrors.energySavedKwh = 'Energy saved must be a positive number'
     }
 
     // Start date validation (required, must be today or future)
@@ -171,20 +188,15 @@ export default function AddChallenge() {
         shortDescription: formData.shortDescription,
         image: formData.image,
         duration: formData.duration,
-        impact: formData.impact,
         startDate: formData.startDate,
-        endDate: formData.endDate
+        endDate: formData.endDate,
+        communityImpact: formData.communityImpact,
+        featured: formData.featured
       }
 
       // Add optional fields if provided
       if (formData.detailedDescription) {
         challengeData.detailedDescription = formData.detailedDescription
-      }
-      if (formData.co2Saved) {
-        challengeData.co2Saved = formData.co2Saved
-      }
-      if (formData.featured) {
-        challengeData.featured = formData.featured
       }
 
       const response = await challengeApi.create(challengeData)
@@ -212,9 +224,12 @@ export default function AddChallenge() {
           else if (message.includes('category')) backendErrors.category = err
           else if (message.includes('image')) backendErrors.image = err
           else if (message.includes('duration')) backendErrors.duration = err
-          else if (message.includes('impact')) backendErrors.impact = err
           else if (message.includes('start')) backendErrors.startDate = err
           else if (message.includes('end')) backendErrors.endDate = err
+          else if (message.includes('co2')) backendErrors.co2SavedKg = err
+          else if (message.includes('plastic')) backendErrors.plasticReducedKg = err
+          else if (message.includes('water')) backendErrors.waterSavedL = err
+          else if (message.includes('energy')) backendErrors.energySavedKwh = err
         })
         if (Object.keys(backendErrors).length > 0) {
           setErrors(backendErrors)
@@ -387,42 +402,96 @@ export default function AddChallenge() {
                 value={formData.duration}
               />
 
-              {/* Impact and CO2 */}
-              <div className="grid gap-6 md:grid-cols-2">
-                <div>
-                  <label htmlFor="impact" className="block text-sm font-medium text-slate-900 mb-2">
-                    Impact Metric <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="impact"
-                    name="impact"
-                    value={formData.impact}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                      errors.impact ? 'border-red-500' : 'border-slate-300'
-                    }`}
-                    placeholder="e.g., Bottles avoided"
-                  />
-                  {errors.impact && <p className="mt-1 text-sm text-red-500">{errors.impact}</p>}
-                </div>
+              {/* Community Impact Section */}
+              <div>
+                <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                  <span className="text-green-600">🌍</span>
+                  Community Impact Metrics
+                </h3>
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div>
+                    <label htmlFor="co2SavedKg" className="block text-sm font-medium text-slate-900 mb-2">
+                      CO₂ Saved (kg)
+                    </label>
+                    <input
+                      type="number"
+                      id="co2SavedKg"
+                      name="co2SavedKg"
+                      value={formData.communityImpact.co2SavedKg}
+                      onChange={handleImpactChange}
+                      min="0"
+                      step="0.1"
+                      className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                        errors.co2SavedKg ? 'border-red-500' : 'border-slate-300'
+                      }`}
+                      placeholder="e.g., 10"
+                    />
+                    {errors.co2SavedKg && <p className="mt-1 text-sm text-red-500">{errors.co2SavedKg}</p>}
+                    <p className="mt-1 text-xs text-slate-500">Estimated CO₂ reduction in kilograms</p>
+                  </div>
 
-                <div>
-                  <label htmlFor="co2Saved" className="block text-sm font-medium text-slate-900 mb-2">
-                    CO₂ Saved <span className="text-slate-500">(Optional)</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="co2Saved"
-                    name="co2Saved"
-                    value={formData.co2Saved}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                      errors.co2Saved ? 'border-red-500' : 'border-slate-300'
-                    }`}
-                    placeholder="e.g., 15 kg"
-                  />
-                  {errors.co2Saved && <p className="mt-1 text-sm text-red-500">{errors.co2Saved}</p>}
+                  <div>
+                    <label htmlFor="plasticReducedKg" className="block text-sm font-medium text-slate-900 mb-2">
+                      Plastic Reduced (kg)
+                    </label>
+                    <input
+                      type="number"
+                      id="plasticReducedKg"
+                      name="plasticReducedKg"
+                      value={formData.communityImpact.plasticReducedKg}
+                      onChange={handleImpactChange}
+                      min="0"
+                      step="0.1"
+                      className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                        errors.plasticReducedKg ? 'border-red-500' : 'border-slate-300'
+                      }`}
+                      placeholder="e.g., 5"
+                    />
+                    {errors.plasticReducedKg && <p className="mt-1 text-sm text-red-500">{errors.plasticReducedKg}</p>}
+                    <p className="mt-1 text-xs text-slate-500">Estimated plastic waste reduction in kilograms</p>
+                  </div>
+
+                  <div>
+                    <label htmlFor="waterSavedL" className="block text-sm font-medium text-slate-900 mb-2">
+                      Water Saved (Liters)
+                    </label>
+                    <input
+                      type="number"
+                      id="waterSavedL"
+                      name="waterSavedL"
+                      value={formData.communityImpact.waterSavedL}
+                      onChange={handleImpactChange}
+                      min="0"
+                      step="1"
+                      className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                        errors.waterSavedL ? 'border-red-500' : 'border-slate-300'
+                      }`}
+                      placeholder="e.g., 100"
+                    />
+                    {errors.waterSavedL && <p className="mt-1 text-sm text-red-500">{errors.waterSavedL}</p>}
+                    <p className="mt-1 text-xs text-slate-500">Estimated water conservation in liters</p>
+                  </div>
+
+                  <div>
+                    <label htmlFor="energySavedKwh" className="block text-sm font-medium text-slate-900 mb-2">
+                      Energy Saved (kWh)
+                    </label>
+                    <input
+                      type="number"
+                      id="energySavedKwh"
+                      name="energySavedKwh"
+                      value={formData.communityImpact.energySavedKwh}
+                      onChange={handleImpactChange}
+                      min="0"
+                      step="0.1"
+                      className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
+                        errors.energySavedKwh ? 'border-red-500' : 'border-slate-300'
+                      }`}
+                      placeholder="e.g., 15"
+                    />
+                    {errors.energySavedKwh && <p className="mt-1 text-sm text-red-500">{errors.energySavedKwh}</p>}
+                    <p className="mt-1 text-xs text-slate-500">Estimated energy conservation in kilowatt-hours</p>
+                  </div>
                 </div>
               </div>
 
