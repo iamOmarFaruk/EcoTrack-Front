@@ -1,0 +1,1528 @@
+================================================================================
+ECOTRACK CHALLENGE API SPECIFICATION
+================================================================================
+
+Last Updated: November 15, 2025
+Version: 1.0
+
+
+================================================================================
+1. CHALLENGE DATA MODEL (MongoDB Native Driver)
+================================================================================
+
+MongoDB Collection: "challenges"
+--------------------------------
+
+Challenge Document Structure:
+{
+  "_id": ObjectId("..."),                    // MongoDB internal ID
+  "id": "plastic-free-week-2025-1700000000", // Unique slug (URL-friendly)
+  "category": "Waste Reduction",             // Required: Must be one of predefined categories
+  "title": "Plastic-Free Week",              // Required: 5-100 chars
+  "shortDescription": "Avoid single-use plastics for a week and share your swaps.", // Required: 20-250 chars
+  "detailedDescription": "Join us in reducing plastic waste...", // Optional: Full details
+  "image": "https://images.unsplash.com/...", // Required: Valid image URL (Unsplash, Pexels, or any)
+  "participants": [                          // Array of participant objects
+    {
+      "userId": "firebase_uid_123",          // Firebase UID
+      "joinedAt": "2025-03-01T10:00:00Z",   // ISO timestamp
+      "status": "joined"                     // "joined" or "left"
+    }
+  ],
+  "registeredParticipants": 1240,            // Counter: active participants
+  "duration": "7 days",                      // Required: Challenge duration
+  "impact": "Bottles avoided",               // Required: Impact metric
+  "co2Saved": "15 kg",                       // Optional: CO2 impact
+  "startDate": "2025-03-01",                 // Required: ISO date (YYYY-MM-DD)
+  "endDate": "2025-03-08",                   // Required: ISO date (YYYY-MM-DD)
+  "featured": true,                          // Required: Boolean
+  "status": "active",                        // Required: "active", "completed", "cancelled"
+  "createdBy": "firebase_uid_xyz",           // Required: Creator's Firebase UID
+  "createdAt": "2025-02-15T08:30:00Z",      // ISO timestamp (auto-generated)
+  "updatedAt": "2025-02-15T08:30:00Z"       // ISO timestamp (auto-updated)
+}
+
+Create Indexes (Run Once):
+--------------------------
+db.challenges.createIndex({ "id": 1 }, { unique: true });
+db.challenges.createIndex({ "createdBy": 1 });
+db.challenges.createIndex({ "startDate": 1 });
+db.challenges.createIndex({ "endDate": 1 });
+db.challenges.createIndex({ "status": 1 });
+db.challenges.createIndex({ "category": 1 });
+db.challenges.createIndex({ "featured": 1 });
+db.challenges.createIndex({ "status": 1, "startDate": 1 });
+db.challenges.createIndex({ "status": 1, "featured": -1 });
+db.challenges.createIndex({ "participants.userId": 1 });
+db.challenges.createIndex({ 
+  "title": "text", 
+  "shortDescription": "text", 
+  "category": "text" 
+});
+
+Example Document:
+-----------------
+{
+  "_id": ObjectId("673c8e9a1234567890abcdef"),
+  "id": "plastic-free-week-2025-1731581400",
+  "category": "Waste Reduction",
+  "title": "Plastic-Free Week",
+  "shortDescription": "Avoid single-use plastics for a week and share your swaps.",
+  "detailedDescription": "Join us in this week-long challenge to eliminate single-use plastics from your daily routine. Track your progress, share alternatives you discover, and inspire others to make sustainable choices.",
+  "image": "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=800&q=80",
+  "participants": [
+    {
+      "userId": "abc123xyz",
+      "joinedAt": "2025-03-01T10:00:00Z",
+      "status": "joined"
+    }
+  ],
+  "registeredParticipants": 1240,
+  "duration": "7 days",
+  "impact": "Bottles avoided",
+  "co2Saved": "15 kg",
+  "startDate": "2025-03-01",
+  "endDate": "2025-03-08",
+  "featured": true,
+  "status": "active",
+  "createdBy": "firebase_uid_creator_123",
+  "createdAt": "2025-02-15T08:30:00Z",
+  "updatedAt": "2025-02-15T08:30:00Z"
+}
+
+
+================================================================================
+2. API ENDPOINTS
+================================================================================
+
+BASE URL: /api/challenges
+
+
+2.1 GET /api/challenges
+------------------------
+Description: Get all challenges with pagination, filtering, and search
+Access: Public (no authentication required)
+
+Query Parameters:
+  - page (optional): Page number (default: 1)
+  - limit (optional): Items per page (default: 10, max: 50)
+  - search (optional): Search in title, description, category
+  - status (optional): Filter by status ("active", "completed", "cancelled")
+  - category (optional): Filter by category
+  - featured (optional): Filter featured challenges ("true" or "false")
+  - sortBy (optional): Sort field ("startDate", "endDate", "participants", "createdAt")
+  - order (optional): Sort order ("asc" or "desc", default: "desc")
+
+Response 200:
+{
+  "success": true,
+  "data": [...array of challenges],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 45,
+    "pages": 5
+  }
+}
+
+Error 500:
+{
+  "success": false,
+  "message": "Failed to fetch challenges"
+}
+
+
+2.2 GET /api/challenges/:id
+----------------------------
+Description: Get single challenge with full details
+Access: Public
+
+Response 200:
+{
+  "success": true,
+  "data": {
+    ...challenge object with all fields,
+    "isCreator": false,           // Boolean (only if authenticated)
+    "isJoined": true,              // Boolean (only if authenticated)
+    "spotsRemaining": "unlimited"  // Or number if limited
+  }
+}
+
+Error 404:
+{
+  "success": false,
+  "message": "Challenge not found"
+}
+
+
+2.3 POST /api/challenges
+-------------------------
+Description: Create new challenge
+Access: Authenticated users only
+Content-Type: application/json
+
+Request Body:
+{
+  "category": "Waste Reduction",               // Required (must be from predefined list)
+  "title": "Plastic-Free Week",                // Required
+  "shortDescription": "Avoid single-use...",   // Required
+  "detailedDescription": "Full description...", // Optional
+  "image": "https://images.unsplash.com/...",  // Required (valid image URL)
+  "duration": "7 days",                        // Required
+  "impact": "Bottles avoided",                 // Required
+  "co2Saved": "15 kg",                         // Optional
+  "startDate": "2025-03-01",                   // Required (YYYY-MM-DD)
+  "endDate": "2025-03-08",                     // Required (YYYY-MM-DD)
+  "featured": false                            // Optional (default: false)
+}
+
+Validation Rules:
+  - category: Required, must be one of: "Food", "Waste Reduction", "Energy Conservation", "Water", "Community"
+  - title: Required, 5-100 characters, unique
+  - shortDescription: Required, 20-250 characters
+  - detailedDescription: Optional, max 2000 characters
+  - image: Required, valid image URL (https/http)
+  - duration: Required, 2-50 characters (e.g., "7 days", "2 weeks", "1 month")
+  - impact: Required, 3-100 characters (e.g., "Bottles avoided", "CO₂ saved", "Trees planted")
+  - co2Saved: Optional, 2-50 characters (e.g., "15 kg", "100 lbs")
+  - startDate: Required, ISO date (YYYY-MM-DD), must be today or future
+  - endDate: Required, ISO date (YYYY-MM-DD), must be after startDate
+  - featured: Optional, boolean (default: false)
+
+Response 201:
+{
+  "success": true,
+  "message": "Challenge created successfully",
+  "data": {...created challenge object with generated id}
+}
+
+Error 400:
+{
+  "success": false,
+  "message": "Validation failed",
+  "errors": [
+    "Title is required",
+    "Category must be one of: Food, Waste Reduction, Energy Conservation, Water, Community",
+    "Image must be a valid URL",
+    "Start date must be today or in the future",
+    "End date must be after start date"
+  ]
+}
+
+Error 401:
+{
+  "success": false,
+  "message": "Authentication required"
+}
+
+
+2.4 PUT /api/challenges/:id
+----------------------------
+Description: Update challenge (creator only)
+Access: Challenge creator only
+Content-Type: application/json
+
+Request Body: (all fields optional)
+{
+  "category": "Energy Conservation",
+  "title": "Updated Title",
+  "shortDescription": "Updated description",
+  "detailedDescription": "Updated detailed description",
+  "image": "https://images.unsplash.com/...",
+  "duration": "14 days",
+  "impact": "kWh reduced",
+  "co2Saved": "25 kg",
+  "startDate": "2025-03-15",
+  "endDate": "2025-03-29",
+  "featured": true,
+  "status": "active"
+}
+
+Business Rules:
+  - Only creator can update their own challenges
+  - Cannot change startDate to past date
+  - Cannot change endDate to before startDate
+  - Cannot change endDate to before current date (for active challenges)
+  - Can change status to "completed" or "cancelled"
+  - Featured flag can be changed (creator or admin)
+  - All validation rules from POST apply
+
+Response 200:
+{
+  "success": true,
+  "message": "Challenge updated successfully",
+  "data": {...updated challenge object}
+}
+
+Error 400:
+{
+  "success": false,
+  "message": "Invalid update data"
+}
+
+Error 403:
+{
+  "success": false,
+  "message": "You can only update your own challenges"
+}
+
+Error 404:
+{
+  "success": false,
+  "message": "Challenge not found"
+}
+
+
+2.5 DELETE /api/challenges/:id
+-------------------------------
+Description: Delete challenge (creator only)
+Access: Challenge creator only
+
+Business Rules:
+  - Only creator can delete their own challenges
+  - If challenge has participants: recommend soft-delete (mark as "cancelled")
+  - Hard delete only if no participants
+  - Consider preventing deletion of active challenges with participants
+  - Log deletion for audit trail
+
+Response 200:
+{
+  "success": true,
+  "message": "Challenge deleted successfully"
+}
+
+OR (if has participants):
+{
+  "success": true,
+  "message": "Challenge cancelled successfully (has participants)"
+}
+
+Error 400:
+{
+  "success": false,
+  "message": "Cannot delete challenge with active participants"
+}
+
+Error 403:
+{
+  "success": false,
+  "message": "You can only delete your own challenges"
+}
+
+Error 404:
+{
+  "success": false,
+  "message": "Challenge not found"
+}
+
+
+2.6 POST /api/challenges/:id/join
+----------------------------------
+Description: Join a challenge (one-time action per user)
+Access: Authenticated users only
+
+Business Rules:
+  - User must be authenticated
+  - User cannot join their own challenge (creator check)
+  - User cannot join same challenge twice
+  - User can join multiple different challenges
+  - Can join challenges that haven't started yet
+  - Cannot join cancelled challenges
+  - Can rejoin after leaving (business decision)
+
+Process:
+  1. Verify user is authenticated
+  2. Check user is not the creator
+  3. Check user hasn't already joined (status = "joined")
+  4. Check challenge status is "active"
+  5. Atomically: increment registeredParticipants AND add to participants array
+  6. Use MongoDB $inc and $push in single operation
+  7. Return updated challenge data
+
+Response 200:
+{
+  "success": true,
+  "message": "Successfully joined the challenge",
+  "data": {
+    ...updated challenge object,
+    "isJoined": true,
+    "registeredParticipants": 1241
+  }
+}
+
+Error 400:
+{
+  "success": false,
+  "message": "You have already joined this challenge"
+}
+
+OR
+{
+  "success": false,
+  "message": "Cannot join your own challenge"
+}
+
+OR
+{
+  "success": false,
+  "message": "Challenge is not active"
+}
+
+Error 401:
+{
+  "success": false,
+  "message": "Authentication required"
+}
+
+Error 404:
+{
+  "success": false,
+  "message": "Challenge not found"
+}
+
+
+2.7 POST /api/challenges/:id/leave
+-----------------------------------
+Description: Leave a challenge
+Access: Authenticated users only
+
+Business Rules:
+  - User must be authenticated
+  - User must have joined the challenge previously
+  - Update participant status to "left" (keep history)
+  - Atomically decrement registeredParticipants
+  - Optional: Allow rejoining after leaving
+  - Consider business rule: prevent leaving within 24h of end date
+
+Process:
+  1. Verify user is authenticated
+  2. Check user has joined (exists in participants with status "joined")
+  3. Atomically: decrement registeredParticipants AND update participant status
+  4. Use MongoDB $inc and $set in single operation
+  5. Return updated challenge data
+
+Response 200:
+{
+  "success": true,
+  "message": "Successfully left the challenge",
+  "data": {
+    ...updated challenge object,
+    "isJoined": false,
+    "registeredParticipants": 1240
+  }
+}
+
+Error 400:
+{
+  "success": false,
+  "message": "You have not joined this challenge"
+}
+
+OR (optional):
+{
+  "success": false,
+  "message": "Cannot leave challenge within 24 hours of end date"
+}
+
+Error 401:
+{
+  "success": false,
+  "message": "Authentication required"
+}
+
+Error 404:
+{
+  "success": false,
+  "message": "Challenge not found"
+}
+
+
+2.8 GET /api/challenges/my-challenges
+--------------------------------------
+Description: Get challenges created by logged-in user
+Access: Authenticated users only
+
+Response 200:
+{
+  "success": true,
+  "data": [
+    ...array of challenges created by user,
+    each with isCreator: true
+  ],
+  "count": 3
+}
+
+Error 401:
+{
+  "success": false,
+  "message": "Authentication required"
+}
+
+
+2.9 GET /api/challenges/my-joined
+----------------------------------
+Description: Get challenges joined by logged-in user
+Access: Authenticated users only
+
+Query Parameters:
+  - status (optional): Filter by participant status ("joined" or "left")
+  - includeCompleted (optional): Include completed challenges (default: false)
+
+Response 200:
+{
+  "success": true,
+  "data": [
+    ...array of challenges user has joined
+  ],
+  "count": 5
+}
+
+Error 401:
+{
+  "success": false,
+  "message": "Authentication required"
+}
+
+
+2.10 GET /api/challenges/:id/participants
+------------------------------------------
+Description: Get list of participants for a challenge
+Access: Public (but limit details if not creator)
+
+Response 200 (if creator):
+{
+  "success": true,
+  "data": [
+    {
+      "userId": "firebase_uid_123",
+      "joinedAt": "2025-03-01T10:00:00Z",
+      "status": "joined"
+    }
+  ],
+  "count": 1240
+}
+
+Response 200 (if not creator):
+{
+  "success": true,
+  "count": 1240,
+  "message": "Participant details available to creator only"
+}
+
+
+================================================================================
+3. DYNAMIC COUNTING & CALCULATIONS
+================================================================================
+
+CRITICAL: Use ATOMIC operations for all counter updates to prevent race conditions
+
+3.1 Participant Count (registeredParticipants)
+-----------------------------------------------
+- ALWAYS use atomic increment/decrement operations with MongoDB $inc operator
+- Never: read count -> calculate -> write (race condition!)
+- Use MongoDB operators: $inc, $push, $set, $pull
+
+MongoDB Native Driver Atomic Operations:
+
+// Get database connection
+const db = client.db('your_database_name');
+const challengesCollection = db.collection('challenges');
+
+// On JOIN:
+const result = await challengesCollection.updateOne(
+  {
+    id: challengeId,
+    status: 'active',
+    'participants.userId': { $ne: userId }, // User hasn't joined
+    createdBy: { $ne: userId }              // Not the creator
+  },
+  {
+    $inc: { registeredParticipants: 1 },
+    $push: {
+      participants: {
+        userId: userId,
+        joinedAt: new Date().toISOString(),
+        status: 'joined'
+      }
+    },
+    $set: { updatedAt: new Date().toISOString() }
+  }
+);
+
+// Check if update succeeded
+if (result.modifiedCount === 0) {
+  // Handle error: already joined, not active, or is creator
+}
+
+// On LEAVE (update status to "left"):
+const result = await challengesCollection.updateOne(
+  {
+    id: challengeId,
+    'participants.userId': userId,
+    'participants.status': 'joined'
+  },
+  {
+    $inc: { registeredParticipants: -1 },
+    $set: {
+      'participants.$.status': 'left',
+      updatedAt: new Date().toISOString()
+    }
+  }
+);
+
+// Check if update succeeded
+if (result.modifiedCount === 0) {
+  // Handle error: not joined or already left
+}
+
+3.2 Calculated Fields (compute on-the-fly)
+-------------------------------------------
+- isCreator = createdBy === currentUserId
+- isJoined = participants.some(p => p.userId === currentUserId && p.status === "joined")
+- daysRemaining = calculate from endDate and current date
+- progressPercentage = calculate based on start/end dates
+- isActive = status === "active" && currentDate <= endDate
+- isUpcoming = status === "active" && currentDate < startDate
+
+3.3 Status Management
+---------------------
+- Auto-update status to "completed" for past challenges (scheduled job or on-demand)
+- Allow manual status changes by creator
+- Status affects visibility and actions
+- Featured challenges can be highlighted on frontend
+
+3.4 Real-time Updates (Optional)
+---------------------------------
+- Use WebSockets or Server-Sent Events for live updates
+- Notify when: participant count changes, challenge updated, challenge cancelled
+- Emit events: "challenge:joined", "challenge:left", "challenge:updated"
+
+
+================================================================================
+4. IMAGE HANDLING (UNSPLASH, PEXELS, OR ANY VALID URL)
+================================================================================
+
+4.1 Image URL Format
+--------------------
+Supported Image Sources:
+
+1. Unsplash:
+   https://images.unsplash.com/photo-{photo_id}?w={width}&q={quality}
+   Recommended: ?w=800&q=80
+
+2. Pexels:
+   https://images.pexels.com/photos/{id}/pexels-photo-{id}.jpeg?auto=compress&cs=tinysrgb&w={width}
+   Recommended: ?auto=compress&cs=tinysrgb&w=800
+
+3. Any Valid Image URL:
+   - Must start with https:// or http://
+   - Must be publicly accessible
+   - Common formats: .jpg, .jpeg, .png, .webp, .gif
+
+Examples:
+  Unsplash: https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=800&q=80
+  Pexels: https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=800
+  Other: https://example.com/images/challenge.jpg
+
+4.2 Default Images by Category
+-------------------------------
+If no image provided, use these defaults:
+
+Food:
+  https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80
+
+Waste Reduction:
+  https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=800&q=80
+
+Energy Conservation:
+  https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800&q=80
+
+Water:
+  https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=800&q=80
+
+Community:
+  https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=800&q=80
+
+4.3 Validation
+--------------
+- Accept URLs from images.unsplash.com, images.pexels.com, or any valid domain
+- Must start with https:// or http:// (prefer https)
+- Validate URL format using regex or URL parser
+- Optional: Verify image exists (HEAD request)
+- Optional: Check Content-Type is image/* (HEAD request)
+- Store full URL as provided by user
+- Maximum URL length: 500 characters
+
+
+================================================================================
+5. VALIDATION RULES DETAILED
+================================================================================
+
+Field: category
+  - Required: Yes
+  - Type: String
+  - Allowed Values: "Food", "Waste Reduction", "Energy Conservation", "Water", "Community"
+  - Must be exact match (case-sensitive)
+  - Examples: "Waste Reduction", "Energy Conservation", "Water"
+  - Validation: Must be one of the predefined categories
+  - Trim whitespace
+
+Field: title
+  - Required: Yes
+  - Type: String
+  - Min Length: 5
+  - Max Length: 100
+  - Must be unique (case-insensitive check)
+  - No special characters except hyphens, apostrophes
+  - Trim whitespace
+  - Used to generate URL slug
+
+Field: shortDescription
+  - Required: Yes
+  - Type: String
+  - Min Length: 20
+  - Max Length: 250
+  - Plain text (no HTML)
+  - Trim whitespace
+  - Display in card view
+
+Field: detailedDescription
+  - Required: No
+  - Type: String
+  - Max Length: 2000
+  - Can include line breaks
+  - No HTML allowed (or sanitize if allowed)
+  - Trim whitespace
+  - Display in detail view
+
+Field: image
+  - Required: Yes
+  - Type: String (URL)
+  - Must be valid URL
+  - Allowed domains: images.unsplash.com, images.pexels.com, or any valid HTTPS URL
+  - Format examples:
+    * Unsplash: https://images.unsplash.com/photo-{id}?params
+    * Pexels: https://images.pexels.com/photos/{id}/...
+    * Other: Any valid https:// image URL
+  - Validate URL structure (must start with https:// or http://)
+  - Optional: Validate image exists (HEAD request)
+
+Field: duration
+  - Required: Yes
+  - Type: String
+  - Min Length: 2
+  - Max Length: 50
+  - Examples: "7 days", "2 weeks", "1 month", "30 days"
+  - Trim whitespace
+
+Field: impact
+  - Required: Yes
+  - Type: String
+  - Min Length: 3
+  - Max Length: 100
+  - Examples: "Bottles avoided", "CO₂ saved", "Trees planted", "kWh reduced"
+  - Trim whitespace
+
+Field: co2Saved
+  - Required: No
+  - Type: String
+  - Min Length: 2
+  - Max Length: 50
+  - Examples: "15 kg", "100 lbs", "0.5 tons"
+  - Trim whitespace
+
+Field: startDate
+  - Required: Yes
+  - Type: String (ISO date format: YYYY-MM-DD)
+  - Must be valid date
+  - Must be today or future date
+  - Must be before endDate
+  - Validate date format
+
+Field: endDate
+  - Required: Yes
+  - Type: String (ISO date format: YYYY-MM-DD)
+  - Must be valid date
+  - Must be after startDate
+  - Must be future date (for new challenges)
+  - Validate date format
+
+Field: featured
+  - Required: No
+  - Type: Boolean
+  - Default: false
+  - Only true/false values
+
+Field: status
+  - Required: No (auto-set to "active" on creation)
+  - Type: String
+  - Allowed values: "active", "completed", "cancelled"
+  - Default: "active"
+  - Can be changed by creator
+
+
+================================================================================
+6. ACCESS CONTROL & PERMISSIONS
+================================================================================
+
+6.1 Public Access (No Authentication)
+--------------------------------------
+✓ GET /api/challenges (list all challenges)
+✓ GET /api/challenges/:id (view challenge details)
+✓ GET /api/challenges/:id/participants (limited info)
+
+6.2 Authenticated User Access
+------------------------------
+✓ All public endpoints
+✓ POST /api/challenges (create challenge)
+✓ POST /api/challenges/:id/join (join challenge)
+✓ POST /api/challenges/:id/leave (leave challenge)
+✓ GET /api/challenges/my-challenges (own challenges)
+✓ GET /api/challenges/my-joined (joined challenges)
+
+6.3 Challenge Creator Access
+-----------------------------
+✓ All authenticated user access
+✓ PUT /api/challenges/:id (update own challenge)
+✓ DELETE /api/challenges/:id (delete own challenge)
+✓ GET /api/challenges/:id/participants (full participant details)
+
+6.4 Admin Access (Optional)
+----------------------------
+✓ All above access
+✓ Update any challenge
+✓ Delete any challenge
+✓ Set featured flag
+✓ View all participant details
+✓ Manage user reports
+
+
+================================================================================
+7. ERROR HANDLING
+================================================================================
+
+7.1 HTTP Status Codes
+----------------------
+200 OK - Successful GET, PUT, DELETE
+201 Created - Successful POST (resource created)
+400 Bad Request - Validation errors, business rule violations
+401 Unauthorized - Authentication required but not provided
+403 Forbidden - Authenticated but not authorized (not owner)
+404 Not Found - Resource doesn't exist
+409 Conflict - Race condition, duplicate entry
+422 Unprocessable Entity - Semantic validation errors
+429 Too Many Requests - Rate limiting
+500 Internal Server Error - Server-side errors
+
+7.2 Error Response Format
+--------------------------
+{
+  "success": false,
+  "message": "Human-readable error message",
+  "error": "ERROR_CODE",          // Optional: Machine-readable code
+  "errors": [                     // Optional: Array for validation errors
+    "Field 'title' is required",
+    "End date must be after start date"
+  ],
+  "details": {                    // Optional: Additional context
+    "field": "startDate",
+    "value": "2024-01-01",
+    "reason": "Date must be in the future"
+  }
+}
+
+7.3 Common Error Codes
+-----------------------
+AUTH_REQUIRED - Authentication required
+AUTH_INVALID - Invalid authentication token
+FORBIDDEN - User lacks permission
+NOT_FOUND - Resource not found
+VALIDATION_ERROR - Input validation failed
+ALREADY_JOINED - User already joined challenge
+NOT_JOINED - User hasn't joined challenge
+CREATOR_CANNOT_JOIN - Challenge creator tried to join own challenge
+CHALLENGE_NOT_ACTIVE - Challenge is not active
+DUPLICATE_TITLE - Challenge title already exists
+INVALID_DATE_RANGE - End date must be after start date
+PAST_DATE - Date cannot be in the past
+RATE_LIMIT - Too many requests
+
+
+================================================================================
+8. BUSINESS LOGIC & RULES
+================================================================================
+
+8.1 Challenge Creation
+-----------------------
+✓ Any authenticated user can create challenges
+✓ User becomes challenge creator (createdBy)
+✓ Initial registeredParticipants = 0
+✓ Initial status = "active"
+✓ Start date must be today or future
+✓ End date must be after start date
+✓ Generate URL-friendly slug from title + timestamp for uniqueness
+✓ Featured default to false (can be changed later)
+✓ Validate all required fields
+
+8.2 Challenge Updates
+----------------------
+✓ Only creator can update their own challenges
+✓ Cannot change startDate to past date
+✓ Cannot change endDate to before startDate or current date
+✓ Can update status to "completed" or "cancelled"
+✓ Can toggle featured flag
+✓ Major changes should notify participants (optional)
+✓ updatedAt timestamp auto-updates
+
+8.3 Challenge Deletion
+-----------------------
+✓ Only creator can delete their own challenges
+✓ If has participants: recommend soft-delete (mark as "cancelled")
+✓ OR prevent deletion and require cancellation first
+✓ Hard delete should be admin-only or for challenges with no participants
+✓ Log deletion for audit trail
+
+8.4 Joining Challenges
+-----------------------
+✓ Must be authenticated
+✓ Cannot join own challenge (creator check)
+✓ Cannot join if already joined (check participant status)
+✓ Cannot join cancelled challenges
+✓ Can join challenges that haven't started yet
+✓ Can join completed challenges (for records)
+✓ Atomic increment of registeredParticipants
+✓ Add to participants array with timestamp and status "joined"
+✓ One active join per user per challenge (no duplicates)
+
+8.5 Leaving Challenges
+-----------------------
+✓ Must be authenticated
+✓ Must have joined previously (status = "joined")
+✓ Atomic decrement of registeredParticipants
+✓ Update participant status to "left" (keep history)
+✓ Optional: restrict leaving within 24h of end date
+✓ Can rejoin after leaving (business decision)
+✓ Update timestamp
+
+8.6 Participant Counting
+-------------------------
+✓ Always use atomic operations ($inc with $push/$set)
+✓ Never manually calculate counts
+✓ registeredParticipants = count of participants with status "joined"
+✓ Validate count on critical operations
+✓ Log discrepancies for monitoring
+✓ No capacity limit (unlike events)
+
+8.7 Challenge Status Lifecycle
+-------------------------------
+active -> completed (auto after end date or manual by creator)
+active -> cancelled (manual by creator)
+cancelled -> active (can reactivate, business decision)
+completed -> (final state, but allow viewing/joining for records)
+
+
+================================================================================
+9. PERFORMANCE & OPTIMIZATION
+================================================================================
+
+9.1 MongoDB Indexes (Native Driver)
+------------------------------------
+Required indexes for optimal performance:
+
+// In MongoDB Shell:
+db.challenges.createIndex({ "id": 1 }, { unique: true });
+db.challenges.createIndex({ "createdBy": 1 });
+db.challenges.createIndex({ "startDate": 1 });
+db.challenges.createIndex({ "endDate": 1 });
+db.challenges.createIndex({ "status": 1 });
+db.challenges.createIndex({ "category": 1 });
+db.challenges.createIndex({ "featured": 1 });
+db.challenges.createIndex({ "status": 1, "startDate": 1 });  // Compound index
+db.challenges.createIndex({ "status": 1, "featured": -1 });  // Featured first
+db.challenges.createIndex({ "participants.userId": 1 });
+db.challenges.createIndex({ 
+  "title": "text", 
+  "shortDescription": "text", 
+  "category": "text" 
+});
+
+// Or programmatically in Node.js with MongoDB Native Driver:
+const db = client.db('your_database_name');
+const challengesCollection = db.collection('challenges');
+
+await challengesCollection.createIndex({ id: 1 }, { unique: true });
+await challengesCollection.createIndex({ createdBy: 1 });
+await challengesCollection.createIndex({ startDate: 1 });
+await challengesCollection.createIndex({ endDate: 1 });
+await challengesCollection.createIndex({ status: 1 });
+await challengesCollection.createIndex({ category: 1 });
+await challengesCollection.createIndex({ featured: 1 });
+await challengesCollection.createIndex({ status: 1, startDate: 1 });
+await challengesCollection.createIndex({ status: 1, featured: -1 });
+await challengesCollection.createIndex({ 'participants.userId': 1 });
+await challengesCollection.createIndex({ 
+  title: 'text', 
+  shortDescription: 'text', 
+  category: 'text' 
+});
+
+9.2 MongoDB Query Optimization (Native Driver)
+-----------------------------------------------
+const db = client.db('your_database_name');
+const challengesCollection = db.collection('challenges');
+
+// Pagination with skip and limit
+const page = parseInt(req.query.page) || 1;
+const limit = parseInt(req.query.limit) || 10;
+const skip = (page - 1) * limit;
+
+// Build filter object
+const filter = { status: 'active' };
+if (req.query.category) filter.category = req.query.category;
+if (req.query.featured) filter.featured = req.query.featured === 'true';
+
+// Sort options
+const sortBy = req.query.sortBy || 'startDate';
+const order = req.query.order === 'asc' ? 1 : -1;
+
+const challenges = await challengesCollection
+  .find(filter)
+  .sort({ [sortBy]: order })
+  .skip(skip)
+  .limit(limit)
+  .toArray();
+
+const total = await challengesCollection.countDocuments(filter);
+
+// For search functionality (using text index)
+if (req.query.search) {
+  const challenges = await challengesCollection
+    .find({
+      $text: { $search: req.query.search },
+      status: 'active'
+    })
+    .sort({ score: { $meta: 'textScore' } })
+    .skip(skip)
+    .limit(limit)
+    .toArray();
+}
+
+// Get user's created challenges
+const myEvents = await challengesCollection
+  .find({ createdBy: userId })
+  .sort({ createdAt: -1 })
+  .toArray();
+
+// Get joined challenges
+const joinedChallenges = await challengesCollection
+  .find({
+    'participants': {
+      $elemMatch: {
+        userId: userId,
+        status: 'joined'
+      }
+    }
+  })
+  .sort({ startDate: 1 })
+  .toArray();
+
+// Get single challenge by id
+const challenge = await challengesCollection.findOne({ id: challengeId });
+
+// Get featured challenges
+const featuredChallenges = await challengesCollection
+  .find({ status: 'active', featured: true })
+  .sort({ startDate: 1 })
+  .limit(3)
+  .toArray();
+
+9.3 Caching Strategy
+--------------------
+- Cache challenge list for 5 minutes
+- Cache individual challenges for 2 minutes
+- Cache featured challenges for 10 minutes
+- Invalidate cache on: create, update, delete, join, leave
+- Use Redis or similar for distributed caching
+- Cache key format: "challenge:{id}", "challenges:page:{n}", "challenges:featured"
+
+9.4 Rate Limiting
+------------------
+- 100 requests per minute for authenticated users
+- 30 requests per minute for unauthenticated users
+- Stricter limits for write operations (create, update, delete)
+- 5 join/leave actions per minute per user
+- Prevent spam and abuse
+
+
+================================================================================
+10. SECURITY CONSIDERATIONS
+================================================================================
+
+10.1 Authentication (Firebase)
+-------------------------------
+- Frontend uses Firebase Authentication (Google OAuth & Email/Password)
+- Frontend sends Firebase ID token in Authorization header: "Bearer {firebase_token}"
+- Backend verifies Firebase ID token using Firebase Admin SDK
+- Extract userId from verified token (token.uid)
+- Never trust userId from request body
+- Firebase handles token refresh automatically on frontend
+- Token expiration handled by Firebase (1 hour default, auto-refreshed)
+
+10.2 Authorization
+-------------------
+- Verify user owns resource before update/delete
+- Don't expose other users' personal data in participants list
+- Validate creator status server-side, never client-side
+- Implement role-based access (optional: admin role)
+- Check creator cannot join own challenge
+
+10.3 Input Validation
+----------------------
+- Sanitize all user inputs
+- Escape HTML in text fields
+- Validate URL formats strictly (Unsplash only)
+- Prevent SQL injection (use parameterized queries)
+- Prevent NoSQL injection (validate types)
+- Limit string lengths to prevent DoS
+- Validate date ranges and formats
+- Check title uniqueness case-insensitively
+
+10.4 Data Protection
+---------------------
+- Don't expose internal MongoDB _id
+- Use custom id field (slug) for URLs
+- Limit participant data visibility
+- Log sensitive operations (create, delete, status changes)
+- Implement audit trail for challenges
+- Rate limit to prevent abuse
+- Protect against CSRF attacks
+
+10.5 Image URLs
+----------------
+- Accept images from Unsplash, Pexels, or any valid HTTPS URL
+- Validate URL format server-side (must be valid http/https)
+- BLOCK dangerous protocols: data:, javascript:, file:, ftp:
+- Validate URL length (max 500 characters)
+- Optional: Verify image accessibility (HEAD request)
+- Optional: Check Content-Type is image/*
+- Consider proxying images through your CDN for performance
+- Rate limit image updates
+- Log suspicious image URLs for security review
+
+
+================================================================================
+11. FIREBASE AUTHENTICATION SETUP
+================================================================================
+
+11.1 Backend Setup
+------------------
+1. Install Firebase Admin SDK:
+   npm install firebase-admin
+
+2. Initialize Firebase Admin (server-side):
+   const admin = require('firebase-admin');
+   admin.initializeApp({
+     credential: admin.credential.cert(serviceAccount)
+   });
+
+3. Create Authentication Middleware:
+   const verifyToken = async (req, res, next) => {
+     try {
+       const token = req.headers.authorization?.split('Bearer ')[1];
+       if (!token) {
+         return res.status(401).json({
+           success: false,
+           message: 'Authentication required'
+         });
+       }
+       
+       const decodedToken = await admin.auth().verifyIdToken(token);
+       req.user = {
+         userId: decodedToken.uid,
+         email: decodedToken.email
+       };
+       next();
+     } catch (error) {
+       res.status(401).json({
+         success: false,
+         message: 'Invalid or expired token'
+       });
+     }
+   };
+
+4. Apply Middleware to Protected Routes:
+   app.post('/api/challenges', verifyToken, createChallenge);
+   app.put('/api/challenges/:id', verifyToken, updateChallenge);
+   app.delete('/api/challenges/:id', verifyToken, deleteChallenge);
+   app.post('/api/challenges/:id/join', verifyToken, joinChallenge);
+   app.post('/api/challenges/:id/leave', verifyToken, leaveChallenge);
+
+11.2 Frontend Setup (Already Done)
+-----------------------------------
+Your frontend already uses Firebase Auth. Just ensure:
+- ID token is sent in Authorization header for API calls
+- Token is refreshed automatically (Firebase handles this)
+- Handle 401 errors by redirecting to login
+
+Example Frontend API Call:
+   const user = auth.currentUser;
+   if (user) {
+     const token = await user.getIdToken();
+     const response = await fetch('/api/challenges', {
+       method: 'POST',
+       headers: {
+         'Authorization': `Bearer ${token}`,
+         'Content-Type': 'application/json'
+       },
+       body: JSON.stringify(challengeData)
+     });
+   }
+
+
+================================================================================
+12. SAMPLE REQUESTS & RESPONSES
+================================================================================
+
+12.1 Create Challenge Request
+------------------------------
+POST /api/challenges
+Content-Type: application/json
+Authorization: Bearer {firebase_id_token}
+
+{
+  "category": "Waste Reduction",
+  "title": "Plastic-Free Week",
+  "shortDescription": "Avoid single-use plastics for a week and share your swaps.",
+  "detailedDescription": "Join us in this week-long challenge to eliminate single-use plastics from your daily routine. Track your progress, share alternatives you discover, and inspire others to make sustainable choices.",
+  "image": "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=800&q=80",
+  "duration": "7 days",
+  "impact": "Bottles avoided",
+  "co2Saved": "15 kg",
+  "startDate": "2025-03-01",
+  "endDate": "2025-03-08",
+  "featured": false
+}
+
+Response 201:
+{
+  "success": true,
+  "message": "Challenge created successfully",
+  "data": {
+    "id": "plastic-free-week-2025-1731581400",
+    "category": "Waste Reduction",
+    "title": "Plastic-Free Week",
+    "shortDescription": "Avoid single-use plastics for a week and share your swaps.",
+    "detailedDescription": "Join us in this week-long challenge...",
+    "image": "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=800&q=80",
+    "participants": [],
+    "registeredParticipants": 0,
+    "duration": "7 days",
+    "impact": "Bottles avoided",
+    "co2Saved": "15 kg",
+    "startDate": "2025-03-01",
+    "endDate": "2025-03-08",
+    "featured": false,
+    "status": "active",
+    "createdBy": "firebase_uid_xyz",
+    "createdAt": "2025-02-15T08:30:00Z",
+    "updatedAt": "2025-02-15T08:30:00Z"
+  }
+}
+
+12.2 Join Challenge Request
+----------------------------
+POST /api/challenges/plastic-free-week-2025-1731581400/join
+Authorization: Bearer {firebase_id_token}
+
+Response 200:
+{
+  "success": true,
+  "message": "Successfully joined the challenge",
+  "data": {
+    "id": "plastic-free-week-2025-1731581400",
+    "title": "Plastic-Free Week",
+    "registeredParticipants": 1241,
+    "isJoined": true,
+    "isCreator": false,
+    ...other challenge fields
+  }
+}
+
+12.3 Get Challenges Request
+----------------------------
+GET /api/challenges?page=1&limit=10&category=Waste%20Reduction&featured=true&sortBy=startDate&order=asc
+
+Response 200:
+{
+  "success": true,
+  "data": [
+    {
+      "id": "plastic-free-week-2025-1731581400",
+      "category": "Waste Reduction",
+      "title": "Plastic-Free Week",
+      "shortDescription": "Avoid single-use plastics for a week...",
+      "image": "https://images.unsplash.com/...",
+      "registeredParticipants": 1240,
+      "duration": "7 days",
+      "impact": "Bottles avoided",
+      "startDate": "2025-03-01",
+      "endDate": "2025-03-08",
+      "featured": true,
+      "status": "active"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 25,
+    "pages": 3
+  }
+}
+
+
+================================================================================
+13. TESTING CHECKLIST
+================================================================================
+
+Essential Tests:
+  ✓ Create challenge with valid data
+  ✓ Create challenge with invalid data (validation)
+  ✓ Create challenge with duplicate title
+  ✓ Create challenge with past dates
+  ✓ Create challenge without authentication
+  ✓ Update own challenge
+  ✓ Update someone else's challenge (should fail)
+  ✓ Delete own challenge
+  ✓ Delete someone else's challenge (should fail)
+  ✓ Join challenge successfully
+  ✓ Join own challenge (should fail)
+  ✓ Join same challenge twice (should fail)
+  ✓ Join cancelled challenge (should fail)
+  ✓ Leave joined challenge
+  ✓ Leave non-joined challenge (should fail)
+  ✓ Verify participant count is accurate after join/leave
+  ✓ Verify atomic operations (concurrent joins)
+  ✓ Get all challenges with pagination
+  ✓ Get challenges with filters and search
+  ✓ Get featured challenges
+  ✓ Get single challenge details
+  ✓ Get my created challenges
+  ✓ Get my joined challenges
+
+
+================================================================================
+14. DEPLOYMENT CHECKLIST
+================================================================================
+
+Backend Setup (MongoDB Native Driver):
+  ✓ MongoDB database created with proper connection string
+  ✓ Collection "challenges" created (or auto-created on first insert)
+  ✓ All indexes created (run createIndex commands)
+  ✓ Firebase Admin SDK initialized with service account
+  ✓ Environment variables configured
+  ✓ Authentication middleware implemented
+  ✓ All 10 endpoints implemented and tested
+  ✓ Error handling implemented
+  ✓ Validation implemented
+  ✓ Atomic operations used for counters
+  ✓ Rate limiting configured
+  ✓ CORS configured for frontend domain
+  ✓ Logging configured
+  ✓ Health check endpoint added
+
+Dependencies to Install:
+  npm install express mongodb firebase-admin cors dotenv
+
+Environment Variables:
+  MONGODB_URI=mongodb+srv://...
+  MONGODB_DB_NAME=ecotrack
+  FIREBASE_SERVICE_ACCOUNT_PATH=./serviceAccountKey.json
+  PORT=5000
+  NODE_ENV=production
+
+Frontend Integration:
+  ✓ API base URL configured
+  ✓ Firebase Authentication integrated
+  ✓ Token sent in Authorization header
+  ✓ Challenge list page fetches from /api/challenges
+  ✓ Challenge detail page fetches from /api/challenges/:id
+  ✓ Join/Leave buttons call respective endpoints
+  ✓ Create/Edit forms submit to /api/challenges
+  ✓ Error handling for API calls
+
+
+================================================================================
+15. API ENDPOINTS SUMMARY
+================================================================================
+
+Total Endpoints: 10
+
+BASE URL: /api/challenges
+
+
+PUBLIC ENDPOINTS (No Authentication Required)
+----------------------------------------------
+1. GET    /api/challenges                     - List all challenges with pagination/search
+2. GET    /api/challenges/:id                 - Get single challenge details
+3. GET    /api/challenges/:id/participants    - Get participant count (limited info)
+
+
+AUTHENTICATED ENDPOINTS (Firebase Token Required)
+--------------------------------------------------
+4. POST   /api/challenges                     - Create new challenge
+5. PUT    /api/challenges/:id                 - Update challenge (creator only)
+6. DELETE /api/challenges/:id                 - Delete challenge (creator only)
+7. POST   /api/challenges/:id/join            - Join a challenge (one-time)
+8. POST   /api/challenges/:id/leave           - Leave a challenge
+9. GET    /api/challenges/my-challenges       - Get challenges created by logged-in user
+10. GET   /api/challenges/my-joined           - Get challenges joined by logged-in user
+
+
+ENDPOINT DETAILS
+----------------
+
+1. GET /api/challenges
+   Query: page, limit, search, status, category, featured, sortBy, order
+   Returns: Array of challenges with pagination
+
+2. GET /api/challenges/:id
+   Params: id (challenge slug)
+   Returns: Single challenge with isCreator, isJoined flags
+
+3. GET /api/challenges/:id/participants
+   Params: id (challenge slug)
+   Returns: Participant count (full list if creator)
+
+4. POST /api/challenges
+   Auth: Required
+   Body: category, title, shortDescription, detailedDescription, image, duration, impact, co2Saved, startDate, endDate, featured
+   Returns: Created challenge object
+
+5. PUT /api/challenges/:id
+   Auth: Required (creator only)
+   Params: id (challenge slug)
+   Body: Any fields to update
+   Returns: Updated challenge object
+
+6. DELETE /api/challenges/:id
+   Auth: Required (creator only)
+   Params: id (challenge slug)
+   Returns: Success message
+
+7. POST /api/challenges/:id/join
+   Auth: Required
+   Params: id (challenge slug)
+   Returns: Updated challenge with isJoined: true
+
+8. POST /api/challenges/:id/leave
+   Auth: Required
+   Params: id (challenge slug)
+   Returns: Updated challenge with isJoined: false
+
+9. GET /api/challenges/my-challenges
+   Auth: Required
+   Returns: Array of challenges created by user
+
+10. GET /api/challenges/my-joined
+    Auth: Required
+    Query: status, includeCompleted
+    Returns: Array of challenges joined by user
+
+
+AUTHENTICATION HEADER
+---------------------
+All authenticated endpoints require:
+Authorization: Bearer {firebase_id_token}
+
+
+================================================================================
+16. DIFFERENCES FROM EVENTS API
+================================================================================
+
+Key Differences:
+  - No capacity limit for challenges (unlimited participants)
+  - No location or organizer fields
+  - Has duration, impact, co2Saved fields
+  - Has category field
+  - Has featured flag for highlighting
+  - Date range (startDate/endDate) instead of single date
+  - Can join challenges that haven't started yet
+  - Can join completed challenges (for records)
+  - Different categories and use cases
+
+
+================================================================================
+17. PREDEFINED CATEGORIES (REQUIRED)
+================================================================================
+
+Fixed Challenge Categories:
+
+The category field MUST be one of these exact values:
+  1. "Food"
+  2. "Waste Reduction"
+  3. "Energy Conservation"
+  4. "Water"
+  5. "Community"
+
+Validation:
+  - Case-sensitive exact match required
+  - No custom categories allowed
+  - Frontend should use dropdown/select input
+  - Backend must validate against this list
+  - Return 400 error if invalid category provided
+
+Error Response for Invalid Category:
+{
+  "success": false,
+  "message": "Invalid category",
+  "error": "INVALID_CATEGORY",
+  "allowedCategories": ["Food", "Waste Reduction", "Energy Conservation", "Water", "Community"]
+}
+
+Frontend Implementation:
+<select name="category" required>
+  <option value="">Select a category</option>
+  <option value="Food">Food</option>
+  <option value="Waste Reduction">Waste Reduction</option>
+  <option value="Energy Conservation">Energy Conservation</option>
+  <option value="Water">Water</option>
+  <option value="Community">Community</option>
+</select>
+
+
+================================================================================
+18. OPTIONAL ENHANCEMENTS
+================================================================================
+
+Future Features (Not Required for MVP):
+  - User progress tracking (daily check-ins)
+  - Achievement badges
+  - Social sharing
+  - Challenge comments/discussions
+  - Challenge leaderboards
+  - Impact calculator integration
+  - Email notifications
+  - Push notifications
+  - Challenge reminders
+  - Challenge templates
+  - Challenge duplication
+  - Challenge recommendations
+  - Challenge statistics/analytics
+  - Challenge reports
+  - Challenge moderation
+
+
+================================================================================
+END OF SPECIFICATION
+================================================================================
+
+QUICK START SUMMARY FOR BACKEND TEAM:
+1. Create MongoDB collection "challenges" with all indexes
+2. Implement 10 API endpoints as specified
+3. Use Firebase Admin SDK for authentication
+4. Use atomic operations ($inc, $push, $set) for participant counting
+5. Validate all inputs server-side
+6. Test all endpoints thoroughly
+7. Document any deviations from this spec
+
+For questions or clarifications, refer to sections above or contact frontend team.
