@@ -7,16 +7,19 @@ import LoginModal from '../components/LoginModal.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import SubpageHero from '../components/SubpageHero.jsx'
 import Button from '../components/ui/Button.jsx'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 
 export default function Tips() {
   useDocumentTitle('Recent Tips')
   const { user } = useAuth()
-  const { tips, loading, error, addTip, updateTip, deleteTip, upvoteTip, canModifyTip } = useUserTips()
+  const { tips, loading, error, pagination, fetchTips, addTip, updateTip, deleteTip, upvoteTip, canModifyTip } = useUserTips()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingTip, setEditingTip] = useState(null)
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+  const [sortBy, setSortBy] = useState('createdAt')
+  const [order, setOrder] = useState('desc')
+  const [searchQuery, setSearchQuery] = useState('')
   
   const handleAddTip = () => {
     setEditingTip(null)
@@ -101,8 +104,34 @@ export default function Tips() {
   const handleLoginRequired = () => {
     setIsLoginModalOpen(true)
   }
+
+  // Handle sort change
+  const handleSortChange = (newSortBy) => {
+    if (sortBy === newSortBy) {
+      // Toggle order if clicking the same sort option
+      setOrder(order === 'desc' ? 'asc' : 'desc')
+    } else {
+      setSortBy(newSortBy)
+      setOrder('desc')
+    }
+  }
+
+  // Handle search with debounce effect
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      fetchTips({ 
+        sortBy, 
+        order, 
+        search: searchQuery,
+        page: 1,
+        limit: 20
+      })
+    }, 300)
+
+    return () => clearTimeout(delayDebounceFn)
+  }, [sortBy, order, searchQuery])
   
-  if (loading) {
+  if (loading && tips.length === 0) {
     return <EcoLoader />
   }
 
@@ -178,6 +207,60 @@ export default function Tips() {
             </Button>
           </div>
         )}
+
+        {/* Search and Sort Controls */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          {/* Search Bar */}
+          <div className="flex-1">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search tips..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+              />
+              <svg 
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+          </div>
+
+          {/* Sort Dropdown */}
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleSortChange('createdAt')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                sortBy === 'createdAt'
+                  ? 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-600/20'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Newest
+              {sortBy === 'createdAt' && (
+                <span className="ml-1">{order === 'desc' ? '↓' : '↑'}</span>
+              )}
+            </button>
+            <button
+              onClick={() => handleSortChange('upvoteCount')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                sortBy === 'upvoteCount'
+                  ? 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-600/20'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Popular
+              {sortBy === 'upvoteCount' && (
+                <span className="ml-1">{order === 'desc' ? '↓' : '↑'}</span>
+              )}
+            </button>
+          </div>
+        </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {tips?.map((tip) => (

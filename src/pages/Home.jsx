@@ -12,12 +12,17 @@ import { useMockFetch } from '../hooks/useMockFetch.js'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver.js'
 import { mockChallenges } from '../data/mockChallenges.js'
-import { mockTips } from '../data/mockTips.js'
 import { mockEvents } from '../data/mockEvents.js'
 import { defaultImages } from '../config/env'
+import { useState, useEffect } from 'react'
+import { tipsApi } from '../services/api.js'
 
 export default function Home() {
   useDocumentTitle('Home')
+  
+  // State for real tips from API
+  const [tips, setTips] = useState([])
+  const [loadingTips, setLoadingTips] = useState(true)
   
   // Intersection observer for Why Go Green section
   const [setWhyGoGreenRef, isWhyGoGreenVisible] = useIntersectionObserver({
@@ -46,8 +51,53 @@ export default function Home() {
     // Limit to 4–6 items; prefer up to 6
     return source.slice(0, 6)
   }, 500)
-  const { data: tips, loading: loadingTips } = useMockFetch(() => mockTips.slice(0, 3), 600)
   const { data: events, loading: loadingEvents } = useMockFetch(() => mockEvents.slice(0, 3), 700)
+
+  // Fetch 3 most recent tips from API
+  useEffect(() => {
+    const fetchRecentTips = async () => {
+      try {
+        setLoadingTips(true)
+        const response = await tipsApi.getAll({ 
+          page: 1, 
+          limit: 3, 
+          sortBy: 'createdAt', 
+          order: 'desc' 
+        })
+        
+        // Handle different API response structures
+        let tipsData = response.data
+        if (response.data?.tips) {
+          tipsData = response.data.tips
+        } else if (response.data?.data?.tips) {
+          tipsData = response.data.data.tips
+        } else if (response.data?.data) {
+          tipsData = response.data.data
+        }
+        
+        // Ensure we have an array
+        const tipsArray = Array.isArray(tipsData) ? tipsData : Object.values(tipsData || {})
+        
+        // Enhance tips with proper data structure
+        const enhancedTips = tipsArray.map(tip => ({
+          ...tip,
+          id: tip.id || tip._id,
+          upvotes: Number.isFinite(Number(tip.upvoteCount))
+            ? Number(tip.upvoteCount)
+            : (Number.isFinite(Number(tip.upvotes)) ? Number(tip.upvotes) : 0),
+        }))
+        
+        setTips(enhancedTips)
+      } catch (error) {
+        console.error('Error fetching tips:', error)
+        setTips([])
+      } finally {
+        setLoadingTips(false)
+      }
+    }
+    
+    fetchRecentTips()
+  }, [])
   
   const isInitialLoading = loadingChallenges && loadingTips && loadingEvents
 

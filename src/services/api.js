@@ -85,22 +85,40 @@ export const userApi = {
 
 // Tips API calls
 export const tipsApi = {
-  // Get all tips with optional filtering
+  // Get all tips with pagination, search, and sorting (Public)
+  // Query params: page, limit, sortBy (createdAt/upvoteCount), order (asc/desc), search, authorId
   getAll: (filters = {}) => httpClient.get('/tips', { params: filters }),
 
-  // Get specific tip by ID
+  // Get trending tips (most upvoted in recent days) (Public)
+  // Query params: days (default: 7, max: 30), limit (default: 10, max: 50)
+  getTrending: (params = {}) => httpClient.get('/tips/trending', { params }),
+
+  // Get tips created by logged-in user (Authenticated)
+  // Query params: page, limit, sortBy, order
+  getMyTips: (params = {}) => httpClient.get('/tips/my-tips', { params }),
+
+  // Get specific tip by ID (Public)
   getById: (id) => httpClient.get(`/tips/${id}`),
 
-  // Create new tip
+  // Create new tip (Authenticated)
+  // Body: { title: string (5-100 chars), content: string (20-500 chars) }
+  // Author info auto-populated from Firebase token
   create: (tipData) => httpClient.post('/tips', tipData),
 
-  // Update tip (user can only update their own)
-  update: (id, tipData) => httpClient.patch(`/tips/${id}`, tipData),
+  // Update tip - full update (Authenticated, author only)
+  // Body: { title?: string, content?: string }
+  update: (id, tipData) => httpClient.put(`/tips/${id}`, tipData),
 
-  // Delete tip (user can only delete their own)
+  // Partially update tip (Authenticated, author only)
+  // Body: { title?: string, content?: string }
+  partialUpdate: (id, tipData) => httpClient.patch(`/tips/${id}`, tipData),
+
+  // Delete tip permanently (Authenticated, author only)
   delete: (id) => httpClient.delete(`/tips/${id}`),
 
-  // Upvote a tip (unlimited voting)
+  // Upvote a tip (Authenticated)
+  // Users can upvote multiple times (max 100 per user per tip)
+  // Cannot upvote own tips
   upvote: (id) => httpClient.post(`/tips/${id}/upvote`)
 }
 

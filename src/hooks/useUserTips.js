@@ -11,6 +11,7 @@ export function useUserTips() {
   const [tips, setTips] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [pagination, setPagination] = useState(null)
 
   // Fetch all tips from the API
   const fetchTips = async (filters = {}) => {
@@ -20,8 +21,14 @@ export function useUserTips() {
       const response = await tipsApi.getAll(filters)
       // Handle different API response structures
       let tipsData = response.data
+      let paginationData = null
+      
       if (response.data?.tips) {
         tipsData = response.data.tips
+        paginationData = response.data.pagination
+      } else if (response.data?.data?.tips) {
+        tipsData = response.data.data.tips
+        paginationData = response.data.data.pagination
       } else if (response.data?.data) {
         tipsData = response.data.data
       }
@@ -49,6 +56,53 @@ export function useUserTips() {
       }))
       
       setTips(enhancedTips)
+      setPagination(paginationData)
+      return enhancedTips
+    } catch (err) {
+      setError(err.message)
+      return []
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Fetch trending tips (most upvoted in recent days)
+  const fetchTrendingTips = async (days = 7, limit = 10) => {
+    setLoading(true)
+    setError(null)
+    try {
+      const response = await tipsApi.getTrending({ days, limit })
+      
+      // Handle different API response structures
+      let tipsData = response.data
+      if (response.data?.tips) {
+        tipsData = response.data.tips
+      } else if (response.data?.data?.tips) {
+        tipsData = response.data.data.tips
+      } else if (response.data?.data) {
+        tipsData = response.data.data
+      }
+      
+      // Ensure we have an array
+      const tipsArray = Array.isArray(tipsData) ? tipsData : Object.values(tipsData || {})
+      
+      // Enhance each tip with proper data structure
+      const enhancedTips = tipsArray.map(tip => ({
+        ...tip,
+        id: tip.id || tip._id,
+        title: tip.title || '',
+        content: tip.content || '',
+        upvotes: Number.isFinite(Number(tip.upvoteCount))
+          ? Number(tip.upvoteCount)
+          : (Number.isFinite(Number(tip.upvotes)) ? Number(tip.upvotes) : 0),
+        createdAt: tip.createdAt || new Date().toISOString(),
+        updatedAt: tip.updatedAt || tip.createdAt || new Date().toISOString(),
+        authorName: tip.authorName || tip.author?.name || 'Anonymous',
+        authorImage: tip.authorImage || tip.authorAvatar || tip.author?.avatarUrl || tip.author?.imageUrl,
+        authorId: tip.authorId || (typeof tip.author === 'string' ? tip.author : tip.author?.uid || tip.author?.id),
+        firebaseId: tip.firebaseId || (typeof tip.author === 'string' ? tip.author : tip.author?.firebaseId)
+      }))
+      
       return enhancedTips
     } catch (err) {
       setError(err.message)
@@ -345,7 +399,9 @@ export function useUserTips() {
     tips: getAllTipsForDisplay(),
     loading,
     error,
+    pagination,
     fetchTips,
+    fetchTrendingTips,
     getTipById,
     addTip,
     updateTip,
