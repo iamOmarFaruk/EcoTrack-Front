@@ -106,7 +106,7 @@ export default function Events() {
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white p-4 rounded-lg border border-slate-200 space-y-4">
+        <div className="bg-white p-4 rounded-lg border border-slate-200 space-y-4" style={{ display: 'none' }}>
           {/* Search Bar */}
           <form onSubmit={handleSearch} className="flex gap-2">
             <input
