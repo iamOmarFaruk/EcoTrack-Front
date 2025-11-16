@@ -10,10 +10,8 @@ import CommunityStats from '../components/CommunityStats.jsx'
 import LazySection from '../components/LazySection.jsx'
 import HowItWorks from '../components/HowItWorks.jsx'
 import Button from '../components/ui/Button.jsx'
-import { useMockFetch } from '../hooks/useMockFetch.js'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver.js'
-import { mockChallenges } from '../data/mockChallenges.js'
 import { defaultImages } from '../config/env'
 import { useState, useEffect } from 'react'
 import { tipsApi, eventApi, challengeApi } from '../services/api.js'
@@ -96,8 +94,7 @@ export default function Home() {
         setFeaturedChallenges(enhancedChallenges)
       } catch (error) {
         console.error('Error fetching featured challenges:', error)
-        // Fallback to mock data if API fails
-        setFeaturedChallenges(mockChallenges.slice(0, 5))
+        setFeaturedChallenges([])
       } finally {
         setLoadingFeatured(false)
       }
