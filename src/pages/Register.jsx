@@ -43,21 +43,22 @@ export default function Register() {
 
   const onSubmit = async (values) => {
     try {
-      await registerUser(values)
+      // Clear any stored redirect before registration
       sessionStorage.removeItem('redirectTo')
-      // Redirect to profile page and force reload to ensure fresh data
-      navigate('/profile', { replace: true })
-      window.location.reload()
+      await registerUser(values)
+      // Force navigate to profile page with full page reload
+      window.location.href = '/profile'
     } catch (e) {
     }
   }
 
   const handleGoogleSignup = async () => {
     try {
-      await loginWithGoogle()
-      const redirectTo = sessionStorage.getItem('redirectTo') || '/'
+      // Clear any stored redirect before Google signup
       sessionStorage.removeItem('redirectTo')
-      navigate(redirectTo, { replace: true })
+      await loginWithGoogle()
+      // Always go to profile after signup
+      window.location.href = '/profile'
     } catch (e) {
     }
   }

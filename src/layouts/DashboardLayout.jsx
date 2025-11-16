@@ -9,9 +9,9 @@ export default function DashboardLayout() {
   const location = useLocation()
 
   const navItems = [
+    { to: '/profile', label: 'Profile' },
     { to: '/my-activities', label: 'My Activities' },
     { to: '/events/my-events', label: 'My Events' },
-    { to: '/profile', label: 'Profile' },
     { to: '/settings', label: 'Settings' }
   ]
 
