@@ -218,10 +218,13 @@ export function AuthProvider({ children }) {
     }
 
     async function deleteAccount() {
+      let backendDeleted = false
+      
       try {
         // First delete the backend profile and data
         const { userApi } = await import('../services/api.js')
         await userApi.deleteProfile()
+        backendDeleted = true
         
         // Then delete the Firebase user
         if (auth.currentUser) {
@@ -236,6 +239,25 @@ export function AuthProvider({ children }) {
         
         showSuccess('Your account has been deleted successfully.')
       } catch (error) {
+        // If backend was deleted successfully but Firebase deletion failed,
+        // still consider it success and just sign out
+        if (backendDeleted) {
+          try {
+            await signOut(auth)
+          } catch (signOutError) {
+            // Ignore signout errors
+          }
+          
+          // Clear local state
+          setUser(null)
+          setUserProfile(null)
+          setUserChallenges([])
+          setUserEvents([])
+          
+          showSuccess('Your account has been deleted successfully.')
+          return
+        }
+        
         // Handle re-authentication requirement
         if (error.code === 'auth/requires-recent-login') {
           const err = new Error('For security reasons, please log out and log back in before deleting your account.')
