@@ -63,7 +63,8 @@ export default function EventDetail() {
 
     setIsJoining(true)
     try {
-      await joinEvent(event.id || event._id)
+      const eventId = event._id || event.id
+      await joinEvent(eventId)
       showSuccess(`Successfully joined "${event.title}"!`)
       // Refresh event data
       await fetchEvent()
@@ -77,7 +78,8 @@ export default function EventDetail() {
   const handleLeaveEvent = async () => {
     setIsLeaving(true)
     try {
-      await leaveEvent(event.id || event._id)
+      const eventId = event._id || event.id
+      await leaveEvent(eventId)
       showSuccess(`You have left "${event.title}"`)
       // Refresh event data
       await fetchEvent()
@@ -124,7 +126,11 @@ export default function EventDetail() {
   const progressPercentage = Math.round((event.registeredParticipants / event.capacity) * 100)
   const spotsRemaining = event.capacity - event.registeredParticipants
   const isCreator = user && event.createdBy === user.uid
-  const isJoined = auth?.userEvents?.includes(event._id || event.id)
+  
+  // Use backend's isJoined field if available, otherwise check userEvents array
+  const eventId = event._id || event.id
+  const isJoined = event.isJoined ?? auth?.userEvents?.includes(eventId)
+  
   const isFull = progressPercentage >= 100
   const isCancelled = event.status === 'cancelled'
   const isPast = new Date(event.date) < new Date()
@@ -288,7 +294,8 @@ export default function EventDetail() {
 
                 {isJoined ? (
                   <Button 
-                    className="w-full bg-red-600 hover:bg-red-700" 
+                    variant="destructive"
+                    className="w-full" 
                     onClick={handleLeaveEvent}
                     disabled={isLeaving || isPast}
                   >
