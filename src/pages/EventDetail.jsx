@@ -117,7 +117,7 @@ export default function EventDetail() {
           showSuccess(hasParticipants 
             ? 'Event cancelled and participants notified' 
             : 'Event deleted successfully')
-          navigate('/events/my-events')
+          navigate('/events')
         } catch (error) {
           showError(error.message || 'Failed to delete event')
           setIsDeleting(false)
