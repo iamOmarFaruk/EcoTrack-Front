@@ -10,7 +10,7 @@ import { showSuccess, showError, showLoading, dismissToast } from '../utils/toas
 import { useAuth } from '../context/AuthContext.jsx'
 
 export default function EditChallenge() {
-  const { id } = useParams()
+  const { slug } = useParams()
   const navigate = useNavigate()
   const { user } = useAuth()
 
@@ -44,7 +44,7 @@ export default function EditChallenge() {
   useEffect(() => {
     fetchChallenge()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id])
+  }, [slug])
 
   // Auto-calculate duration based on start and end dates
   useEffect(() => {
@@ -71,7 +71,7 @@ export default function EditChallenge() {
   const fetchChallenge = async () => {
     try {
       setLoading(true)
-      const response = await challengeApi.getById(id)
+      const response = await challengeApi.getBySlug(slug)
       const challengeData = response?.data || response
 
       if (!challengeData) {
@@ -85,7 +85,11 @@ export default function EditChallenge() {
         return
       }
 
-      setChallenge(challengeData)
+      setChallenge({
+        ...challengeData,
+        _id: challengeData._id || challengeData.id,
+        slug: challengeData.slug || slug
+      })
 
       // Format dates for input fields
       const formatDate = (dateString) => {
@@ -266,15 +270,17 @@ export default function EditChallenge() {
         challengeData.detailedDescription = formData.detailedDescription
       }
 
-      const response = await challengeApi.update(id, challengeData)
+      const response = await challengeApi.update(challenge._id, challengeData)
       const updatedChallenge = response?.data || response
 
       showSuccess('Challenge updated successfully!')
       // Navigate using slug if available, otherwise use _id
       if (updatedChallenge?.slug) {
         navigate(`/challenges/${updatedChallenge.slug}`)
+      } else if (challenge?.slug) {
+        navigate(`/challenges/${challenge.slug}`)
       } else {
-        navigate(`/challenges/${id}`)
+        navigate(`/challenges/${slug}`)
       }
     } catch (error) {
       console.error('Error updating challenge:', error)
@@ -314,7 +320,7 @@ export default function EditChallenge() {
     if (challenge?.slug) {
       navigate(`/challenges/${challenge.slug}`)
     } else {
-      navigate(`/challenges/${id}`)
+      navigate(`/challenges/${slug}`)
     }
   }
 

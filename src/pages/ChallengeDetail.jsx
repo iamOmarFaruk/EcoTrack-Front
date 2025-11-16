@@ -118,8 +118,9 @@ export default function ChallengeDetail() {
   }
 
   const handleEditChallenge = () => {
-    // Use _id for edit URL, not slug (as per API specification)
-    window.location.href = `/challenges/${challenge._id}/edit`
+    // Navigate to slug-based edit URL for SEO-friendly routing
+    const targetSlug = challenge.slug || slug
+    window.location.href = `/challenges/${targetSlug}/edit`
   }
 
   useEffect(() => {
