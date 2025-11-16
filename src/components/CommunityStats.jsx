@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
+import { Leaf, Recycle, Droplets, Zap } from 'lucide-react'
 import SectionHeading from './SectionHeading.jsx'
 import { Card, CardContent } from './ui/Card.jsx'
 import LazySection from './LazySection.jsx'
 import { CommunityStatsCardSkeleton } from './Skeleton.jsx'
-import { useMockFetch } from '../hooks/useMockFetch.js'
-import { mockCommunityStatsList } from '../data/mockStats.js'
+import { challengeApi } from '../services/api.js'
 
 function formatValue(value) {
   if (typeof value !== 'number' || !Number.isFinite(value)) return '0'
@@ -80,10 +80,92 @@ function AnimatedNumber({ value, isActive, durationMs = 1600 }) {
 }
 
 export default function CommunityStats() {
-  const { data: stats, loading } = useMockFetch(() => mockCommunityStatsList, 450)
+  const [stats, setStats] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   // Use a small sentinel placed just above the grid so animation starts
   // when the user actually reaches this section (not on initial page load).
   const [triggerRef, inView] = useInViewOnce({ rootMargin: '0px 0px -25% 0px', threshold: 0 })
+
+  // Fetch live community impact summary from API
+  useEffect(() => {
+    let isMounted = true
+
+    async function fetchCommunityImpact() {
+      try {
+        setLoading(true)
+        setError(null)
+
+        const response = await challengeApi.getCommunityImpactSummary()
+
+        // Normalize different possible response shapes
+        const root = response?.data || {}
+        const payload = root.data || root
+
+        const {
+          co2SavedKg = 0,
+          plasticReducedKg = 0,
+          waterSavedL = 0,
+          energySavedKwh = 0
+        } = payload || {}
+
+        const mappedStats = [
+          {
+            key: 'co2SavedKg',
+            label: 'CO₂ avoided',
+            value: co2SavedKg,
+            unit: 'kg',
+            icon: Leaf,
+            accent: 'bg-emerald-50 text-emerald-600'
+          },
+          {
+            key: 'plasticReducedKg',
+            label: 'Plastic reduced',
+            value: plasticReducedKg,
+            unit: 'kg',
+            icon: Recycle,
+            accent: 'bg-teal-50 text-teal-600'
+          },
+          {
+            key: 'waterSavedL',
+            label: 'Water saved',
+            value: waterSavedL,
+            unit: 'L',
+            icon: Droplets,
+            accent: 'bg-blue-50 text-blue-600'
+          },
+          {
+            key: 'energySavedKwh',
+            label: 'Energy saved',
+            value: energySavedKwh,
+            unit: 'kWh',
+            icon: Zap,
+            accent: 'bg-amber-50 text-amber-600'
+          }
+        ]
+
+        if (isMounted) {
+          setStats(mappedStats)
+        }
+      } catch (err) {
+        if (isMounted) {
+          console.error('Failed to load community impact stats:', err)
+          setError('Unable to load live stats right now.')
+          setStats([])
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false)
+        }
+      }
+    }
+
+    fetchCommunityImpact()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   return (
     <section>
@@ -94,6 +176,12 @@ export default function CommunityStats() {
       {/* Invisible sentinel that enters view right before the grid */}
       <span ref={triggerRef} aria-hidden="true" className="block h-px w-px opacity-0" />
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {!loading && error && (
+          <div className="sm:col-span-2 lg:col-span-4 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
+            {error}
+          </div>
+        )}
+
         {loading &&
           Array.from({ length: 4 }).map((_, i) => (
             <LazySection
@@ -105,7 +193,7 @@ export default function CommunityStats() {
             </LazySection>
           ))}
 
-        {!loading &&
+        {!loading && !error &&
           stats?.map((item) => (
             <LazySection
               key={item.key}
@@ -118,8 +206,10 @@ export default function CommunityStats() {
             >
               <Card className="h-full">
                 <CardContent className="flex h-full items-center gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100">
-                    <span className="text-xl" aria-hidden="true">{item.icon}</span>
+                  <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ring-1 ring-emerald-100 ${item.accent || 'bg-emerald-50 text-emerald-700'}`}>
+                    {item.icon && (
+                      <item.icon className="h-5 w-5" aria-hidden="true" />
+                    )}
                   </div>
                   <div className="min-w-0">
                     <p className="text-xs text-slate-500">{item.label}</p>

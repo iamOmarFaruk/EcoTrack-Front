@@ -68,7 +68,11 @@ export const challengeApi = {
 
   // Get challenges joined by logged-in user (Authenticated)
   // Query params: status (active/left), includeCompleted (boolean)
-  getMyJoined: (filters = {}) => httpClient.get('/challenges/my/joined', { params: filters })
+  getMyJoined: (filters = {}) => httpClient.get('/challenges/my/joined', { params: filters }),
+
+  // Get global community impact summary across all challenges (Public)
+  // Response: { success: boolean, data: { co2SavedKg, plasticReducedKg, waterSavedL, energySavedKwh } }
+  getCommunityImpactSummary: () => httpClient.get('/challenges/community-impact/summary')
 }
 
 // User API calls
