@@ -42,12 +42,65 @@ export default function Home() {
   const [challenges, setChallenges] = useState([])
   const [loadingChallenges, setLoadingChallenges] = useState(true)
   
+  // State for featured challenges (for hero slider)
+  const [featuredChallenges, setFeaturedChallenges] = useState([])
+  const [loadingFeatured, setLoadingFeatured] = useState(true)
+  
   // Intersection observer for Why Go Green section
   const [setWhyGoGreenRef, isWhyGoGreenVisible] = useIntersectionObserver({
     threshold: 0.2,
     rootMargin: '50px',
     triggerOnce: true
   })
+  
+  // Fetch 5 featured challenges for hero slider
+  useEffect(() => {
+    const fetchFeaturedChallenges = async () => {
+      try {
+        setLoadingFeatured(true)
+        const response = await challengeApi.getAll({ 
+          page: 1, 
+          limit: 5,
+          status: 'active',
+          sortBy: 'startDate',
+          order: 'asc'
+        })
+        
+        // Handle different API response structures
+        let challengesData = response.data
+        if (response.data?.challenges) {
+          challengesData = response.data.challenges
+        } else if (response.data?.data?.challenges) {
+          challengesData = response.data.data.challenges
+        } else if (response.data?.data) {
+          challengesData = response.data.data
+        }
+        
+        // Ensure we have an array
+        const challengesArray = Array.isArray(challengesData) ? challengesData : Object.values(challengesData || {})
+        
+        // Enhance challenges with proper data structure for Hero slider
+        const enhancedChallenges = challengesArray.map(challenge => ({
+          ...challenge,
+          _id: challenge._id || challenge.id,
+          id: challenge.id || challenge._id,
+          participants: challenge.registeredParticipants ?? (Array.isArray(challenge.participants) ? challenge.participants.length : challenge.participants) ?? 0,
+          imageUrl: challenge.image || challenge.imageUrl,
+          description: challenge.shortDescription || challenge.description // Map API shortDescription to description for Hero
+        }))
+        
+        setFeaturedChallenges(enhancedChallenges)
+      } catch (error) {
+        console.error('Error fetching featured challenges:', error)
+        // Fallback to mock data if API fails
+        setFeaturedChallenges(mockChallenges.slice(0, 5))
+      } finally {
+        setLoadingFeatured(false)
+      }
+    }
+    
+    fetchFeaturedChallenges()
+  }, [])
   
   // Fetch 6 active challenges from API
   useEffect(() => {
@@ -325,8 +378,8 @@ export default function Home() {
     setIsLoginModalOpen(true)
   }
   
-  const isInitialLoading = loadingChallenges && loadingTips && loadingEvents
-  const isAnyLoading = loadingChallenges || loadingTips || loadingEvents
+  const isInitialLoading = loadingChallenges && loadingTips && loadingEvents && loadingFeatured
+  const isAnyLoading = loadingChallenges || loadingTips || loadingEvents || loadingFeatured
 
   if (isInitialLoading) {
     return <EcoLoader />
@@ -335,7 +388,7 @@ export default function Home() {
   return (
     <div className="space-y-12">
       <div className="full-bleed">
-        <Hero slides={mockChallenges.slice(0, 5)} effect="creative" />
+        <Hero slides={featuredChallenges} effect="creative" />
       </div>
 
       <CommunityStats />
