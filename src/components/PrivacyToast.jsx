@@ -81,8 +81,8 @@ export default function PrivacyToast() {
         visible ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
       }`}
     >
-      <div className="container px-4 pb-4">
-        <div className="pointer-events-auto mx-auto max-w-3xl rounded-2xl border border-emerald-600/60 bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-700 text-emerald-50 shadow-2xl">
+      <div className="container px-3 sm:px-4 pb-4">
+        <div className="pointer-events-auto mx-auto max-w-5xl rounded-2xl border border-emerald-600/60 bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-700 text-emerald-50 shadow-2xl">
           <div className="p-4 md:p-5">
             <div className="flex flex-col items-start gap-3 md:flex-row md:items-center md:justify-between">
               <div className="space-y-1">
@@ -99,8 +99,9 @@ export default function PrivacyToast() {
                   variant="secondary"
                   aria-describedby="privacy-toast-desc"
                   onClick={onAccept}
+                  className="px-6 whitespace-nowrap"
                 >
-                  Accept
+                  Accept & close
                 </Button>
               </div>
             </div>
