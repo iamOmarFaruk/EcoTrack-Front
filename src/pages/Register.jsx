@@ -44,9 +44,10 @@ export default function Register() {
   const onSubmit = async (values) => {
     try {
       await registerUser(values)
-      const redirectTo = sessionStorage.getItem('redirectTo') || '/'
       sessionStorage.removeItem('redirectTo')
-      navigate(redirectTo, { replace: true })
+      // Redirect to profile page and force reload to ensure fresh data
+      navigate('/profile', { replace: true })
+      window.location.reload()
     } catch (e) {
     }
   }

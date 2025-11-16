@@ -50,27 +50,29 @@ export default function Profile() {
             {/* Use photoURL from database if available, fallback to auth user avatar */}
             <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden bg-emerald-100 flex items-center justify-center relative">
               {(() => {
-                const imageUrl = userData?.photoURL || auth.user?.avatarUrl
+                // Priority: auth.user (Firebase) > userData (database) for most up-to-date info
+                const imageUrl = auth.user?.avatarUrl || userData?.photoURL
+                const displayName = auth.user?.name || userData?.displayName || 'User'
                 
                 if (imageUrl) {
                   return (
                     <div 
                       className="w-full h-full bg-cover bg-center bg-no-repeat"
                       style={{ backgroundImage: `url(${imageUrl})` }}
-                      title={userData?.displayName || auth.user?.name || 'User'}
+                      title={displayName}
                     />
                   )
                 } else {
                   return (
                     <div className="w-full h-full bg-emerald-500 flex items-center justify-center text-white text-2xl font-bold">
-                      {(userData?.displayName || auth.user?.name || 'U').charAt(0).toUpperCase()}
+                      {displayName.charAt(0).toUpperCase()}
                     </div>
                   )
                 }
               })()}
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">{userData?.displayName || auth.user?.name || 'Eco User'}</h2>
-            <p className="text-gray-600">{userData?.email || auth.user?.email}</p>
+            <h2 className="text-2xl font-bold text-gray-900">{auth.user?.name || userData?.displayName || 'Eco User'}</h2>
+            <p className="text-gray-600">{auth.user?.email || userData?.email}</p>
             <div className="flex items-center justify-center gap-4 mt-2 text-sm text-gray-500">
               {userData?.membershipDuration && (
                 <span>Member for {userData.membershipDuration}</span>

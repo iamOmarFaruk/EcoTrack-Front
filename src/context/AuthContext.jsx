@@ -34,6 +34,13 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
+        // Reload user to ensure we have the latest profile data
+        try {
+          await firebaseUser.reload()
+        } catch (reloadError) {
+          console.log('Could not reload Firebase user, using cached data')
+        }
+        
         // Ensure we capture Google photoURL properly, with fallback to generic Google avatar
         let avatarUrl = firebaseUser.photoURL || ''
         
@@ -164,8 +171,13 @@ export function AuthProvider({ children }) {
           photoURL: photoUrl || null,
         })
         
-        // Backend will auto-create profile when /auth/me is called
-        // But we can optionally register with additional data
+        // Force reload the user to ensure the profile update is reflected
+        await userCredential.user.reload()
+        
+        // Get the updated token with the new profile data
+        await userCredential.user.getIdToken(true)
+        
+        // Now register with backend - it will receive the updated Firebase user data
         try {
           const requestData = {
             displayName: name,
@@ -175,7 +187,7 @@ export function AuthProvider({ children }) {
           await authApi.register(requestData)
         } catch (mongoError) {
           // Don't throw the error - Firebase registration was successful
-          // Profile will be auto-created on first /auth/me call
+          // Profile will be auto-created on first /auth/me call with updated data
           console.log('Backend registration skipped, will auto-create on first access')
         }
         
