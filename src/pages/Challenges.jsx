@@ -73,7 +73,7 @@ export default function Challenges() {
           endDate: challenge.endDate || 'No data',
           status: challenge.status || 'active',
           imageUrl: challenge.image || challenge.imageUrl || 'No data',
-          participants: challenge.registeredParticipants || challenge.participants || 0,
+          participants: challenge.registeredParticipants ?? (Array.isArray(challenge.participants) ? challenge.participants.length : challenge.participants) ?? 0,
           impactMetric: challenge.impact || challenge.impactMetric || 'No data',
           co2Saved: challenge.co2Saved || null,
           featured: challenge.featured || false,

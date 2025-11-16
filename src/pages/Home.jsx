@@ -80,7 +80,7 @@ export default function Home() {
           ...challenge,
           _id: challenge._id || challenge.id,
           id: challenge.id || challenge._id,
-          participants: challenge.registeredParticipants || challenge.participants || 0,
+          participants: challenge.registeredParticipants ?? (Array.isArray(challenge.participants) ? challenge.participants.length : challenge.participants) ?? 0,
           imageUrl: challenge.image || challenge.imageUrl
         }))
         

@@ -125,7 +125,7 @@ export default function ChallengeDetail() {
         
         setChallenge({
           ...challengeData,
-          participants: challengeData.registeredParticipants || challengeData.participants || 0
+          participants: challengeData.registeredParticipants ?? (Array.isArray(challengeData.participants) ? challengeData.participants.length : challengeData.participants) ?? 0
         })
 
         // Fetch related challenges
