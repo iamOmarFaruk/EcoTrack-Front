@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
+import { Leaf, Recycle, Droplets, Zap } from 'lucide-react'
 import { challengeApi } from '../services/api.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import Button from '../components/ui/Button.jsx'
@@ -8,6 +9,7 @@ import EcoLoader from '../components/EcoLoader.jsx'
 import SubpageHero from '../components/SubpageHero.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { utils } from '../config/env'
+import { formatDate } from '../utils/formatDate.js'
 import { showSuccess, showError, showLoading, dismissToast, showDeleteConfirmation } from '../utils/toast.jsx'
 
 export default function ChallengeDetail() {
@@ -134,8 +136,14 @@ export default function ChallengeDetail() {
           })
           const relatedData = relatedResponse?.data || relatedResponse
           const challengesArray = relatedData.challenges || relatedData.data || relatedData || []
+          const normalizeId = (value) => value?.toString?.()
+          const currentId = normalizeId(challengeData.id || challengeData._id || id)
           
-          setRelatedChallenges(challengesArray.filter(c => c.id !== id || c._id !== id).slice(0, 3))
+          setRelatedChallenges(
+            challengesArray
+              .filter(c => normalizeId(c.id || c._id) !== currentId)
+              .slice(0, 3)
+          )
         } catch (error) {
           console.error('Error fetching related challenges:', error)
         }
@@ -178,6 +186,63 @@ export default function ChallengeDetail() {
     endDate,
     featured
   } = challenge
+
+  const communityImpact = challenge.communityImpact || null
+  const normalizeNumber = (value) => {
+    if (value === null || value === undefined || value === '') return null
+    if (typeof value === 'number') return value
+    const parsed = Number(value)
+    return Number.isNaN(parsed) ? null : parsed
+  }
+
+  const numberFormatter = new Intl.NumberFormat('en-US')
+
+  const impactMetrics = [
+    {
+      key: 'co2SavedKg',
+      label: 'CO₂ saved',
+      value: communityImpact?.co2SavedKg,
+      unit: 'kg',
+      icon: Leaf,
+      accent: 'bg-emerald-50 text-emerald-600'
+    },
+    {
+      key: 'plasticReducedKg',
+      label: 'Plastic reduced',
+      value: communityImpact?.plasticReducedKg,
+      unit: 'kg',
+      icon: Recycle,
+      accent: 'bg-teal-50 text-teal-600'
+    },
+    {
+      key: 'waterSavedL',
+      label: 'Water saved',
+      value: communityImpact?.waterSavedL,
+      unit: 'L',
+      icon: Droplets,
+      accent: 'bg-blue-50 text-blue-600'
+    },
+    {
+      key: 'energySavedKwh',
+      label: 'Energy saved',
+      value: communityImpact?.energySavedKwh,
+      unit: 'kWh',
+      icon: Zap,
+      accent: 'bg-amber-50 text-amber-600'
+    }
+  ].filter(metric => metric.value !== null && metric.value !== undefined && metric.value !== '')
+
+  const formatMetricValue = (value) => {
+    const numeric = normalizeNumber(value)
+    if (numeric === null) {
+      return typeof value === 'string' ? value : '—'
+    }
+    return numberFormatter.format(numeric)
+  }
+
+  const timelineRange = startDate && endDate
+    ? `${formatDate(startDate, { dateStyle: 'long' })} – ${formatDate(endDate, { dateStyle: 'long' })}`
+    : 'Schedule coming soon'
 
   return (
     <div className="space-y-12">
@@ -225,25 +290,38 @@ export default function ChallengeDetail() {
             )}
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div className="bg-emerald-50 rounded-lg p-4">
-              <h3 className="font-semibold text-emerald-900 mb-1">Duration</h3>
-              <p className="text-emerald-700">{duration}</p>
-            </div>
-            <div className="bg-blue-50 rounded-lg p-4">
-              <h3 className="font-semibold text-blue-900 mb-1">Impact Metric</h3>
-              <p className="text-blue-700">{impact}</p>
-            </div>
-            {co2Saved && (
-              <div className="bg-purple-50 rounded-lg p-4">
-                <h3 className="font-semibold text-purple-900 mb-1">CO₂ Saved</h3>
-                <p className="text-purple-700">{co2Saved}</p>
+          <div className="space-y-5">
+            {impactMetrics.length > 0 && (
+              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Impact Metrics</p>
+                    <h3 className="text-xl font-bold text-slate-900 mt-1">Measured community benefits</h3>
+                  </div>
+                </div>
+                <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                  {impactMetrics.map(metric => {
+                    const Icon = metric.icon
+                    return (
+                      <div key={metric.key} className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
+                        <div className="flex items-center gap-3">
+                          <div className={`h-12 w-12 rounded-full ${metric.accent} flex items-center justify-center`}> 
+                            <Icon className="h-5 w-5" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-slate-500">{metric.label}</p>
+                            <p className="text-2xl font-bold text-slate-900">
+                              {formatMetricValue(metric.value)}
+                              <span className="ml-1 text-base font-semibold text-slate-500">{metric.unit}</span>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
             )}
-            <div className="bg-amber-50 rounded-lg p-4">
-              <h3 className="font-semibold text-amber-900 mb-1">Timeline</h3>
-              <p className="text-amber-700">{startDate} to {endDate}</p>
-            </div>
           </div>
         </div>
 
@@ -254,7 +332,19 @@ export default function ChallengeDetail() {
             <div className="space-y-3">
               <div className="flex justify-between items-center py-2 border-b border-slate-100">
                 <span className="text-slate-600">Participants</span>
-                <span className="font-semibold text-lg">{participantCount}</span>
+                <span className="font-semibold text-lg">{participantCount === 0 ? 'No people joined yet' : participantCount}</span>
+              </div>
+              <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                <span className="text-slate-600">Start Date</span>
+                <span className="font-semibold text-lg">{startDate ? formatDate(startDate) : 'TBD'}</span>
+              </div>
+              <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                <span className="text-slate-600">End Date</span>
+                <span className="font-semibold text-lg">{endDate ? formatDate(endDate) : 'TBD'}</span>
+              </div>
+              <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                <span className="text-slate-600">Duration</span>
+                <span className="font-semibold text-lg">{duration || 'TBD'}</span>
               </div>
               <div className="flex justify-between items-center py-2">
                 <span className="text-slate-600">Status</span>
@@ -294,8 +384,8 @@ export default function ChallengeDetail() {
                   </Button>
                   <Button
                     onClick={handleDeleteChallenge}
-                    variant="outline"
-                    className="w-full text-red-600 border-red-600 hover:bg-red-50"
+                    variant="destructive"
+                    className="w-full"
                   >
                     Delete Challenge
                   </Button>
