@@ -64,7 +64,7 @@ export default function App() {
               }
             />
             <Route
-              path="/challenges/edit/:id"
+              path="/challenges/:id/edit"
               element={
                 <ProtectedRoute>
                   <EditChallenge />

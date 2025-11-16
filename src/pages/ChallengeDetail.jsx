@@ -329,8 +329,8 @@ export default function ChallengeDetail() {
           <div className="bg-white border-2 border-slate-200 rounded-lg p-6">
             <h3 className="text-xl font-bold mb-4">Challenge Stats</h3>
             <div className="space-y-3">
-              <div className="flex flex-col py-2 border-b border-slate-100">
-                <span className="text-slate-600 mb-1">Participants</span>
+              <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                <span className="text-slate-600">Participants</span>
                 <span className="font-semibold text-lg">
                   {participantCount === 0 ? 'No one joined yet' : `${participantCount} ${participantCount === 1 ? 'person' : 'people'} joined`}
                 </span>
