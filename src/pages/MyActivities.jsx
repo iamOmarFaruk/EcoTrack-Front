@@ -248,7 +248,7 @@ export default function MyActivities() {
                   )}
 
                   <Link
-                    to={`/challenges/${activity.challenge?._id}`}
+                    to={`/challenges/${activity.challenge?.slug || activity.challenge?._id}`}
                     className="block w-full text-center px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg font-medium hover:bg-emerald-100 transition-colors"
                   >
                     View Details

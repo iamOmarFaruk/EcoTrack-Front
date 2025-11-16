@@ -28,35 +28,46 @@ export const challengeApi = {
   getAll: (filters = {}) => httpClient.get('/challenges', { params: filters }),
 
   // Get specific challenge by ID (Public, shows additional fields if authenticated)
+  // IMPORTANT: Use _id (MongoDB ID) for operations (join, leave, update, delete)
   getById: (id) => httpClient.get(`/challenges/${id}`),
 
+  // Get specific challenge by slug (Public, shows additional fields if authenticated)
+  // IMPORTANT: Use slug for SEO-friendly URLs and viewing
+  getBySlug: (slug) => httpClient.get(`/challenges/slug/${slug}`),
+
   // Create new challenge (Authenticated)
-  // Required fields: category, title, shortDescription, image, duration, impact, startDate, endDate
-  // Optional: detailedDescription, co2Saved, featured
+  // Required fields: category, title, shortDescription, image, duration, communityImpact, startDate, endDate
+  // Optional: detailedDescription, featured
+  // Returns challenge with both _id and slug
   create: (challengeData) => httpClient.post('/challenges', challengeData),
 
   // Update challenge - creator only (Authenticated)
+  // IMPORTANT: Must use _id (MongoDB ID), not slug
   // All fields optional, uses PUT method
   update: (id, challengeData) => httpClient.put(`/challenges/${id}`, challengeData),
 
   // Delete challenge - creator only (Authenticated)
+  // IMPORTANT: Must use _id (MongoDB ID), not slug
   // Will be cancelled instead if has participants
   delete: (id) => httpClient.delete(`/challenges/${id}`),
 
   // Join a challenge (Authenticated)
+  // IMPORTANT: Must use _id (MongoDB ID), not slug
   join: (id) => httpClient.post(`/challenges/${id}/join`),
 
   // Leave a challenge (Authenticated)
+  // IMPORTANT: Must use _id (MongoDB ID), not slug
   leave: (id) => httpClient.post(`/challenges/${id}/leave`),
 
   // Get participant count (Public, full list if creator)
+  // IMPORTANT: Must use _id (MongoDB ID), not slug
   getParticipants: (id) => httpClient.get(`/challenges/${id}/participants`),
 
   // Get challenges created by logged-in user (Authenticated)
   getMyCreated: () => httpClient.get('/challenges/my/created'),
 
   // Get challenges joined by logged-in user (Authenticated)
-  // Query params: status (joined/left), includeCompleted (boolean)
+  // Query params: status (active/left), includeCompleted (boolean)
   getMyJoined: (filters = {}) => httpClient.get('/challenges/my/joined', { params: filters })
 }
 

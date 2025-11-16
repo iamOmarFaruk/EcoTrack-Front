@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import Hero from '../components/Hero.jsx'
 import SectionHeading from '../components/SectionHeading.jsx'
 import LazyChallengeCard from '../components/LazyChallengeCard.jsx'
@@ -8,6 +9,7 @@ import EcoLoader from '../components/EcoLoader.jsx'
 import CommunityStats from '../components/CommunityStats.jsx'
 import LazySection from '../components/LazySection.jsx'
 import HowItWorks from '../components/HowItWorks.jsx'
+import Button from '../components/ui/Button.jsx'
 import { useMockFetch } from '../hooks/useMockFetch.js'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver.js'
@@ -84,6 +86,7 @@ export default function Home() {
           ...challenge,
           _id: challenge._id || challenge.id,
           id: challenge.id || challenge._id,
+          slug: challenge.slug || '', // Store slug for SEO-friendly URLs
           participants: challenge.registeredParticipants ?? (Array.isArray(challenge.participants) ? challenge.participants.length : challenge.participants) ?? 0,
           imageUrl: challenge.image || challenge.imageUrl,
           description: challenge.shortDescription || challenge.description // Map API shortDescription to description for Hero
@@ -133,6 +136,7 @@ export default function Home() {
           ...challenge,
           _id: challenge._id || challenge.id,
           id: challenge.id || challenge._id,
+          slug: challenge.slug || '', // Store slug for SEO-friendly URLs
           participants: challenge.registeredParticipants ?? (Array.isArray(challenge.participants) ? challenge.participants.length : challenge.participants) ?? 0,
           imageUrl: challenge.image || challenge.imageUrl
         }))
@@ -383,7 +387,29 @@ export default function Home() {
   return (
     <div className="space-y-12">
       <div className="full-bleed">
-        <Hero slides={featuredChallenges} effect="creative" />
+        {loadingFeatured ? (
+          <div className="relative h-[500px] bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center">
+            <div className="text-center text-white">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+              <p className="text-lg">Loading featured challenges...</p>
+            </div>
+          </div>
+        ) : featuredChallenges.length > 0 ? (
+          <Hero slides={featuredChallenges} effect="creative" />
+        ) : (
+          <div className="relative h-[500px] bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center">
+            <div className="text-center text-white px-4">
+              <svg className="w-16 h-16 mx-auto mb-4 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <h2 className="text-3xl font-bold mb-2">No Featured Challenges Available</h2>
+              <p className="text-lg text-white/90 mb-6">Check back soon for exciting eco-friendly challenges!</p>
+              <Button as={Link} to="/challenges" variant="secondary">
+                Browse All Challenges
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       <CommunityStats />

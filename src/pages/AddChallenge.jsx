@@ -204,9 +204,12 @@ export default function AddChallenge() {
 
       showSuccess('Challenge created successfully!')
       
-      // Navigate to the challenge detail page
-      if (challenge?.id) {
-        navigate(`/challenges/${challenge.id}`)
+      // Navigate to the challenge detail page using slug (SEO-friendly)
+      if (challenge?.slug) {
+        navigate(`/challenges/${challenge.slug}`)
+      } else if (challenge?.id || challenge?._id) {
+        // Fallback to _id if slug is not available
+        navigate(`/challenges/${challenge.id || challenge._id}`)
       } else {
         navigate('/challenges')
       }

@@ -129,7 +129,7 @@ export default function Hero({ slides = [], effect = 'coverflow' }) {
                     </p>
                   ) : null}
                   <div className="mt-6 flex flex-wrap items-center gap-3">
-                    <Button as={Link} to={`/challenges/${item._id}`}>
+                    <Button as={Link} to={`/challenges/${item.slug || item._id}`}>
                       View Challenge
                     </Button>
                     <Button as={Link} to="/challenges" variant="secondary">

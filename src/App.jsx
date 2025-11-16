@@ -38,7 +38,6 @@ export default function App() {
           <Route element={<PublicLayout />}>
             <Route path="/" element={<Home />} />
             <Route path="/challenges" element={<Challenges />} />
-            <Route path="/challenges/:id" element={<ChallengeDetail />} />
             <Route path="/tips" element={<Tips />} />
             <Route path="/events" element={<Events />} />
             <Route path="/events/:id" element={<EventDetail />} />
@@ -64,14 +63,6 @@ export default function App() {
               }
             />
             <Route
-              path="/challenges/:id/edit"
-              element={
-                <ProtectedRoute>
-                  <EditChallenge />
-                </ProtectedRoute>
-              }
-            />
-            <Route
               path="/challenges/add"
               element={
                 <ProtectedRoute>
@@ -79,7 +70,15 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="*" element={<NotFound />} />
+            <Route
+              path="/challenges/:id/edit"
+              element={
+                <ProtectedRoute>
+                  <EditChallenge />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/challenges/:slug" element={<ChallengeDetail />} />
           </Route>
           <Route element={<DashboardLayout />}>
           <Route
@@ -123,6 +122,7 @@ export default function App() {
               }
             />
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster
           position="top-center"

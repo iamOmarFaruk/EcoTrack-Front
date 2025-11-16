@@ -13,7 +13,7 @@ import { formatDate } from '../utils/formatDate.js'
 import { showSuccess, showError, showLoading, dismissToast, showDeleteConfirmation } from '../utils/toast.jsx'
 
 export default function ChallengeDetail() {
-  const { id } = useParams()
+  const { slug } = useParams() // Use slug from URL (SEO-friendly)
   const { auth } = useAuth()
   const [challenge, setChallenge] = useState(null)
   const [relatedChallenges, setRelatedChallenges] = useState([])
@@ -42,15 +42,17 @@ export default function ChallengeDetail() {
 
     setIsJoining(true)
     try {
-      await challengeApi.join(id)
+      // Use _id for join operation, not slug
+      await challengeApi.join(challenge._id)
       showSuccess('Successfully joined the challenge!')
       
-      // Refresh challenge data
-      const response = await challengeApi.getById(id)
+      // Refresh challenge data using slug
+      const response = await challengeApi.getBySlug(slug)
       const challengeData = response?.data || response
       
       setChallenge(prev => ({
         ...prev,
+        _id: challengeData._id || challengeData.id || prev._id, // Ensure _id is preserved
         isJoined: true,
         participants: challengeData.registeredParticipants || (prev.participants + 1)
       }))
@@ -71,15 +73,17 @@ export default function ChallengeDetail() {
   const handleLeaveChallenge = async () => {
     setIsLeaving(true)
     try {
-      await challengeApi.leave(id)
+      // Use _id for leave operation, not slug
+      await challengeApi.leave(challenge._id)
       showSuccess('Successfully left the challenge')
       
-      // Refresh challenge data
-      const response = await challengeApi.getById(id)
+      // Refresh challenge data using slug
+      const response = await challengeApi.getBySlug(slug)
       const challengeData = response?.data || response
       
       setChallenge(prev => ({
         ...prev,
+        _id: challengeData._id || challengeData.id || prev._id, // Ensure _id is preserved
         isJoined: false,
         participants: challengeData.registeredParticipants || Math.max(0, prev.participants - 1)
       }))
@@ -98,7 +102,8 @@ export default function ChallengeDetail() {
         try {
           const loadingToast = showLoading('Deleting challenge...')
           
-          await challengeApi.delete(id)
+          // Use _id for delete operation, not slug
+          await challengeApi.delete(challenge._id)
           
           dismissToast(loadingToast)
           showSuccess('Challenge deleted successfully!')
@@ -113,18 +118,21 @@ export default function ChallengeDetail() {
   }
 
   const handleEditChallenge = () => {
-    window.location.href = `/challenges/${id}/edit`
+    // Use _id for edit URL, not slug (as per API specification)
+    window.location.href = `/challenges/${challenge._id}/edit`
   }
 
   useEffect(() => {
     const fetchChallengeDetails = async () => {
       try {
         setLoading(true)
-        const response = await challengeApi.getById(id)
+        // Fetch challenge by slug (SEO-friendly)
+        const response = await challengeApi.getBySlug(slug)
         const challengeData = response?.data || response
         
         setChallenge({
           ...challengeData,
+          _id: challengeData._id || challengeData.id, // Ensure _id is set
           participants: challengeData.registeredParticipants ?? (Array.isArray(challengeData.participants) ? challengeData.participants.length : challengeData.participants) ?? 0
         })
 
@@ -137,7 +145,7 @@ export default function ChallengeDetail() {
           const relatedData = relatedResponse?.data || relatedResponse
           const challengesArray = relatedData.challenges || relatedData.data || relatedData || []
           const normalizeId = (value) => value?.toString?.()
-          const currentId = normalizeId(challengeData.id || challengeData._id || id)
+          const currentId = normalizeId(challengeData.id || challengeData._id)
           
           setRelatedChallenges(
             challengesArray
@@ -154,10 +162,10 @@ export default function ChallengeDetail() {
       }
     }
 
-    if (id) {
+    if (slug) {
       fetchChallengeDetails()
     }
-  }, [id])
+  }, [slug])
 
   if (loading) {
     return <EcoLoader />

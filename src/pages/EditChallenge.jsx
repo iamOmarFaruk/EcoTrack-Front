@@ -267,9 +267,15 @@ export default function EditChallenge() {
       }
 
       const response = await challengeApi.update(id, challengeData)
+      const updatedChallenge = response?.data || response
 
       showSuccess('Challenge updated successfully!')
-      navigate(`/challenges/${id}`)
+      // Navigate using slug if available, otherwise use _id
+      if (updatedChallenge?.slug) {
+        navigate(`/challenges/${updatedChallenge.slug}`)
+      } else {
+        navigate(`/challenges/${id}`)
+      }
     } catch (error) {
       console.error('Error updating challenge:', error)
       
@@ -304,7 +310,12 @@ export default function EditChallenge() {
   }
 
   const handleCancel = () => {
-    navigate(`/challenges/${id}`)
+    // Navigate using slug if available, otherwise use _id
+    if (challenge?.slug) {
+      navigate(`/challenges/${challenge.slug}`)
+    } else {
+      navigate(`/challenges/${id}`)
+    }
   }
 
   const getMinDate = () => {
