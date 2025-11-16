@@ -14,7 +14,7 @@ import { useIntersectionObserver } from '../hooks/useIntersectionObserver.js'
 import { mockChallenges } from '../data/mockChallenges.js'
 import { defaultImages } from '../config/env'
 import { useState, useEffect } from 'react'
-import { tipsApi, eventApi } from '../services/api.js'
+import { tipsApi, eventApi, challengeApi } from '../services/api.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import TipModal from '../components/TipModal.jsx'
 import LoginModal from '../components/LoginModal.jsx'
@@ -38,6 +38,10 @@ export default function Home() {
   const [events, setEvents] = useState([])
   const [loadingEvents, setLoadingEvents] = useState(true)
   
+  // State for real challenges from API
+  const [challenges, setChallenges] = useState([])
+  const [loadingChallenges, setLoadingChallenges] = useState(true)
+  
   // Intersection observer for Why Go Green section
   const [setWhyGoGreenRef, isWhyGoGreenVisible] = useIntersectionObserver({
     threshold: 0.2,
@@ -45,26 +49,52 @@ export default function Home() {
     triggerOnce: true
   })
   
-  const { data: challenges, loading: loadingChallenges } = useMockFetch(() => {
-    const now = new Date()
-    const MS_PER_DAY = 24 * 60 * 60 * 1000
-    const parseDays = (duration) => {
-      const n = Number.parseInt(duration)
-      return Number.isFinite(n) ? n : 0
+  // Fetch 6 active challenges from API
+  useEffect(() => {
+    const fetchActiveChallenges = async () => {
+      try {
+        setLoadingChallenges(true)
+        const response = await challengeApi.getAll({ 
+          page: 1, 
+          limit: 6,
+          status: 'active',
+          sortBy: 'startDate',
+          order: 'asc'
+        })
+        
+        // Handle different API response structures
+        let challengesData = response.data
+        if (response.data?.challenges) {
+          challengesData = response.data.challenges
+        } else if (response.data?.data?.challenges) {
+          challengesData = response.data.data.challenges
+        } else if (response.data?.data) {
+          challengesData = response.data.data
+        }
+        
+        // Ensure we have an array
+        const challengesArray = Array.isArray(challengesData) ? challengesData : Object.values(challengesData || {})
+        
+        // Enhance challenges with proper data structure
+        const enhancedChallenges = challengesArray.map(challenge => ({
+          ...challenge,
+          _id: challenge._id || challenge.id,
+          id: challenge.id || challenge._id,
+          participants: challenge.registeredParticipants || challenge.participants || 0,
+          imageUrl: challenge.image || challenge.imageUrl
+        }))
+        
+        setChallenges(enhancedChallenges)
+      } catch (error) {
+        console.error('Error fetching challenges:', error)
+        setChallenges([])
+      } finally {
+        setLoadingChallenges(false)
+      }
     }
-    const ongoing = mockChallenges.filter((c) => {
-      const start = new Date(c.startDate)
-      const days = parseDays(c.duration)
-      if (days <= 0) return true
-      const end = new Date(start.getTime() + days * MS_PER_DAY)
-      return now >= start && now <= end
-    })
-    const source = ongoing.length
-      ? ongoing
-      : [...mockChallenges].sort((a, b) => (b.participants || 0) - (a.participants || 0))
-    // Limit to 4–6 items; prefer up to 6
-    return source.slice(0, 6)
-  }, 500)
+    
+    fetchActiveChallenges()
+  }, [])
 
   // Fetch 3 latest events from API
   useEffect(() => {
@@ -331,6 +361,7 @@ export default function Home() {
   }
   
   const isInitialLoading = loadingChallenges && loadingTips && loadingEvents
+  const isAnyLoading = loadingChallenges || loadingTips || loadingEvents
 
   if (isInitialLoading) {
     return <EcoLoader />
