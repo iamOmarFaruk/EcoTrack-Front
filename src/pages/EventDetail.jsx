@@ -193,11 +193,11 @@ export default function EventDetail() {
         <div className="space-y-6">
           {/* Join Event Card or Creator Controls */}
           {isCreator ? (
-            <Card className="border-blue-200 bg-blue-50">
+            <Card className="border-green-200 bg-green-50">
               <CardContent className="space-y-4">
                 <div className="text-center">
-                  <h3 className="text-lg font-semibold text-blue-900">Event Management</h3>
-                  <p className="text-sm text-blue-700 mt-1">
+                  <h3 className="text-lg font-semibold text-green-900">Event Management</h3>
+                  <p className="text-sm text-green-700 mt-1">
                     You are the organizer of this event
                   </p>
                 </div>
@@ -210,26 +210,27 @@ export default function EventDetail() {
                       {event.registeredParticipants} / {event.capacity}
                     </span>
                   </div>
-                  <div className="w-full bg-blue-200 rounded-full h-2">
+                  <div className="w-full bg-green-200 rounded-full h-2">
                     <div 
-                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                      className="bg-green-600 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${progressPercentage}%` }}
                     ></div>
                   </div>
-                  <p className="text-xs text-blue-600 text-center">
+                  <p className="text-xs text-green-600 text-center">
                     {spotsRemaining} spots remaining
                   </p>
                 </div>
 
                 <div className="space-y-2">
                   <Button 
-                    className="w-full bg-blue-600 hover:bg-blue-700" 
+                    className="w-full bg-green-600 hover:bg-green-700" 
                     onClick={handleEditEvent}
                   >
                     Edit Event
                   </Button>
                   <Button 
-                    className="w-full bg-red-600 hover:bg-red-700" 
+                    variant="danger"
+                    className="w-full bg-red-600 hover:bg-red-700 text-white" 
                     onClick={handleDeleteEvent}
                     disabled={isDeleting}
                   >
