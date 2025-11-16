@@ -149,6 +149,14 @@ export default function Navbar() {
                   >
                     My Activities
                   </Link>
+                  <Link
+                    to="/my-events"
+                    onClick={() => setProfileOpen(false)}
+                    className="block px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50"
+                    role="menuitem"
+                  >
+                    My Events
+                  </Link>
                   <hr className="my-1 border-gray-200" />
                   <Link
                     to="/settings"
@@ -271,10 +279,18 @@ export default function Navbar() {
                   My Activities
                 </Link>
                 <Link
-                  to="/settings"
+                  to="/my-events"
                   onClick={() => setOpen(false)}
                   className={clsx('rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
                   style={{ transitionDelay: `${navItems.length * 50 + 100}ms` }}
+                >
+                  My Events
+                </Link>
+                <Link
+                  to="/settings"
+                  onClick={() => setOpen(false)}
+                  className={clsx('rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  style={{ transitionDelay: `${navItems.length * 50 + 150}ms` }}
                 >
                   Settings
                 </Link>
