@@ -539,7 +539,7 @@ export default function AddChallenge() {
                   name="featured"
                   checked={formData.featured}
                   onChange={handleChange}
-                  className="w-4 h-4 text-green-600 border-slate-300 rounded focus:ring-green-500"
+                  className="w-4 h-4 text-green-600 border-slate-300 rounded focus:ring-green-500 accent-green-600"
                 />
                 <label htmlFor="featured" className="ml-2 block text-sm text-slate-900">
                   Mark as featured challenge
