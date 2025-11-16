@@ -279,6 +279,39 @@ export default function ChallengeDetail() {
         </SubpageHero>
       </div>
 
+      {/* Impact Metrics - Full Width */}
+      {impactMetrics.length > 0 && (
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold text-slate-500">Impact Metrics</p>
+              <h3 className="text-xl font-bold text-slate-900 mt-1">Measured community benefits</h3>
+            </div>
+          </div>
+          <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {impactMetrics.map(metric => {
+              const Icon = metric.icon
+              return (
+                <div key={metric.key} className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
+                  <div className="flex items-center gap-3">
+                    <div className={`h-12 w-12 rounded-full ${metric.accent} flex items-center justify-center`}> 
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-slate-500">{metric.label}</p>
+                      <p className="text-2xl font-bold text-slate-900">
+                        {formatMetricValue(metric.value)}
+                        <span className="ml-1 text-base font-semibold text-slate-500">{metric.unit}</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Challenge Details */}
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
@@ -289,40 +322,6 @@ export default function ChallengeDetail() {
               <p className="text-slate-600 whitespace-pre-line">{detailedDescription}</p>
             )}
           </div>
-
-          <div className="space-y-5">
-            {impactMetrics.length > 0 && (
-              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Impact Metrics</p>
-                    <h3 className="text-xl font-bold text-slate-900 mt-1">Measured community benefits</h3>
-                  </div>
-                </div>
-                <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                  {impactMetrics.map(metric => {
-                    const Icon = metric.icon
-                    return (
-                      <div key={metric.key} className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
-                        <div className="flex items-center gap-3">
-                          <div className={`h-12 w-12 rounded-full ${metric.accent} flex items-center justify-center`}> 
-                            <Icon className="h-5 w-5" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-slate-500">{metric.label}</p>
-                            <p className="text-2xl font-bold text-slate-900">
-                              {formatMetricValue(metric.value)}
-                              <span className="ml-1 text-base font-semibold text-slate-500">{metric.unit}</span>
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Sidebar */}
@@ -330,9 +329,11 @@ export default function ChallengeDetail() {
           <div className="bg-white border-2 border-slate-200 rounded-lg p-6">
             <h3 className="text-xl font-bold mb-4">Challenge Stats</h3>
             <div className="space-y-3">
-              <div className="flex justify-between items-center py-2 border-b border-slate-100">
-                <span className="text-slate-600">Participants</span>
-                <span className="font-semibold text-lg">{participantCount === 0 ? 'No people joined yet' : participantCount}</span>
+              <div className="flex flex-col py-2 border-b border-slate-100">
+                <span className="text-slate-600 mb-1">Participants</span>
+                <span className="font-semibold text-lg">
+                  {participantCount === 0 ? 'No one joined yet' : `${participantCount} ${participantCount === 1 ? 'person' : 'people'} joined`}
+                </span>
               </div>
               <div className="flex justify-between items-center py-2 border-b border-slate-100">
                 <span className="text-slate-600">Start Date</span>

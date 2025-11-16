@@ -21,7 +21,12 @@ export default function ChallengeCard({ challenge }) {
         <h3 className="text-xl font-bold text-slate-900 mb-3">{challenge.title}</h3>
         <p className="line-clamp-2 text-sm text-slate-600 mb-4">{challenge.description || challenge.shortDescription}</p>
         <div className="flex items-center justify-between text-sm text-slate-600 mb-4">
-          <span>Participants: {challenge.participants || challenge.registeredParticipants || 0}</span>
+          <span>
+            {(() => {
+              const count = challenge.participants || challenge.registeredParticipants || 0;
+              return count === 0 ? 'No one joined yet' : `${count} ${count === 1 ? 'person' : 'people'} joined`;
+            })()}
+          </span>
         </div>
         <Button as={Link} to={`/challenges/${challenge._id || challenge.id}`} className="self-start">View</Button>
       </CardContent>
