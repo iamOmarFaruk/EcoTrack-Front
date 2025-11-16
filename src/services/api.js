@@ -68,6 +68,9 @@ export const userApi = {
   // Update current user profile
   updateProfile: (profileData) => httpClient.patch('/users/profile', profileData),
 
+  // Delete current user profile and all related data
+  deleteProfile: () => httpClient.delete('/users/profile'),
+
   // Get public user profile by Firebase UID or MongoDB ID
   getById: (id) => httpClient.get(`/users/${id}`),
 

@@ -217,6 +217,40 @@ export function AuthProvider({ children }) {
       }
     }
 
+    async function deleteAccount() {
+      try {
+        // First delete the backend profile and data
+        const { userApi } = await import('../services/api.js')
+        await userApi.deleteProfile()
+        
+        // Then delete the Firebase user
+        if (auth.currentUser) {
+          await auth.currentUser.delete()
+        }
+        
+        // Clear local state
+        setUser(null)
+        setUserProfile(null)
+        setUserChallenges([])
+        setUserEvents([])
+        
+        showSuccess('Your account has been deleted successfully.')
+      } catch (error) {
+        // Handle re-authentication requirement
+        if (error.code === 'auth/requires-recent-login') {
+          const err = new Error('For security reasons, please log out and log back in before deleting your account.')
+          err.code = error.code
+          showError(err.message)
+          throw err
+        }
+        
+        const err = new Error(error.message || 'Failed to delete account. Please try again.')
+        err.code = error.code
+        showError(err.message)
+        throw err
+      }
+    }
+
     async function resetPassword(email) {
       try {
         await sendPasswordResetEmail(auth, email)
@@ -381,6 +415,7 @@ export function AuthProvider({ children }) {
       logout, 
       resetPassword,
       updateUserProfile,
+      deleteAccount,
       joinChallenge,
       leaveChallenge,
       joinEvent,
