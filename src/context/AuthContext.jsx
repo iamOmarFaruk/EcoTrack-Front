@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, useEffect, useState } from 'react'
-import toast from 'react-hot-toast'
+import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
@@ -144,12 +144,12 @@ export function AuthProvider({ children }) {
     async function login({ email, password }) {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password)
-        toast.success('Welcome back!')
+        showSuccess('Welcome back!')
         return userCredential.user
       } catch (error) {
         const err = new Error(getFirebaseErrorMessage(error))
         err.code = error.code
-        toast.error(err.message)
+        showError(err.message)
         throw err
       }
     }
@@ -179,12 +179,12 @@ export function AuthProvider({ children }) {
           console.log('Backend registration skipped, will auto-create on first access')
         }
         
-        toast.success('Account created successfully! Welcome to EcoTrack!')
+        showSuccess('Account created successfully! Welcome to EcoTrack!')
         return userCredential.user
       } catch (error) {
         const err = new Error(getFirebaseErrorMessage(error))
         err.code = error.code
-        toast.error(err.message)
+        showError(err.message)
         throw err
       }
     }
@@ -195,12 +195,12 @@ export function AuthProvider({ children }) {
         
         // Backend will auto-create profile when /auth/me is called
         // No need to explicitly register - the /auth/me endpoint handles this
-        toast.success('Welcome back!')
+        showSuccess('Welcome back!')
         return result.user
       } catch (error) {
         const err = new Error(getFirebaseErrorMessage(error))
         err.code = error.code
-        toast.error(err.message)
+        showError(err.message)
         throw err
       }
     }
@@ -208,11 +208,11 @@ export function AuthProvider({ children }) {
     async function logout() {
       try {
         await signOut(auth)
-        toast.success('You have been logged out.')
+        showSuccess('You have been logged out.')
       } catch (error) {
         const err = new Error(getFirebaseErrorMessage(error))
         err.code = error.code
-        toast.error(err.message)
+        showError(err.message)
         throw err
       }
     }
@@ -220,11 +220,11 @@ export function AuthProvider({ children }) {
     async function resetPassword(email) {
       try {
         await sendPasswordResetEmail(auth, email)
-        toast.success('Password reset email sent! Check your inbox.')
+        showSuccess('Password reset email sent! Check your inbox.')
       } catch (error) {
         const err = new Error(getFirebaseErrorMessage(error))
         err.code = error.code
-        toast.error(err.message)
+        showError(err.message)
         throw err
       }
     }

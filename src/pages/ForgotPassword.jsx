@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Button from '../components/ui/Button.jsx'
-import toast from 'react-hot-toast'
+import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
@@ -33,10 +33,10 @@ export default function ForgotPassword() {
   const onSubmit = async (values) => {
     try {
       await resetPassword(values.email)
-      toast.success('Password reset email sent! Check your inbox.')
+      showSuccess('Password reset email sent! Check your inbox.')
       reset()
     } catch (e) {
-      toast.error(e.message)
+      showError(e.message)
     }
   }
 

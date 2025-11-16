@@ -8,7 +8,7 @@ import SubpageHero from '../components/SubpageHero.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import { defaultImages } from '../config/env.js'
 import { formatDate } from '../utils/formatDate.js'
-import toast from 'react-hot-toast'
+import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
 
 export default function MyEvents() {
   useDocumentTitle('My Events')
@@ -37,7 +37,7 @@ export default function MyEvents() {
       setStats(data?.stats || null)
     } catch (error) {
       console.error('Error fetching my events:', error)
-      toast.error('Failed to load your events')
+      showError('Failed to load your events')
     } finally {
       setLoading(false)
     }
@@ -58,7 +58,7 @@ export default function MyEvents() {
       })
     } catch (error) {
       console.error('Error fetching joined events:', error)
-      toast.error('Failed to load joined events')
+      showError('Failed to load joined events')
     } finally {
       setLoading(false)
     }

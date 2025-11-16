@@ -18,7 +18,7 @@ import { tipsApi, eventApi, challengeApi } from '../services/api.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import TipModal from '../components/TipModal.jsx'
 import LoginModal from '../components/LoginModal.jsx'
-import toast from 'react-hot-toast'
+import { showSuccess, showError, showDeleteConfirmation } from '../utils/toast.jsx'
 
 export default function Home() {
   useDocumentTitle('Home')
@@ -212,51 +212,16 @@ export default function Home() {
 
   // Handle delete tip
   const handleDeleteTip = async (tipId) => {
-    toast((t) => (
-      <div className="flex items-start gap-3">
-        <div className="flex-shrink-0">
-          <svg className="w-5 h-5 text-red-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <div className="flex-1">
-          <h3 className="text-sm font-medium text-gray-900">Delete Tip</h3>
-          <p className="text-sm text-gray-600 mt-1 mb-3">
-            Are you sure you want to delete this tip? This action cannot be undone.
-          </p>
-          <div className="flex gap-2 justify-end">
-            <button
-              onClick={() => toast.dismiss(t.id)}
-              className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={async () => {
-                toast.dismiss(t.id)
-                try {
-                  await tipsApi.delete(tipId)
-                  setTips(prevTips => prevTips.filter(tip => tip.id !== tipId))
-                  toast.success('Tip deleted successfully')
-                } catch (error) {
-                  toast.error('Failed to delete tip: ' + error.message)
-                }
-              }}
-              className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
-    ), {
-      duration: Infinity,
-      style: {
-        background: '#fff',
-        border: '1px solid #fed7d7',
-        borderRadius: '8px',
-        padding: '16px',
-        maxWidth: '400px',
+    showDeleteConfirmation({
+      itemName: 'Tip',
+      onConfirm: async () => {
+        try {
+          await tipsApi.delete(tipId)
+          setTips(prevTips => prevTips.filter(tip => tip.id !== tipId))
+          showSuccess('Tip deleted successfully')
+        } catch (error) {
+          showError('Failed to delete tip: ' + error.message)
+        }
       }
     })
   }
@@ -308,7 +273,7 @@ export default function Home() {
           tip.id === tipId ? { ...tip, upvotes: originalTip.upvotes } : tip
         )
       )
-      toast.error('Failed to upvote tip: ' + error.message)
+      showError('Failed to upvote tip: ' + error.message)
     }
   }
 
@@ -345,7 +310,7 @@ export default function Home() {
           )
         )
         
-        toast.success('Tip updated successfully!')
+        showSuccess('Tip updated successfully!')
       }
       
       setIsModalOpen(false)

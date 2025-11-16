@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import Button from './ui/Button.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
-import toast from 'react-hot-toast'
+import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
 
 export default function LoginModal({ isOpen, onClose }) {
   const { login, loginWithGoogle } = useAuth()
@@ -68,10 +68,10 @@ export default function LoginModal({ isOpen, onClose }) {
     
     try {
       await login(formData)
-      toast.success('Welcome back!')
+      showSuccess('Welcome back!')
       onClose() // Close modal on successful login
     } catch (error) {
-      toast.error(error.message || 'Login failed. Please try again.')
+      showError(error.message || 'Login failed. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -83,10 +83,10 @@ export default function LoginModal({ isOpen, onClose }) {
     
     try {
       await loginWithGoogle()
-      toast.success('Welcome back!')
+      showSuccess('Welcome back!')
       onClose() // Close modal on successful login
     } catch (error) {
-      toast.error(error.message || 'Google login failed. Please try again.')
+      showError(error.message || 'Google login failed. Please try again.')
     } finally {
       setIsSubmitting(false)
     }

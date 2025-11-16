@@ -6,7 +6,7 @@ import Button from '../components/ui/Button.jsx'
 import { Card, CardContent } from '../components/ui/Card.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import NotFound from './NotFound.jsx'
-import toast from 'react-hot-toast'
+import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 
 export default function EditChallenge() {
@@ -114,7 +114,7 @@ export default function EditChallenge() {
       } else if (error.status === 403) {
         setNotAuthorized(true)
       } else {
-        toast.error('Failed to load challenge')
+        showError('Failed to load challenge')
       }
     } finally {
       setLoading(false)
@@ -214,13 +214,13 @@ export default function EditChallenge() {
     e.preventDefault()
 
     if (!user) {
-      toast.error('You must be logged in to edit a challenge')
+      showError('You must be logged in to edit a challenge')
       navigate('/login')
       return
     }
 
     if (!validateForm()) {
-      toast.error('Please fix the form errors')
+      showError('Please fix the form errors')
       return
     }
 
@@ -252,7 +252,7 @@ export default function EditChallenge() {
 
       const response = await challengeApi.update(id, challengeData)
 
-      toast.success('Challenge updated successfully!')
+      showSuccess('Challenge updated successfully!')
       navigate(`/challenges/${id}`)
     } catch (error) {
       console.error('Error updating challenge:', error)
@@ -273,12 +273,12 @@ export default function EditChallenge() {
         })
         if (Object.keys(backendErrors).length > 0) {
           setErrors(backendErrors)
-          toast.error('Please fix the validation errors')
+          showError('Please fix the validation errors')
           return
         }
       }
       
-      toast.error(error.message || 'Failed to update challenge')
+      showError(error.message || 'Failed to update challenge')
     } finally {
       setIsSubmitting(false)
     }

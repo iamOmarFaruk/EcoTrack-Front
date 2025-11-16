@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import toast from 'react-hot-toast'
+import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
 import Button from '../components/ui/Button.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
@@ -22,7 +22,7 @@ export default function Contact() {
 
   const onSubmit = async (data) => {
     await new Promise((r) => setTimeout(r, 800))
-    toast.success('Message sent! We will get back to you soon.')
+    showSuccess('Message sent! We will get back to you soon.')
     reset()
   }
 

@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext.jsx'
 import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
 import EcoLoader from '../components/EcoLoader.jsx'
 import { authApi } from '../services/api.js'
-import toast from 'react-hot-toast'
+import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
 
 export default function Profile() {
   const isLoading = useMinimumLoading(300)
@@ -26,7 +26,7 @@ export default function Profile() {
         setUserData(userData)
       } catch (error) {
         console.error('Failed to fetch user data:', error)
-        toast.error('Failed to load user data')
+        showError('Failed to load user data')
       } finally {
         setFetchingUser(false)
       }

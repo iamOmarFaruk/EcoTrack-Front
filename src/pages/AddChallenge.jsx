@@ -4,7 +4,7 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { challengeApi } from '../services/api.js'
 import Button from '../components/ui/Button.jsx'
 import { Card, CardContent } from '../components/ui/Card.jsx'
-import toast from 'react-hot-toast'
+import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 
 export default function AddChallenge() {
@@ -168,13 +168,13 @@ export default function AddChallenge() {
     e.preventDefault()
 
     if (!user) {
-      toast.error('You must be logged in to create a challenge')
+      showError('You must be logged in to create a challenge')
       navigate('/login')
       return
     }
 
     if (!validateForm()) {
-      toast.error('Please fix the form errors')
+      showError('Please fix the form errors')
       return
     }
 
@@ -202,7 +202,7 @@ export default function AddChallenge() {
       const response = await challengeApi.create(challengeData)
       const challenge = response?.data?.challenge || response?.challenge || response?.data
 
-      toast.success('Challenge created successfully!')
+      showSuccess('Challenge created successfully!')
       
       // Navigate to the challenge detail page
       if (challenge?.id) {
@@ -233,12 +233,12 @@ export default function AddChallenge() {
         })
         if (Object.keys(backendErrors).length > 0) {
           setErrors(backendErrors)
-          toast.error('Please fix the validation errors')
+          showError('Please fix the validation errors')
           return
         }
       }
       
-      toast.error(error.message || 'Failed to create challenge')
+      showError(error.message || 'Failed to create challenge')
     } finally {
       setIsSubmitting(false)
     }

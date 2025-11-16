@@ -127,31 +127,40 @@ export default function App() {
         <Toaster
           position="top-center"
           toastOptions={{
-            duration: 1000,
+            duration: 3000,
+            // Default styles are overridden by individual toast utilities
             style: {
-              background: '#022c22',
-              color: '#ecfdf5',
-              borderRadius: '9999px',
-              padding: '12px 20px',
-              boxShadow:
-                '0 20px 25px -5px rgba(6, 78, 59, 0.4), 0 10px 10px -5px rgba(6, 78, 59, 0.3)',
+              background: '#fff',
+              color: '#374151',
+              borderRadius: '8px',
+              padding: '16px',
+              border: '1px solid #e5e7eb',
             },
-            // Ensure only the built-in left icon appears; no extra right icons
             success: {
+              style: {
+                background: '#fff',
+                border: '1px solid #d1fae5',
+                color: '#065f46',
+              },
               iconTheme: {
-                primary: '#22c55e',
-                secondary: '#022c22',
+                primary: '#10b981',
+                secondary: '#fff',
               },
             },
             error: {
+              style: {
+                background: '#fff',
+                border: '1px solid #fecaca',
+                color: '#991b1b',
+              },
               iconTheme: {
-                primary: '#f97373',
-                secondary: '#022c22',
+                primary: '#ef4444',
+                secondary: '#fff',
               },
             },
           }}
           containerStyle={{
-            top: 16,
+            top: 80,
           }}
         />
         <PrivacyToast />

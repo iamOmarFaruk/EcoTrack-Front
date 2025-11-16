@@ -8,7 +8,7 @@ import EcoLoader from '../components/EcoLoader.jsx'
 import SubpageHero from '../components/SubpageHero.jsx'
 import Button from '../components/ui/Button.jsx'
 import { useState, useEffect } from 'react'
-import toast from 'react-hot-toast'
+import { showDeleteConfirmation, showError } from '../utils/toast.jsx'
 
 export default function Tips() {
   useDocumentTitle('Recent Tips')
@@ -32,49 +32,10 @@ export default function Tips() {
   }
 
   const handleDeleteTip = async (tipId) => {
-    toast((t) => (
-      <div className="flex items-start gap-3">
-        <div className="flex-shrink-0">
-          <svg className="w-5 h-5 text-red-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        </div>
-        <div className="flex-1">
-          <h3 className="text-sm font-medium text-gray-900">Delete Tip</h3>
-          <p className="text-sm text-gray-600 mt-1 mb-3">
-            Are you sure you want to delete this tip? This action cannot be undone.
-          </p>
-          <div className="flex gap-2 justify-end">
-            <button
-              onClick={() => toast.dismiss(t.id)}
-              className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={async () => {
-                toast.dismiss(t.id)
-                try {
-                  await deleteTip(tipId)
-                } catch (error) {
-                  toast.error('Failed to delete tip: ' + error.message)
-                }
-              }}
-              className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
-    ), {
-      duration: Infinity,
-      style: {
-        background: '#fff',
-        border: '1px solid #fed7d7',
-        borderRadius: '8px',
-        padding: '16px',
-        maxWidth: '400px',
+    showDeleteConfirmation({
+      itemName: 'Tip',
+      onConfirm: async () => {
+        await deleteTip(tipId)
       }
     })
   }
@@ -97,7 +58,7 @@ export default function Tips() {
     try {
       await upvoteTip(tipId)
     } catch (error) {
-      toast.error('Failed to upvote tip: ' + error.message)
+      showError('Failed to upvote tip: ' + error.message)
     }
   }
 

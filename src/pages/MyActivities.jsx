@@ -5,7 +5,7 @@ import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
 import EcoLoader from '../components/EcoLoader.jsx'
 import { challengeApi } from '../services/api.js'
 import { useAuth } from '../context/AuthContext.jsx'
-import toast from 'react-hot-toast'
+import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
 
 export default function MyActivities() {
   const isLoading = useMinimumLoading(300)
@@ -99,7 +99,7 @@ export default function MyActivities() {
       setPagination(joinedResponse?.pagination || null)
     } catch (error) {
       console.error('Failed to fetch activities:', error)
-      toast.error('Failed to load your activities')
+      showError('Failed to load your activities')
     } finally {
       setLoading(false)
     }

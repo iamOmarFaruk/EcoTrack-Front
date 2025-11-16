@@ -8,7 +8,7 @@ import SubpageHero from '../components/SubpageHero.jsx'
 import Button from '../components/ui/Button.jsx'
 import { defaultImages } from '../config/env.js'
 import { useAuth } from '../context/AuthContext.jsx'
-import toast from 'react-hot-toast'
+import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
 
 export default function Events() {
   useDocumentTitle('Events')
@@ -53,7 +53,7 @@ export default function Events() {
       setPagination(data?.pagination || null)
     } catch (error) {
       console.error('Error fetching events:', error)
-      toast.error('Failed to load events')
+      showError('Failed to load events')
     } finally {
       setLoading(false)
     }
@@ -67,7 +67,7 @@ export default function Events() {
 
   const handleCreateEvent = () => {
     if (!user) {
-      toast.error('Please log in to create an event')
+      showError('Please log in to create an event')
       navigate('/login')
       return
     }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext.jsx'
 import { tipsApi } from '../services/api.js'
-import toast from 'react-hot-toast'
+import { showSuccess, showError } from '../utils/toast.jsx'
 
 /**
  * Custom hook for managing tips using the backend API
@@ -213,7 +213,7 @@ export function useUserTips() {
       setTips(prevTips => [enhancedTip, ...prevTips])
       
       // Show success message
-      toast.success('Tip shared successfully!')
+      showSuccess('Tip shared successfully!')
       
       return enhancedTip
     } catch (err) {
@@ -284,7 +284,7 @@ export function useUserTips() {
       )
       
       // Show success message
-      toast.success('Tip updated successfully!')
+      showSuccess('Tip updated successfully!')
       
       return enhancedTip
     } catch (err) {
@@ -307,7 +307,7 @@ export function useUserTips() {
       setTips(prevTips => prevTips.filter(tip => tip.id !== tipId))
       
       // Show success message
-      toast.success('Tip deleted successfully')
+      showSuccess('Tip deleted successfully')
     } catch (err) {
       setError(err.message)
       throw err
@@ -357,7 +357,7 @@ export function useUserTips() {
       )
       
       setError('Failed to upvote tip. Please try again.')
-      toast.error('Failed to upvote tip. Please try again.')
+      showError('Failed to upvote tip. Please try again.')
       throw err
     }
   }

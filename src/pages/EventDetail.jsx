@@ -9,7 +9,7 @@ import SubpageHero from '../components/SubpageHero.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import NotFound from './NotFound.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
-import toast from 'react-hot-toast'
+import { showSuccess, showError, showDeleteConfirmation } from '../utils/toast.jsx'
 
 export default function EventDetail() {
   const { id } = useParams()
@@ -47,7 +47,7 @@ export default function EventDetail() {
       if (error.status === 404) {
         setNotFound(true)
       } else {
-        toast.error('Failed to load event')
+        showError('Failed to load event')
       }
     } finally {
       setLoading(false)
@@ -56,7 +56,7 @@ export default function EventDetail() {
 
   const handleJoinEvent = async () => {
     if (!user) {
-      toast.error('Please log in to join this event')
+      showError('Please log in to join this event')
       navigate('/login')
       return
     }
@@ -64,11 +64,11 @@ export default function EventDetail() {
     setIsJoining(true)
     try {
       await joinEvent(event.id || event._id)
-      toast.success(`Successfully joined "${event.title}"!`)
+      showSuccess(`Successfully joined "${event.title}"!`)
       // Refresh event data
       await fetchEvent()
     } catch (error) {
-      toast.error(error.message || 'Failed to join event')
+      showError(error.message || 'Failed to join event')
     } finally {
       setIsJoining(false)
     }
@@ -78,11 +78,11 @@ export default function EventDetail() {
     setIsLeaving(true)
     try {
       await leaveEvent(event.id || event._id)
-      toast.success(`You have left "${event.title}"`)
+      showSuccess(`You have left "${event.title}"`)
       // Refresh event data
       await fetchEvent()
     } catch (error) {
-      toast.error(error.message || 'Failed to leave event')
+      showError(error.message || 'Failed to leave event')
     } finally {
       setIsLeaving(false)
     }
@@ -93,19 +93,20 @@ export default function EventDetail() {
   }
 
   const handleDeleteEvent = async () => {
-    if (!confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
-      return
-    }
-
-    setIsDeleting(true)
-    try {
-      await eventApi.delete(event.id || event._id)
-      toast.success('Event deleted successfully')
-      navigate('/events/my-events')
-    } catch (error) {
-      toast.error(error.message || 'Failed to delete event')
-      setIsDeleting(false)
-    }
+    showDeleteConfirmation({
+      itemName: 'Event',
+      onConfirm: async () => {
+        setIsDeleting(true)
+        try {
+          await eventApi.delete(event.id || event._id)
+          showSuccess('Event deleted successfully')
+          navigate('/events/my-events')
+        } catch (error) {
+          showError(error.message || 'Failed to delete event')
+          setIsDeleting(false)
+        }
+      }
+    })
   }
 
   const handleGoBack = () => {

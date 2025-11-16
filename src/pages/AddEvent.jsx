@@ -4,7 +4,7 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { eventApi } from '../services/api.js'
 import Button from '../components/ui/Button.jsx'
 import { Card, CardContent } from '../components/ui/Card.jsx'
-import toast from 'react-hot-toast'
+import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 
 export default function AddEvent() {
@@ -130,18 +130,18 @@ export default function AddEvent() {
     e.preventDefault()
 
     if (!user) {
-      toast.error('You must be logged in to create an event')
+      showError('You must be logged in to create an event')
       navigate('/login')
       return
     }
 
     if (!user.name) {
-      toast.error('User profile is not complete. Please update your profile.')
+      showError('User profile is not complete. Please update your profile.')
       return
     }
 
     if (!validateForm()) {
-      toast.error('Please fix the form errors')
+      showError('Please fix the form errors')
       return
     }
 
@@ -159,7 +159,7 @@ export default function AddEvent() {
       const response = await eventApi.create(eventData)
       const event = response?.data?.event || response?.event
 
-      toast.success('Event created successfully!')
+      showSuccess('Event created successfully!')
       
       // Navigate to the event detail page
       if (event?.id) {
@@ -177,9 +177,9 @@ export default function AddEvent() {
           backendErrors[err.field] = err.message
         })
         setErrors(backendErrors)
-        toast.error('Please fix the validation errors')
+        showError('Please fix the validation errors')
       } else {
-        toast.error(error.message || 'Failed to create event')
+        showError(error.message || 'Failed to create event')
       }
     } finally {
       setIsSubmitting(false)
