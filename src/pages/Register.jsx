@@ -7,7 +7,7 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 const passwordRules = z.string()
   .min(6, 'Min 6 characters')
@@ -30,6 +30,7 @@ export default function Register() {
   const { register, handleSubmit, formState: { errors, isSubmitting }, watch } = useForm({
     resolver: zodResolver(schema),
   })
+  const [imageError, setImageError] = useState(false)
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -61,12 +62,19 @@ export default function Register() {
   }
 
   const pwd = watch('password') || ''
+  const photoUrl = watch('photoUrl') || ''
+  
   const ruleChecks = [
     { ok: pwd.length >= 6, label: 'Min 6 characters' },
     { ok: /[A-Z]/.test(pwd), label: 'At least 1 uppercase letter' },
     { ok: /[a-z]/.test(pwd), label: 'At least 1 lowercase letter' },
     { ok: /[^A-Za-z0-9]/.test(pwd), label: 'At least 1 special character' },
   ]
+
+  // Reset image error when URL changes
+  useEffect(() => {
+    setImageError(false)
+  }, [photoUrl])
 
   if (isLoading || loading) {
     return <EcoLoader />
@@ -109,6 +117,35 @@ export default function Register() {
         </div>
         <div>
           <label className="mb-1 block text-sm font-medium">Photo URL (Optional)</label>
+          
+          {/* Profile Image Preview */}
+          {photoUrl && !errors.photoUrl && (
+            <div className="mb-3 flex items-center gap-3">
+              <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-slate-200 bg-slate-100 flex items-center justify-center">
+                {!imageError ? (
+                  <img 
+                    src={photoUrl} 
+                    alt="Profile preview" 
+                    className="w-full h-full object-cover"
+                    onError={() => setImageError(true)}
+                  />
+                ) : (
+                  <div className="text-slate-400 text-center p-2">
+                    <svg className="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+              <div className="flex-1">
+                <p className="text-xs text-slate-600">Profile Picture Preview</p>
+                {imageError && (
+                  <p className="text-xs text-amber-600 mt-1">Unable to load image</p>
+                )}
+              </div>
+            </div>
+          )}
+          
           <input className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" placeholder="https://..." {...register('photoUrl')} />
           {errors.photoUrl && <p className="mt-1 text-sm text-red-600">{errors.photoUrl.message}</p>}
         </div>
