@@ -64,6 +64,7 @@ export default function Home() {
           page: 1, 
           limit: 5,
           status: 'active',
+          featured: true,
           sortBy: 'startDate',
           order: 'asc'
         })
