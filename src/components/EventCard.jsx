@@ -7,7 +7,9 @@ export default function EventCard({ event }) {
   const navigate = useNavigate()
 
   const handleViewDetails = () => {
-    navigate(`/events/${event.id}`)
+    // Use slug for SEO-friendly URLs, fallback to _id
+    const identifier = event.slug || event._id || event.id
+    navigate(`/events/${identifier}`)
   }
 
   return (

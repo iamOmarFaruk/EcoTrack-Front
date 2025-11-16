@@ -128,34 +128,48 @@ export const tipsApi = {
 
 // Event API calls
 export const eventApi = {
-  // Get all events with pagination and search (Public)
+  // Get all events with pagination and filters (Public)
+  // Query params: page, limit, status, search, sortBy, order
   getAll: (filters = {}) => httpClient.get('/events', { params: filters }),
 
-  // Get specific event by ID (Public, optional auth for isJoined/isCreator)
+  // Get specific event by slug or _id (Public, shows isJoined/isCreator if authenticated)
+  // Can use either slug (for display) or _id (for operations)
   getById: (id) => httpClient.get(`/events/${id}`),
 
   // Create new event (Authenticated)
+  // Required: title, description, detailedDescription, date, location, organizer, capacity, duration, requirements, benefits
+  // Optional: image
   create: (eventData) => httpClient.post('/events', eventData),
 
   // Update event - creator only (Authenticated)
+  // MUST use _id (NOT slug) for update operations
+  // All fields optional
   update: (id, eventData) => httpClient.put(`/events/${id}`, eventData),
 
   // Delete event - creator only (Authenticated)
+  // MUST use _id (NOT slug) for delete operations
+  // Will be cancelled instead if has participants
   delete: (id) => httpClient.delete(`/events/${id}`),
 
   // Join an event (Authenticated)
+  // MUST use _id (NOT slug) for join operations
+  // Users can rejoin after leaving
   join: (id) => httpClient.post(`/events/${id}/join`),
 
   // Leave an event (Authenticated)
+  // MUST use _id (NOT slug) for leave operations
   leave: (id) => httpClient.post(`/events/${id}/leave`),
 
   // Get events created by logged-in user (Authenticated)
   getMyEvents: () => httpClient.get('/events/my-events'),
 
   // Get events joined by logged-in user (Authenticated)
+  // Query params: status (upcoming/past)
   getMyJoined: (status = 'upcoming') => httpClient.get('/events/my-joined', { params: { status } }),
 
-  // Get participant list for an event (Public)
+  // Get participant list for an event (Public/Creator)
+  // MUST use _id (NOT slug)
+  // Creators see full list, others see counts only
   getParticipants: (id) => httpClient.get(`/events/${id}/participants`)
 }
 

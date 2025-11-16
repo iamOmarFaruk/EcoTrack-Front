@@ -161,83 +161,87 @@ export default function MyEvents() {
         </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {events.map((event) => (
-            <Card key={event._id || event.id} className="h-full">
-              <CardContent className="flex h-full flex-col">
-                {/* Event Image */}
-                {event.image && (
-                  <div className="h-48 -mt-4 -mx-4 mb-4 bg-gray-200 rounded-t-lg overflow-hidden">
-                    <img
-                      src={event.image}
-                      alt={event.title}
-                      className="w-full h-full object-cover"
-                    />
+          {events.map((event) => {
+            // Use slug for SEO-friendly URLs, fallback to _id
+            const identifier = event.slug || event._id
+            return (
+              <Card key={event._id} className="h-full">
+                <CardContent className="flex h-full flex-col">
+                  {/* Event Image */}
+                  {event.image && (
+                    <div className="h-48 -mt-4 -mx-4 mb-4 bg-gray-200 rounded-t-lg overflow-hidden">
+                      <img
+                        src={event.image}
+                        alt={event.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+
+                  {/* Status Badge */}
+                  <span className={`inline-block self-start px-3 py-1 rounded-full text-xs font-medium mb-2 ${getStatusBadge(event.status)}`}>
+                    {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
+                  </span>
+
+                  {/* Title */}
+                  <h3 className="text-lg font-semibold mb-2 line-clamp-2">{event.title}</h3>
+
+                  {/* Date & Location */}
+                  <p className="text-sm text-slate-600 mb-2">
+                    📅 {formatDate(event.date)}
+                  </p>
+                  <p className="text-sm text-slate-600 mb-3">
+                    📍 {event.location}
+                  </p>
+
+                  {/* Description */}
+                  <p className="text-sm text-slate-700 line-clamp-2 mb-4 flex-grow">
+                    {event.description}
+                  </p>
+
+                  {/* Participants Info */}
+                  <div className="mb-4">
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-slate-600">Participants</span>
+                      <span className="font-medium">
+                        {event.registeredParticipants} / {event.capacity}
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                        style={{
+                          width: `${Math.round((event.registeredParticipants / event.capacity) * 100)}%`
+                        }}
+                      />
+                    </div>
                   </div>
-                )}
 
-                {/* Status Badge */}
-                <span className={`inline-block self-start px-3 py-1 rounded-full text-xs font-medium mb-2 ${getStatusBadge(event.status)}`}>
-                  {event.status.charAt(0).toUpperCase() + event.status.slice(1)}
-                </span>
-
-                {/* Title */}
-                <h3 className="text-lg font-semibold mb-2 line-clamp-2">{event.title}</h3>
-
-                {/* Date & Location */}
-                <p className="text-sm text-slate-600 mb-2">
-                  📅 {formatDate(event.date)}
-                </p>
-                <p className="text-sm text-slate-600 mb-3">
-                  📍 {event.location}
-                </p>
-
-                {/* Description */}
-                <p className="text-sm text-slate-700 line-clamp-2 mb-4 flex-grow">
-                  {event.description}
-                </p>
-
-                {/* Participants Info */}
-                <div className="mb-4">
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-slate-600">Participants</span>
-                    <span className="font-medium">
-                      {event.registeredParticipants} / {event.capacity}
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-green-600 h-2 rounded-full transition-all duration-300"
-                      style={{
-                        width: `${Math.round((event.registeredParticipants / event.capacity) * 100)}%`
-                      }}
-                    />
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex gap-2">
-                  <Link
-                    to={`/events/${event.id || event._id}`}
-                    className="flex-1"
-                  >
-                    <Button variant="outline" className="w-full">
-                      View Details
-                    </Button>
-                  </Link>
-                  {activeTab === 'created' && (
+                  {/* Action Buttons */}
+                  <div className="flex gap-2">
                     <Link
-                      to={`/events/${event.id || event._id}/edit`}
+                      to={`/events/${identifier}`}
                       className="flex-1"
                     >
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                        Edit
+                      <Button variant="outline" className="w-full">
+                        View Details
                       </Button>
                     </Link>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                    {activeTab === 'created' && (
+                      <Link
+                        to={`/events/${identifier}/edit`}
+                        className="flex-1"
+                      >
+                        <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                          Edit
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })}
         </div>
       )}
 

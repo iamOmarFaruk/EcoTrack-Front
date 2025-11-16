@@ -174,14 +174,9 @@ export default function Home() {
         // Ensure we have an array
         const eventsArray = Array.isArray(eventsData) ? eventsData : Object.values(eventsData || {})
         
-        // Enhance events with proper data structure
-        const enhancedEvents = eventsArray.map(event => ({
-          ...event,
-          _id: event._id || event.id,
-          id: event.id || event._id
-        }))
-        
-        setEvents(enhancedEvents)
+        // Backend always returns _id and slug
+        // No need to enhance, use as-is
+        setEvents(eventsArray)
       } catch (error) {
         console.error('Error fetching events:', error)
         setEvents([])

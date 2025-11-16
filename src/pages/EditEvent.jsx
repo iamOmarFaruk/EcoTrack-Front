@@ -208,14 +208,18 @@ export default function EditEvent() {
         date: new Date(formData.date).toISOString()
       }
 
-      const response = await eventApi.update(id, eventData)
+      // MUST use _id for update operation (id param could be slug)
+      const eventId = event._id
+      const response = await eventApi.update(eventId, eventData)
       const updatedEvent = response?.data?.event || response?.event
 
       showSuccess('Event updated successfully!')
       
-      // Navigate to the event detail page
-      if (updatedEvent?.id) {
-        navigate(`/events/${updatedEvent.id}`)
+      // Navigate to the event detail page using slug (SEO-friendly)
+      if (updatedEvent?.slug) {
+        navigate(`/events/${updatedEvent.slug}`)
+      } else if (updatedEvent?._id) {
+        navigate(`/events/${updatedEvent._id}`)
       } else {
         navigate(`/events/${id}`)
       }

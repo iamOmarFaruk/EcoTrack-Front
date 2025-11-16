@@ -161,9 +161,11 @@ export default function AddEvent() {
 
       showSuccess('Event created successfully!')
       
-      // Navigate to the event detail page
-      if (event?.id) {
-        navigate(`/events/${event.id}`)
+      // Navigate to the event detail page using slug (SEO-friendly)
+      if (event?.slug) {
+        navigate(`/events/${event.slug}`)
+      } else if (event?._id) {
+        navigate(`/events/${event._id}`)
       } else {
         navigate('/events')
       }

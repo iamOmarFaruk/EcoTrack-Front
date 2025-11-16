@@ -96,12 +96,13 @@ export function AuthProvider({ children }) {
             let joinedEvents = []
             
             // Handle different response structures
+            // Backend always returns _id (MongoDB ObjectId)
             if (Array.isArray(eventsResponse)) {
-              joinedEvents = eventsResponse.map(e => e._id || e.id)
+              joinedEvents = eventsResponse.map(e => e._id)
             } else if (eventsResponse?.data?.events && Array.isArray(eventsResponse.data.events)) {
-              joinedEvents = eventsResponse.data.events.map(e => e._id || e.id)
+              joinedEvents = eventsResponse.data.events.map(e => e._id)
             } else if (eventsResponse?.events && Array.isArray(eventsResponse.events)) {
-              joinedEvents = eventsResponse.events.map(e => e._id || e.id)
+              joinedEvents = eventsResponse.events.map(e => e._id)
             }
             
             setUserEvents(joinedEvents)
@@ -481,12 +482,13 @@ export function AuthProvider({ children }) {
           let joinedEvents = []
           
           // Handle different response structures
+          // Backend always returns _id (MongoDB ObjectId)
           if (Array.isArray(eventsResponse)) {
-            joinedEvents = eventsResponse.map(e => e._id || e.id)
+            joinedEvents = eventsResponse.map(e => e._id)
           } else if (eventsResponse?.data?.events && Array.isArray(eventsResponse.data.events)) {
-            joinedEvents = eventsResponse.data.events.map(e => e._id || e.id)
+            joinedEvents = eventsResponse.data.events.map(e => e._id)
           } else if (eventsResponse?.events && Array.isArray(eventsResponse.events)) {
-            joinedEvents = eventsResponse.events.map(e => e._id || e.id)
+            joinedEvents = eventsResponse.events.map(e => e._id)
           }
           
           setUserEvents(joinedEvents)

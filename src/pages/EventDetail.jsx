@@ -9,7 +9,7 @@ import SubpageHero from '../components/SubpageHero.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import NotFound from './NotFound.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
-import { showSuccess, showError, showDeleteConfirmation } from '../utils/toast.jsx'
+import { showSuccess, showError, showConfirmation } from '../utils/toast.jsx'
 
 export default function EventDetail() {
   const { id } = useParams()
@@ -63,7 +63,8 @@ export default function EventDetail() {
 
     setIsJoining(true)
     try {
-      const eventId = event._id || event.id
+      // MUST use _id for join operation (not slug)
+      const eventId = event._id
       await joinEvent(eventId)
       showSuccess(`Successfully joined "${event.title}"!`)
       // Refresh event data
@@ -78,7 +79,8 @@ export default function EventDetail() {
   const handleLeaveEvent = async () => {
     setIsLeaving(true)
     try {
-      const eventId = event._id || event.id
+      // MUST use _id for leave operation (not slug)
+      const eventId = event._id
       await leaveEvent(eventId)
       showSuccess(`You have left "${event.title}"`)
       // Refresh event data
@@ -91,17 +93,30 @@ export default function EventDetail() {
   }
 
   const handleEditEvent = () => {
-    navigate(`/events/${event.id || event._id}/edit`)
+    // Use slug for SEO-friendly edit URL, fallback to _id
+    const identifier = event.slug || event._id
+    navigate(`/events/${identifier}/edit`)
   }
 
   const handleDeleteEvent = async () => {
-    showDeleteConfirmation({
-      itemName: 'Event',
+    const hasParticipants = event.registeredParticipants > 0
+    
+    showConfirmation({
+      title: 'Delete Event',
+      message: hasParticipants 
+        ? `This event has ${event.registeredParticipants} registered participant${event.registeredParticipants > 1 ? 's' : ''}. If you delete it, the event will be cancelled and all participants will be notified. This action cannot be undone.`
+        : 'Are you sure you want to delete this event? This action cannot be undone.',
+      confirmText: hasParticipants ? 'Cancel Event' : 'Delete',
+      cancelText: 'Go Back',
+      type: 'danger',
       onConfirm: async () => {
         setIsDeleting(true)
         try {
-          await eventApi.delete(event.id || event._id)
-          showSuccess('Event deleted successfully')
+          // MUST use _id for delete operation (not slug)
+          await eventApi.delete(event._id)
+          showSuccess(hasParticipants 
+            ? 'Event cancelled and participants notified' 
+            : 'Event deleted successfully')
           navigate('/events/my-events')
         } catch (error) {
           showError(error.message || 'Failed to delete event')
@@ -123,13 +138,14 @@ export default function EventDetail() {
     return <NotFound />
   }
 
+  // Calculate progress and status
   const progressPercentage = Math.round((event.registeredParticipants / event.capacity) * 100)
   const spotsRemaining = event.capacity - event.registeredParticipants
   const isCreator = user && event.createdBy === user.uid
   
-  // Use backend's isJoined field if available, otherwise check userEvents array
-  const eventId = event._id || event.id
-  const isJoined = event.isJoined ?? auth?.userEvents?.includes(eventId)
+  // Backend returns isJoined field when authenticated
+  // Fallback to checking userEvents array (from auth context)
+  const isJoined = event.isJoined ?? auth?.userEvents?.includes(event._id)
   
   const isFull = progressPercentage >= 100
   const isCancelled = event.status === 'cancelled'
