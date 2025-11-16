@@ -83,38 +83,6 @@ export default function Profile() {
             </div>
           </div>
           
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="text-center p-4 bg-emerald-50 rounded-lg">
-              <div className="text-2xl font-bold text-emerald-700">{userData?.stats?.challengesCompleted || 0}</div>
-              <div className="text-sm text-emerald-600">Challenges Completed</div>
-            </div>
-            <div className="text-center p-4 bg-blue-50 rounded-lg">
-              <div className="text-2xl font-bold text-blue-700">{userData?.stats?.challengesJoined || 0}</div>
-              <div className="text-sm text-blue-600">Challenges Joined</div>
-            </div>
-          </div>
-          
-          {userData?.stats && (
-            <div className="grid gap-4 md:grid-cols-4 mt-4">
-              <div className="text-center p-4 bg-purple-50 rounded-lg">
-                <div className="text-2xl font-bold text-purple-700">{userData.stats.eventsAttended || 0}</div>
-                <div className="text-sm text-purple-600">Events Attended</div>
-              </div>
-              <div className="text-center p-4 bg-yellow-50 rounded-lg">
-                <div className="text-2xl font-bold text-yellow-700">{userData.stats.totalImpactPoints || 0}</div>
-                <div className="text-sm text-yellow-600">Impact Points</div>
-              </div>
-              <div className="text-center p-4 bg-orange-50 rounded-lg">
-                <div className="text-2xl font-bold text-orange-700">{userData.stats.streak || 0}</div>
-                <div className="text-sm text-orange-600">Day Streak 🔥</div>
-              </div>
-              <div className="text-center p-4 bg-pink-50 rounded-lg">
-                <div className="text-2xl font-bold text-pink-700">{userData.stats.tipsShared || 0}</div>
-                <div className="text-sm text-pink-600">Tips Shared</div>
-              </div>
-            </div>
-          )}
-          
           {/* Badges Section */}
           {userData?.badges && userData.badges.length > 0 && (
             <div className="mt-6 p-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-lg">
@@ -130,24 +98,6 @@ export default function Profile() {
                     <span className="text-sm font-medium text-gray-700">{badge.name}</span>
                   </div>
                 ))}
-              </div>
-            </div>
-          )}
-          
-          {/* Next Rank Progress */}
-          {userData?.nextRank && (
-            <div className="mt-6 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-semibold text-gray-700">Next Rank: {userData.nextRank.rank}</h3>
-                <span className="text-sm text-gray-600">{userData.nextRank.pointsNeeded} points needed</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
-                  className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all duration-300"
-                  style={{ 
-                    width: `${Math.min(100, ((userData.stats?.totalImpactPoints || 0) / ((userData.stats?.totalImpactPoints || 0) + userData.nextRank.pointsNeeded)) * 100)}%` 
-                  }}
-                />
               </div>
             </div>
           )}
