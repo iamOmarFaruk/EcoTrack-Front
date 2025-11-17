@@ -114,7 +114,7 @@ React 19.1 + Vite 7.1 + TailwindCSS 3.4
 ```
 Node.js + Express + MongoDB (Serverless)
 ├── Authentication: Firebase Admin SDK
-├── Database: MongoDB Native Driver
+├── Database: MongoDB with Mongoose ODM
 ├── API Design: RESTful with proper status codes
 ├── Security: Token verification, input sanitization
 ├── Performance: Atomic operations, indexing
@@ -123,7 +123,7 @@ Node.js + Express + MongoDB (Serverless)
 
 **Backend Technologies:**
 - **🟢 Node.js + Express** - Server runtime & framework
-- **🍃 MongoDB** - NoSQL database with native driver
+- **🍃 MongoDB + Mongoose** - NoSQL database with ODM (Object Data Modeling)
 - **🔐 Firebase Admin SDK** - Server-side authentication
 - **☁️ Vercel Functions** - Serverless deployment
 - **🔒 CORS** - Cross-origin resource sharing
