@@ -79,6 +79,7 @@ export default function App() {
               }
             />
             <Route path="/challenges/:slug" element={<ChallengeDetail />} />
+            <Route path="*" element={<NotFound />} />
           </Route>
           <Route element={<DashboardLayout />}>
           <Route
@@ -122,7 +123,6 @@ export default function App() {
               }
             />
           </Route>
-          <Route path="*" element={<NotFound />} />
         </Routes>
         <Toaster
           position="top-center"
