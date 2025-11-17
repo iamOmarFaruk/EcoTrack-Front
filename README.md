@@ -1,13 +1,16 @@
 <div align="center">
 
 # 🌱 EcoTrack
-
-### *Empowering Environmental Action Through Community Engagement*
+### *MERN Full-Stack Demo - Empowering Environmental Action Through Community Engagement*
 
 [![Live Demo](https://img.shields.io/badge/🌐_Live-eco--track--peach.vercel.app-00C853?style=for-the-badge)](https://eco-track-peach.vercel.app)
 [![API](https://img.shields.io/badge/⚡_API-Serverless-0078D4?style=for-the-badge)](https://eco-track-backend-delta.vercel.app/api/)
 
----
+<br/>
+
+![EcoTrack Application Screenshot](ecotrack-screenshot.png)
+
+<br/>
 
 **A full-stack web application that connects environmentally-conscious individuals through challenges, events, and community-driven sustainability initiatives.**
 
