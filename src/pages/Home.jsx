@@ -151,14 +151,14 @@ export default function Home() {
     fetchActiveChallenges()
   }, [])
 
-  // Fetch 3 latest events from API
+  // Fetch 4 latest events from API
   useEffect(() => {
     const fetchUpcomingEvents = async () => {
       try {
         setLoadingEvents(true)
         const response = await eventApi.getAll({ 
           page: 1, 
-          limit: 3,
+          limit: 4,
           sortBy: 'createdAt',
           order: 'desc'
         })
@@ -190,14 +190,14 @@ export default function Home() {
     fetchUpcomingEvents()
   }, [])
 
-  // Fetch 3 most recent tips from API
+  // Fetch 5 most recent tips from API
   useEffect(() => {
     const fetchRecentTips = async () => {
       try {
         setLoadingTips(true)
         const response = await tipsApi.getAll({ 
           page: 1, 
-          limit: 3, 
+          limit: 5, 
           sortBy: 'createdAt', 
           order: 'desc' 
         })
@@ -432,8 +432,8 @@ export default function Home() {
 
       <section>
         <SectionHeading title="Recent Tips" subtitle="Practical, bite-sized advice" />
-        <div className="grid gap-6 md:grid-cols-3">
-          {loadingTips && Array.from({ length: 3 }).map((_, i) => (
+        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+          {loadingTips && Array.from({ length: 5 }).map((_, i) => (
             <LazySection 
               key={i} 
               fallback={<TipCardSkeleton />}
@@ -459,8 +459,8 @@ export default function Home() {
 
       <section>
         <SectionHeading title="Upcoming Events" subtitle="Join the community" />
-        <div className="grid gap-6 md:grid-cols-3">
-          {loadingEvents && Array.from({ length: 3 }).map((_, i) => (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {loadingEvents && Array.from({ length: 4 }).map((_, i) => (
             <LazySection 
               key={i} 
               fallback={<EventCardSkeleton />}
