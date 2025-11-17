@@ -14,7 +14,7 @@
 
 **A full-stack web application that connects environmentally-conscious individuals through challenges, events, and community-driven sustainability initiatives.**
 
-[🎯 Features](#-features) • [🛠️ Tech Stack](#️-tech-stack) • [🏗️ Architecture](#️-architecture) • [📸 Screenshots](#-screenshots)
+[🎯 Features](#-features) • [🛠️ Tech Stack](#️-tech-stack) • [🏗️ Architecture](#️-architecture)
 
 </div>
 
@@ -269,26 +269,6 @@ VITE_API_BASE_URL=https://eco-track-backend-delta.vercel.app/api
 # External Services
 VITE_UNSPLASH_BASE_URL
 ```
-
----
-
-## 📸 Screenshots
-
-<div align="center">
-
-### 🏠 Home Page - Hero Section
-*Engaging landing with featured challenges and community statistics*
-
-### 🏆 Challenges Dashboard
-*Browse, filter, and join eco-challenges with real-time participant counts*
-
-### 📅 Events Management
-*Create and manage environmental events with capacity tracking*
-
-### 👤 User Dashboard
-*Track personal activities, joined challenges, and impact metrics*
-
-</div>
 
 ---
 
