@@ -317,7 +317,10 @@ VITE_UNSPLASH_BASE_URL
 <div align="center">
 
 ### **Omar Faruk**
-*Full-Stack Web Developer specializing in React, Node.js, and MongoDB*
+*Full-Stack Web Developer | MERN Stack | Laravel | AI Automation | DevOps*
+
+**Specializing in:**  
+React • Node.js • MongoDB • Laravel • CI/CD Pipelines • Cloud Infrastructure • AI Integration
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/omar-expert-webdeveloper/)
 [![Portfolio](https://img.shields.io/badge/Portfolio-Visit-FF6B6B?style=for-the-badge&logo=safari&logoColor=white)](https://omarfaruk.dev/)
