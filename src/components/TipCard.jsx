@@ -4,15 +4,15 @@ import { Card, CardContent, CardHeader, CardFooter } from './ui/Card.jsx'
 import { formatDate } from '../utils/formatDate.js'
 import { useAuth } from '../context/AuthContext.jsx'
 
-export default function TipCard({ 
-  tip, 
-  showContent = true, 
-  showActions = true, 
-  onEdit, 
-  onDelete, 
-  onUpvote, 
-  onLoginRequired, 
-  canModify = false 
+export default function TipCard({
+  tip,
+  showContent = true,
+  showActions = true,
+  onEdit,
+  onDelete,
+  onUpvote,
+  onLoginRequired,
+  canModify = false
 }) {
   const { user } = useAuth()
   const initialUpvotes = Number.isFinite(Number(tip?.upvotes)) ? Number(tip.upvotes) : 0
@@ -22,22 +22,22 @@ export default function TipCard({
 
   const handleUpvote = async () => {
     if (isUpvoting) return
-    
+
     setIsUpvoting(true)
-    
+
     // Immediate visual feedback with flying animation
     const newThumb = {
       id: Date.now() + Math.random(),
       startX: Math.random() * 20 - 10, // Random horizontal offset
     }
-    
+
     setFlyingThumbs((prev) => [...prev, newThumb])
-    
+
     // Remove the thumb after animation completes
     setTimeout(() => {
       setFlyingThumbs((prev) => prev.filter((thumb) => thumb.id !== newThumb.id))
     }, 1000)
-    
+
     try {
       if (onUpvote) {
         // The parent hook will handle optimistic update and server sync
@@ -74,11 +74,11 @@ export default function TipCard({
         avatar: user.avatarUrl || user.photoURL || tip.authorImage || tip.authorAvatar
       }
     }
-    
+
     // For other users' tips, use tip data
     const authorName = tip.authorName || tip.author?.name || 'Anonymous'
     const authorAvatar = tip.authorImage || tip.authorAvatar || tip.author?.avatarUrl || tip.author?.imageUrl
-    
+
     return {
       name: authorName,
       avatar: authorAvatar
@@ -87,7 +87,7 @@ export default function TipCard({
 
   const authorInfo = getAuthorInfo()
   // Only show edited badge if timestamps are truly different (not just reference)
-  const isEdited = tip.updatedAt && tip.createdAt && 
+  const isEdited = tip.updatedAt && tip.createdAt &&
     new Date(tip.updatedAt).getTime() !== new Date(tip.createdAt).getTime()
 
   // Sync local upvotes state with tip prop changes (for optimistic updates)
@@ -134,7 +134,7 @@ export default function TipCard({
             <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
           </svg>
           {upvotes}
-          
+
           {/* Flying thumbs up animations */}
           {flyingThumbs.map((thumb) => (
             <svg
@@ -177,14 +177,21 @@ export default function TipCard({
               </button>
             </div>
           ) : (
-            <Button 
-              className="h-8 px-3 text-xs shadow-none" 
-              type="button" 
+            <button
+              type="button"
               onClick={handleUpvote}
               disabled={isUpvoting}
+              className="group flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-primary bg-primary/10 hover:bg-primary/20 rounded-md transition-all active:scale-95 disabled:opacity-50"
             >
-              {isUpvoting ? 'Upvoting...' : 'Upvote'}
-            </Button>
+              <svg
+                className={`w-3.5 h-3.5 transition-transform group-hover:-translate-y-0.5 ${isUpvoting ? 'animate-bounce' : ''}`}
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+              </svg>
+              <span>{isUpvoting ? 'Upvoting...' : 'Upvote'}</span>
+            </button>
           )
         ) : (
           <button
@@ -194,7 +201,7 @@ export default function TipCard({
             Log in to upvote
           </button>
         )}
-        
+
         <style>{`
           @keyframes flyUp {
             0% {
