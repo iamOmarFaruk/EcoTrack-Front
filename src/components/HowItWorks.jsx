@@ -1,5 +1,6 @@
 import { Card, CardContent } from './ui/Card.jsx'
 import { FiTarget, FiTrendingUp, FiMessageCircle } from 'react-icons/fi'
+import SectionHeading from './SectionHeading.jsx'
 
 export default function HowItWorks() {
   const steps = [
@@ -25,14 +26,11 @@ export default function HowItWorks() {
 
   return (
     <section className="space-y-8">
-      <div className="text-center space-y-4">
-        <h2 className="text-2xl sm:text-3xl font-heading font-bold text-heading">
-          How It Works
-        </h2>
-        <p className="text-base sm:text-lg text-text/80 max-w-2xl mx-auto">
-          Getting started with EcoTrack is simple. Follow these three easy steps to begin your sustainable living journey.
-        </p>
-      </div>
+      <SectionHeading
+        title="How It Works"
+        subtitle="Getting started with EcoTrack is simple. Follow these three easy steps to begin your sustainable living journey."
+        centered={true}
+      />
 
       <div className="grid gap-6 md:grid-cols-3">
         {steps.map((step) => {

@@ -22,51 +22,51 @@ import { showSuccess, showError, showDeleteConfirmation } from '../utils/toast.j
 
 export default function Home() {
   useDocumentTitle('Home')
-  
+
   const { user } = useAuth()
-  
+
   // State for real tips from API
   const [tips, setTips] = useState([])
   const [loadingTips, setLoadingTips] = useState(true)
-  
+
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingTip, setEditingTip] = useState(null)
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
-  
+
   // State for real events from API
   const [events, setEvents] = useState([])
   const [loadingEvents, setLoadingEvents] = useState(true)
-  
+
   // State for real challenges from API
   const [challenges, setChallenges] = useState([])
   const [loadingChallenges, setLoadingChallenges] = useState(true)
-  
+
   // State for featured challenges (for hero slider)
   const [featuredChallenges, setFeaturedChallenges] = useState([])
   const [loadingFeatured, setLoadingFeatured] = useState(true)
-  
+
   // Intersection observer for Why Go Green section
   const [setWhyGoGreenRef, isWhyGoGreenVisible] = useIntersectionObserver({
     threshold: 0.2,
     rootMargin: '50px',
     triggerOnce: true
   })
-  
+
   // Fetch 5 featured challenges for hero slider
   useEffect(() => {
     const fetchFeaturedChallenges = async () => {
       try {
         setLoadingFeatured(true)
-        const response = await challengeApi.getAll({ 
-          page: 1, 
+        const response = await challengeApi.getAll({
+          page: 1,
           limit: 5,
           status: 'active',
           featured: true,
           sortBy: 'startDate',
           order: 'asc'
         })
-        
+
         // Handle different API response structures
         let challengesData = response.data
         if (response.data?.challenges) {
@@ -76,10 +76,10 @@ export default function Home() {
         } else if (response.data?.data) {
           challengesData = response.data.data
         }
-        
+
         // Ensure we have an array
         const challengesArray = Array.isArray(challengesData) ? challengesData : Object.values(challengesData || {})
-        
+
         // Enhance challenges with proper data structure for Hero slider
         const enhancedChallenges = challengesArray.map(challenge => ({
           ...challenge,
@@ -90,7 +90,7 @@ export default function Home() {
           imageUrl: challenge.image || challenge.imageUrl,
           description: challenge.shortDescription || challenge.description // Map API shortDescription to description for Hero
         }))
-        
+
         setFeaturedChallenges(enhancedChallenges)
       } catch (error) {
         console.error('Error fetching featured challenges:', error)
@@ -99,23 +99,23 @@ export default function Home() {
         setLoadingFeatured(false)
       }
     }
-    
+
     fetchFeaturedChallenges()
   }, [])
-  
+
   // Fetch 6 active challenges from API
   useEffect(() => {
     const fetchActiveChallenges = async () => {
       try {
         setLoadingChallenges(true)
-        const response = await challengeApi.getAll({ 
-          page: 1, 
+        const response = await challengeApi.getAll({
+          page: 1,
           limit: 6,
           status: 'active',
           sortBy: 'startDate',
           order: 'asc'
         })
-        
+
         // Handle different API response structures
         let challengesData = response.data
         if (response.data?.challenges) {
@@ -125,10 +125,10 @@ export default function Home() {
         } else if (response.data?.data) {
           challengesData = response.data.data
         }
-        
+
         // Ensure we have an array
         const challengesArray = Array.isArray(challengesData) ? challengesData : Object.values(challengesData || {})
-        
+
         // Enhance challenges with proper data structure
         const enhancedChallenges = challengesArray.map(challenge => ({
           ...challenge,
@@ -138,7 +138,7 @@ export default function Home() {
           participants: challenge.registeredParticipants ?? (Array.isArray(challenge.participants) ? challenge.participants.length : challenge.participants) ?? 0,
           imageUrl: challenge.image || challenge.imageUrl
         }))
-        
+
         setChallenges(enhancedChallenges)
       } catch (error) {
         console.error('Error fetching challenges:', error)
@@ -147,7 +147,7 @@ export default function Home() {
         setLoadingChallenges(false)
       }
     }
-    
+
     fetchActiveChallenges()
   }, [])
 
@@ -156,13 +156,13 @@ export default function Home() {
     const fetchUpcomingEvents = async () => {
       try {
         setLoadingEvents(true)
-        const response = await eventApi.getAll({ 
-          page: 1, 
+        const response = await eventApi.getAll({
+          page: 1,
           limit: 4,
           sortBy: 'createdAt',
           order: 'desc'
         })
-        
+
         // Handle different API response structures
         let eventsData = response.data
         if (response.data?.events) {
@@ -172,10 +172,10 @@ export default function Home() {
         } else if (response.data?.data) {
           eventsData = response.data.data
         }
-        
+
         // Ensure we have an array
         const eventsArray = Array.isArray(eventsData) ? eventsData : Object.values(eventsData || {})
-        
+
         // Backend always returns _id and slug
         // No need to enhance, use as-is
         setEvents(eventsArray)
@@ -186,7 +186,7 @@ export default function Home() {
         setLoadingEvents(false)
       }
     }
-    
+
     fetchUpcomingEvents()
   }, [])
 
@@ -195,13 +195,13 @@ export default function Home() {
     const fetchRecentTips = async () => {
       try {
         setLoadingTips(true)
-        const response = await tipsApi.getAll({ 
-          page: 1, 
-          limit: 5, 
-          sortBy: 'createdAt', 
-          order: 'desc' 
+        const response = await tipsApi.getAll({
+          page: 1,
+          limit: 5,
+          sortBy: 'createdAt',
+          order: 'desc'
         })
-        
+
         // Handle different API response structures
         let tipsData = response.data
         if (response.data?.tips) {
@@ -211,10 +211,10 @@ export default function Home() {
         } else if (response.data?.data) {
           tipsData = response.data.data
         }
-        
+
         // Ensure we have an array
         const tipsArray = Array.isArray(tipsData) ? tipsData : Object.values(tipsData || {})
-        
+
         // Enhance tips with proper data structure
         const enhancedTips = tipsArray.map(tip => ({
           ...tip,
@@ -227,7 +227,7 @@ export default function Home() {
           authorImage: tip.authorImage || tip.authorAvatar || tip.author?.avatarUrl || tip.author?.imageUrl,
           firebaseId: tip.firebaseId || (typeof tip.author === 'string' ? tip.author : tip.author?.firebaseId)
         }))
-        
+
         setTips(enhancedTips)
       } catch (error) {
         console.error('Error fetching tips:', error)
@@ -236,17 +236,17 @@ export default function Home() {
         setLoadingTips(false)
       }
     }
-    
+
     fetchRecentTips()
   }, [])
 
   // Check if user can modify a tip (ownership check)
   const canModifyTip = (tip) => {
     if (!user) return false
-    
+
     return (
-      tip.authorId === user.uid || 
-      tip.author?.uid === user.uid || 
+      tip.authorId === user.uid ||
+      tip.author?.uid === user.uid ||
       tip.author?.id === user.uid ||
       tip.author?.firebaseId === user.uid ||
       tip.author === user.uid ||
@@ -290,7 +290,7 @@ export default function Home() {
       )
 
       const response = await tipsApi.upvote(tipId)
-      
+
       // Update with server response
       let updatedTip = response.data
       if (response.data?.tip) {
@@ -307,12 +307,12 @@ export default function Home() {
         prevTips.map(tip =>
           tip.id === tipId
             ? {
-                ...tip,
-                ...updatedTip,
-                upvotes: Number.isFinite(Number(serverUpvotes))
-                  ? Number(serverUpvotes)
-                  : originalTip.upvotes + 1
-              }
+              ...tip,
+              ...updatedTip,
+              upvotes: Number.isFinite(Number(serverUpvotes))
+                ? Number(serverUpvotes)
+                : originalTip.upvotes + 1
+            }
             : tip
         )
       )
@@ -332,7 +332,7 @@ export default function Home() {
     try {
       if (editingTip) {
         const response = await tipsApi.update(editingTip.id, tipData)
-        
+
         // Handle response
         let updatedTip = response.data
         if (response.data?.tip) {
@@ -348,21 +348,21 @@ export default function Home() {
           prevTips.map(tip =>
             tip.id === editingTip.id
               ? {
-                  ...tip,
-                  ...tipData,
-                  ...updatedTip,
-                  id: editingTip.id,
-                  upvotes: Number.isFinite(Number(updatedTip?.upvoteCount))
-                    ? Number(updatedTip.upvoteCount)
-                    : (Number.isFinite(Number(updatedTip?.upvotes)) ? Number(updatedTip.upvotes) : tip.upvotes)
-                }
+                ...tip,
+                ...tipData,
+                ...updatedTip,
+                id: editingTip.id,
+                upvotes: Number.isFinite(Number(updatedTip?.upvoteCount))
+                  ? Number(updatedTip.upvoteCount)
+                  : (Number.isFinite(Number(updatedTip?.upvotes)) ? Number(updatedTip.upvotes) : tip.upvotes)
+              }
               : tip
           )
         )
-        
+
         showSuccess('Tip updated successfully!')
       }
-      
+
       setIsModalOpen(false)
       setEditingTip(null)
     } catch (error) {
@@ -374,7 +374,7 @@ export default function Home() {
   const handleLoginRequired = () => {
     setIsLoginModalOpen(true)
   }
-  
+
   const isInitialLoading = loadingChallenges && loadingTips && loadingEvents && loadingFeatured
   const isAnyLoading = loadingChallenges || loadingTips || loadingEvents || loadingFeatured
 
@@ -416,8 +416,8 @@ export default function Home() {
         <SectionHeading title="Active Challenges" subtitle="Happening right now" />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {loadingChallenges && Array.from({ length: 6 }).map((_, i) => (
-            <LazySection 
-              key={i} 
+            <LazySection
+              key={i}
               fallback={<ChallengeCardSkeleton />}
               minimumLoadingTime={2000}
             >
@@ -434,8 +434,8 @@ export default function Home() {
         <SectionHeading title="Recent Tips" subtitle="Practical, bite-sized advice" />
         <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
           {loadingTips && Array.from({ length: 5 }).map((_, i) => (
-            <LazySection 
-              key={i} 
+            <LazySection
+              key={i}
               fallback={<TipCardSkeleton />}
               minimumLoadingTime={2000}
             >
@@ -443,9 +443,9 @@ export default function Home() {
             </LazySection>
           ))}
           {!loadingTips && tips?.map((t, i) => (
-            <LazyTipCard 
-              key={i} 
-              tip={t} 
+            <LazyTipCard
+              key={i}
+              tip={t}
               showActions={true}
               canModify={canModifyTip(t)}
               onEdit={handleEditTip}
@@ -461,8 +461,8 @@ export default function Home() {
         <SectionHeading title="Upcoming Events" subtitle="Join the community" />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {loadingEvents && Array.from({ length: 4 }).map((_, i) => (
-            <LazySection 
-              key={i} 
+            <LazySection
+              key={i}
               fallback={<EventCardSkeleton />}
               minimumLoadingTime={2000}
             >
@@ -481,25 +481,21 @@ export default function Home() {
           <img
             src={defaultImages.homeFeature}
             alt="Hands holding a small plant seedling with soil"
-            className={`w-full h-80 sm:h-96 lg:h-[28rem] object-cover rounded-2xl shadow-lg transition-all duration-1000 ease-out ${
-              isWhyGoGreenVisible 
-                ? 'opacity-100 translate-x-0' 
+            className={`w-full h-80 sm:h-96 lg:h-[28rem] object-cover rounded-2xl shadow-lg transition-all duration-1000 ease-out ${isWhyGoGreenVisible
+                ? 'opacity-100 translate-x-0'
                 : 'opacity-0 -translate-x-12'
-            }`}
+              }`}
             loading="lazy"
           />
         </div>
-        
+
         {/* Content */}
-        <div className="order-2 space-y-4 sm:space-y-6">
-          <h2 className="text-2xl sm:text-3xl font-heading font-bold text-heading">
-            Why Go Green?
-          </h2>
-          <p className="text-base sm:text-lg leading-relaxed text-text/80">
-            Sustainable living isn't just good for the planet—it's good for you too. 
-            Discover the amazing benefits of making eco-friendly choices in your daily life.
-          </p>
-          
+        <div className="order-2 space-y-4">
+          <SectionHeading
+            title="Why Go Green?"
+            subtitle="Sustainable living isn't just good for the planet—it's good for you too. Discover the amazing benefits of making eco-friendly choices in your daily life."
+          />
+
           <ul className="space-y-3 text-text/80">
             <li className="flex items-start space-x-3">
               <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2"></span>
