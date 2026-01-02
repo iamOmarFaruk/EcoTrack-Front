@@ -125,44 +125,27 @@ export default function CommunityStats() {
         <span ref={triggerRef} aria-hidden="true" className="block h-px w-px opacity-0" />
 
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 px-4 md:px-0">
-          {!loading && error && (
+          {loading ? (
+            Array.from({ length: 4 }).map((_, i) => (
+              <CommunityStatsCardSkeleton key={i} />
+            ))
+          ) : error ? (
             <div className="sm:col-span-2 lg:col-span-4 text-sm text-secondary bg-secondary/10 border border-secondary/40 rounded-lg px-4 py-3 text-center">
               {error}
             </div>
-          )}
-
-          {loading &&
-            Array.from({ length: 4 }).map((_, i) => (
-              <LazySection
-                key={i}
-                fallback={<CommunityStatsCardSkeleton />}
-                minimumLoadingTime={2000}
-              >
-                <div style={{ display: 'none' }} />
-              </LazySection>
-            ))}
-
-          {!loading && !error &&
+          ) : (
             stats?.map((item) => (
-              <LazySection
+              <ImpactCard
                 key={item.key}
-                fallback={<CommunityStatsCardSkeleton />}
-                minimumLoadingTime={2000}
-                intersectionOptions={{
-                  threshold: 0.1,
-                  rootMargin: '50px'
-                }}
+                label={item.label}
+                unit={item.unit}
+                icon={item.icon}
+                accentColor={item.key === 'co2SavedKg' ? 'primary' : 'secondary'}
               >
-                <ImpactCard
-                  label={item.label}
-                  unit={item.unit}
-                  icon={item.icon}
-                  accentColor={item.key === 'co2SavedKg' ? 'primary' : 'secondary'}
-                >
-                  <AnimatedNumber value={item.value} isActive={inView} />
-                </ImpactCard>
-              </LazySection>
-            ))}
+                <AnimatedNumber value={item.value} isActive={inView} />
+              </ImpactCard>
+            ))
+          )}
         </div>
       </div>
     </section>

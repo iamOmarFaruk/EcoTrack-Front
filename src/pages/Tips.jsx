@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext.jsx'
 import LazyTipCard from '../components/LazyTipCard.jsx'
 import TipModal from '../components/TipModal.jsx'
 import LoginModal from '../components/LoginModal.jsx'
-import EcoLoader from '../components/EcoLoader.jsx'
+import { TipCardSkeleton } from '../components/Skeleton.jsx'
 import SubpageHero from '../components/SubpageHero.jsx'
 import Button from '../components/ui/Button.jsx'
 import { useState, useMemo } from 'react'
@@ -114,9 +114,7 @@ export default function Tips() {
     )
   }
 
-  if (loading && tips.length === 0) {
-    return <EcoLoader />
-  }
+
 
   if (error) {
     return (
@@ -249,7 +247,11 @@ export default function Tips() {
           initial="hidden"
           animate="show"
         >
-          {tips?.map((tip, i) => (
+          {loading ? (
+            Array.from({ length: 6 }).map((_, i) => (
+              <TipCardSkeleton key={i} />
+            ))
+          ) : tips?.map((tip, i) => (
             <motion.div key={tip.id || tip._id || i} variants={itemVariants}>
               <LazyTipCard
                 tip={tip}

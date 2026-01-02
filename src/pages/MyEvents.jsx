@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import Button from '../components/ui/Button.jsx'
 import { Card, CardContent } from '../components/ui/Card.jsx'
-import EcoLoader from '../components/EcoLoader.jsx'
+import { EventCardSkeleton } from '../components/Skeleton.jsx'
 import { formatDate } from '../utils/formatDate.js'
 import { useMyEvents, useMyJoinedEvents } from '../hooks/queries'
 
@@ -46,8 +46,8 @@ export default function MyEvents() {
         <button
           onClick={() => setActiveTab('created')}
           className={`px-6 py-3 rounded-lg font-medium transition-colors ${activeTab === 'created'
-              ? 'bg-primary text-surface'
-              : 'bg-surface text-text/80 border border-border hover:bg-light'
+            ? 'bg-primary text-surface'
+            : 'bg-surface text-text/80 border border-border hover:bg-light'
             }`}
         >
           Events I Created
@@ -55,8 +55,8 @@ export default function MyEvents() {
         <button
           onClick={() => setActiveTab('joined')}
           className={`px-6 py-3 rounded-lg font-medium transition-colors ${activeTab === 'joined'
-              ? 'bg-primary text-surface'
-              : 'bg-surface text-text/80 border border-border hover:bg-light'
+            ? 'bg-primary text-surface'
+            : 'bg-surface text-text/80 border border-border hover:bg-light'
             }`}
         >
           Events I Joined
@@ -121,7 +121,11 @@ export default function MyEvents() {
 
       {/* Events List */}
       {loading ? (
-        <EcoLoader />
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 9 }).map((_, i) => (
+            <EventCardSkeleton key={i} />
+          ))}
+        </div>
       ) : events.length === 0 ? (
         <div className="bg-surface rounded-xl p-12 border border-border shadow-sm text-center">
           <div className="w-24 h-24 bg-gradient-to-br from-primary/15 to-primary/15 rounded-full flex items-center justify-center mx-auto mb-6">

@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import SectionHeading from '../components/SectionHeading.jsx'
-import EcoLoader from '../components/EcoLoader.jsx'
+import { ChallengeCardSkeleton } from '../components/Skeleton.jsx'
 import { challengeApi } from '../services/api.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
@@ -111,9 +111,7 @@ export default function MyActivities() {
   // ... (rest of render code)
 
 
-  if (isLoading || loading) {
-    return <EcoLoader />
-  }
+
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -173,7 +171,13 @@ export default function MyActivities() {
       </div>
 
       {/* Activities Grid */}
-      {activities.length === 0 ? (
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 9 }).map((_, i) => (
+            <ChallengeCardSkeleton key={i} />
+          ))}
+        </div>
+      ) : activities.length === 0 ? (
         <div className="bg-surface rounded-xl p-12 border border-border shadow-sm text-center">
           <div className="w-24 h-24 bg-gradient-to-br from-primary/15 to-primary/15 rounded-full flex items-center justify-center mx-auto mb-6">
             <span className="text-4xl">🌱</span>

@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import LazyEventCard from '../components/LazyEventCard.jsx'
-import EcoLoader from '../components/EcoLoader.jsx'
+import { EventCardSkeleton } from '../components/Skeleton.jsx'
 import SubpageHero from '../components/SubpageHero.jsx'
 import Button from '../components/ui/Button.jsx'
 import { defaultImages } from '../config/env.js'
@@ -137,7 +137,11 @@ export default function Events() {
 
         {/* Events Grid */}
         {loading ? (
-          <EcoLoader />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <EventCardSkeleton key={i} />
+            ))}
+          </div>
         ) : events.length === 0 ? (
           <div className="bg-surface rounded-xl p-12 border border-border shadow-sm text-center">
             <div className="w-24 h-24 bg-gradient-to-br from-primary/15 to-primary/15 rounded-full flex items-center justify-center mx-auto mb-6">
