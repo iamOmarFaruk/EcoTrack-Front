@@ -18,35 +18,21 @@ const navItems = [
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const { auth, logout, loading } = useAuth()
-  const [show, setShow] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
+  const [isScrolled, setIsScrolled] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const profileRef = useRef(null)
 
   const userName = auth.user?.name || 'Eco User'
 
-  // Simple scroll handler
   useEffect(() => {
-    const controlNavbar = () => {
-      const currentScrollY = window.scrollY
-      
-      if (currentScrollY < 80) {
-        // Always show at top
-        setShow(true)
-      } else if (currentScrollY > lastScrollY) {
-        // Scrolling down - hide
-        setShow(false)
-      } else {
-        // Scrolling up - show
-        setShow(true)
-      }
-      
-      setLastScrollY(currentScrollY)
+    const onScroll = () => {
+      setIsScrolled(window.scrollY > 80)
     }
 
-    window.addEventListener('scroll', controlNavbar)
-    return () => window.removeEventListener('scroll', controlNavbar)
-  }, [lastScrollY])
+    onScroll()
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   useEffect(() => {
     const onKey = (e) => {
@@ -68,17 +54,23 @@ export default function Navbar() {
   return (
     <header
       className={clsx(
-        'fixed top-0 left-0 right-0 z-40 w-full border-b bg-white/95 shadow-sm backdrop-blur transition-transform duration-300',
-        show ? 'translate-y-0' : '-translate-y-full'
+        'fixed top-0 left-0 right-0 z-40 w-full border-b bg-white/95 shadow-sm backdrop-blur transition-all duration-300'
       )}
     >
-      <div className="container flex h-16 items-center justify-between">
+      <div
+        className={clsx(
+          'container flex items-center justify-between transition-all duration-300',
+          isScrolled ? 'h-16' : 'h-20'
+        )}
+      >
         <Link to="/" className="flex items-center gap-2">
           <Logo className="h-7 w-7 sm:h-8 sm:w-8" />
-          <span className="text-lg sm:text-xl font-semibold text-slate-900">EcoTrack</span>
+          <span className={clsx('font-semibold text-slate-900', isScrolled ? 'text-base sm:text-lg' : 'text-lg sm:text-xl')}>
+            EcoTrack
+          </span>
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden items-center gap-8 md:flex">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
@@ -309,4 +301,3 @@ export default function Navbar() {
     </header>
   )
 }
-
