@@ -182,13 +182,7 @@ export default function Home() {
         />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {loadingChallenges && Array.from({ length: 6 }).map((_, i) => (
-            <LazySection
-              key={i}
-              fallback={<ChallengeCardSkeleton />}
-              minimumLoadingTime={2000}
-            >
-              <div style={{ display: 'none' }}>Loading...</div>
-            </LazySection>
+            <ChallengeCardSkeleton key={i} />
           ))}
           {!loadingChallenges && challenges?.map((c) => (
             <LazyChallengeCard key={c._id} challenge={c} />
@@ -204,13 +198,7 @@ export default function Home() {
         />
         <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
           {loadingTips && Array.from({ length: 5 }).map((_, i) => (
-            <LazySection
-              key={i}
-              fallback={<TipCardSkeleton />}
-              minimumLoadingTime={2000}
-            >
-              <div style={{ display: 'none' }}>Loading...</div>
-            </LazySection>
+            <TipCardSkeleton key={i} />
           ))}
           {!loadingTips && tips?.map((t, i) => (
             <LazyTipCard
@@ -235,13 +223,7 @@ export default function Home() {
         />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {loadingEvents && Array.from({ length: 4 }).map((_, i) => (
-            <LazySection
-              key={i}
-              fallback={<EventCardSkeleton />}
-              minimumLoadingTime={2000}
-            >
-              <div style={{ display: 'none' }}>Loading...</div>
-            </LazySection>
+            <EventCardSkeleton key={i} />
           ))}
           {!loadingEvents && events?.map((e, i) => (
             <LazyEventCard key={i} event={e} />

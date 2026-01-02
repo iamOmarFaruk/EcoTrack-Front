@@ -59,8 +59,10 @@ export const useChallenges = (filters = {}) => {
         queryKey: queryKeys.challenges.list(filters),
         queryFn: async () => {
             const response = await challengeApi.getAll(filters)
-            const data = response.data?.challenges || response.data?.data?.challenges || response.data?.data || []
-            const array = Array.isArray(data) ? data : Object.values(data)
+            // Handle various response structures
+            const data = response.challenges || response.data?.challenges || response.data || response || []
+            // Support both Array and Object (map) formats
+            const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
             return array.map(normalizeChallenge)
         },
         keepPreviousData: true
@@ -83,7 +85,7 @@ export const useChallenge = (id, options = {}) => {
         queryKey: queryKeys.challenges.detail(id),
         queryFn: async () => {
             const response = await challengeApi.getById(id)
-            const data = response.data?.challenge || response.data?.data?.challenge || response.data?.data || response.data
+            const data = response.challenge || response.data?.challenge || response.data || response
             return normalizeChallenge(data)
         },
         enabled: !!id,
@@ -96,7 +98,7 @@ export const useChallengeBySlug = (slug, options = {}) => {
         queryKey: queryKeys.challenges.detail(slug),
         queryFn: async () => {
             const response = await challengeApi.getBySlug(slug)
-            const data = response.data?.challenge || response.data?.data?.challenge || response.data?.data || response.data
+            const data = response.challenge || response.data?.challenge || response.data || response
             return normalizeChallenge(data)
         },
         enabled: !!slug,
@@ -109,8 +111,8 @@ export const useMyCreatedChallenges = () => {
         queryKey: queryKeys.challenges.myCreated,
         queryFn: async () => {
             const response = await challengeApi.getMyCreated()
-            const data = response.data?.challenges || response.data?.data?.challenges || response.data?.data || []
-            const array = Array.isArray(data) ? data : []
+            const data = response.challenges || response.data?.challenges || response.data || response || []
+            const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
             return array.map(normalizeChallenge)
         }
     })
@@ -121,8 +123,8 @@ export const useMyJoinedChallenges = (filters = {}) => {
         queryKey: queryKeys.challenges.myJoined(filters),
         queryFn: async () => {
             const response = await challengeApi.getMyJoined(filters)
-            const data = response.data?.challenges || response.data?.data?.challenges || response.data?.data || []
-            const array = Array.isArray(data) ? data : []
+            const data = response.challenges || response.data?.challenges || response.data || response || []
+            const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
             return array.map(normalizeChallenge)
         }
     })
@@ -203,8 +205,8 @@ export const useTips = (filters = {}) => {
         queryKey: queryKeys.tips.list(filters),
         queryFn: async () => {
             const response = await tipsApi.getAll(filters)
-            const data = response.data?.tips || response.data?.data?.tips || response.data?.data || []
-            const array = Array.isArray(data) ? data : []
+            const data = response.tips || response.data?.tips || response.data || response || []
+            const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
             return array.map(normalizeTip)
         },
         keepPreviousData: true
@@ -216,8 +218,8 @@ export const useMyTips = (filters = {}) => {
         queryKey: queryKeys.tips.myTips(filters),
         queryFn: async () => {
             const response = await tipsApi.getMyTips(filters)
-            const data = response.data?.tips || response.data?.data?.tips || response.data?.data || []
-            const array = Array.isArray(data) ? data : []
+            const data = response.tips || response.data?.tips || response.data || response || []
+            const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
             return array.map(normalizeTip)
         },
         keepPreviousData: true
@@ -287,8 +289,9 @@ export const useEvents = (filters = {}) => {
         queryKey: queryKeys.events.list(filters),
         queryFn: async () => {
             const response = await eventApi.getAll(filters)
-            const data = response.data?.events || response.data?.data?.events || response.data?.data || []
-            return Array.isArray(data) ? data : []
+            const data = response.events || response.data?.events || response.data || response || []
+            const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
+            return array
         },
         keepPreviousData: true
     })
@@ -301,7 +304,7 @@ export const useEvent = (id, options = {}) => {
         queryKey: queryKeys.events.detail(id),
         queryFn: async () => {
             const response = await eventApi.getById(id)
-            return response.data?.event || response.data?.data?.event || response.data?.data || response.data
+            return response.event || response.data?.event || response.data || response
         },
         enabled: !!id,
         ...options
@@ -313,9 +316,9 @@ export const useMyEvents = () => {
         queryKey: queryKeys.events.myEvents,
         queryFn: async () => {
             const response = await eventApi.getMyEvents()
-            const data = response.data?.events || response.data?.data?.events || response.data?.data || []
-            const stats = response.data?.stats || response.data?.data?.stats || null
-            const array = Array.isArray(data) ? data : []
+            const data = response.events || response.data?.events || response.data || response || []
+            const stats = response.stats || response.data?.stats || null
+            const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
             // Return object with events and stats since MyEvents page uses stats
             return { events: array, stats }
         }
@@ -327,13 +330,13 @@ export const useMyJoinedEvents = (status = 'upcoming') => {
         queryKey: queryKeys.events.myJoined(status),
         queryFn: async () => {
             const response = await eventApi.getMyJoined(status)
-            const data = response.data?.events || response.data?.data?.events || response.data?.data || []
+            const data = response.events || response.data?.events || response.data || response || []
             const stats = {
-                total: response.data?.total || 0,
-                upcoming: response.data?.upcoming || 0,
-                past: response.data?.past || 0
+                total: response.total || response.data?.total || 0,
+                upcoming: response.upcoming || response.data?.upcoming || 0,
+                past: response.past || response.data?.past || 0
             }
-            const array = Array.isArray(data) ? data : []
+            const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
             return { events: array, stats }
         }
     })
