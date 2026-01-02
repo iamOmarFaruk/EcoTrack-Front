@@ -96,8 +96,8 @@ export default function Hero({ slides = [], effect = 'fade' }) {
                 </div>
 
                 {/* Overlays */}
-                <div className="absolute inset-0 bg-dark/40" />
-                <div className="absolute inset-0 bg-gradient-to-t from-dark/80 via-dark/20 to-transparent" />
+                <div className="absolute inset-0 bg-black/60" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
                 {/* Decorative glows */}
                 <div className="pointer-events-none absolute inset-0 mix-blend-screen opacity-50">
@@ -134,10 +134,10 @@ export default function Hero({ slides = [], effect = 'fade' }) {
                       </span>
                     </motion.div>
 
-                    {/* Heading - Balanced size, 1 line on desktop */}
+                    {/* Heading - Refined size, 1 line on desktop */}
                     <motion.h1
                       variants={itemVariants}
-                      className="mb-4 max-w-none md:whitespace-nowrap text-3xl font-black tracking-tighter text-white drop-shadow-2xl sm:text-5xl md:text-6xl lg:text-7xl"
+                      className="mb-4 max-w-none md:whitespace-nowrap text-3xl font-black tracking-tighter text-white drop-shadow-2xl sm:text-4xl md:text-5xl lg:text-6xl"
                     >
                       {item.title}
                     </motion.h1>
