@@ -9,27 +9,29 @@ export function ChallengeCardSkeleton() {
   return (
     <div className="h-full overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
       {/* Image skeleton */}
-      <Skeleton className="h-40 w-full rounded-none" />
-      
-      {/* Header skeleton */}
-      <div className="border-b p-4">
-        <Skeleton className="h-3 w-20 mb-2" />
-        <Skeleton className="h-5 w-3/4" />
-      </div>
-      
+      <Skeleton className="h-48 w-full rounded-none" />
+
       {/* Content skeleton */}
       <div className="p-4 flex flex-col gap-3">
-        <div className="space-y-2">
+        {/* Category skeleton */}
+        <Skeleton className="h-3 w-20 mb-1" />
+
+        {/* Title skeleton */}
+        <Skeleton className="h-6 w-3/4 mb-1" />
+
+        {/* Description skeleton */}
+        <div className="space-y-2 mb-2">
           <Skeleton className="h-3 w-full" />
           <Skeleton className="h-3 w-2/3" />
         </div>
-        
-        <div className="mt-auto flex items-center justify-between">
-          <Skeleton className="h-3 w-24" />
-          <Skeleton className="h-3 w-16" />
+
+        {/* Stats skeleton */}
+        <div className="flex items-center justify-between mb-2">
+          <Skeleton className="h-3 w-32" />
         </div>
-        
-        <Skeleton className="h-9 w-16 mt-2" />
+
+        {/* Button skeleton */}
+        <Skeleton className="h-[42px] w-32 rounded-[5px]" />
       </div>
     </div>
   )
@@ -42,13 +44,13 @@ export function EventCardSkeleton() {
       <div className="p-4 flex flex-col h-full">
         <Skeleton className="h-5 w-3/4 mb-2" />
         <Skeleton className="h-3 w-1/2 mb-3" />
-        
+
         <div className="space-y-2 mb-4">
           <Skeleton className="h-3 w-full" />
           <Skeleton className="h-3 w-full" />
           <Skeleton className="h-3 w-2/3" />
         </div>
-        
+
         <div className="mt-auto">
           <Skeleton className="h-9 w-20" />
         </div>
@@ -69,7 +71,7 @@ export function TipCardSkeleton() {
           <Skeleton className="h-3 w-16" />
         </div>
       </div>
-      
+
       {/* Content */}
       <div className="px-4 pb-4 flex-1">
         <Skeleton className="h-5 w-2/3 mb-3" />
@@ -79,7 +81,7 @@ export function TipCardSkeleton() {
           <Skeleton className="h-3 w-3/4" />
         </div>
       </div>
-      
+
       {/* Footer */}
       <div className="p-4 flex items-center justify-between border-t">
         <Skeleton className="h-7 w-16 rounded-full" />

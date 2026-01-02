@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import LazyChallengeCard from '../components/LazyChallengeCard.jsx'
+import { ChallengeCardSkeleton } from '../components/Skeleton.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import SubpageHero from '../components/SubpageHero.jsx'
 import Button from '../components/ui/Button.jsx'
@@ -54,9 +55,6 @@ export default function Challenges() {
     []
   )
 
-  if (loading) {
-    return <EcoLoader />
-  }
 
   // Error state
   if (error) {
@@ -217,7 +215,11 @@ export default function Challenges() {
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {challenges.length > 0 ? (
+          {loading ? (
+            Array.from({ length: 6 }).map((_, i) => (
+              <ChallengeCardSkeleton key={i} />
+            ))
+          ) : challenges.length > 0 ? (
             challenges.map((c) => (
               <LazyChallengeCard key={c._id} challenge={c} />
             ))

@@ -137,12 +137,6 @@ export default function Home() {
     setIsLoginModalOpen(true)
   }
 
-  const isInitialLoading = loadingChallenges && loadingTips && loadingEvents && loadingFeatured
-  const isAnyLoading = loadingChallenges || loadingTips || loadingEvents || loadingFeatured
-
-  if (isInitialLoading) {
-    return <EcoLoader />
-  }
 
   return (
     <div className="space-y-12">

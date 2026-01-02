@@ -6,7 +6,7 @@ import { utils } from '../config/env'
 export default function ChallengeCard({ challenge }) {
   // Use slug for SEO-friendly URLs, fallback to _id if slug is not available
   const challengeUrl = challenge.slug ? `/challenges/${challenge.slug}` : `/challenges/${challenge._id || challenge.id}`
-  
+
   return (
     <Card className="h-full overflow-hidden">
       <img
@@ -31,7 +31,7 @@ export default function ChallengeCard({ challenge }) {
             })()}
           </span>
         </div>
-        <Button as={Link} to={challengeUrl} className="self-start">View</Button>
+        <Button as={Link} to={challengeUrl} className="self-start">View Details</Button>
       </CardContent>
     </Card>
   )
