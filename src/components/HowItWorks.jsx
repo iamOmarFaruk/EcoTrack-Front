@@ -27,51 +27,55 @@ export default function HowItWorks() {
   ]
 
   return (
-    <section className="space-y-8">
-      <SectionHeading
-        badge="Process"
-        title="How It Works"
-        subtitle="Getting started with EcoTrack is simple. Follow these three easy steps to begin your sustainable living journey."
-        centered={true}
-      />
+    <section>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="space-y-12">
+          <SectionHeading
+            badge="Process"
+            title="How It Works"
+            subtitle="Getting started with EcoTrack is simple. Follow these three easy steps to begin your sustainable living journey."
+            centered={true}
+          />
 
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.2 }}
-        className="grid gap-6 md:grid-cols-3"
-      >
-        {steps.map((step) => {
-          const IconComponent = step.icon
-          return (
-            <motion.div
-              key={step.id}
-              variants={itemVariants}
-              className="h-full"
-            >
-              <Card className="h-full border-border/50 shadow-sm bg-white/70 backdrop-blur-sm">
-                <CardContent className="p-8 text-center space-y-6">
-                  {/* Icon */}
-                  <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto transition-colors duration-300">
-                    <IconComponent className="w-8 h-8 text-primary" />
-                  </div>
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            className="grid gap-6 md:grid-cols-3"
+          >
+            {steps.map((step) => {
+              const IconComponent = step.icon
+              return (
+                <motion.div
+                  key={step.id}
+                  variants={itemVariants}
+                  className="h-full"
+                >
+                  <Card className="h-full border-border/50 shadow-sm bg-white/70 backdrop-blur-sm">
+                    <CardContent className="p-8 text-center space-y-6">
+                      {/* Icon */}
+                      <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto transition-colors duration-300">
+                        <IconComponent className="w-8 h-8 text-primary" />
+                      </div>
 
-                  {/* Title */}
-                  <h3 className="text-xl font-heading font-bold text-heading">
-                    {step.title}
-                  </h3>
+                      {/* Title */}
+                      <h3 className="text-xl font-heading font-bold text-heading">
+                        {step.title}
+                      </h3>
 
-                  {/* Description */}
-                  <p className="text-text/80 leading-relaxed">
-                    {step.description}
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )
-        })}
-      </motion.div>
+                      {/* Description */}
+                      <p className="text-text/80 leading-relaxed">
+                        {step.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )
+            })}
+          </motion.div>
+        </div>
+      </div>
     </section>
   )
 }

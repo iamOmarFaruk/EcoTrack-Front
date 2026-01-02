@@ -145,7 +145,7 @@ export default function Home() {
 
 
   return (
-    <div className="space-y-12">
+    <div className="">
       <div className="full-bleed">
         {loadingFeatured ? (
           <div className="relative h-[500px] bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
@@ -230,7 +230,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      <div className="full-bleed bg-primary/5 py-20">
+      <section className="full-bleed bg-primary/5">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
             badge="Events"
@@ -254,11 +254,11 @@ export default function Home() {
             ))}
           </motion.div>
         </div>
-      </div>
+      </section>
 
-      <div className="full-bleed bg-surface pt-16 sm:pt-24 pb-0 !mt-0">
+      <section className="full-bleed bg-surface !mt-0">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <section className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center" ref={setWhyGoGreenRef}>
+          <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center" ref={setWhyGoGreenRef}>
             {/* Left Image */}
             <div className="order-1 h-full">
               <img
@@ -315,9 +315,9 @@ export default function Home() {
                 </li>
               </ul>
             </div>
-          </section>
+          </div>
         </div>
-      </div>
+      </section>
 
       <HowItWorks />
 

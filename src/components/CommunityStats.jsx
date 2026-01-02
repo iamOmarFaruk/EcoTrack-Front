@@ -114,7 +114,7 @@ export default function CommunityStats() {
   }, [])
 
   return (
-    <section className="py-12 md:py-20 bg-bg-light/50">
+    <section className="bg-bg-light/50">
       <div className="container mx-auto">
         <SectionHeading
           badge="Live Impact"

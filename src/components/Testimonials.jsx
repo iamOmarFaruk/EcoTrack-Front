@@ -71,7 +71,7 @@ const TestimonialCard = ({ testimonial }) => (
 
 export default function Testimonials() {
     return (
-        <section className="py-20 bg-primary/5 relative overflow-hidden">
+        <section className="bg-primary/5 relative overflow-hidden">
             <div className="container mx-auto px-4 mb-10">
                 <SectionHeading
                     badge="Community Stories"

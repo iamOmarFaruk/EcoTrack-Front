@@ -71,7 +71,7 @@ export default function FAQ() {
     const [openIndex, setOpenIndex] = useState(0)
 
     return (
-        <section className="py-20 relative overflow-hidden">
+        <section className="relative overflow-hidden">
             {/* Decorative background elements */}
 
 
