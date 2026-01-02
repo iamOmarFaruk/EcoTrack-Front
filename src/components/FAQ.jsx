@@ -29,7 +29,8 @@ const AccordionItem = ({ question, answer, isOpen, onClick }) => {
     return (
         <motion.div
             initial={false}
-            className={`border border-border/60 rounded-xl overflow-hidden mb-4 transition-colors duration-300 ${isOpen ? 'bg-primary/5 border-primary/30' : 'bg-surface hover:border-primary/30'}`}
+            className={`border rounded-xl overflow-hidden mb-4 transition-all duration-300 ${isOpen ? 'border-primary/30' : 'bg-surface border-border/60 hover:border-primary/30'}`}
+            style={{ backgroundColor: isOpen ? 'rgb(var(--color-primary) / 0.05)' : '' }}
         >
             <button
                 onClick={onClick}
@@ -56,7 +57,7 @@ const AccordionItem = ({ question, answer, isOpen, onClick }) => {
                         }}
                         transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
                     >
-                        <div className="px-6 pb-6 text-text/80 leading-relaxed">
+                        <div className="px-6 pb-6 text-heading leading-relaxed">
                             {answer}
                         </div>
                     </motion.div>
