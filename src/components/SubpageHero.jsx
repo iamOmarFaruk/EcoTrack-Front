@@ -1,5 +1,7 @@
 import clsx from 'clsx'
 import { defaultImages } from '../config/env'
+import { motion } from 'framer-motion'
+import { containerVariants, itemVariants } from '../utils/animations'
 
 export default function SubpageHero({
   title,
@@ -24,7 +26,7 @@ export default function SubpageHero({
   }
 
   return (
-    <section 
+    <section
       className={clsx(
         'relative flex items-center overflow-hidden',
         heightClasses[height],
@@ -41,38 +43,52 @@ export default function SubpageHero({
           loading="lazy"
         />
       </div>
-      
+
       {/* Overlay */}
       <div className={clsx('absolute inset-0', overlayClasses[overlayIntensity])} />
-      
+
       {/* Gradient overlay for better text readability */}
       <div className="absolute inset-0 bg-gradient-to-r from-dark/60 via-dark/30 to-transparent" />
-      
+
       {/* Content */}
       <div className="relative z-10 w-full">
         <div className="container px-6 md:px-8">
-          <div className="max-w-2xl">
+          <motion.div
+            className="max-w-2xl"
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+          >
             {title && (
-              <h1 className="text-3xl font-heading font-bold tracking-tight text-surface sm:text-4xl md:text-5xl">
+              <motion.h1
+                className="text-3xl font-heading font-bold tracking-tight text-surface sm:text-4xl md:text-5xl"
+                variants={itemVariants}
+              >
                 {title}
-              </h1>
+              </motion.h1>
             )}
-            
+
             {subtitle && (
-              <p className="mt-3 text-lg text-surface/90 sm:text-xl md:text-2xl">
+              <motion.p
+                className="mt-3 text-lg text-surface/90 sm:text-xl md:text-2xl"
+                variants={itemVariants}
+              >
                 {subtitle}
-              </p>
+              </motion.p>
             )}
-            
+
             {children && (
-              <div className="mt-6">
+              <motion.div
+                className="mt-6"
+                variants={itemVariants}
+              >
                 {children}
-              </div>
+              </motion.div>
             )}
-          </div>
+          </motion.div>
         </div>
       </div>
-      
+
       {/* Optional decorative elements */}
       <div className="pointer-events-none absolute inset-0 mix-blend-soft-light opacity-20">
         <div className="absolute -left-1/4 top-0 h-full w-1/2 rounded-full bg-primary/30 blur-3xl" />
