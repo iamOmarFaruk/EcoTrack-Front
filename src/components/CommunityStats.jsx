@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Leaf, Recycle, Droplets, Zap } from 'lucide-react'
 import { animate, useInView } from 'framer-motion'
 import SectionHeading from './SectionHeading.jsx'
-import { Card, CardContent } from './ui/Card.jsx'
+import ImpactCard from './ui/ImpactCard.jsx'
 import LazySection from './LazySection.jsx'
 import { CommunityStatsCardSkeleton } from './Skeleton.jsx'
 import { challengeApi } from '../services/api.js'
@@ -52,8 +52,6 @@ export default function CommunityStats() {
         setError(null)
 
         const response = await challengeApi.getCommunityImpactSummary()
-
-        // Normalize different possible response shapes
         const root = response?.data || {}
         const payload = root.data || root
 
@@ -70,32 +68,28 @@ export default function CommunityStats() {
             label: 'CO₂ avoided',
             value: co2SavedKg,
             unit: 'kg',
-            icon: Leaf,
-            accent: 'bg-primary/10 text-primary'
+            icon: Leaf
           },
           {
             key: 'plasticReducedKg',
             label: 'Plastic reduced',
             value: plasticReducedKg,
             unit: 'kg',
-            icon: Recycle,
-            accent: 'bg-secondary/10 text-secondary'
+            icon: Recycle
           },
           {
             key: 'waterSavedL',
             label: 'Water saved',
             value: waterSavedL,
             unit: 'L',
-            icon: Droplets,
-            accent: 'bg-secondary/10 text-secondary'
+            icon: Droplets
           },
           {
             key: 'energySavedKwh',
             label: 'Energy saved',
             value: energySavedKwh,
             unit: 'kWh',
-            icon: Zap,
-            accent: 'bg-secondary/10 text-secondary'
+            icon: Zap
           }
         ]
 
@@ -116,71 +110,61 @@ export default function CommunityStats() {
     }
 
     fetchCommunityImpact()
-
-    return () => {
-      isMounted = false
-    }
+    return () => { isMounted = false }
   }, [])
 
   return (
-    <section>
-      <SectionHeading
-        badge="Statistics"
-        title="Live Community Impact"
-        subtitle="Community-wide impact at a glance"
-      />
-      {/* Invisible sentinel that enters view right before the grid */}
-      <span ref={triggerRef} aria-hidden="true" className="block h-px w-px opacity-0" />
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {!loading && error && (
-          <div className="sm:col-span-2 lg:col-span-4 text-sm text-secondary bg-secondary/10 border border-secondary/40 rounded-lg px-4 py-3">
-            {error}
-          </div>
-        )}
+    <section className="py-12 md:py-20 bg-bg-light/50">
+      <div className="container mx-auto">
+        <SectionHeading
+          badge="Live Impact"
+          title="Our Community's Contribution"
+          subtitle="Real-time environmental impact tracking across all active challenges"
+        />
 
-        {loading &&
-          Array.from({ length: 4 }).map((_, i) => (
-            <LazySection
-              key={i}
-              fallback={<CommunityStatsCardSkeleton />}
-              minimumLoadingTime={2000}
-            >
-              <div style={{ display: 'none' }}>Hidden while loading</div>
-            </LazySection>
-          ))}
+        <span ref={triggerRef} aria-hidden="true" className="block h-px w-px opacity-0" />
 
-        {!loading && !error &&
-          stats?.map((item) => (
-            <LazySection
-              key={item.key}
-              fallback={<CommunityStatsCardSkeleton />}
-              minimumLoadingTime={2000}
-              intersectionOptions={{
-                threshold: 0.1,
-                rootMargin: '50px'
-              }}
-            >
-              <Card className="h-full">
-                <CardContent className="flex h-full items-center gap-4">
-                  <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ring-1 ring-primary/30 ${item.accent || 'bg-primary/10 text-primary'}`}>
-                    {item.icon && (
-                      <item.icon className="h-5 w-5" aria-hidden="true" />
-                    )}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs text-text/70">{item.label}</p>
-                    <p className="truncate text-xl font-heading font-extrabold tracking-tight text-heading">
-                      <AnimatedNumber value={item.value} isActive={inView} />{' '}
-                      <span className="text-xs font-semibold text-text/70 align-middle">{item.unit}</span>
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </LazySection>
-          ))}
+        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 px-4 md:px-0">
+          {!loading && error && (
+            <div className="sm:col-span-2 lg:col-span-4 text-sm text-secondary bg-secondary/10 border border-secondary/40 rounded-lg px-4 py-3 text-center">
+              {error}
+            </div>
+          )}
+
+          {loading &&
+            Array.from({ length: 4 }).map((_, i) => (
+              <LazySection
+                key={i}
+                fallback={<CommunityStatsCardSkeleton />}
+                minimumLoadingTime={2000}
+              >
+                <div style={{ display: 'none' }} />
+              </LazySection>
+            ))}
+
+          {!loading && !error &&
+            stats?.map((item) => (
+              <LazySection
+                key={item.key}
+                fallback={<CommunityStatsCardSkeleton />}
+                minimumLoadingTime={2000}
+                intersectionOptions={{
+                  threshold: 0.1,
+                  rootMargin: '50px'
+                }}
+              >
+                <ImpactCard
+                  label={item.label}
+                  unit={item.unit}
+                  icon={item.icon}
+                  accentColor={item.key === 'co2SavedKg' ? 'primary' : 'secondary'}
+                >
+                  <AnimatedNumber value={item.value} isActive={inView} />
+                </ImpactCard>
+              </LazySection>
+            ))}
+        </div>
       </div>
     </section>
   )
 }
-
-
