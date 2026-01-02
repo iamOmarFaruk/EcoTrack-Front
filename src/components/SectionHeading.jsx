@@ -8,7 +8,7 @@ export default function SectionHeading({ title, subtitle, badge, centered = true
           </span>
         )}
 
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-extrabold tracking-tight text-heading leading-tight max-w-4xl">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold tracking-tight text-heading leading-tight max-w-4xl">
           {title}
         </h2>
 
