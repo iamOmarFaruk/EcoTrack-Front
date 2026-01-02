@@ -9,7 +9,7 @@ export default function PublicLayout() {
     <div className="flex min-h-screen flex-col">
       <Navbar />
       {/* Add padding-top to account for fixed navbar (h-16) */}
-      <main className={`container flex-1 pb-8 ${isHome ? 'pt-16' : 'pt-24'}`}>
+      <main className={`container flex-1 ${isHome ? 'pt-16 pb-0' : 'pt-24 pb-8'}`}>
         <Outlet />
       </main>
       <Footer />

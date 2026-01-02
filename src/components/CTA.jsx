@@ -1,44 +1,104 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Button from './ui/Button'
+import whyGoGreenImg from '../assets/why-go-green.png'
+
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.15,
+            delayChildren: 0.2,
+        },
+    },
+}
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.8,
+            ease: [0.21, 0.47, 0.32, 0.98],
+        },
+    },
+}
 
 export default function CTA() {
     return (
-        <section className="py-20 px-4">
-            <div className="container mx-auto max-w-6xl">
+        <section className="relative isolate overflow-hidden h-[50vh] min-h-[400px] flex items-center justify-center">
+            {/* Background image */}
+            <div className="absolute inset-0">
+                <img
+                    src={whyGoGreenImg}
+                    alt="Sustainable lifestyle"
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                />
+            </div>
+
+            {/* Overlays */}
+            <div className="absolute inset-0 bg-black/60" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+            {/* Content */}
+            <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-12 text-center">
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    variants={containerVariants}
+                    initial="hidden"
+                    whileInView="visible"
                     viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                    className="relative rounded-3xl overflow-hidden bg-primary text-white text-center py-16 px-6 sm:px-12 lg:py-24"
+                    className="flex flex-col items-center"
                 >
-                    {/* Decorative circles */}
-                    <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
-                    <div className="absolute bottom-0 right-0 w-64 h-64 bg-black/10 rounded-full translate-x-1/2 translate-y-1/2 blur-3xl"></div>
+                    <motion.h2
+                        variants={itemVariants}
+                        className="mb-6 text-3xl font-black tracking-tighter text-white drop-shadow-2xl sm:text-4xl md:text-5xl lg:text-6xl"
+                    >
+                        Ready to Make a Real Difference?
+                    </motion.h2>
 
-                    <div className="relative z-10 max-w-3xl mx-auto space-y-8">
-                        <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold leading-tight">
-                            Ready to Make a Real Difference?
-                        </h2>
+                    <motion.p
+                        variants={itemVariants}
+                        className="mb-8 max-w-2xl text-lg text-white/90 md:text-xl lg:text-2xl"
+                    >
+                        Join thousands of eco-conscious individuals tracking their impact, completing challenges, and building a sustainable future together.
+                    </motion.p>
 
-                        <p className="text-lg sm:text-xl text-white/90 leading-relaxed max-w-2xl mx-auto">
-                            Join thousands of eco-conscious individuals tracking their impact, completing challenges, and building a sustainable future together.
-                        </p>
-
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-                            <Button as={Link} to="/register" variant="secondary" size="lg" className="min-w-[180px] shadow-lg shadow-black/20">
-                                Join Now - It's Free
-                            </Button>
-                            <Button as={Link} to="/challenges" variant="outline" size="lg" className="min-w-[180px] bg-transparent border-white text-white hover:bg-white/10 hover:text-white">
+                    <motion.div
+                        variants={{
+                            hidden: { opacity: 0 },
+                            visible: {
+                                opacity: 1,
+                                transition: {
+                                    staggerChildren: 0.1,
+                                    delayChildren: 0.1,
+                                },
+                            },
+                        }}
+                        className="flex flex-wrap items-center justify-center gap-4"
+                    >
+                        <motion.div variants={itemVariants}>
+                            <Button
+                                as={Link}
+                                to="/challenges"
+                                className="!px-8 !py-4 text-lg"
+                            >
                                 Explore Challenges
                             </Button>
-                        </div>
-
-                        <p className="text-sm text-white/70 pt-4">
-                            No credit card required • Join 10,000+ members
-                        </p>
-                    </div>
+                        </motion.div>
+                        <motion.div variants={itemVariants}>
+                            <Button
+                                as={Link}
+                                to="/tips"
+                                variant="secondary"
+                                className="!px-8 !py-4 text-lg"
+                            >
+                                Share Tips
+                            </Button>
+                        </motion.div>
+                    </motion.div>
                 </motion.div>
             </div>
         </section>

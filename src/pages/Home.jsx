@@ -325,7 +325,10 @@ export default function Home() {
 
       <FAQ />
 
-      <CTA />
+      <div className="full-bleed">
+        <CTA />
+      </div>
+
 
       {/* Tip Modal */}
       <TipModal
