@@ -72,7 +72,7 @@ export default function FAQ() {
     return (
         <section className="py-20 relative overflow-hidden">
             {/* Decorative background elements */}
-            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
+
 
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
                 <SectionHeading

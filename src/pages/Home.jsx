@@ -315,7 +315,9 @@ export default function Home() {
 
       <HowItWorks />
 
-      <Testimonials />
+      <div className="full-bleed">
+        <Testimonials />
+      </div>
 
       <FAQ />
 
