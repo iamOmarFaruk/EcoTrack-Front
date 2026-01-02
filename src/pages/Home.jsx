@@ -386,22 +386,22 @@ export default function Home() {
     <div className="space-y-12">
       <div className="full-bleed">
         {loadingFeatured ? (
-          <div className="relative h-[500px] bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center">
-            <div className="text-center text-white">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <div className="relative h-[500px] bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
+            <div className="text-center text-surface">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-surface mx-auto mb-4"></div>
               <p className="text-lg">Loading featured challenges...</p>
             </div>
           </div>
         ) : featuredChallenges.length > 0 ? (
           <Hero slides={featuredChallenges} effect="creative" />
         ) : (
-          <div className="relative h-[500px] bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center">
-            <div className="text-center text-white px-4">
+          <div className="relative h-[500px] bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
+            <div className="text-center text-surface px-4">
               <svg className="w-16 h-16 mx-auto mb-4 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <h2 className="text-3xl font-bold mb-2">No Featured Challenges Available</h2>
-              <p className="text-lg text-white/90 mb-6">Check back soon for exciting eco-friendly challenges!</p>
+              <p className="text-lg text-surface/90 mb-6">Check back soon for exciting eco-friendly challenges!</p>
               <Button as={Link} to="/challenges" variant="secondary">
                 Browse All Challenges
               </Button>
@@ -492,43 +492,43 @@ export default function Home() {
         
         {/* Content */}
         <div className="order-2 space-y-4 sm:space-y-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
+          <h2 className="text-2xl sm:text-3xl font-bold text-heading">
             Why Go Green?
           </h2>
-          <p className="text-base sm:text-lg leading-relaxed text-slate-600">
+          <p className="text-base sm:text-lg leading-relaxed text-text/80">
             Sustainable living isn't just good for the planet—it's good for you too. 
             Discover the amazing benefits of making eco-friendly choices in your daily life.
           </p>
           
-          <ul className="space-y-3 text-slate-600">
+          <ul className="space-y-3 text-text/80">
             <li className="flex items-start space-x-3">
-              <span className="flex-shrink-0 w-2 h-2 bg-emerald-500 rounded-full mt-2"></span>
+              <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2"></span>
               <span className="text-base sm:text-lg leading-relaxed">
-                <strong className="text-slate-900">Save Money:</strong> Reduce utility bills through energy efficiency and waste reduction
+                <strong className="text-heading">Save Money:</strong> Reduce utility bills through energy efficiency and waste reduction
               </span>
             </li>
             <li className="flex items-start space-x-3">
-              <span className="flex-shrink-0 w-2 h-2 bg-emerald-500 rounded-full mt-2"></span>
+              <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2"></span>
               <span className="text-base sm:text-lg leading-relaxed">
-                <strong className="text-slate-900">Better Health:</strong> Cleaner air, organic foods, and active transportation improve well-being
+                <strong className="text-heading">Better Health:</strong> Cleaner air, organic foods, and active transportation improve well-being
               </span>
             </li>
             <li className="flex items-start space-x-3">
-              <span className="flex-shrink-0 w-2 h-2 bg-emerald-500 rounded-full mt-2"></span>
+              <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2"></span>
               <span className="text-base sm:text-lg leading-relaxed">
-                <strong className="text-slate-900">Protect the Future:</strong> Preserve natural resources for future generations
+                <strong className="text-heading">Protect the Future:</strong> Preserve natural resources for future generations
               </span>
             </li>
             <li className="flex items-start space-x-3">
-              <span className="flex-shrink-0 w-2 h-2 bg-emerald-500 rounded-full mt-2"></span>
+              <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2"></span>
               <span className="text-base sm:text-lg leading-relaxed">
-                <strong className="text-slate-900">Create Community:</strong> Connect with like-minded people who share your values
+                <strong className="text-heading">Create Community:</strong> Connect with like-minded people who share your values
               </span>
             </li>
             <li className="flex items-start space-x-3">
-              <span className="flex-shrink-0 w-2 h-2 bg-emerald-500 rounded-full mt-2"></span>
+              <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2"></span>
               <span className="text-base sm:text-lg leading-relaxed">
-                <strong className="text-slate-900">Feel Empowered:</strong> Take meaningful action that makes a real difference
+                <strong className="text-heading">Feel Empowered:</strong> Take meaningful action that makes a real difference
               </span>
             </li>
           </ul>

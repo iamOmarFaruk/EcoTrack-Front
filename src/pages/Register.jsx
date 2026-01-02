@@ -85,7 +85,7 @@ export default function Register() {
   return (
     <div className="mx-auto max-w-sm">
       <h1 className="text-2xl font-semibold">Join EcoTrack</h1>
-      <p className="mt-1 text-sm text-slate-900">Create your account to get started.</p>
+      <p className="mt-1 text-sm text-heading">Create your account to get started.</p>
 
       <Button 
         type="button" 
@@ -103,19 +103,19 @@ export default function Register() {
       </Button>
 
       <div className="mt-4 text-center">
-        <span className="px-2 text-sm text-slate-500">or</span>
+        <span className="px-2 text-sm text-text/70">or</span>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-4 grid gap-4">
         <div>
           <label className="mb-1 block text-sm font-medium">Name</label>
-          <input className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" placeholder="Your name" {...register('name')} />
-          {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
+          <input className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Your name" {...register('name')} />
+          {errors.name && <p className="mt-1 text-sm text-danger">{errors.name.message}</p>}
         </div>
         <div>
           <label className="mb-1 block text-sm font-medium">Email</label>
-          <input className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" placeholder="you@example.com" {...register('email')} />
-          {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
+          <input className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="you@example.com" {...register('email')} />
+          {errors.email && <p className="mt-1 text-sm text-danger">{errors.email.message}</p>}
         </div>
         <div>
           <label className="mb-1 block text-sm font-medium">Photo URL (Optional)</label>
@@ -123,7 +123,7 @@ export default function Register() {
           {/* Profile Image Preview */}
           {photoUrl && !errors.photoUrl && (
             <div className="mb-3 flex items-center gap-3">
-              <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-slate-200 bg-slate-100 flex items-center justify-center">
+              <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-border bg-muted flex items-center justify-center">
                 {!imageError ? (
                   <img 
                     src={photoUrl} 
@@ -132,7 +132,7 @@ export default function Register() {
                     onError={() => setImageError(true)}
                   />
                 ) : (
-                  <div className="text-slate-400 text-center p-2">
+                  <div className="text-text/60 text-center p-2">
                     <svg className="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
@@ -140,24 +140,24 @@ export default function Register() {
                 )}
               </div>
               <div className="flex-1">
-                <p className="text-xs text-slate-600">Profile Picture Preview</p>
+                <p className="text-xs text-text/80">Profile Picture Preview</p>
                 {imageError && (
-                  <p className="text-xs text-amber-600 mt-1">Unable to load image</p>
+                  <p className="text-xs text-secondary mt-1">Unable to load image</p>
                 )}
               </div>
             </div>
           )}
           
-          <input className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" placeholder="https://..." {...register('photoUrl')} />
-          {errors.photoUrl && <p className="mt-1 text-sm text-red-600">{errors.photoUrl.message}</p>}
+          <input className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="https://..." {...register('photoUrl')} />
+          {errors.photoUrl && <p className="mt-1 text-sm text-danger">{errors.photoUrl.message}</p>}
         </div>
         <div>
           <label className="mb-1 block text-sm font-medium">Password</label>
-          <input type="password" className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" {...register('password')} />
-          {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>}
+          <input type="password" className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" {...register('password')} />
+          {errors.password && <p className="mt-1 text-sm text-danger">{errors.password.message}</p>}
           <ul className="mt-2 space-y-1 text-xs">
             {ruleChecks.map((r) => (
-              <li key={r.label} className={r.ok ? 'text-emerald-700' : 'text-slate-500'}>
+              <li key={r.label} className={r.ok ? 'text-primary' : 'text-text/70'}>
                 {r.ok ? '✓' : '•'} {r.label}
               </li>
             ))}
@@ -169,7 +169,7 @@ export default function Register() {
       </form>
       <div className="mt-4 text-sm text-center">
         Already have an account?{' '}
-        <Link to="/login" className="text-slate-700 hover:text-emerald-700 font-medium">Sign In</Link>
+        <Link to="/login" className="text-text hover:text-primary font-medium">Sign In</Link>
       </div>
     </div>
   )

@@ -1,13 +1,13 @@
 import clsx from 'clsx'
 
 export default function Skeleton({ className }) {
-  return <div className={clsx('animate-pulse rounded-md bg-slate-200/70', className)} />
+  return <div className={clsx('animate-pulse rounded-md bg-muted/70', className)} />
 }
 
 // Challenge Card Skeleton
 export function ChallengeCardSkeleton() {
   return (
-    <div className="h-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+    <div className="h-full overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
       {/* Image skeleton */}
       <Skeleton className="h-40 w-full rounded-none" />
       
@@ -38,7 +38,7 @@ export function ChallengeCardSkeleton() {
 // Event Card Skeleton
 export function EventCardSkeleton() {
   return (
-    <div className="h-full rounded-lg border border-slate-200 bg-white shadow-sm">
+    <div className="h-full rounded-lg border border-border bg-surface shadow-sm">
       <div className="p-4 flex flex-col h-full">
         <Skeleton className="h-5 w-3/4 mb-2" />
         <Skeleton className="h-3 w-1/2 mb-3" />
@@ -60,7 +60,7 @@ export function EventCardSkeleton() {
 // Tip Card Skeleton
 export function TipCardSkeleton() {
   return (
-    <div className="h-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm flex flex-col">
+    <div className="h-full overflow-hidden rounded-lg border border-border bg-surface shadow-sm flex flex-col">
       {/* Header with avatar */}
       <div className="p-4 flex items-center gap-3">
         <Skeleton className="h-10 w-10 rounded-full" />
@@ -92,7 +92,7 @@ export function TipCardSkeleton() {
 // Community Stats Card Skeleton
 export function CommunityStatsCardSkeleton() {
   return (
-    <div className="h-full rounded-lg border border-slate-200 bg-white shadow-sm">
+    <div className="h-full rounded-lg border border-border bg-surface shadow-sm">
       <div className="p-4 flex items-center gap-4 h-full">
         <div className="flex-shrink-0">
           <Skeleton className="h-12 w-12 rounded-lg" />

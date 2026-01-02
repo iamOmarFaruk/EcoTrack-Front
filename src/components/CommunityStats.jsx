@@ -116,7 +116,7 @@ export default function CommunityStats() {
             value: co2SavedKg,
             unit: 'kg',
             icon: Leaf,
-            accent: 'bg-emerald-50 text-emerald-600'
+            accent: 'bg-primary/10 text-primary'
           },
           {
             key: 'plasticReducedKg',
@@ -124,7 +124,7 @@ export default function CommunityStats() {
             value: plasticReducedKg,
             unit: 'kg',
             icon: Recycle,
-            accent: 'bg-teal-50 text-teal-600'
+            accent: 'bg-secondary/10 text-secondary'
           },
           {
             key: 'waterSavedL',
@@ -132,7 +132,7 @@ export default function CommunityStats() {
             value: waterSavedL,
             unit: 'L',
             icon: Droplets,
-            accent: 'bg-blue-50 text-blue-600'
+            accent: 'bg-secondary/10 text-secondary'
           },
           {
             key: 'energySavedKwh',
@@ -140,7 +140,7 @@ export default function CommunityStats() {
             value: energySavedKwh,
             unit: 'kWh',
             icon: Zap,
-            accent: 'bg-amber-50 text-amber-600'
+            accent: 'bg-secondary/10 text-secondary'
           }
         ]
 
@@ -177,7 +177,7 @@ export default function CommunityStats() {
       <span ref={triggerRef} aria-hidden="true" className="block h-px w-px opacity-0" />
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {!loading && error && (
-          <div className="sm:col-span-2 lg:col-span-4 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
+          <div className="sm:col-span-2 lg:col-span-4 text-sm text-secondary bg-secondary/10 border border-secondary/40 rounded-lg px-4 py-3">
             {error}
           </div>
         )}
@@ -206,16 +206,16 @@ export default function CommunityStats() {
             >
               <Card className="h-full">
                 <CardContent className="flex h-full items-center gap-4">
-                  <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ring-1 ring-emerald-100 ${item.accent || 'bg-emerald-50 text-emerald-700'}`}>
+                  <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ring-1 ring-primary/30 ${item.accent || 'bg-primary/10 text-primary'}`}>
                     {item.icon && (
                       <item.icon className="h-5 w-5" aria-hidden="true" />
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs text-slate-500">{item.label}</p>
-                    <p className="truncate text-xl font-extrabold tracking-tight text-slate-900">
+                    <p className="text-xs text-text/70">{item.label}</p>
+                    <p className="truncate text-xl font-extrabold tracking-tight text-heading">
                       <AnimatedNumber value={item.value} isActive={inView} />{' '}
-                      <span className="text-xs font-semibold text-slate-500 align-middle">{item.unit}</span>
+                      <span className="text-xs font-semibold text-text/70 align-middle">{item.unit}</span>
                     </p>
                   </div>
                 </CardContent>

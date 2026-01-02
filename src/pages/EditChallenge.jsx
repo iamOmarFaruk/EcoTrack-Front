@@ -339,16 +339,16 @@ export default function EditChallenge() {
 
   if (notAuthorized) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-red-50 to-white py-12">
+      <div className="min-h-screen bg-gradient-to-b from-danger/10 to-surface py-12">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="bg-white rounded-lg shadow-md p-8">
-            <div className="text-red-600 mb-4">
+          <div className="bg-surface rounded-lg shadow-md p-8">
+            <div className="text-danger mb-4">
               <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-4">Not Authorized</h2>
-            <p className="text-slate-600 mb-6">
+            <h2 className="text-2xl font-bold text-heading mb-4">Not Authorized</h2>
+            <p className="text-text/80 mb-6">
               You don't have permission to edit this challenge. Only the creator can make changes.
             </p>
             <Button onClick={() => navigate('/challenges')}>Back to Challenges</Button>
@@ -359,14 +359,14 @@ export default function EditChallenge() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-12">
+    <div className="min-h-screen bg-gradient-to-b from-primary/10 to-surface py-12">
       {/* Page Header */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-slate-900 mb-3">
+          <h1 className="text-4xl font-bold text-heading mb-3">
             Edit Challenge
           </h1>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+          <p className="text-lg text-text/80 max-w-2xl mx-auto">
             Update your challenge details
           </p>
         </div>
@@ -379,16 +379,16 @@ export default function EditChallenge() {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Category */}
               <div>
-                <label htmlFor="category" className="block text-sm font-medium text-slate-900 mb-2">
-                  Category <span className="text-red-500">*</span>
+                <label htmlFor="category" className="block text-sm font-medium text-heading mb-2">
+                  Category <span className="text-danger">*</span>
                 </label>
                 <select
                   id="category"
                   name="category"
                   value={formData.category}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                    errors.category ? 'border-red-500' : 'border-slate-300'
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
+                    errors.category ? 'border-danger' : 'border-border'
                   }`}
                 >
                   <option value="Food">Food</option>
@@ -397,13 +397,13 @@ export default function EditChallenge() {
                   <option value="Water">Water</option>
                   <option value="Community">Community</option>
                 </select>
-                {errors.category && <p className="mt-1 text-sm text-red-500">{errors.category}</p>}
+                {errors.category && <p className="mt-1 text-sm text-danger">{errors.category}</p>}
               </div>
 
               {/* Title */}
               <div>
-                <label htmlFor="title" className="block text-sm font-medium text-slate-900 mb-2">
-                  Challenge Title <span className="text-red-500">*</span>
+                <label htmlFor="title" className="block text-sm font-medium text-heading mb-2">
+                  Challenge Title <span className="text-danger">*</span>
                 </label>
                 <input
                   type="text"
@@ -411,19 +411,19 @@ export default function EditChallenge() {
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                    errors.title ? 'border-red-500' : 'border-slate-300'
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
+                    errors.title ? 'border-danger' : 'border-border'
                   }`}
                   placeholder="e.g., Plastic-Free Week"
                 />
-                {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
-                <p className="mt-1 text-xs text-slate-500">{formData.title.length}/100 characters</p>
+                {errors.title && <p className="mt-1 text-sm text-danger">{errors.title}</p>}
+                <p className="mt-1 text-xs text-text/70">{formData.title.length}/100 characters</p>
               </div>
 
               {/* Short Description */}
               <div>
-                <label htmlFor="shortDescription" className="block text-sm font-medium text-slate-900 mb-2">
-                  Short Description <span className="text-red-500">*</span>
+                <label htmlFor="shortDescription" className="block text-sm font-medium text-heading mb-2">
+                  Short Description <span className="text-danger">*</span>
                 </label>
                 <textarea
                   id="shortDescription"
@@ -431,19 +431,19 @@ export default function EditChallenge() {
                   value={formData.shortDescription}
                   onChange={handleChange}
                   rows={3}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                    errors.shortDescription ? 'border-red-500' : 'border-slate-300'
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
+                    errors.shortDescription ? 'border-danger' : 'border-border'
                   }`}
                   placeholder="Brief description for challenge cards (20-250 characters)"
                 />
-                {errors.shortDescription && <p className="mt-1 text-sm text-red-500">{errors.shortDescription}</p>}
-                <p className="mt-1 text-xs text-slate-500">{formData.shortDescription.length}/250 characters</p>
+                {errors.shortDescription && <p className="mt-1 text-sm text-danger">{errors.shortDescription}</p>}
+                <p className="mt-1 text-xs text-text/70">{formData.shortDescription.length}/250 characters</p>
               </div>
 
               {/* Detailed Description (Optional) */}
               <div>
-                <label htmlFor="detailedDescription" className="block text-sm font-medium text-slate-900 mb-2">
-                  Detailed Description <span className="text-slate-500">(Optional)</span>
+                <label htmlFor="detailedDescription" className="block text-sm font-medium text-heading mb-2">
+                  Detailed Description <span className="text-text/70">(Optional)</span>
                 </label>
                 <textarea
                   id="detailedDescription"
@@ -451,20 +451,20 @@ export default function EditChallenge() {
                   value={formData.detailedDescription}
                   onChange={handleChange}
                   rows={6}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                    errors.detailedDescription ? 'border-red-500' : 'border-slate-300'
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
+                    errors.detailedDescription ? 'border-danger' : 'border-border'
                   }`}
                   placeholder="Full description with all details about the challenge (max 2000 characters)"
                 />
-                {errors.detailedDescription && <p className="mt-1 text-sm text-red-500">{errors.detailedDescription}</p>}
-                <p className="mt-1 text-xs text-slate-500">{formData.detailedDescription.length}/2000 characters</p>
+                {errors.detailedDescription && <p className="mt-1 text-sm text-danger">{errors.detailedDescription}</p>}
+                <p className="mt-1 text-xs text-text/70">{formData.detailedDescription.length}/2000 characters</p>
               </div>
 
               {/* Date Range */}
               <div className="grid gap-6 md:grid-cols-2">
                 <div>
-                  <label htmlFor="startDate" className="block text-sm font-medium text-slate-900 mb-2">
-                    Start Date <span className="text-red-500">*</span>
+                  <label htmlFor="startDate" className="block text-sm font-medium text-heading mb-2">
+                    Start Date <span className="text-danger">*</span>
                   </label>
                   <input
                     type="date"
@@ -473,16 +473,16 @@ export default function EditChallenge() {
                     value={formData.startDate}
                     onChange={handleChange}
                     min={getMinDate()}
-                    className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                      errors.startDate ? 'border-red-500' : 'border-slate-300'
+                    className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
+                      errors.startDate ? 'border-danger' : 'border-border'
                     }`}
                   />
-                  {errors.startDate && <p className="mt-1 text-sm text-red-500">{errors.startDate}</p>}
+                  {errors.startDate && <p className="mt-1 text-sm text-danger">{errors.startDate}</p>}
                 </div>
 
                 <div>
-                  <label htmlFor="endDate" className="block text-sm font-medium text-slate-900 mb-2">
-                    End Date <span className="text-red-500">*</span>
+                  <label htmlFor="endDate" className="block text-sm font-medium text-heading mb-2">
+                    End Date <span className="text-danger">*</span>
                   </label>
                   <input
                     type="date"
@@ -491,11 +491,11 @@ export default function EditChallenge() {
                     value={formData.endDate}
                     onChange={handleChange}
                     min={formData.startDate || getMinDate()}
-                    className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                      errors.endDate ? 'border-red-500' : 'border-slate-300'
+                    className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
+                      errors.endDate ? 'border-danger' : 'border-border'
                     }`}
                   />
-                  {errors.endDate && <p className="mt-1 text-sm text-red-500">{errors.endDate}</p>}
+                  {errors.endDate && <p className="mt-1 text-sm text-danger">{errors.endDate}</p>}
                 </div>
               </div>
 
@@ -509,13 +509,13 @@ export default function EditChallenge() {
 
               {/* Community Impact Section */}
               <div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                  <span className="text-green-600">🌍</span>
+                <h3 className="text-lg font-semibold text-heading mb-4 flex items-center gap-2">
+                  <span className="text-primary">🌍</span>
                   Community Impact Metrics
                 </h3>
                 <div className="grid gap-6 md:grid-cols-2">
                   <div>
-                    <label htmlFor="co2SavedKg" className="block text-sm font-medium text-slate-900 mb-2">
+                    <label htmlFor="co2SavedKg" className="block text-sm font-medium text-heading mb-2">
                       CO₂ Saved (kg)
                     </label>
                     <input
@@ -526,17 +526,17 @@ export default function EditChallenge() {
                       onChange={handleImpactChange}
                       min="0"
                       step="0.1"
-                      className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                        errors.co2SavedKg ? 'border-red-500' : 'border-slate-300'
+                      className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
+                        errors.co2SavedKg ? 'border-danger' : 'border-border'
                       }`}
                       placeholder="e.g., 10"
                     />
-                    {errors.co2SavedKg && <p className="mt-1 text-sm text-red-500">{errors.co2SavedKg}</p>}
-                    <p className="mt-1 text-xs text-slate-500">Estimated CO₂ reduction in kilograms</p>
+                    {errors.co2SavedKg && <p className="mt-1 text-sm text-danger">{errors.co2SavedKg}</p>}
+                    <p className="mt-1 text-xs text-text/70">Estimated CO₂ reduction in kilograms</p>
                   </div>
 
                   <div>
-                    <label htmlFor="plasticReducedKg" className="block text-sm font-medium text-slate-900 mb-2">
+                    <label htmlFor="plasticReducedKg" className="block text-sm font-medium text-heading mb-2">
                       Plastic Reduced (kg)
                     </label>
                     <input
@@ -547,17 +547,17 @@ export default function EditChallenge() {
                       onChange={handleImpactChange}
                       min="0"
                       step="0.1"
-                      className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                        errors.plasticReducedKg ? 'border-red-500' : 'border-slate-300'
+                      className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
+                        errors.plasticReducedKg ? 'border-danger' : 'border-border'
                       }`}
                       placeholder="e.g., 5"
                     />
-                    {errors.plasticReducedKg && <p className="mt-1 text-sm text-red-500">{errors.plasticReducedKg}</p>}
-                    <p className="mt-1 text-xs text-slate-500">Estimated plastic waste reduction in kilograms</p>
+                    {errors.plasticReducedKg && <p className="mt-1 text-sm text-danger">{errors.plasticReducedKg}</p>}
+                    <p className="mt-1 text-xs text-text/70">Estimated plastic waste reduction in kilograms</p>
                   </div>
 
                   <div>
-                    <label htmlFor="waterSavedL" className="block text-sm font-medium text-slate-900 mb-2">
+                    <label htmlFor="waterSavedL" className="block text-sm font-medium text-heading mb-2">
                       Water Saved (Liters)
                     </label>
                     <input
@@ -568,17 +568,17 @@ export default function EditChallenge() {
                       onChange={handleImpactChange}
                       min="0"
                       step="1"
-                      className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                        errors.waterSavedL ? 'border-red-500' : 'border-slate-300'
+                      className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
+                        errors.waterSavedL ? 'border-danger' : 'border-border'
                       }`}
                       placeholder="e.g., 100"
                     />
-                    {errors.waterSavedL && <p className="mt-1 text-sm text-red-500">{errors.waterSavedL}</p>}
-                    <p className="mt-1 text-xs text-slate-500">Estimated water conservation in liters</p>
+                    {errors.waterSavedL && <p className="mt-1 text-sm text-danger">{errors.waterSavedL}</p>}
+                    <p className="mt-1 text-xs text-text/70">Estimated water conservation in liters</p>
                   </div>
 
                   <div>
-                    <label htmlFor="energySavedKwh" className="block text-sm font-medium text-slate-900 mb-2">
+                    <label htmlFor="energySavedKwh" className="block text-sm font-medium text-heading mb-2">
                       Energy Saved (kWh)
                     </label>
                     <input
@@ -589,21 +589,21 @@ export default function EditChallenge() {
                       onChange={handleImpactChange}
                       min="0"
                       step="0.1"
-                      className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                        errors.energySavedKwh ? 'border-red-500' : 'border-slate-300'
+                      className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
+                        errors.energySavedKwh ? 'border-danger' : 'border-border'
                       }`}
                       placeholder="e.g., 15"
                     />
-                    {errors.energySavedKwh && <p className="mt-1 text-sm text-red-500">{errors.energySavedKwh}</p>}
-                    <p className="mt-1 text-xs text-slate-500">Estimated energy conservation in kilowatt-hours</p>
+                    {errors.energySavedKwh && <p className="mt-1 text-sm text-danger">{errors.energySavedKwh}</p>}
+                    <p className="mt-1 text-xs text-text/70">Estimated energy conservation in kilowatt-hours</p>
                   </div>
                 </div>
               </div>
 
               {/* Image URL */}
               <div>
-                <label htmlFor="image" className="block text-sm font-medium text-slate-900 mb-2">
-                  Challenge Image URL <span className="text-red-500">*</span>
+                <label htmlFor="image" className="block text-sm font-medium text-heading mb-2">
+                  Challenge Image URL <span className="text-danger">*</span>
                 </label>
                 <input
                   type="url"
@@ -611,25 +611,25 @@ export default function EditChallenge() {
                   name="image"
                   value={formData.image}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                    errors.image ? 'border-red-500' : 'border-slate-300'
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
+                    errors.image ? 'border-danger' : 'border-border'
                   }`}
                   placeholder="https://images.unsplash.com/photo-... (must be HTTPS)"
                 />
-                {errors.image && <p className="mt-1 text-sm text-red-500">{errors.image}</p>}
-                <p className="mt-1 text-xs text-slate-500">
+                {errors.image && <p className="mt-1 text-sm text-danger">{errors.image}</p>}
+                <p className="mt-1 text-xs text-text/70">
                   Enter a valid HTTPS image URL (from Unsplash, Pexels, or any other source)
                 </p>
                 
                 {/* Image Preview */}
                 {formData.image && formData.image.startsWith('https://') && (
-                  <div className="mt-4 rounded-lg overflow-hidden border-2 border-green-200 shadow-md">
+                  <div className="mt-4 rounded-lg overflow-hidden border-2 border-primary shadow-md">
                     <img 
                       src={formData.image} 
                       alt="Challenge preview"
                       className="w-full h-64 object-cover"
                       onError={(e) => {
-                        e.target.parentElement.innerHTML = '<div class="w-full h-64 bg-red-50 flex items-center justify-center"><p class="text-red-600 text-sm">Failed to load image. Please check the URL.</p></div>'
+                        e.target.parentElement.innerHTML = '<div class="w-full h-64 bg-danger/10 flex items-center justify-center"><p class="text-danger text-sm">Failed to load image. Please check the URL.</p></div>'
                       }}
                     />
                   </div>
@@ -644,9 +644,9 @@ export default function EditChallenge() {
                   name="featured"
                   checked={formData.featured}
                   onChange={handleChange}
-                  className="w-4 h-4 text-green-600 border-slate-300 rounded focus:ring-green-500 accent-green-600"
+                  className="w-4 h-4 text-primary border-border rounded focus:ring-primary accent-green-600"
                 />
-                <label htmlFor="featured" className="ml-2 block text-sm text-slate-900">
+                <label htmlFor="featured" className="ml-2 block text-sm text-heading">
                   Mark as featured challenge
                 </label>
               </div>
@@ -664,7 +664,7 @@ export default function EditChallenge() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-green-600 hover:bg-green-700"
+                  className="bg-primary hover:bg-primary"
                 >
                   {isSubmitting ? 'Updating Challenge...' : 'Update Challenge'}
                 </Button>

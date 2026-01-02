@@ -6,10 +6,10 @@ export default function EcoLoader() {
           className="absolute inset-0 rounded-full blur-xl opacity-60"
           style={{
             background:
-              'radial-gradient(circle at 50% 50%, rgba(165,214,167,0.5), rgba(76,175,80,0.25), rgba(46,125,50,0.15))',
+              'radial-gradient(circle at 50% 50%, rgb(var(--color-primary) / 0.45), rgb(var(--color-primary) / 0.25), rgb(var(--color-secondary) / 0.15))',
           }}
         ></div>
-        <div className="relative h-full w-full overflow-hidden rounded-full ring-1 ring-[#4CAF50]/40">
+        <div className="relative h-full w-full overflow-hidden rounded-full ring-1 ring-primary/40">
           <img
             src="/logo.png"
             alt=""
@@ -21,4 +21,3 @@ export default function EcoLoader() {
     </div>
   )
 }
-

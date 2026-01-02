@@ -8,37 +8,37 @@ import toast from 'react-hot-toast'
 const toastStyles = {
   success: {
     style: {
-      background: '#fff',
-      border: '1px solid #d1fae5',
-      borderRadius: '8px',
+      background: 'rgb(var(--color-surface))',
+      border: '1px solid rgb(var(--color-primary) / 0.2)',
+      borderRadius: 'var(--radius)',
       padding: '16px',
-      color: '#065f46',
+      color: 'rgb(var(--color-primary))',
     },
     iconTheme: {
-      primary: '#10b981',
-      secondary: '#fff',
+      primary: 'rgb(var(--color-primary))',
+      secondary: 'rgb(var(--color-surface))',
     },
   },
   error: {
     style: {
-      background: '#fff',
-      border: '1px solid #fecaca',
-      borderRadius: '8px',
+      background: 'rgb(var(--color-surface))',
+      border: '1px solid rgb(var(--color-danger) / 0.25)',
+      borderRadius: 'var(--radius)',
       padding: '16px',
-      color: '#991b1b',
+      color: 'rgb(var(--color-danger))',
     },
     iconTheme: {
-      primary: '#ef4444',
-      secondary: '#fff',
+      primary: 'rgb(var(--color-danger))',
+      secondary: 'rgb(var(--color-surface))',
     },
   },
   loading: {
     style: {
-      background: '#fff',
-      border: '1px solid #e5e7eb',
-      borderRadius: '8px',
+      background: 'rgb(var(--color-surface))',
+      border: '1px solid rgb(var(--color-border))',
+      borderRadius: 'var(--radius)',
       padding: '16px',
-      color: '#374151',
+      color: 'rgb(var(--color-text))',
     },
   },
 }
@@ -80,7 +80,7 @@ export const showConfirmation = ({
       <div className="flex items-start gap-3">
         <div className="flex-shrink-0">
           <svg 
-            className={`w-5 h-5 mt-0.5 ${isDanger ? 'text-red-600' : 'text-amber-600'}`} 
+            className={`w-5 h-5 mt-0.5 ${isDanger ? 'text-danger' : 'text-secondary'}`} 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"
@@ -94,15 +94,15 @@ export const showConfirmation = ({
           </svg>
         </div>
         <div className="flex-1">
-          <h3 className="text-sm font-medium text-gray-900">{title}</h3>
-          <p className="text-sm text-gray-600 mt-1 mb-3">{message}</p>
+          <h3 className="text-sm font-medium text-heading">{title}</h3>
+          <p className="text-sm text-text/80 mt-1 mb-3">{message}</p>
           <div className="flex gap-2 justify-end">
             <button
               onClick={() => {
                 toast.dismiss(t.id)
                 if (onCancel) onCancel()
               }}
-              className="px-3 py-1.5 text-sm font-medium bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
+              className="px-3 py-1.5 text-sm font-medium bg-muted text-text rounded-md hover:bg-muted transition-colors"
             >
               {cancelText}
             </button>
@@ -113,8 +113,8 @@ export const showConfirmation = ({
               }}
               className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                 isDanger
-                  ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                  : 'bg-amber-100 text-amber-700 hover:bg-amber-200'
+                  ? 'bg-danger/15 text-danger hover:bg-danger/20'
+                  : 'bg-secondary/15 text-secondary hover:bg-secondary/20'
               }`}
             >
               {confirmText}
@@ -126,9 +126,13 @@ export const showConfirmation = ({
     {
       duration: Infinity,
       style: {
-        background: '#fff',
-        border: `1px solid ${isDanger ? '#fed7d7' : '#fef3c7'}`,
-        borderRadius: '8px',
+        background: 'rgb(var(--color-surface))',
+        border: `1px solid ${
+          isDanger
+            ? 'rgb(var(--color-danger) / 0.25)'
+            : 'rgb(var(--color-secondary) / 0.25)'
+        }`,
+        borderRadius: 'var(--radius)',
         padding: '16px',
         maxWidth: '400px',
       },

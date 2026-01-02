@@ -99,7 +99,7 @@ export default function TipCard({
   return (
     <Card className="h-full overflow-hidden flex flex-col">
       <CardHeader className="flex items-center gap-3">
-        <div className="h-10 w-10 overflow-hidden rounded-full bg-slate-200 flex items-center justify-center text-xs font-medium text-slate-600">
+        <div className="h-10 w-10 overflow-hidden rounded-full bg-muted flex items-center justify-center text-xs font-medium text-text/80">
           {authorInfo.avatar ? (
             <img src={authorInfo.avatar} alt={authorInfo.name} loading="lazy" className="h-full w-full object-cover" />
           ) : (
@@ -109,11 +109,11 @@ export default function TipCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between">
             <div className="min-w-0">
-              <div className="truncate text-xs font-medium text-slate-900">{authorInfo.name}</div>
-              <div className="truncate text-[11px] text-slate-500 flex items-center gap-1">
+              <div className="truncate text-xs font-medium text-heading">{authorInfo.name}</div>
+              <div className="truncate text-[11px] text-text/70 flex items-center gap-1">
                 <span>{formatDate(tip.createdAt)}</span>
                 {isEdited && (
-                  <span className="text-[11px] text-slate-400">
+                  <span className="text-[11px] text-text/60">
                     (edited)
                   </span>
                 )}
@@ -123,14 +123,14 @@ export default function TipCard({
         </div>
       </CardHeader>
       <CardContent className="flex-1">
-        <h3 className="text-base font-semibold text-slate-900">{tip.title}</h3>
+        <h3 className="text-base font-semibold text-heading">{tip.title}</h3>
         {showContent && (
-          <p className="mt-2 line-clamp-3 text-sm text-slate-900">{tip.content}</p>
+          <p className="mt-2 line-clamp-3 text-sm text-heading">{tip.content}</p>
         )}
       </CardContent>
       <CardFooter className="flex items-center justify-between mt-auto relative">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20 relative overflow-visible">
-          <svg className="h-3.5 w-3.5 text-emerald-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20 relative overflow-visible">
+          <svg className="h-3.5 w-3.5 text-primary" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
             <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
           </svg>
           {upvotes}
@@ -139,7 +139,7 @@ export default function TipCard({
           {flyingThumbs.map((thumb) => (
             <svg
               key={thumb.id}
-              className="absolute h-3.5 w-3.5 text-emerald-600 pointer-events-none"
+              className="absolute h-3.5 w-3.5 text-primary pointer-events-none"
               style={{
                 left: `${thumb.startX}px`,
                 animation: 'flyUp 1s ease-out forwards',
@@ -157,7 +157,7 @@ export default function TipCard({
             <div className="flex items-center gap-2">
               <button
                 onClick={handleEdit}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-text/80 hover:text-text bg-muted hover:bg-muted rounded-md transition-colors"
                 title="Edit tip"
               >
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -167,7 +167,7 @@ export default function TipCard({
               </button>
               <button
                 onClick={handleDelete}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded-md transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-danger hover:text-danger bg-danger/10 hover:bg-danger/15 rounded-md transition-colors"
                 title="Delete tip"
               >
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -189,7 +189,7 @@ export default function TipCard({
         ) : (
           <button
             onClick={onLoginRequired}
-            className="text-xs text-emerald-600 hover:text-emerald-700 font-medium underline-offset-2 hover:underline transition-colors"
+            className="text-xs text-primary hover:text-primary font-medium underline-offset-2 hover:underline transition-colors"
           >
             Log in to upvote
           </button>

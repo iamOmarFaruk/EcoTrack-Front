@@ -116,17 +116,17 @@ export default function MyActivities() {
       {/* Summary Stats */}
       {summary && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-white p-6 rounded-xl border border-gray-200 text-center">
-            <div className="text-3xl font-bold text-emerald-600">{summary.total}</div>
-            <div className="text-sm text-gray-600 mt-1">Total Challenges</div>
+          <div className="bg-surface p-6 rounded-xl border border-border text-center">
+            <div className="text-3xl font-bold text-primary">{summary.total}</div>
+            <div className="text-sm text-text/80 mt-1">Total Challenges</div>
           </div>
-          <div className="bg-white p-6 rounded-xl border border-gray-200 text-center">
-            <div className="text-3xl font-bold text-blue-600">{summary.active}</div>
-            <div className="text-sm text-gray-600 mt-1">Active Challenges</div>
+          <div className="bg-surface p-6 rounded-xl border border-border text-center">
+            <div className="text-3xl font-bold text-secondary">{summary.active}</div>
+            <div className="text-sm text-text/80 mt-1">Active Challenges</div>
           </div>
-          <div className="bg-white p-6 rounded-xl border border-gray-200 text-center">
-            <div className="text-3xl font-bold text-purple-600">{summary.completed}</div>
-            <div className="text-sm text-gray-600 mt-1">Completed</div>
+          <div className="bg-surface p-6 rounded-xl border border-border text-center">
+            <div className="text-3xl font-bold text-secondary">{summary.completed}</div>
+            <div className="text-sm text-text/80 mt-1">Completed</div>
           </div>
         </div>
       )}
@@ -137,8 +137,8 @@ export default function MyActivities() {
           onClick={() => setStatusFilter('all')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             statusFilter === 'all'
-              ? 'bg-emerald-600 text-white'
-              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+              ? 'bg-primary text-surface'
+              : 'bg-surface text-text/80 border border-border hover:bg-light'
           }`}
         >
           All
@@ -147,8 +147,8 @@ export default function MyActivities() {
           onClick={() => setStatusFilter('active')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             statusFilter === 'active'
-              ? 'bg-emerald-600 text-white'
-              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+              ? 'bg-primary text-surface'
+              : 'bg-surface text-text/80 border border-border hover:bg-light'
           }`}
         >
           Active
@@ -157,8 +157,8 @@ export default function MyActivities() {
           onClick={() => setStatusFilter('completed')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             statusFilter === 'completed'
-              ? 'bg-emerald-600 text-white'
-              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+              ? 'bg-primary text-surface'
+              : 'bg-surface text-text/80 border border-border hover:bg-light'
           }`}
         >
           Completed
@@ -167,17 +167,17 @@ export default function MyActivities() {
 
       {/* Activities Grid */}
       {activities.length === 0 ? (
-        <div className="bg-white rounded-xl p-12 border border-gray-200 shadow-sm text-center">
-          <div className="w-24 h-24 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <div className="bg-surface rounded-xl p-12 border border-border shadow-sm text-center">
+          <div className="w-24 h-24 bg-gradient-to-br from-primary/15 to-primary/15 rounded-full flex items-center justify-center mx-auto mb-6">
             <span className="text-4xl">🌱</span>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">No activities yet</h3>
-          <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
+          <h3 className="text-2xl font-bold text-heading mb-4">No activities yet</h3>
+          <p className="text-lg text-text/80 mb-6 max-w-2xl mx-auto">
             Start joining challenges to track your eco-friendly journey!
           </p>
           <Link
             to="/challenges"
-            className="inline-block px-6 py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors"
+            className="inline-block px-6 py-3 bg-primary text-surface rounded-lg font-medium hover:bg-primary transition-colors"
           >
             Browse Challenges
           </Link>
@@ -188,10 +188,10 @@ export default function MyActivities() {
             {activities.map((activity) => (
               <div
                 key={activity._id}
-                className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
+                className="bg-surface rounded-xl border border-border overflow-hidden hover:shadow-lg transition-shadow"
               >
                 {activity.challenge?.imageUrl && (
-                  <div className="h-48 bg-gray-200">
+                  <div className="h-48 bg-muted">
                     <img
                       src={activity.challenge.imageUrl}
                       alt={activity.challenge.title}
@@ -201,37 +201,37 @@ export default function MyActivities() {
                 )}
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
+                    <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded">
                       {activity.challenge?.category || 'Challenge'}
                     </span>
                     <span
                       className={`text-xs font-medium px-2 py-1 rounded ${
                         activity.userProgress?.status === 'Completed'
-                          ? 'bg-purple-50 text-purple-600'
-                          : 'bg-blue-50 text-blue-600'
+                          ? 'bg-secondary/10 text-secondary'
+                          : 'bg-secondary/10 text-secondary'
                       }`}
                     >
                       {activity.userProgress?.status || 'Ongoing'}
                     </span>
                   </div>
-                  <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">
+                  <h3 className="font-bold text-lg text-heading mb-2 line-clamp-2">
                     {activity.challenge?.title}
                   </h3>
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-2">
+                  <p className="text-sm text-text/80 mb-4 line-clamp-2">
                     {activity.challenge?.description}
                   </p>
                   
                   {/* Progress Bar */}
                   <div className="mb-4">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-gray-600">Progress</span>
-                      <span className="text-xs font-semibold text-gray-900">
+                      <span className="text-xs text-text/80">Progress</span>
+                      <span className="text-xs font-semibold text-heading">
                         {activity.userProgress?.progress || 0}%
                       </span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-muted rounded-full h-2">
                       <div
-                        className="bg-gradient-to-r from-emerald-500 to-teal-500 h-2 rounded-full transition-all duration-300"
+                        className="bg-gradient-to-r from-primary to-secondary h-2 rounded-full transition-all duration-300"
                         style={{ width: `${activity.userProgress?.progress || 0}%` }}
                       />
                     </div>
@@ -239,8 +239,8 @@ export default function MyActivities() {
 
                   {/* Impact */}
                   {activity.userProgress?.impactAchieved > 0 && (
-                    <div className="text-sm text-gray-600 mb-3">
-                      <span className="font-semibold text-emerald-600">
+                    <div className="text-sm text-text/80 mb-3">
+                      <span className="font-semibold text-primary">
                         {activity.userProgress.impactAchieved}
                       </span>{' '}
                       {activity.challenge?.impactMetric || 'impact points'}
@@ -249,7 +249,7 @@ export default function MyActivities() {
 
                   <Link
                     to={`/challenges/${activity.challenge?.slug || activity.challenge?._id}`}
-                    className="block w-full text-center px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg font-medium hover:bg-emerald-100 transition-colors"
+                    className="block w-full text-center px-4 py-2 bg-primary/10 text-primary rounded-lg font-medium hover:bg-primary/15 transition-colors"
                   >
                     View Details
                   </Link>
@@ -264,17 +264,17 @@ export default function MyActivities() {
               <button
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={!pagination.hasPrev}
-                className="px-4 py-2 rounded-lg border border-gray-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                className="px-4 py-2 rounded-lg border border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-light"
               >
                 Previous
               </button>
-              <span className="px-4 py-2 text-gray-600">
+              <span className="px-4 py-2 text-text/80">
                 Page {pagination.page} of {pagination.totalPages}
               </span>
               <button
                 onClick={() => setCurrentPage(p => p + 1)}
                 disabled={!pagination.hasNext}
-                className="px-4 py-2 rounded-lg border border-gray-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                className="px-4 py-2 rounded-lg border border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-light"
               >
                 Next
               </button>

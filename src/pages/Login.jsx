@@ -60,18 +60,18 @@ export default function Login() {
   return (
     <div className="mx-auto max-w-sm">
       <h1 className="text-2xl font-semibold">Login to EcoTrack</h1>
-      <p className="mt-1 text-sm text-slate-900">Sign in to your account to continue.</p>
+      <p className="mt-1 text-sm text-heading">Sign in to your account to continue.</p>
       
       <form onSubmit={handleSubmit(onSubmit)} className="mt-6 grid gap-4">
         <div>
           <label className="mb-1 block text-sm font-medium">Email</label>
-          <input className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" placeholder="you@example.com" {...register('email')} />
-          {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
+          <input className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="you@example.com" {...register('email')} />
+          {errors.email && <p className="mt-1 text-sm text-danger">{errors.email.message}</p>}
         </div>
         <div>
           <label className="mb-1 block text-sm font-medium">Password</label>
-          <input type="password" className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" placeholder="Enter your password" {...register('password')} />
-          {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>}
+          <input type="password" className="w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Enter your password" {...register('password')} />
+          {errors.password && <p className="mt-1 text-sm text-danger">{errors.password.message}</p>}
         </div>
         <Button type="submit" className="h-10" disabled={isSubmitting}>
           {isSubmitting ? 'Signing in...' : 'Login'}
@@ -79,7 +79,7 @@ export default function Login() {
       </form>
 
       <div className="mt-4 text-center">
-        <span className="px-2 text-sm text-slate-500">or</span>
+        <span className="px-2 text-sm text-text/70">or</span>
       </div>
 
       <Button 
@@ -98,8 +98,8 @@ export default function Login() {
       </Button>
       
       <div className="mt-4 flex items-center justify-between text-sm">
-        <Link to="/register" className="text-slate-700 hover:text-emerald-700">Create Account</Link>
-        <Link to="/forgot-password" className="text-slate-700 hover:text-emerald-700">Forgot Password</Link>
+        <Link to="/register" className="text-text hover:text-primary">Create Account</Link>
+        <Link to="/forgot-password" className="text-text hover:text-primary">Forgot Password</Link>
       </div>
     </div>
   )

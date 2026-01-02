@@ -17,13 +17,13 @@ export default function NotFound() {
       <div className="mx-auto max-w-lg">
         {/* Error content */}
         <div className="space-y-6">
-          <h1 className="text-6xl font-bold tracking-tight text-slate-900">
-            4<span className="text-emerald-500">0</span>4
+          <h1 className="text-6xl font-bold tracking-tight text-heading">
+            4<span className="text-surface/900">0</span>4
           </h1>
-          <h2 className="text-2xl font-semibold text-slate-700">
+          <h2 className="text-2xl font-semibold text-text">
             Oops! Page Not Found
           </h2>
-          <p className="text-lg text-slate-600 leading-relaxed">
+          <p className="text-lg text-text/80 leading-relaxed">
             Looks like this page got lost in the forest. 🌿<br />
             Don't worry, we'll help you find your way back home.
           </p>
@@ -45,11 +45,11 @@ export default function NotFound() {
         </div>
         
         {/* Additional help text */}
-        <p className="mt-6 text-sm text-slate-500">
+        <p className="mt-6 text-sm text-text/70">
           If you believe this is an error, please{' '}
           <Link 
             to="/contact" 
-            className="text-emerald-600 hover:text-emerald-700 underline"
+            className="text-primary hover:text-primary underline"
           >
             contact us
           </Link>

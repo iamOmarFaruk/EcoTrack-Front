@@ -23,7 +23,7 @@ export default function DashboardLayout() {
         <div className="mb-4 md:hidden">
           <button
             onClick={() => setMobileNavOpen(!mobileNavOpen)}
-            className="flex w-full items-center justify-between rounded-lg border bg-white p-3 text-sm font-medium shadow-sm"
+            className="flex w-full items-center justify-between rounded-lg border bg-surface p-3 text-sm font-medium shadow-sm"
           >
             <span>Dashboard Menu</span>
             <svg
@@ -39,15 +39,15 @@ export default function DashboardLayout() {
             'mt-2 overflow-hidden transition-all duration-300 ease-in-out',
             mobileNavOpen ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'
           )}>
-            <nav className="grid gap-1 rounded-lg border bg-white p-2 text-sm shadow-sm">
+            <nav className="grid gap-1 rounded-lg border bg-surface p-2 text-sm shadow-sm">
               {navItems.map((item) => (
                 <Link
                   key={item.to}
                   className={clsx(
                     'rounded-md px-3 py-2 transition-colors',
                     location.pathname === item.to
-                      ? 'bg-emerald-50 text-emerald-700 font-medium'
-                      : 'hover:bg-slate-50 text-slate-700'
+                      ? 'bg-primary/10 text-primary font-medium'
+                      : 'hover:bg-light text-text'
                   )}
                   to={item.to}
                   onClick={() => setMobileNavOpen(false)}
@@ -68,8 +68,8 @@ export default function DashboardLayout() {
                 className={clsx(
                   'rounded-md px-3 py-2 transition-colors',
                   location.pathname === item.to
-                    ? 'bg-emerald-50 text-emerald-700 font-medium'
-                    : 'hover:bg-slate-50 text-slate-700'
+                    ? 'bg-primary/10 text-primary font-medium'
+                    : 'hover:bg-light text-text'
                 )}
                 to={item.to}
               >

@@ -130,32 +130,32 @@ export default function App() {
             duration: 3000,
             // Default styles are overridden by individual toast utilities
             style: {
-              background: '#fff',
-              color: '#374151',
-              borderRadius: '8px',
+              background: 'rgb(var(--color-surface))',
+              color: 'rgb(var(--color-text))',
+              borderRadius: 'var(--radius)',
               padding: '16px',
-              border: '1px solid #e5e7eb',
+              border: '1px solid rgb(var(--color-border))',
             },
             success: {
               style: {
-                background: '#fff',
-                border: '1px solid #d1fae5',
-                color: '#065f46',
+                background: 'rgb(var(--color-surface))',
+                border: '1px solid rgb(var(--color-primary) / 0.2)',
+                color: 'rgb(var(--color-primary))',
               },
               iconTheme: {
-                primary: '#10b981',
-                secondary: '#fff',
+                primary: 'rgb(var(--color-primary))',
+                secondary: 'rgb(var(--color-surface))',
               },
             },
             error: {
               style: {
-                background: '#fff',
-                border: '1px solid #fecaca',
-                color: '#991b1b',
+                background: 'rgb(var(--color-surface))',
+                border: '1px solid rgb(var(--color-danger) / 0.25)',
+                color: 'rgb(var(--color-danger))',
               },
               iconTheme: {
-                primary: '#ef4444',
-                secondary: '#fff',
+                primary: 'rgb(var(--color-danger))',
+                secondary: 'rgb(var(--color-surface))',
               },
             },
           }}

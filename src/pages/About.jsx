@@ -16,10 +16,10 @@ export default function About() {
     <div className="space-y-12 sm:space-y-16 pb-8">
       {/* Hero Section */}
       <section className="text-center space-y-4 sm:space-y-6 px-4">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-2 sm:mb-4">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-heading mb-2 sm:mb-4">
           About EcoTrack
         </h1>
-        <p className="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
+        <p className="text-lg sm:text-xl text-text/80 max-w-3xl mx-auto leading-relaxed">
           EcoTrack helps people build sustainable habits through challenges, tips, and events.
           We care about clean design, great UX, and meaningful impact.
         </p>
@@ -39,10 +39,10 @@ export default function About() {
         
         {/* Content */}
         <div className="order-2 space-y-4 sm:space-y-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
+          <h2 className="text-2xl sm:text-3xl font-bold text-heading">
             Building a Sustainable Future Together
           </h2>
-          <div className="space-y-3 sm:space-y-4 text-slate-600">
+          <div className="space-y-3 sm:space-y-4 text-text/80">
             <p className="text-base sm:text-lg leading-relaxed">
               At EcoTrack, we believe that small actions can create big changes. Our platform
               brings together a community of eco-conscious individuals who are passionate
@@ -67,10 +67,10 @@ export default function About() {
       <section className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center px-4">
         {/* Content - First on desktop, second on mobile */}
         <div className="order-2 lg:order-1 space-y-4 sm:space-y-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
+          <h2 className="text-2xl sm:text-3xl font-bold text-heading">
             Join Our Growing Community
           </h2>
-          <div className="space-y-3 sm:space-y-4 text-slate-600">
+          <div className="space-y-3 sm:space-y-4 text-text/80">
             <p className="text-base sm:text-lg leading-relaxed">
               Whether you're just starting your sustainability journey or you're a
               seasoned environmental advocate, EcoTrack provides the tools and
@@ -102,21 +102,21 @@ export default function About() {
       </section>
 
       {/* Stats Section */}
-      <section className="bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 mx-4">
+      <section className="bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 mx-4">
         <div className="text-center space-y-6 sm:space-y-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Our Impact</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-heading">Our Impact</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
             <div className="space-y-1 sm:space-y-2">
-              <div className="text-2xl sm:text-3xl font-bold text-emerald-600">10,000+</div>
-              <div className="text-sm sm:text-base text-slate-600">Active Members</div>
+              <div className="text-2xl sm:text-3xl font-bold text-primary">10,000+</div>
+              <div className="text-sm sm:text-base text-text/80">Active Members</div>
             </div>
             <div className="space-y-1 sm:space-y-2">
-              <div className="text-2xl sm:text-3xl font-bold text-emerald-600">500+</div>
-              <div className="text-sm sm:text-base text-slate-600">Challenges Completed</div>
+              <div className="text-2xl sm:text-3xl font-bold text-primary">500+</div>
+              <div className="text-sm sm:text-base text-text/80">Challenges Completed</div>
             </div>
             <div className="space-y-1 sm:space-y-2">
-              <div className="text-2xl sm:text-3xl font-bold text-emerald-600">50+</div>
-              <div className="text-sm sm:text-base text-slate-600">Community Events</div>
+              <div className="text-2xl sm:text-3xl font-bold text-primary">50+</div>
+              <div className="text-sm sm:text-base text-text/80">Community Events</div>
             </div>
           </div>
         </div>

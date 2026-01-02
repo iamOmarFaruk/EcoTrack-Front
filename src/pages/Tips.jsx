@@ -109,7 +109,7 @@ export default function Tips() {
           />
         </div>
         <div className="text-center py-8">
-          <p className="text-red-600">Error loading tips: {error}</p>
+          <p className="text-danger">Error loading tips: {error}</p>
           <Button 
             onClick={() => window.location.reload()} 
             className="mt-4"
@@ -139,7 +139,7 @@ export default function Tips() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl sm:text-2xl font-semibold">Community Tips</h2>
-            <p className="mt-1 text-sm sm:text-base text-slate-900">Recent community-shared sustainability tips and advice.</p>
+            <p className="mt-1 text-sm sm:text-base text-heading">Recent community-shared sustainability tips and advice.</p>
           </div>
           {user && (
             <Button 
@@ -179,10 +179,10 @@ export default function Tips() {
                 placeholder="Search tips..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                className="w-full px-4 py-2 pl-10 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
               />
               <svg 
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" 
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text/60" 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
@@ -198,8 +198,8 @@ export default function Tips() {
               onClick={() => handleSortChange('createdAt')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 sortBy === 'createdAt'
-                  ? 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-600/20'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-primary/15 text-primary ring-1 ring-primary/20'
+                  : 'bg-muted text-text hover:bg-muted'
               }`}
             >
               Newest
@@ -211,8 +211,8 @@ export default function Tips() {
               onClick={() => handleSortChange('upvoteCount')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 sortBy === 'upvoteCount'
-                  ? 'bg-emerald-100 text-emerald-700 ring-1 ring-emerald-600/20'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-primary/15 text-primary ring-1 ring-primary/20'
+                  : 'bg-muted text-text hover:bg-muted'
               }`}
             >
               Popular
@@ -241,11 +241,11 @@ export default function Tips() {
 
         {tips?.length === 0 && !loading && (
           <div className="text-center py-12">
-            <svg className="mx-auto h-12 w-12 text-slate-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 48 48">
+            <svg className="mx-auto h-12 w-12 text-text/60 mb-4" fill="none" stroke="currentColor" viewBox="0 0 48 48">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h32l-3 18H11L8 12zm0 0l-2-7m14 25v8m0-8l3 3m-3-3l-3 3" />
             </svg>
-            <h3 className="text-lg font-medium text-slate-900 mb-2">No tips shared yet</h3>
-            <p className="text-slate-600 mb-4">Be the first to share an eco-friendly tip with the community!</p>
+            <h3 className="text-lg font-medium text-heading mb-2">No tips shared yet</h3>
+            <p className="text-text/80 mb-4">Be the first to share an eco-friendly tip with the community!</p>
             {user ? (
               <Button onClick={handleAddTip} className="mx-auto">
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

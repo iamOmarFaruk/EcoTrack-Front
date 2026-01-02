@@ -93,20 +93,20 @@ export default function Events() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h2 className="text-xl sm:text-2xl font-semibold">Eco-Friendly Events</h2>
-            <p className="mt-1 text-sm sm:text-base text-slate-600">
+            <p className="mt-1 text-sm sm:text-base text-text/80">
               Discover and participate in eco-friendly events near you
             </p>
           </div>
           <Button
             onClick={handleCreateEvent}
-            className="bg-green-600 hover:bg-green-700 whitespace-nowrap"
+            className="bg-primary hover:bg-primary whitespace-nowrap"
           >
             + Create Event
           </Button>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white p-4 rounded-lg border border-slate-200 space-y-4" style={{ display: 'none' }}>
+        <div className="bg-surface p-4 rounded-lg border border-border space-y-4" style={{ display: 'none' }}>
           {/* Search Bar */}
           <form onSubmit={handleSearch} className="flex gap-2">
             <input
@@ -114,7 +114,7 @@ export default function Events() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search events by title, location, or organizer..."
-              className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="flex-1 px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
             />
             <Button type="submit">Search</Button>
           </form>
@@ -123,14 +123,14 @@ export default function Events() {
           <div className="flex flex-wrap gap-4">
             {/* Status Filter */}
             <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-slate-700">Status:</label>
+              <label className="text-sm font-medium text-text">Status:</label>
               <select
                 value={statusFilter}
                 onChange={(e) => {
                   setStatusFilter(e.target.value)
                   setCurrentPage(1)
                 }}
-                className="px-3 py-1 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="px-3 py-1 border border-border rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent"
               >
                 <option value="all">All</option>
                 <option value="active">Active</option>
@@ -141,14 +141,14 @@ export default function Events() {
 
             {/* Sort By */}
             <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-slate-700">Sort By:</label>
+              <label className="text-sm font-medium text-text">Sort By:</label>
               <select
                 value={sortBy}
                 onChange={(e) => {
                   setSortBy(e.target.value)
                   setCurrentPage(1)
                 }}
-                className="px-3 py-1 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="px-3 py-1 border border-border rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-transparent"
               >
                 <option value="date">Date</option>
                 <option value="createdAt">Recently Added</option>
@@ -162,16 +162,16 @@ export default function Events() {
         {loading ? (
           <EcoLoader />
         ) : events.length === 0 ? (
-          <div className="bg-white rounded-xl p-12 border border-gray-200 shadow-sm text-center">
-            <div className="w-24 h-24 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="bg-surface rounded-xl p-12 border border-border shadow-sm text-center">
+            <div className="w-24 h-24 bg-gradient-to-br from-primary/15 to-primary/15 rounded-full flex items-center justify-center mx-auto mb-6">
               <span className="text-4xl">🌍</span>
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">No events found</h3>
-            <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
+            <h3 className="text-2xl font-bold text-heading mb-4">No events found</h3>
+            <p className="text-lg text-text/80 mb-6 max-w-2xl mx-auto">
               {searchQuery ? 'Try adjusting your search or filters.' : 'Be the first to create an eco-friendly event!'}
             </p>
             {user && (
-              <Button onClick={handleCreateEvent} className="bg-green-600 hover:bg-green-700">
+              <Button onClick={handleCreateEvent} className="bg-primary hover:bg-primary">
                 Create First Event
               </Button>
             )}
@@ -196,7 +196,7 @@ export default function Events() {
                   >
                     Previous
                   </Button>
-                  <span className="px-4 py-2 text-slate-600">
+                  <span className="px-4 py-2 text-text/80">
                     Page {pagination.currentPage} of {pagination.totalPages}
                   </span>
                   <Button
@@ -208,7 +208,7 @@ export default function Events() {
                     Next
                   </Button>
                 </div>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-text/70">
                   Showing {events.length} of {pagination.totalEvents} events
                 </p>
               </div>

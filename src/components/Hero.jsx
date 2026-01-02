@@ -96,18 +96,18 @@ export default function Hero({ slides = [], effect = 'coverflow' }) {
                 loading="lazy"
               />
               {/* Dark overlay + vignette + color wash for readability */}
-              <div className="absolute inset-0 bg-black/35 md:bg-black/45" />
-              <div className="absolute inset-0 bg-gradient-to-tr from-black/70 via-black/30 to-black/0" />
+              <div className="absolute inset-0 bg-dark/35 md:bg-dark/45" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-dark/70 via-dark/30 to-dark/0" />
               <div className="pointer-events-none absolute inset-0 mix-blend-screen">
-                <div className="absolute -left-1/3 top-0 h-[120%] w-[60%] rounded-full bg-emerald-400/20 blur-3xl" />
-                <div className="absolute -right-1/3 bottom-0 h-[120%] w-[60%] rounded-full bg-teal-400/20 blur-3xl" />
+                <div className="absolute -left-1/3 top-0 h-[120%] w-[60%] rounded-full bg-primary/20 blur-3xl" />
+                <div className="absolute -right-1/3 bottom-0 h-[120%] w-[60%] rounded-full bg-secondary/20 blur-3xl" />
               </div>
 
               {/* Content */}
               <div className="relative z-10 mx-auto flex h-full max-w-6xl items-center px-6 md:px-8">
                 <div className="max-w-2xl">
-                  <div className="mb-3 hidden items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/90 ring-1 ring-white/20 backdrop-blur-md md:inline-flex">
-                    <span className="inline-block h-2 w-2 rounded-full bg-emerald-400" />
+                  <div className="mb-3 hidden items-center gap-2 rounded-full bg-surface/10 px-3 py-1 text-xs font-semibold text-surface/90 ring-1 ring-surface/20 backdrop-blur-md md:inline-flex">
+                    <span className="inline-block h-2 w-2 rounded-full bg-primary" />
                     <span>
                       {(() => {
                         const parsedDays = Number.parseInt(item.duration)
@@ -120,11 +120,11 @@ export default function Hero({ slides = [], effect = 'coverflow' }) {
                       })()}
                     </span>
                   </div>
-                  <h1 className="text-balance text-3xl font-extrabold tracking-tight text-white drop-shadow md:text-5xl">
+                  <h1 className="text-balance text-3xl font-extrabold tracking-tight text-surface drop-shadow md:text-5xl">
                     {item.title}
                   </h1>
                   {item.description ? (
-                    <p className="mt-3 max-w-prose text-pretty text-white/90 md:text-lg">
+                    <p className="mt-3 max-w-prose text-pretty text-surface/90 md:text-lg">
                       {item.description}
                     </p>
                   ) : null}

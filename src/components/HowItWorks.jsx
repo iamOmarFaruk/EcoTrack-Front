@@ -26,10 +26,10 @@ export default function HowItWorks() {
   return (
     <section className="space-y-8">
       <div className="text-center space-y-4">
-        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
+        <h2 className="text-2xl sm:text-3xl font-bold text-heading">
           How It Works
         </h2>
-        <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
+        <p className="text-base sm:text-lg text-text/80 max-w-2xl mx-auto">
           Getting started with EcoTrack is simple. Follow these three easy steps to begin your sustainable living journey.
         </p>
       </div>
@@ -41,17 +41,17 @@ export default function HowItWorks() {
             <Card key={step.id} className="h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
               <CardContent className="p-6 text-center space-y-4">
                 {/* Icon */}
-                <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto">
-                  <IconComponent className="w-8 h-8 text-emerald-600" />
+                <div className="w-16 h-16 bg-primary/15 rounded-full flex items-center justify-center mx-auto">
+                  <IconComponent className="w-8 h-8 text-primary" />
                 </div>
 
                 {/* Title */}
-                <h3 className="text-xl font-semibold text-slate-900">
+                <h3 className="text-xl font-semibold text-heading">
                   {step.title}
                 </h3>
 
                 {/* Description */}
-                <p className="text-slate-600 leading-relaxed">
+                <p className="text-text/80 leading-relaxed">
                   {step.description}
                 </p>
               </CardContent>

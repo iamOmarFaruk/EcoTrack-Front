@@ -4,7 +4,30 @@ import typography from '@tailwindcss/typography'
 export default {
   content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
   theme: {
+    borderRadius: {
+      none: '0px',
+      sm: 'calc(var(--radius) - 4px)',
+      DEFAULT: 'var(--radius)',
+      md: 'calc(var(--radius) + 2px)',
+      lg: 'calc(var(--radius) + 4px)',
+      xl: 'calc(var(--radius) + 8px)',
+      '2xl': 'calc(var(--radius) + 12px)',
+      '3xl': 'calc(var(--radius) + 16px)',
+      full: '9999px',
+    },
     extend: {
+      colors: {
+        primary: 'rgb(var(--color-primary) / <alpha-value>)',
+        secondary: 'rgb(var(--color-secondary) / <alpha-value>)',
+        danger: 'rgb(var(--color-danger) / <alpha-value>)',
+        text: 'rgb(var(--color-text) / <alpha-value>)',
+        heading: 'rgb(var(--color-heading) / <alpha-value>)',
+        surface: 'rgb(var(--color-surface) / <alpha-value>)',
+        light: 'rgb(var(--color-bg-light) / <alpha-value>)',
+        muted: 'rgb(var(--color-bg-muted) / <alpha-value>)',
+        dark: 'rgb(var(--color-bg-dark) / <alpha-value>)',
+        border: 'rgb(var(--color-border) / <alpha-value>)',
+      },
       fontFamily: {
         sans: ['"Work Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         heading: ['"Merriweather"', 'ui-serif', 'Georgia', 'serif'],

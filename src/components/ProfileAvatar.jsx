@@ -78,17 +78,17 @@ export default function ProfileAvatar({
           <>
             {imageLoading && (
               <div className={clsx(
-                'absolute inset-0 flex items-center justify-center rounded-full bg-slate-200 animate-pulse',
+                'absolute inset-0 flex items-center justify-center rounded-full bg-muted animate-pulse',
                 currentSize.container
               )}>
-                <div className="h-4 w-4 rounded-full bg-slate-300" />
+                <div className="h-4 w-4 rounded-full bg-border" />
               </div>
             )}
             <img
               src={avatarUrl}
               alt={`${userName}'s profile`}
               className={clsx(
-                'rounded-full object-cover ring-2 ring-white shadow-sm transition-opacity',
+                'rounded-full object-cover ring-2 ring-surface shadow-sm transition-opacity',
                 currentSize.container,
                 imageLoading ? 'opacity-0' : 'opacity-100'
               )}
@@ -99,7 +99,7 @@ export default function ProfileAvatar({
           </>
         ) : shouldShowInitials ? (
           <div className={clsx(
-            'flex items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 font-bold uppercase text-white shadow-sm ring-2 ring-white',
+            'flex items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary font-bold uppercase text-surface shadow-sm ring-2 ring-surface',
             currentSize.container,
             currentSize.text
           )}>
@@ -107,7 +107,7 @@ export default function ProfileAvatar({
           </div>
         ) : (
           <div className={clsx(
-            'flex items-center justify-center rounded-full bg-gradient-to-br from-slate-400 to-slate-500 text-white shadow-sm ring-2 ring-white',
+            'flex items-center justify-center rounded-full bg-gradient-to-br from-muted to-muted text-surface shadow-sm ring-2 ring-surface',
             currentSize.container,
             currentSize.text
           )}>
@@ -125,11 +125,11 @@ export default function ProfileAvatar({
       
       {showName && (
         <div className="min-w-0 flex-1">
-          <p className={clsx('font-medium text-slate-900 truncate', currentSize.nameText)}>
+          <p className={clsx('font-medium text-heading truncate', currentSize.nameText)}>
             {userName}
           </p>
           {userEmail && size !== 'sm' && (
-            <p className="text-xs text-slate-500 truncate">
+            <p className="text-xs text-text/70 truncate">
               {userEmail}
             </p>
           )}

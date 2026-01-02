@@ -54,7 +54,7 @@ export default function Navbar() {
   return (
     <header
       className={clsx(
-        'fixed top-0 left-0 right-0 z-40 w-full border-b bg-white/95 shadow-sm backdrop-blur transition-all duration-300'
+        'fixed top-0 left-0 right-0 z-40 w-full border-b bg-surface/95 shadow-sm backdrop-blur transition-all duration-300'
       )}
     >
       <div
@@ -65,7 +65,7 @@ export default function Navbar() {
       >
         <Link to="/" className="flex items-center gap-2">
           <Logo className="h-7 w-7 sm:h-8 sm:w-8" />
-          <span className={clsx('font-semibold text-slate-900', isScrolled ? 'text-base sm:text-lg' : 'text-lg sm:text-xl')}>
+          <span className={clsx('font-semibold text-heading', isScrolled ? 'text-base sm:text-lg' : 'text-lg sm:text-xl')}>
             EcoTrack
           </span>
         </Link>
@@ -77,8 +77,8 @@ export default function Navbar() {
               to={item.to}
               className={({ isActive }) =>
                 clsx(
-                  'text-base font-bold transition-colors hover:text-emerald-700 link-underline-sweep',
-                  isActive ? 'text-emerald-800 link-underline-sweep--active' : 'text-slate-900'
+                  'text-base font-bold transition-colors hover:text-primary link-underline-sweep',
+                  isActive ? 'text-primary link-underline-sweep--active' : 'text-heading'
                 )
               }
             >
@@ -90,11 +90,11 @@ export default function Navbar() {
         <div className="hidden items-center gap-3 md:flex">
           {loading ? (
             <div className="flex items-center gap-2">
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent"></div>
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
             </div>
           ) : !auth.isLoggedIn ? (
             <>
-              <Link to="/login" className="text-sm text-slate-900 hover:text-emerald-800">Login</Link>
+              <Link to="/login" className="text-sm text-heading hover:text-primary">Login</Link>
               <Button as={Link} to="/register">Register</Button>
             </>
           ) : (
@@ -104,17 +104,17 @@ export default function Navbar() {
                 aria-haspopup="menu"
                 aria-expanded={profileOpen}
                 className={clsx(
-                  'flex items-center gap-2 rounded-md border px-2 py-1.5 transition-colors hover:bg-slate-50',
-                  profileOpen && 'bg-slate-50'
+                  'flex items-center gap-2 rounded-md border px-2 py-1.5 transition-colors hover:bg-light',
+                  profileOpen && 'bg-light'
                 )}
               >
                 <ProfileAvatar user={auth.user} size="md" />
-                <span className="text-sm font-medium text-slate-900">{userName}</span>
+                <span className="text-sm font-medium text-heading">{userName}</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                   fill="currentColor"
-                  className={clsx('h-4 w-4 text-slate-500 transition-transform', profileOpen && 'rotate-180')}
+                  className={clsx('h-4 w-4 text-text/70 transition-transform', profileOpen && 'rotate-180')}
                   aria-hidden="true"
                 >
                   <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.187l3.71-3.955a.75.75 0 111.08 1.04l-4.243 4.52a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z" clipRule="evenodd" />
@@ -123,12 +123,12 @@ export default function Navbar() {
               {profileOpen && (
                 <div
                   role="menu"
-                  className="absolute right-0 mt-2 w-52 overflow-hidden rounded-md border bg-white py-1 shadow-lg"
+                  className="absolute right-0 mt-2 w-52 overflow-hidden rounded-md border bg-surface py-1 shadow-lg"
                 >
                   <Link
                     to="/profile"
                     onClick={() => setProfileOpen(false)}
-                    className="block px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50"
+                    className="block px-3 py-2 text-sm text-heading hover:bg-primary/10"
                     role="menuitem"
                   >
                     Profile
@@ -136,7 +136,7 @@ export default function Navbar() {
                   <Link
                     to="/my-activities"
                     onClick={() => setProfileOpen(false)}
-                    className="block px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50"
+                    className="block px-3 py-2 text-sm text-heading hover:bg-primary/10"
                     role="menuitem"
                   >
                     My Activities
@@ -144,23 +144,23 @@ export default function Navbar() {
                   <Link
                     to="/my-events"
                     onClick={() => setProfileOpen(false)}
-                    className="block px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50"
+                    className="block px-3 py-2 text-sm text-heading hover:bg-primary/10"
                     role="menuitem"
                   >
                     My Events
                   </Link>
-                  <hr className="my-1 border-gray-200" />
+                  <hr className="my-1 border-border" />
                   <Link
                     to="/settings"
                     onClick={() => setProfileOpen(false)}
-                    className="block px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50"
+                    className="block px-3 py-2 text-sm text-heading hover:bg-primary/10"
                     role="menuitem"
                   >
                     Settings
                   </Link>
                   <button
                     onClick={() => { logout(); setProfileOpen(false) }}
-                    className="block w-full px-3 py-2 text-left text-sm text-slate-900 hover:bg-emerald-50"
+                    className="block w-full px-3 py-2 text-left text-sm text-heading hover:bg-primary/10"
                     role="menuitem"
                   >
                     Logout
@@ -181,19 +181,19 @@ export default function Navbar() {
           <div className="relative h-5 w-5" aria-hidden="true">
             <span
               className={clsx(
-                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-slate-900 transition-transform duration-300 ease-out',
+                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-dark transition-transform duration-300 ease-out',
                 open ? 'translate-y-0 rotate-45' : '-translate-y-2 rotate-0'
               )}
             />
             <span
               className={clsx(
-                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-slate-900 transition-all duration-300 ease-out',
+                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-dark transition-all duration-300 ease-out',
                 open ? 'opacity-0 scale-x-0' : 'opacity-100 scale-x-100'
               )}
             />
             <span
               className={clsx(
-                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-slate-900 transition-transform duration-300 ease-out',
+                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-dark transition-transform duration-300 ease-out',
                 open ? 'translate-y-0 -rotate-45' : 'translate-y-2 rotate-0'
               )}
             />
@@ -216,9 +216,9 @@ export default function Navbar() {
               onClick={() => setOpen(false)}
               className={({ isActive }) =>
                 clsx(
-                  'rounded-md px-3 py-2 text-base font-bold transition-colors hover:bg-emerald-50 mobile-menu-item',
+                  'rounded-md px-3 py-2 text-base font-bold transition-colors hover:bg-primary/10 mobile-menu-item',
                   open && 'mobile-menu-item--open',
-                  isActive ? 'text-emerald-800' : 'text-slate-900'
+                  isActive ? 'text-primary' : 'text-heading'
                 )
               }
               style={{ transitionDelay: `${idx * 50}ms` }}
@@ -229,15 +229,15 @@ export default function Navbar() {
           <div className="mt-2 grid gap-1">
             {loading ? (
               <div className="flex items-center justify-center gap-2 py-3">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent"></div>
-                <span className="text-sm text-slate-600">Loading...</span>
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+                <span className="text-sm text-text/80">Loading...</span>
               </div>
             ) : !auth.isLoggedIn ? (
               <>
                 <Link
                   to="/login"
                   onClick={() => setOpen(false)}
-                  className={clsx('rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  className={clsx('rounded-md px-3 py-2 text-sm text-heading hover:bg-primary/10 mobile-menu-item', open && 'mobile-menu-item--open')}
                   style={{ transitionDelay: `${navItems.length * 50}ms` }}
                 >
                   Login
@@ -257,7 +257,7 @@ export default function Navbar() {
                 <Link
                   to="/profile"
                   onClick={() => setOpen(false)}
-                  className={clsx('rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  className={clsx('rounded-md px-3 py-2 text-sm text-heading hover:bg-primary/10 mobile-menu-item', open && 'mobile-menu-item--open')}
                   style={{ transitionDelay: `${navItems.length * 50}ms` }}
                 >
                   Profile
@@ -265,7 +265,7 @@ export default function Navbar() {
                 <Link
                   to="/my-activities"
                   onClick={() => setOpen(false)}
-                  className={clsx('rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  className={clsx('rounded-md px-3 py-2 text-sm text-heading hover:bg-primary/10 mobile-menu-item', open && 'mobile-menu-item--open')}
                   style={{ transitionDelay: `${navItems.length * 50 + 50}ms` }}
                 >
                   My Activities
@@ -273,7 +273,7 @@ export default function Navbar() {
                 <Link
                   to="/my-events"
                   onClick={() => setOpen(false)}
-                  className={clsx('rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  className={clsx('rounded-md px-3 py-2 text-sm text-heading hover:bg-primary/10 mobile-menu-item', open && 'mobile-menu-item--open')}
                   style={{ transitionDelay: `${navItems.length * 50 + 100}ms` }}
                 >
                   My Events
@@ -281,14 +281,14 @@ export default function Navbar() {
                 <Link
                   to="/settings"
                   onClick={() => setOpen(false)}
-                  className={clsx('rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  className={clsx('rounded-md px-3 py-2 text-sm text-heading hover:bg-primary/10 mobile-menu-item', open && 'mobile-menu-item--open')}
                   style={{ transitionDelay: `${navItems.length * 50 + 150}ms` }}
                 >
                   Settings
                 </Link>
                 <button
                   onClick={() => { logout(); setOpen(false) }}
-                  className={clsx('rounded-md px-3 py-2 text-left text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  className={clsx('rounded-md px-3 py-2 text-left text-sm text-heading hover:bg-primary/10 mobile-menu-item', open && 'mobile-menu-item--open')}
                   style={{ transitionDelay: `${navItems.length * 50 + 150}ms` }}
                 >
                   Logout

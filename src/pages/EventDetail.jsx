@@ -183,7 +183,7 @@ export default function EventDetail() {
           <Card>
             <CardContent className="space-y-4">
               <h2 className="text-2xl font-semibold">About This Event</h2>
-              <p className="text-slate-700 leading-relaxed">
+              <p className="text-text leading-relaxed">
                 {event.detailedDescription}
               </p>
             </CardContent>
@@ -193,8 +193,8 @@ export default function EventDetail() {
           <div className="grid gap-6 md:grid-cols-2">
             <Card>
               <CardContent className="space-y-3">
-                <h3 className="text-lg font-semibold text-slate-900">Requirements</h3>
-                <p className="text-sm text-slate-700">
+                <h3 className="text-lg font-semibold text-heading">Requirements</h3>
+                <p className="text-sm text-text">
                   {event.requirements}
                 </p>
               </CardContent>
@@ -202,8 +202,8 @@ export default function EventDetail() {
 
             <Card>
               <CardContent className="space-y-3">
-                <h3 className="text-lg font-semibold text-slate-900">What You'll Get</h3>
-                <p className="text-sm text-slate-700">
+                <h3 className="text-lg font-semibold text-heading">What You'll Get</h3>
+                <p className="text-sm text-text">
                   {event.benefits}
                 </p>
               </CardContent>
@@ -215,11 +215,11 @@ export default function EventDetail() {
         <div className="space-y-6">
           {/* Join Event Card or Creator Controls */}
           {isCreator ? (
-            <Card className="border-green-200 bg-green-50">
+            <Card className="border-primary bg-primary/10">
               <CardContent className="space-y-4">
                 <div className="text-center">
-                  <h3 className="text-lg font-semibold text-green-900">Event Management</h3>
-                  <p className="text-sm text-green-700 mt-1">
+                  <h3 className="text-lg font-semibold text-primary">Event Management</h3>
+                  <p className="text-sm text-primary mt-1">
                     You are the organizer of this event
                   </p>
                 </div>
@@ -227,32 +227,32 @@ export default function EventDetail() {
                 {/* Capacity Progress */}
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-600">Participants</span>
+                    <span className="text-text/80">Participants</span>
                     <span className="font-medium">
                       {event.registeredParticipants} / {event.capacity}
                     </span>
                   </div>
-                  <div className="w-full bg-green-200 rounded-full h-2">
+                  <div className="w-full bg-primary/20 rounded-full h-2">
                     <div 
-                      className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                      className="bg-primary h-2 rounded-full transition-all duration-300"
                       style={{ width: `${progressPercentage}%` }}
                     ></div>
                   </div>
-                  <p className="text-xs text-green-600 text-center">
+                  <p className="text-xs text-primary text-center">
                     {spotsRemaining} spots remaining
                   </p>
                 </div>
 
                 <div className="space-y-2">
                   <Button 
-                    className="w-full bg-green-600 hover:bg-green-700" 
+                    className="w-full bg-primary hover:bg-primary" 
                     onClick={handleEditEvent}
                   >
                     Edit Event
                   </Button>
                   <Button 
                     variant="danger"
-                    className="w-full bg-red-600 hover:bg-red-700 text-white" 
+                    className="w-full bg-danger hover:bg-danger text-surface" 
                     onClick={handleDeleteEvent}
                     disabled={isDeleting}
                   >
@@ -262,13 +262,13 @@ export default function EventDetail() {
               </CardContent>
             </Card>
           ) : (
-            <Card className="border-green-200 bg-green-50">
+            <Card className="border-primary bg-primary/10">
               <CardContent className="space-y-4">
                 <div className="text-center">
-                  <h3 className="text-lg font-semibold text-green-900">
+                  <h3 className="text-lg font-semibold text-primary">
                     {isJoined ? 'You\'re Registered!' : 'Join This Event'}
                   </h3>
-                  <p className="text-sm text-green-700 mt-1">
+                  <p className="text-sm text-primary mt-1">
                     {isJoined ? 'See you at the event!' : 'Be part of the change in your community'}
                   </p>
                 </div>
@@ -277,12 +277,12 @@ export default function EventDetail() {
                 {(isCancelled || isPast) && (
                   <div className="text-center">
                     {isCancelled && (
-                      <span className="inline-block px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
+                      <span className="inline-block px-3 py-1 bg-danger/15 text-danger rounded-full text-sm font-medium">
                         Event Cancelled
                       </span>
                     )}
                     {isPast && !isCancelled && (
-                      <span className="inline-block px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
+                      <span className="inline-block px-3 py-1 bg-muted text-text rounded-full text-sm font-medium">
                         Event Ended
                       </span>
                     )}
@@ -292,18 +292,18 @@ export default function EventDetail() {
                 {/* Capacity Progress */}
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-600">Participants</span>
+                    <span className="text-text/80">Participants</span>
                     <span className="font-medium">
                       {event.registeredParticipants} / {event.capacity}
                     </span>
                   </div>
-                  <div className="w-full bg-green-200 rounded-full h-2">
+                  <div className="w-full bg-primary/20 rounded-full h-2">
                     <div 
-                      className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                      className="bg-primary h-2 rounded-full transition-all duration-300"
                       style={{ width: `${progressPercentage}%` }}
                     ></div>
                   </div>
-                  <p className="text-xs text-green-600 text-center">
+                  <p className="text-xs text-primary text-center">
                     {spotsRemaining} spots remaining
                   </p>
                 </div>
@@ -319,7 +319,7 @@ export default function EventDetail() {
                   </Button>
                 ) : (
                   <Button 
-                    className="w-full bg-green-600 hover:bg-green-700" 
+                    className="w-full bg-primary hover:bg-primary" 
                     onClick={handleJoinEvent}
                     disabled={isFull || isCancelled || isPast || isJoining}
                   >
@@ -337,22 +337,22 @@ export default function EventDetail() {
               
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-slate-600">Date</span>
+                  <span className="text-text/80">Date</span>
                   <span className="font-medium">{formatDate(event.date)}</span>
                 </div>
                 
                 <div className="flex justify-between">
-                  <span className="text-slate-600">Location</span>
+                  <span className="text-text/80">Location</span>
                   <span className="font-medium">{event.location}</span>
                 </div>
                 
                 <div className="flex justify-between">
-                  <span className="text-slate-600">Duration</span>
+                  <span className="text-text/80">Duration</span>
                   <span className="font-medium">{event.duration}</span>
                 </div>
                 
                 <div className="flex justify-between">
-                  <span className="text-slate-600">Organizer</span>
+                  <span className="text-text/80">Organizer</span>
                   <span className="font-medium">{event.organizer}</span>
                 </div>
               </div>

@@ -6,11 +6,21 @@
 
 @layer base {
   :root {
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+    --color-primary: 5 150 105; /* #059669 */
+    --color-secondary: 15 118 110; /* #0f766e */
+    --color-danger: 185 28 28; /* #b91c1c */
+    --color-text: 30 41 59; /* #1f2937 */
+    --color-heading: 15 23 42; /* #0f172a */
+    --color-surface: 255 255 255; /* #ffffff */
+    --color-bg-light: 248 250 252; /* #f8fafc */
+    --color-bg-muted: 241 245 249; /* #f1f5f9 */
+    --color-bg-dark: 15 23 42; /* #0f172a */
+    --color-border: 226 232 240; /* #e2e8f0 */
   }
   /* Consistent vertical rhythm for all sections */
   section {
-    @apply py-6 md:py-8;
+    @apply py-8 md:py-12;
   }
   html {
     /* Reserve space for the vertical scrollbar to prevent layout shift
@@ -30,30 +40,32 @@
   }
   html::-webkit-scrollbar-track,
   body::-webkit-scrollbar-track {
-    background: #e5f5ef; /* light emerald-tinted track */
+    background: rgb(var(--color-bg-muted));
   }
   html::-webkit-scrollbar-thumb,
   body::-webkit-scrollbar-thumb {
-    background: #047857; /* custom EcoTrack green */
+    background: rgb(var(--color-primary));
     border-radius: 999px;
-    border: 2px solid #e5f5ef; /* gives a pill effect */
+    border: 2px solid rgb(var(--color-bg-muted)); /* gives a pill effect */
   }
   html::-webkit-scrollbar-thumb:hover,
   body::-webkit-scrollbar-thumb:hover {
-    background: #065f46; /* darker shade on hover */
+    background: rgb(var(--color-primary) / 0.85);
   }
 
   /* Firefox scrollbar styling */
   html,
   body {
     scrollbar-width: thin;
-    scrollbar-color: #047857 #e5f5ef; /* thumb track */
+    scrollbar-color: rgb(var(--color-primary)) rgb(var(--color-bg-muted)); /* thumb track */
   }
   #root {
     min-height: 100vh;
   }
   body {
-    @apply bg-white text-slate-900 antialiased font-sans;
+    @apply antialiased font-sans;
+    background-color: rgb(var(--color-bg-light));
+    color: rgb(var(--color-text));
     box-sizing: border-box;
     overflow-x: hidden; /* avoid horizontal scrollbars from full-bleed/3D effects */
     /* Improve mobile touch scrolling */
@@ -68,6 +80,7 @@
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: "Merriweather", ui-serif, Georgia, serif;
+    color: rgb(var(--color-heading));
   }
 }
 
@@ -207,8 +220,8 @@
     opacity: 1;
   }
   .hero-swiper .swiper-pagination-bullet-active {
-    background: #10b981; /* emerald-500 */
-    border-color: #ffffff;
+    background: rgb(var(--color-primary));
+    border-color: rgb(var(--color-surface));
   }
   /* Remove default section padding for the full-bleed hero */
   .hero-swiper {

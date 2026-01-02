@@ -26,10 +26,10 @@ export default function EventCard({ event }) {
       )}
       <CardContent className="flex h-full flex-col">
         <h3 className="text-base font-semibold">{event.title}</h3>
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="mt-1 text-xs text-text/70">
           {formatDate(event.date)} • {event.location}
         </p>
-        <p className="mt-2 line-clamp-3 text-sm text-slate-900">{event.description}</p>
+        <p className="mt-2 line-clamp-3 text-sm text-heading">{event.description}</p>
         <Button
           className="mt-4 h-9 self-start"
           onClick={handleViewDetails}
