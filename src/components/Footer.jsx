@@ -1,15 +1,15 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { SiGithub, SiX, SiInstagram, SiLinkedin } from 'react-icons/si'
-import { RiMailLine, RiSendPlaneFill, RiMapPinLine, RiPhoneLine } from 'react-icons/ri'
+import { RiMailLine, RiSendPlaneFill, RiMapPinLine, RiPhoneLine, RiPlantLine, RiLightbulbLine, RiCalendarEventLine, RiTeamLine } from 'react-icons/ri'
 import Logo from './Logo.jsx'
 
 const footerLinks = {
   explore: [
-    { label: 'Challenges', path: '/challenges' },
-    { label: 'Impact Tips', path: '/tips' },
-    { label: 'Local Events', path: '/events' },
-    { label: 'Community', path: '/community' },
+    { label: 'Challenges', path: '/challenges', icon: RiPlantLine },
+    { label: 'Impact Tips', path: '/tips', icon: RiLightbulbLine },
+    { label: 'Local Events', path: '/events', icon: RiCalendarEventLine },
+    { label: 'Community', path: '/community', icon: RiTeamLine },
   ],
   resources: [
     { label: 'About Us', path: '/about' },
@@ -95,10 +95,10 @@ export default function Footer() {
                 <li key={index}>
                   <Link
                     to={link.path}
-                    className="text-sm transition-colors hover:text-white flex items-center group"
+                    className="flex items-center gap-2 text-sm transition-colors hover:text-white group"
                   >
-                    <span className="w-0 overflow-hidden group-hover:w-4 transition-all duration-300 text-primary">→</span>
-                    <span className="link-underline-sweep">{link.label}</span>
+                    <link.icon className="text-primary shrink-0" size={18} />
+                    <span>{link.label}</span>
                   </Link>
                 </li>
               ))}
