@@ -230,31 +230,33 @@ export default function Home() {
         </motion.div>
       </section>
 
-      <section>
-        <SectionHeading
-          badge="Events"
-          title="Upcoming Events"
-          subtitle="Join the community"
-        />
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.1 }}
-          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
-        >
-          {loadingEvents && Array.from({ length: 4 }).map((_, i) => (
-            <EventCardSkeleton key={i} />
-          ))}
-          {!loadingEvents && events?.map((e, i) => (
-            <motion.div key={e._id || e.id || i} variants={itemVariants}>
-              <LazyEventCard event={e} />
-            </motion.div>
-          ))}
-        </motion.div>
-      </section>
+      <div className="full-bleed bg-primary/5 py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeading
+            badge="Events"
+            title="Upcoming Events"
+            subtitle="Join the community"
+          />
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.1 }}
+            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+          >
+            {loadingEvents && Array.from({ length: 4 }).map((_, i) => (
+              <EventCardSkeleton key={i} />
+            ))}
+            {!loadingEvents && events?.map((e, i) => (
+              <motion.div key={e._id || e.id || i} variants={itemVariants}>
+                <LazyEventCard event={e} />
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </div>
 
-      <div className="full-bleed bg-surface py-16 sm:py-24">
+      <div className="full-bleed bg-surface pt-16 sm:pt-24 pb-0 !mt-0">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <section className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center" ref={setWhyGoGreenRef}>
             {/* Left Image */}
