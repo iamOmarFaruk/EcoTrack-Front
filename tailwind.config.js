@@ -6,7 +6,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Nunito"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['"Work Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        heading: ['"Merriweather"', 'ui-serif', 'Georgia', 'serif'],
       },
       container: {
         center: true,
@@ -56,4 +57,3 @@ export default {
   },
   plugins: [typography],
 }
-
