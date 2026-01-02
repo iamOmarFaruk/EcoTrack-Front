@@ -164,14 +164,6 @@ export default function Hero({ slides = [], effect = 'fade' }) {
                       >
                         View Challenge
                       </Button>
-                      <Button
-                        as={Link}
-                        to="/challenges"
-                        variant="secondary"
-                        className="bg-white/10 !px-8 !py-4 text-lg text-white hover:bg-white/20"
-                      >
-                        Browse All
-                      </Button>
                     </motion.div>
                   </motion.div>
                 </div>
