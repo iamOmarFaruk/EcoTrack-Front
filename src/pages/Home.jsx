@@ -9,6 +9,9 @@ import EcoLoader from '../components/EcoLoader.jsx'
 import CommunityStats from '../components/CommunityStats.jsx'
 import LazySection from '../components/LazySection.jsx'
 import HowItWorks from '../components/HowItWorks.jsx'
+import Testimonials from '../components/Testimonials.jsx'
+import FAQ from '../components/FAQ.jsx'
+import CTA from '../components/CTA.jsx'
 import Button from '../components/ui/Button.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver.js'
@@ -311,6 +314,12 @@ export default function Home() {
       </section>
 
       <HowItWorks />
+
+      <Testimonials />
+
+      <FAQ />
+
+      <CTA />
 
       {/* Tip Modal */}
       <TipModal
