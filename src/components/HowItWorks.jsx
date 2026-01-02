@@ -1,6 +1,8 @@
 import { Card, CardContent } from './ui/Card.jsx'
 import { FiTarget, FiTrendingUp, FiMessageCircle } from 'react-icons/fi'
 import SectionHeading from './SectionHeading.jsx'
+import { motion } from 'framer-motion'
+import { containerVariants, itemVariants } from '../utils/animations'
 
 export default function HowItWorks() {
   const steps = [
@@ -33,31 +35,43 @@ export default function HowItWorks() {
         centered={true}
       />
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.2 }}
+        className="grid gap-6 md:grid-cols-3"
+      >
         {steps.map((step) => {
           const IconComponent = step.icon
           return (
-            <Card key={step.id} className="h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-              <CardContent className="p-6 text-center space-y-4">
-                {/* Icon */}
-                <div className="w-16 h-16 bg-primary/15 rounded-full flex items-center justify-center mx-auto">
-                  <IconComponent className="w-8 h-8 text-primary" />
-                </div>
+            <motion.div
+              key={step.id}
+              variants={itemVariants}
+              className="h-full"
+            >
+              <Card className="h-full border-none shadow-none bg-surface/50 backdrop-blur-sm">
+                <CardContent className="p-10 text-center space-y-6">
+                  {/* Icon */}
+                  <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto transition-colors duration-300">
+                    <IconComponent className="w-10 h-10 text-primary" />
+                  </div>
 
-                {/* Title */}
-                <h3 className="text-xl font-heading font-semibold text-heading">
-                  {step.title}
-                </h3>
+                  {/* Title */}
+                  <h3 className="text-2xl font-heading font-bold text-heading">
+                    {step.title}
+                  </h3>
 
-                {/* Description */}
-                <p className="text-text/80 leading-relaxed">
-                  {step.description}
-                </p>
-              </CardContent>
-            </Card>
+                  {/* Description */}
+                  <p className="text-text/75 leading-relaxed text-lg">
+                    {step.description}
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
           )
         })}
-      </div>
+      </motion.div>
     </section>
   )
 }
