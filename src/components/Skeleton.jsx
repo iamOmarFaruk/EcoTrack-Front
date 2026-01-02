@@ -113,3 +113,43 @@ export function CommunityStatsCardSkeleton() {
 }
 
 
+// Hero Skeleton
+export function HeroSkeleton() {
+  return (
+    <div className="relative h-[500px] w-full overflow-hidden bg-muted/30 flex items-center justify-center">
+      {/* Subtle background pulse */}
+      <div className="absolute inset-0 bg-gradient-to-r from-muted/50 to-muted/20 animate-pulse"></div>
+
+      <div className="container relative z-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="max-w-2xl space-y-6">
+          {/* Badge skeleton */}
+          <Skeleton className="h-6 w-32 rounded-full mb-4" />
+
+          {/* Title skeletons */}
+          <div className="space-y-3">
+            <Skeleton className="h-12 w-full max-w-md sm:h-16" />
+            <Skeleton className="h-12 w-3/4 max-w-sm sm:h-16" />
+          </div>
+
+          {/* Subtitle skeletons */}
+          <div className="space-y-2 mt-6">
+            <Skeleton className="h-4 w-full max-w-lg" />
+            <Skeleton className="h-4 w-5/6 max-w-md" />
+          </div>
+
+          {/* Button skeleton */}
+          <div className="pt-4">
+            <Skeleton className="h-12 w-44 rounded-[5px]" />
+          </div>
+        </div>
+      </div>
+
+      {/* Slide indicator skeletons */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-12 flex gap-2">
+        <Skeleton className="h-2 w-2 rounded-full" />
+        <Skeleton className="h-2 w-2 rounded-full opacity-50" />
+        <Skeleton className="h-2 w-2 rounded-full opacity-30" />
+      </div>
+    </div>
+  )
+}
