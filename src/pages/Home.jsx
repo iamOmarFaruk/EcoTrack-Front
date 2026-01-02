@@ -400,7 +400,7 @@ export default function Home() {
               <svg className="w-16 h-16 mx-auto mb-4 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <h2 className="text-3xl font-bold mb-2">No Featured Challenges Available</h2>
+              <h2 className="text-3xl font-heading font-bold mb-2">No Featured Challenges Available</h2>
               <p className="text-lg text-surface/90 mb-6">Check back soon for exciting eco-friendly challenges!</p>
               <Button as={Link} to="/challenges" variant="secondary">
                 Browse All Challenges
@@ -492,7 +492,7 @@ export default function Home() {
         
         {/* Content */}
         <div className="order-2 space-y-4 sm:space-y-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-heading">
+          <h2 className="text-2xl sm:text-3xl font-heading font-bold text-heading">
             Why Go Green?
           </h2>
           <p className="text-base sm:text-lg leading-relaxed text-text/80">

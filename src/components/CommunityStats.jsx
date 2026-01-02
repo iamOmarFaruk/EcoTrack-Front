@@ -213,7 +213,7 @@ export default function CommunityStats() {
                   </div>
                   <div className="min-w-0">
                     <p className="text-xs text-text/70">{item.label}</p>
-                    <p className="truncate text-xl font-extrabold tracking-tight text-heading">
+                    <p className="truncate text-xl font-heading font-extrabold tracking-tight text-heading">
                       <AnimatedNumber value={item.value} isActive={inView} />{' '}
                       <span className="text-xs font-semibold text-text/70 align-middle">{item.unit}</span>
                     </p>

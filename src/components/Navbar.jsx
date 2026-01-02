@@ -65,7 +65,7 @@ export default function Navbar() {
       >
         <Link to="/" className="flex items-center gap-2">
           <Logo className="h-7 w-7 sm:h-8 sm:w-8" />
-          <span className={clsx('font-semibold text-heading', isScrolled ? 'text-base sm:text-lg' : 'text-lg sm:text-xl')}>
+          <span className={clsx('font-heading font-bold text-heading', isScrolled ? 'text-base sm:text-lg' : 'text-lg sm:text-xl')}>
             EcoTrack
           </span>
         </Link>
@@ -77,7 +77,7 @@ export default function Navbar() {
               to={item.to}
               className={({ isActive }) =>
                 clsx(
-                  'text-base font-bold transition-colors hover:text-primary link-underline-sweep',
+                  'text-base font-heading font-semibold transition-colors hover:text-primary link-underline-sweep',
                   isActive ? 'text-primary link-underline-sweep--active' : 'text-heading'
                 )
               }
@@ -216,7 +216,7 @@ export default function Navbar() {
               onClick={() => setOpen(false)}
               className={({ isActive }) =>
                 clsx(
-                  'rounded-md px-3 py-2 text-base font-bold transition-colors hover:bg-primary/10 mobile-menu-item',
+                  'rounded-md px-3 py-2 text-base font-heading font-semibold transition-colors hover:bg-primary/10 mobile-menu-item',
                   open && 'mobile-menu-item--open',
                   isActive ? 'text-primary' : 'text-heading'
                 )

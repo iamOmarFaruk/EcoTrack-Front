@@ -1,5 +1,15 @@
 import typography from '@tailwindcss/typography'
 
+// Helper function for CSS variable-based colors with alpha support
+const withOpacity = (variableName) => {
+  return ({ opacityValue }) => {
+    if (opacityValue !== undefined) {
+      return `rgb(var(${variableName}) / ${opacityValue})`
+    }
+    return `rgb(var(${variableName}))`
+  }
+}
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
@@ -17,20 +27,41 @@ export default {
     },
     extend: {
       colors: {
-        primary: 'rgb(var(--color-primary) / <alpha-value>)',
-        secondary: 'rgb(var(--color-secondary) / <alpha-value>)',
-        danger: 'rgb(var(--color-danger) / <alpha-value>)',
-        text: 'rgb(var(--color-text) / <alpha-value>)',
-        heading: 'rgb(var(--color-heading) / <alpha-value>)',
-        surface: 'rgb(var(--color-surface) / <alpha-value>)',
-        light: 'rgb(var(--color-bg-light) / <alpha-value>)',
-        muted: 'rgb(var(--color-bg-muted) / <alpha-value>)',
-        dark: 'rgb(var(--color-bg-dark) / <alpha-value>)',
-        border: 'rgb(var(--color-border) / <alpha-value>)',
+        primary: {
+          DEFAULT: withOpacity('--color-primary'),
+          darker: withOpacity('--color-primary-darker'),
+        },
+        secondary: {
+          DEFAULT: withOpacity('--color-secondary'),
+        },
+        danger: {
+          DEFAULT: withOpacity('--color-danger'),
+        },
+        text: {
+          DEFAULT: withOpacity('--color-text'),
+        },
+        heading: {
+          DEFAULT: withOpacity('--color-heading'),
+        },
+        surface: {
+          DEFAULT: withOpacity('--color-surface'),
+        },
+        light: {
+          DEFAULT: withOpacity('--color-bg-light'),
+        },
+        muted: {
+          DEFAULT: withOpacity('--color-bg-muted'),
+        },
+        dark: {
+          DEFAULT: withOpacity('--color-bg-dark'),
+        },
+        border: {
+          DEFAULT: withOpacity('--color-border'),
+        },
       },
       fontFamily: {
-        sans: ['"Work Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        heading: ['"Merriweather"', 'ui-serif', 'Georgia', 'serif'],
+        sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        heading: ['"Poppins"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       container: {
         center: true,

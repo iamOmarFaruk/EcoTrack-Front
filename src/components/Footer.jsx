@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             <Logo className="h-8 w-8 sm:h-9 sm:w-9" />
-            <span className="text-base sm:text-lg font-semibold tracking-tight">EcoTrack</span>
+            <span className="text-base sm:text-lg font-heading font-bold tracking-tight">EcoTrack</span>
           </div>
           <p className="text-sm text-surface/90">
             Track eco habits, join challenges, and grow a greener community.
@@ -22,7 +22,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="space-y-3">
-          <p className="text-sm font-bold text-surface/90">Quick links</p>
+          <p className="text-sm font-heading font-bold text-surface/90">Quick links</p>
           <nav className="grid gap-1 text-sm">
             <Link to="/" className="text-surface/90 hover:text-surface hover:underline underline-offset-4 transition-colors">Home</Link>
             <Link to="/challenges" className="text-surface/90 hover:text-surface hover:underline underline-offset-4 transition-colors">Challenges</Link>
@@ -33,7 +33,7 @@ export default function Footer() {
           </nav>
         </div>
         <div className="space-y-3">
-          <p className="text-sm font-bold text-surface/90">Legal notice</p>
+          <p className="text-sm font-heading font-bold text-surface/90">Legal notice</p>
           <div className="text-xs sm:text-sm text-surface/90">
             <p>We use essential session cookies to operate EcoTrack. Consent resets when you close your browser. No personal data is stored or sold.</p>
           </div>

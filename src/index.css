@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Work+Sans:wght@400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,6 +6,7 @@
   :root {
     --radius: 0.75rem;
     --color-primary: 5 150 105; /* #059669 */
+    --color-primary-darker: 4 120 84; /* A darker shade of #059669 for hover */
     --color-secondary: 15 118 110; /* #0f766e */
     --color-danger: 185 28 28; /* #b91c1c */
     --color-text: 30 41 59; /* #1f2937 */
@@ -79,8 +78,9 @@
     box-sizing: border-box;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: "Merriweather", ui-serif, Georgia, serif;
+    font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
     color: rgb(var(--color-heading));
+    font-weight: 700;
   }
 }
 

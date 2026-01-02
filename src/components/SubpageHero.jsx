@@ -53,7 +53,7 @@ export default function SubpageHero({
         <div className="container px-6 md:px-8">
           <div className="max-w-2xl">
             {title && (
-              <h1 className="text-3xl font-bold tracking-tight text-surface sm:text-4xl md:text-5xl">
+              <h1 className="text-3xl font-heading font-bold tracking-tight text-surface sm:text-4xl md:text-5xl">
                 {title}
               </h1>
             )}

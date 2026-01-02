@@ -26,7 +26,7 @@ export default function HowItWorks() {
   return (
     <section className="space-y-8">
       <div className="text-center space-y-4">
-        <h2 className="text-2xl sm:text-3xl font-bold text-heading">
+        <h2 className="text-2xl sm:text-3xl font-heading font-bold text-heading">
           How It Works
         </h2>
         <p className="text-base sm:text-lg text-text/80 max-w-2xl mx-auto">
@@ -46,7 +46,7 @@ export default function HowItWorks() {
                 </div>
 
                 {/* Title */}
-                <h3 className="text-xl font-semibold text-heading">
+                <h3 className="text-xl font-heading font-semibold text-heading">
                   {step.title}
                 </h3>
 

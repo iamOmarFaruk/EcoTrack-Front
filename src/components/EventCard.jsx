@@ -25,7 +25,7 @@ export default function EventCard({ event }) {
         </div>
       )}
       <CardContent className="flex h-full flex-col">
-        <h3 className="text-base font-semibold">{event.title}</h3>
+        <h3 className="text-base font-heading font-semibold">{event.title}</h3>
         <p className="mt-1 text-xs text-text/70">
           {formatDate(event.date)} • {event.location}
         </p>
