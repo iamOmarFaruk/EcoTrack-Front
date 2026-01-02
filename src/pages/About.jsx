@@ -1,17 +1,10 @@
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
-import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
 import { Link } from 'react-router-dom'
-import EcoLoader from '../components/EcoLoader.jsx'
 import Button from '../components/ui/Button.jsx'
 import SectionHeading from '../components/SectionHeading.jsx'
 
 export default function About() {
   useDocumentTitle('About')
-  const isLoading = useMinimumLoading(300)
-
-  if (isLoading) {
-    return <EcoLoader />
-  }
 
   return (
     <div className="space-y-12 sm:space-y-16 pb-8">

@@ -1,27 +1,56 @@
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useAuth } from '../context/AuthContext.jsx'
-import { useUserTips } from '../hooks/useUserTips.js'
 import LazyTipCard from '../components/LazyTipCard.jsx'
 import TipModal from '../components/TipModal.jsx'
 import LoginModal from '../components/LoginModal.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import SubpageHero from '../components/SubpageHero.jsx'
 import Button from '../components/ui/Button.jsx'
-import { useState, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { showDeleteConfirmation, showError } from '../utils/toast.jsx'
+import { useTips, useTipMutations } from '../hooks/queries'
 
 export default function Tips() {
   useDocumentTitle('Recent Tips')
   const { user } = useAuth()
-  const { tips, loading, error, pagination, fetchTips, addTip, updateTip, deleteTip, upvoteTip, canModifyTip } = useUserTips()
+
+  // Local state for UI
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingTip, setEditingTip] = useState(null)
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+
+  // Local state for filters
   const [sortBy, setSortBy] = useState('createdAt')
   const [order, setOrder] = useState('desc')
   const [searchQuery, setSearchQuery] = useState('')
-  
+  const [currentPage, setCurrentPage] = useState(1)
+
+  // Memoize filters for React Query
+  const filters = useMemo(() => {
+    const params = {
+      page: currentPage,
+      limit: 20,
+      sortBy,
+      order
+    }
+    if (searchQuery) params.search = searchQuery
+    return params
+  }, [currentPage, sortBy, order, searchQuery])
+
+  // React Query Hooks
+  const {
+    data: tips = [],
+    isLoading: loading,
+    error
+  } = useTips(filters)
+
+  const { createTip, updateTip, deleteTip, upvoteTip } = useTipMutations()
+
   const handleAddTip = () => {
+    if (!user) {
+      setIsLoginModalOpen(true)
+      return
+    }
     setEditingTip(null)
     setIsModalOpen(true)
   }
@@ -31,67 +60,58 @@ export default function Tips() {
     setIsModalOpen(true)
   }
 
-  const handleDeleteTip = async (tipId) => {
+  const handleDeleteTip = (tipId) => {
     showDeleteConfirmation({
       itemName: 'Tip',
-      onConfirm: async () => {
-        await deleteTip(tipId)
-      }
+      onConfirm: () => deleteTip.mutate(tipId)
     })
   }
 
   const handleSubmitTip = async (tipData) => {
     try {
       if (editingTip) {
-        await updateTip(editingTip.id, tipData)
+        await updateTip.mutateAsync({ id: editingTip.id, data: tipData })
       } else {
-        await addTip(tipData)
+        await createTip.mutateAsync(tipData)
       }
       setIsModalOpen(false)
       setEditingTip(null)
     } catch (error) {
-      throw error
+      console.error(error)
+      // Error handled by mutation hook or toast
     }
   }
 
-  const handleUpvote = async (tipId) => {
-    try {
-      await upvoteTip(tipId)
-    } catch (error) {
-      showError('Failed to upvote tip: ' + error.message)
-    }
+  const handleUpvote = (tipId) => {
+    upvoteTip.mutate(tipId)
   }
 
   const handleLoginRequired = () => {
     setIsLoginModalOpen(true)
   }
 
-  // Handle sort change
   const handleSortChange = (newSortBy) => {
     if (sortBy === newSortBy) {
-      // Toggle order if clicking the same sort option
       setOrder(order === 'desc' ? 'asc' : 'desc')
     } else {
       setSortBy(newSortBy)
       setOrder('desc')
     }
+    setCurrentPage(1)
   }
 
-  // Handle search with debounce effect
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      fetchTips({ 
-        sortBy, 
-        order, 
-        search: searchQuery,
-        page: 1,
-        limit: 20
-      })
-    }, 300)
+  // Check if user can edit/delete a tip
+  const canModifyTip = (tip) => {
+    if (!user) return false
+    return (
+      tip.authorId === user.uid ||
+      tip.author?.uid === user.uid ||
+      tip.author?.id === user.uid ||
+      tip.author === user.uid ||
+      tip.firebaseId === user.uid
+    )
+  }
 
-    return () => clearTimeout(delayDebounceFn)
-  }, [sortBy, order, searchQuery])
-  
   if (loading && tips.length === 0) {
     return <EcoLoader />
   }
@@ -109,12 +129,12 @@ export default function Tips() {
           />
         </div>
         <div className="text-center py-8">
-          <p className="text-danger">Error loading tips: {error}</p>
-          <Button 
-            onClick={() => window.location.reload()} 
+          <p className="text-danger">Error loading tips. Please try again.</p>
+          <Button
+            onClick={() => window.location.reload()}
             className="mt-4"
           >
-            Try Again
+            Refresh
           </Button>
         </div>
       </div>
@@ -142,7 +162,7 @@ export default function Tips() {
             <p className="mt-1 text-sm sm:text-base text-heading">Recent community-shared sustainability tips and advice.</p>
           </div>
           {user && (
-            <Button 
+            <Button
               onClick={handleAddTip}
               className="hidden sm:flex items-center gap-2"
             >
@@ -157,7 +177,7 @@ export default function Tips() {
         {/* Mobile Add Button */}
         {user && (
           <div className="sm:hidden">
-            <Button 
+            <Button
               onClick={handleAddTip}
               className="w-full flex items-center justify-center gap-2"
             >
@@ -181,10 +201,10 @@ export default function Tips() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full px-4 py-2 pl-10 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
               />
-              <svg 
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text/60" 
-                fill="none" 
-                stroke="currentColor" 
+              <svg
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text/60"
+                fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -196,11 +216,10 @@ export default function Tips() {
           <div className="flex gap-2">
             <button
               onClick={() => handleSortChange('createdAt')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                sortBy === 'createdAt'
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${sortBy === 'createdAt'
                   ? 'bg-primary/15 text-primary ring-1 ring-primary/20'
                   : 'bg-muted text-text hover:bg-muted'
-              }`}
+                }`}
             >
               Newest
               {sortBy === 'createdAt' && (
@@ -209,11 +228,10 @@ export default function Tips() {
             </button>
             <button
               onClick={() => handleSortChange('upvoteCount')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                sortBy === 'upvoteCount'
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${sortBy === 'upvoteCount'
                   ? 'bg-primary/15 text-primary ring-1 ring-primary/20'
                   : 'bg-muted text-text hover:bg-muted'
-              }`}
+                }`}
             >
               Popular
               {sortBy === 'upvoteCount' && (
@@ -225,10 +243,10 @@ export default function Tips() {
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {tips?.map((tip) => (
-            <LazyTipCard 
-              key={tip.id} 
-              tip={tip} 
-              showContent={true} 
+            <LazyTipCard
+              key={tip.id}
+              tip={tip}
+              showContent={true}
               showActions={true}
               onEdit={handleEditTip}
               onDelete={handleDeleteTip}
@@ -281,5 +299,4 @@ export default function Tips() {
     </div>
   )
 }
-
 

@@ -1,68 +1,30 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
-import { eventApi } from '../services/api.js'
 import Button from '../components/ui/Button.jsx'
 import { Card, CardContent } from '../components/ui/Card.jsx'
-import SubpageHero from '../components/SubpageHero.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
-import { defaultImages } from '../config/env.js'
 import { formatDate } from '../utils/formatDate.js'
-import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
+import { useMyEvents, useMyJoinedEvents } from '../hooks/queries'
 
 export default function MyEvents() {
   useDocumentTitle('My Events')
   const navigate = useNavigate()
-  
-  const [events, setEvents] = useState([])
-  const [stats, setStats] = useState(null)
-  const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('created') // created or joined
 
-  useEffect(() => {
-    if (activeTab === 'created') {
-      fetchMyEvents()
-    } else {
-      fetchJoinedEvents()
-    }
-  }, [activeTab])
+  const {
+    data: createdData = { events: [], stats: null },
+    isLoading: loadingCreated
+  } = useMyEvents()
 
-  const fetchMyEvents = async () => {
-    try {
-      setLoading(true)
-      const response = await eventApi.getMyEvents()
-      const data = response?.data || response
-      
-      setEvents(data?.events || [])
-      setStats(data?.stats || null)
-    } catch (error) {
-      console.error('Error fetching my events:', error)
-      showError('Failed to load your events')
-    } finally {
-      setLoading(false)
-    }
-  }
+  const {
+    data: joinedData = { events: [], stats: null },
+    isLoading: loadingJoined
+  } = useMyJoinedEvents('upcoming')
 
-  const fetchJoinedEvents = async () => {
-    try {
-      setLoading(true)
-      const response = await eventApi.getMyJoined('upcoming')
-      const data = response?.data || response
-      
-      setEvents(data?.events || [])
-      // Stats structure might be different for joined events
-      setStats({
-        total: data?.total || 0,
-        upcoming: data?.upcoming || 0,
-        past: data?.past || 0
-      })
-    } catch (error) {
-      console.error('Error fetching joined events:', error)
-      showError('Failed to load joined events')
-    } finally {
-      setLoading(false)
-    }
-  }
+  const loading = activeTab === 'created' ? loadingCreated : loadingJoined
+  const events = activeTab === 'created' ? createdData.events : joinedData.events
+  const stats = activeTab === 'created' ? createdData.stats : joinedData.stats
 
   const handleCreateEvent = () => {
     navigate('/events/add')
@@ -83,53 +45,77 @@ export default function MyEvents() {
       <div className="flex gap-2">
         <button
           onClick={() => setActiveTab('created')}
-          className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-            activeTab === 'created'
+          className={`px-6 py-3 rounded-lg font-medium transition-colors ${activeTab === 'created'
               ? 'bg-primary text-surface'
               : 'bg-surface text-text/80 border border-border hover:bg-light'
-          }`}
+            }`}
         >
           Events I Created
         </button>
         <button
           onClick={() => setActiveTab('joined')}
-          className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-            activeTab === 'joined'
+          className={`px-6 py-3 rounded-lg font-medium transition-colors ${activeTab === 'joined'
               ? 'bg-primary text-surface'
               : 'bg-surface text-text/80 border border-border hover:bg-light'
-          }`}
+            }`}
         >
           Events I Joined
         </button>
       </div>
 
-      {/* Stats Section - Only for created events */}
-      {activeTab === 'created' && stats && (
+      {/* Stats Section */}
+      {stats && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="text-center">
-              <div className="text-3xl font-bold text-primary">{stats.active || 0}</div>
-              <div className="text-sm text-text/80 mt-1">Active Events</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="text-center">
-              <div className="text-3xl font-bold text-secondary">{stats.completed || 0}</div>
-              <div className="text-sm text-text/80 mt-1">Completed</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="text-center">
-              <div className="text-3xl font-bold text-danger">{stats.cancelled || 0}</div>
-              <div className="text-sm text-text/80 mt-1">Cancelled</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="text-center">
-              <div className="text-3xl font-bold text-secondary">{stats.totalParticipants || 0}</div>
-              <div className="text-sm text-text/80 mt-1">Total Participants</div>
-            </CardContent>
-          </Card>
+          {activeTab === 'created' ? (
+            <>
+              <Card>
+                <CardContent className="text-center">
+                  <div className="text-3xl font-bold text-primary">{stats.active || 0}</div>
+                  <div className="text-sm text-text/80 mt-1">Active Events</div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="text-center">
+                  <div className="text-3xl font-bold text-secondary">{stats.completed || 0}</div>
+                  <div className="text-sm text-text/80 mt-1">Completed</div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="text-center">
+                  <div className="text-3xl font-bold text-danger">{stats.cancelled || 0}</div>
+                  <div className="text-sm text-text/80 mt-1">Cancelled</div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="text-center">
+                  <div className="text-3xl font-bold text-secondary">{stats.totalParticipants || 0}</div>
+                  <div className="text-sm text-text/80 mt-1">Total Participants</div>
+                </CardContent>
+              </Card>
+            </>
+          ) : (
+            // Stats for joined events
+            <>
+              <Card>
+                <CardContent className="text-center">
+                  <div className="text-3xl font-bold text-primary">{stats.upcoming || 0}</div>
+                  <div className="text-sm text-text/80 mt-1">Upcoming</div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="text-center">
+                  <div className="text-3xl font-bold text-secondary">{stats.past || 0}</div>
+                  <div className="text-sm text-text/80 mt-1">Past Events</div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="text-center">
+                  <div className="text-3xl font-bold text-text">{stats.total || 0}</div>
+                  <div className="text-sm text-text/80 mt-1">Total Joined</div>
+                </CardContent>
+              </Card>
+            </>
+          )}
         </div>
       )}
 
@@ -145,8 +131,8 @@ export default function MyEvents() {
             {activeTab === 'created' ? 'No events created yet' : 'No events joined yet'}
           </h3>
           <p className="text-lg text-text/80 mb-6 max-w-2xl mx-auto">
-            {activeTab === 'created' 
-              ? 'Start creating eco-friendly events and bring your community together!' 
+            {activeTab === 'created'
+              ? 'Start creating eco-friendly events and bring your community together!'
               : 'Browse available events and join the ones that interest you!'}
           </p>
           {activeTab === 'created' ? (

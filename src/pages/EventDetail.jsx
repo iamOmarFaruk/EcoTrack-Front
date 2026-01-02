@@ -1,7 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
-import { eventApi } from '../services/api.js'
 import { formatDate } from '../utils/formatDate.js'
 import Button from '../components/ui/Button.jsx'
 import { Card, CardContent } from '../components/ui/Card.jsx'
@@ -9,121 +7,57 @@ import SubpageHero from '../components/SubpageHero.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import NotFound from './NotFound.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
-import { showSuccess, showError, showConfirmation } from '../utils/toast.jsx'
+import { showConfirmation } from '../utils/toast.jsx'
+import { useEvent, useEventMutations } from '../hooks/queries'
 
 export default function EventDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { user, joinEvent, leaveEvent, auth } = useAuth()
-  
-  const [event, setEvent] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [notFound, setNotFound] = useState(false)
-  const [isJoining, setIsJoining] = useState(false)
-  const [isLeaving, setIsLeaving] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
-  
+  const { user, auth } = useAuth()
+
+  const {
+    data: event,
+    isLoading: loading,
+    error
+  } = useEvent(id)
+
+  const { joinEvent, leaveEvent, deleteEvent } = useEventMutations()
+
   useDocumentTitle(event ? event.title : 'Event Details')
 
-  useEffect(() => {
-    fetchEvent()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id])
-
-  const fetchEvent = async () => {
-    try {
-      setLoading(true)
-      const response = await eventApi.getById(id)
-      const eventData = response?.data?.event || response?.event || response
-      
-      if (!eventData) {
-        setNotFound(true)
-        return
-      }
-      
-      setEvent(eventData)
-    } catch (error) {
-      console.error('Error fetching event:', error)
-      if (error.status === 404) {
-        setNotFound(true)
-      } else {
-        showError('Failed to load event')
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleJoinEvent = async () => {
+  const handleJoinEvent = () => {
     if (!user) {
-      showError('Please log in to join this event')
       navigate('/login')
       return
     }
-
-    setIsJoining(true)
-    try {
-      // MUST use _id for join operation (not slug)
-      const eventId = event._id
-      await joinEvent(eventId)
-      showSuccess(`Successfully joined "${event.title}"!`)
-      // Refresh event data
-      await fetchEvent()
-    } catch (error) {
-      showError(error.message || 'Failed to join event')
-    } finally {
-      setIsJoining(false)
-    }
+    joinEvent.mutate(event._id)
   }
 
-  const handleLeaveEvent = async () => {
-    setIsLeaving(true)
-    try {
-      // MUST use _id for leave operation (not slug)
-      const eventId = event._id
-      await leaveEvent(eventId)
-      showSuccess(`You have left "${event.title}"`)
-      // Refresh event data
-      await fetchEvent()
-    } catch (error) {
-      showError(error.message || 'Failed to leave event')
-    } finally {
-      setIsLeaving(false)
-    }
+  const handleLeaveEvent = () => {
+    leaveEvent.mutate(event._id)
   }
 
-  const handleEditEvent = () => {
-    // Use slug for SEO-friendly edit URL, fallback to _id
-    const identifier = event.slug || event._id
-    navigate(`/events/${identifier}/edit`)
-  }
-
-  const handleDeleteEvent = async () => {
+  const handleDeleteEvent = () => {
     const hasParticipants = event.registeredParticipants > 0
-    
     showConfirmation({
       title: 'Delete Event',
-      message: hasParticipants 
+      message: hasParticipants
         ? `This event has ${event.registeredParticipants} registered participant${event.registeredParticipants > 1 ? 's' : ''}. If you delete it, the event will be cancelled and all participants will be notified. This action cannot be undone.`
         : 'Are you sure you want to delete this event? This action cannot be undone.',
       confirmText: hasParticipants ? 'Cancel Event' : 'Delete',
       cancelText: 'Go Back',
       type: 'danger',
-      onConfirm: async () => {
-        setIsDeleting(true)
-        try {
-          // MUST use _id for delete operation (not slug)
-          await eventApi.delete(event._id)
-          showSuccess(hasParticipants 
-            ? 'Event cancelled and participants notified' 
-            : 'Event deleted successfully')
-          navigate('/events')
-        } catch (error) {
-          showError(error.message || 'Failed to delete event')
-          setIsDeleting(false)
-        }
+      onConfirm: () => {
+        deleteEvent.mutate(event._id, {
+          onSuccess: () => navigate('/events')
+        })
       }
     })
+  }
+
+  const handleEditEvent = () => {
+    const identifier = event.slug || event._id
+    navigate(`/events/${identifier}/edit`)
   }
 
   const handleGoBack = () => {
@@ -134,7 +68,7 @@ export default function EventDetail() {
     return <EcoLoader />
   }
 
-  if (notFound || !event) {
+  if (error || !event) {
     return <NotFound />
   }
 
@@ -142,11 +76,9 @@ export default function EventDetail() {
   const progressPercentage = Math.round((event.registeredParticipants / event.capacity) * 100)
   const spotsRemaining = event.capacity - event.registeredParticipants
   const isCreator = user && event.createdBy === user.uid
-  
-  // Backend returns isJoined field when authenticated
-  // Fallback to checking userEvents array (from auth context)
+
+  // Checking join status using the event data itself or fallback
   const isJoined = event.isJoined ?? auth?.userEvents?.includes(event._id)
-  
   const isFull = progressPercentage >= 100
   const isCancelled = event.status === 'cancelled'
   const isPast = new Date(event.date) < new Date()
@@ -166,8 +98,8 @@ export default function EventDetail() {
 
       {/* Back Button */}
       <div>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           onClick={handleGoBack}
           className="mb-6"
         >
@@ -223,7 +155,7 @@ export default function EventDetail() {
                     You are the organizer of this event
                   </p>
                 </div>
-                
+
                 {/* Capacity Progress */}
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
@@ -233,7 +165,7 @@ export default function EventDetail() {
                     </span>
                   </div>
                   <div className="w-full bg-primary/20 rounded-full h-2">
-                    <div 
+                    <div
                       className="bg-primary h-2 rounded-full transition-all duration-300"
                       style={{ width: `${progressPercentage}%` }}
                     ></div>
@@ -244,15 +176,15 @@ export default function EventDetail() {
                 </div>
 
                 <div className="space-y-2">
-                  <Button 
-                    className="w-full bg-primary hover:bg-primary" 
+                  <Button
+                    className="w-full bg-primary hover:bg-primary"
                     onClick={handleEditEvent}
                   >
                     Edit Event
                   </Button>
-                  <Button 
+                  <Button
                     variant="danger"
-                    className="w-full bg-danger hover:bg-danger text-surface" 
+                    className="w-full bg-danger hover:bg-danger text-surface"
                     onClick={handleDeleteEvent}
                     disabled={isDeleting}
                   >
@@ -272,7 +204,7 @@ export default function EventDetail() {
                     {isJoined ? 'See you at the event!' : 'Be part of the change in your community'}
                   </p>
                 </div>
-                
+
                 {/* Status Badges */}
                 {(isCancelled || isPast) && (
                   <div className="text-center">
@@ -288,7 +220,7 @@ export default function EventDetail() {
                     )}
                   </div>
                 )}
-                
+
                 {/* Capacity Progress */}
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
@@ -298,7 +230,7 @@ export default function EventDetail() {
                     </span>
                   </div>
                   <div className="w-full bg-primary/20 rounded-full h-2">
-                    <div 
+                    <div
                       className="bg-primary h-2 rounded-full transition-all duration-300"
                       style={{ width: `${progressPercentage}%` }}
                     ></div>
@@ -309,17 +241,17 @@ export default function EventDetail() {
                 </div>
 
                 {isJoined ? (
-                  <Button 
+                  <Button
                     variant="destructive"
-                    className="w-full" 
+                    className="w-full"
                     onClick={handleLeaveEvent}
                     disabled={isLeaving || isPast}
                   >
                     {isLeaving ? 'Leaving...' : 'Leave Event'}
                   </Button>
                 ) : (
-                  <Button 
-                    className="w-full bg-primary hover:bg-primary" 
+                  <Button
+                    className="w-full bg-primary hover:bg-primary"
                     onClick={handleJoinEvent}
                     disabled={isFull || isCancelled || isPast || isJoining}
                   >
@@ -334,23 +266,23 @@ export default function EventDetail() {
           <Card>
             <CardContent className="space-y-4">
               <h3 className="text-lg font-semibold">Event Information</h3>
-              
+
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-text/80">Date</span>
                   <span className="font-medium">{formatDate(event.date)}</span>
                 </div>
-                
+
                 <div className="flex justify-between">
                   <span className="text-text/80">Location</span>
                   <span className="font-medium">{event.location}</span>
                 </div>
-                
+
                 <div className="flex justify-between">
                   <span className="text-text/80">Duration</span>
                   <span className="font-medium">{event.duration}</span>
                 </div>
-                
+
                 <div className="flex justify-between">
                   <span className="text-text/80">Organizer</span>
                   <span className="font-medium">{event.organizer}</span>

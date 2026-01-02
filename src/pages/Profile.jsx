@@ -1,43 +1,33 @@
-import { useState, useEffect } from 'react'
+import { useMemo } from 'react'
 import SectionHeading from '../components/SectionHeading.jsx'
 import ProfileAvatar from '../components/ProfileAvatar.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
-import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
 import EcoLoader from '../components/EcoLoader.jsx'
-import { authApi } from '../services/api.js'
-import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
+import { useUserProfile } from '../hooks/queries'
 
 export default function Profile() {
-  const isLoading = useMinimumLoading(300)
   const { auth } = useAuth()
-  const [userData, setUserData] = useState(null)
-  const [fetchingUser, setFetchingUser] = useState(false)
 
-  // Fetch current user data from database using /auth/me endpoint
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (!auth.user?.uid) return
+  const {
+    data: userData,
+    isLoading
+  } = useUserProfile()
 
-      setFetchingUser(true)
-      try {
-        const response = await authApi.getMe()
-        // response.data contains complete user data with stats, badges, rank
-        const userData = response?.data || response
-        setUserData(userData)
-      } catch (error) {
-        console.error('Failed to fetch user data:', error)
-        showError('Failed to load user data')
-      } finally {
-        setFetchingUser(false)
-      }
-    }
-
-    fetchUserData()
-  }, [auth.user?.uid])
-
-  if (isLoading || fetchingUser) {
+  if (isLoading) {
     return <EcoLoader />
   }
+
+  // Fallback to auth user if profile data is missing/loading but we have auth
+  const displayUser = userData || (auth.user ? {
+    displayName: auth.user.name,
+    email: auth.user.email,
+    photoURL: auth.user.avatarUrl,
+    ...userData // merge any partial data
+  } : null)
+
+  // Create a safe user object to render
+  const safeUserData = displayUser || {}; (userData || {}) // Ensure we have an object
+
 
   return (
     <div className="max-w-4xl mx-auto">

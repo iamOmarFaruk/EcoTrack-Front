@@ -1,7 +1,6 @@
-import { useParams, Link } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { Leaf, Recycle, Droplets, Zap } from 'lucide-react'
-import { challengeApi } from '../services/api.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import Button from '../components/ui/Button.jsx'
 import ChallengeCard from '../components/ChallengeCard.jsx'
@@ -11,162 +10,73 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { utils } from '../config/env'
 import { formatDate } from '../utils/formatDate.js'
 import { showSuccess, showError, showLoading, dismissToast, showDeleteConfirmation } from '../utils/toast.jsx'
+import { useChallengeBySlug, useChallenges, useChallengeMutations } from '../hooks/queries'
 
 export default function ChallengeDetail() {
-  const { slug } = useParams() // Use slug from URL (SEO-friendly)
+  const { slug } = useParams()
   const { auth } = useAuth()
-  const [challenge, setChallenge] = useState(null)
-  const [relatedChallenges, setRelatedChallenges] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [isJoining, setIsJoining] = useState(false)
-  const [isLeaving, setIsLeaving] = useState(false)
-  
+  const navigate = useNavigate()
+
+  // Fetch challenge details
+  const {
+    data: challenge,
+    isLoading: loading,
+    error
+  } = useChallengeBySlug(slug)
+
+  // Fetch related challenges (only if we have a category)
+  const { data: relatedChallenges = [] } = useChallenges(
+    challenge?.category
+      ? { category: challenge.category, limit: 3 }
+      : { limit: 0 } // Don't fetch if no category
+  )
+
+  // Filter out current challenge from related
+  const filteredRelated = relatedChallenges
+    .filter(c => c.id !== challenge?.id && c._id !== challenge?._id)
+    .slice(0, 3)
+
   useDocumentTitle(challenge ? challenge.title : 'Challenge Details')
 
-  // Check if current user is the creator of the challenge
+  // Mutations
+  const { joinChallenge, leaveChallenge, deleteChallenge } = useChallengeMutations()
+
+  // Check ownership
   const isOwner = challenge && auth.user && (
-    challenge.isCreator || 
+    challenge.isCreator ||
     challenge.createdBy === auth.user.uid ||
     challenge.createdById === auth.user.uid
   )
-  
-  // Check if user has joined the challenge
+
   const isJoined = challenge?.isJoined || false
 
-  const handleJoinChallenge = async () => {
+  const handleJoinChallenge = () => {
     if (!auth.isLoggedIn) {
       showError('Please log in to join challenges')
       return
     }
-
-    setIsJoining(true)
-    try {
-      // Use _id for join operation, not slug
-      await challengeApi.join(challenge._id)
-      showSuccess('Successfully joined the challenge!')
-      
-      // Refresh challenge data using slug
-      const response = await challengeApi.getBySlug(slug)
-      const challengeData = response?.data || response
-      
-      setChallenge(prev => ({
-        ...prev,
-        _id: challengeData._id || challengeData.id || prev._id, // Ensure _id is preserved
-        isJoined: true,
-        participants: challengeData.registeredParticipants || (prev.participants + 1)
-      }))
-    } catch (error) {
-      console.error('Error joining challenge:', error)
-      if (error.message?.includes('already joined')) {
-        showError('You have already joined this challenge')
-      } else if (error.message?.includes('not active')) {
-        showError('This challenge is not currently active')
-      } else {
-        showError('Failed to join challenge. Please try again.')
-      }
-    } finally {
-      setIsJoining(false)
-    }
+    joinChallenge.mutate(challenge.id)
   }
 
-  const handleLeaveChallenge = async () => {
-    setIsLeaving(true)
-    try {
-      // Use _id for leave operation, not slug
-      await challengeApi.leave(challenge._id)
-      showSuccess('Successfully left the challenge')
-      
-      // Refresh challenge data using slug
-      const response = await challengeApi.getBySlug(slug)
-      const challengeData = response?.data || response
-      
-      setChallenge(prev => ({
-        ...prev,
-        _id: challengeData._id || challengeData.id || prev._id, // Ensure _id is preserved
-        isJoined: false,
-        participants: challengeData.registeredParticipants || Math.max(0, prev.participants - 1)
-      }))
-    } catch (error) {
-      console.error('Error leaving challenge:', error)
-      showError('Failed to leave challenge. Please try again.')
-    } finally {
-      setIsLeaving(false)
-    }
+  const handleLeaveChallenge = () => {
+    leaveChallenge.mutate(challenge.id)
   }
 
-  const handleDeleteChallenge = async () => {
+  const handleDeleteChallenge = () => {
     showDeleteConfirmation({
       itemName: 'Challenge',
-      onConfirm: async () => {
-        try {
-          const loadingToast = showLoading('Deleting challenge...')
-          
-          // Use _id for delete operation, not slug
-          await challengeApi.delete(challenge._id)
-          
-          dismissToast(loadingToast)
-          showSuccess('Challenge deleted successfully!')
-          
-          window.location.href = '/challenges'
-        } catch (error) {
-          console.error('Error deleting challenge:', error)
-          showError('Failed to delete challenge. Please try again.')
-        }
+      onConfirm: () => {
+        deleteChallenge.mutate(challenge.id, {
+          onSuccess: () => navigate('/challenges')
+        })
       }
     })
   }
 
   const handleEditChallenge = () => {
-    // Navigate to slug-based edit URL for SEO-friendly routing
     const targetSlug = challenge.slug || slug
-    window.location.href = `/challenges/${targetSlug}/edit`
+    navigate(`/challenges/${targetSlug}/edit`)
   }
-
-  useEffect(() => {
-    const fetchChallengeDetails = async () => {
-      try {
-        setLoading(true)
-        // Fetch challenge by slug (SEO-friendly)
-        const response = await challengeApi.getBySlug(slug)
-        const challengeData = response?.data || response
-        
-        setChallenge({
-          ...challengeData,
-          _id: challengeData._id || challengeData.id, // Ensure _id is set
-          participants: challengeData.registeredParticipants ?? (Array.isArray(challengeData.participants) ? challengeData.participants.length : challengeData.participants) ?? 0
-        })
-
-        // Fetch related challenges
-        try {
-          const relatedResponse = await challengeApi.getAll({ 
-            category: challengeData.category, 
-            limit: 3 
-          })
-          const relatedData = relatedResponse?.data || relatedResponse
-          const challengesArray = relatedData.challenges || relatedData.data || relatedData || []
-          const normalizeId = (value) => value?.toString?.()
-          const currentId = normalizeId(challengeData.id || challengeData._id)
-          
-          setRelatedChallenges(
-            challengesArray
-              .filter(c => normalizeId(c.id || c._id) !== currentId)
-              .slice(0, 3)
-          )
-        } catch (error) {
-          console.error('Error fetching related challenges:', error)
-        }
-      } catch (error) {
-        setError(error.message || 'Failed to load challenge details')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    if (slug) {
-      fetchChallengeDetails()
-    }
-  }, [slug])
 
   if (loading) {
     return <EcoLoader />
@@ -263,16 +173,16 @@ export default function ChallengeDetail() {
           height="large"
         >
           <div className="flex flex-col gap-4 max-w-3xl">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="inline-flex items-center rounded-full bg-primary/100/20 px-4 py-1 text-sm font-semibold text-surface uppercase tracking-wide">
-              {category}
-            </span>
-            {featured && (
-              <span className="inline-flex items-center rounded-full bg-secondary/20 px-4 py-1 text-sm font-semibold text-surface uppercase tracking-wide">
-                Featured
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="inline-flex items-center rounded-full bg-primary/100/20 px-4 py-1 text-sm font-semibold text-surface uppercase tracking-wide">
+                {category}
               </span>
-            )}
-          </div>
+              {featured && (
+                <span className="inline-flex items-center rounded-full bg-secondary/20 px-4 py-1 text-sm font-semibold text-surface uppercase tracking-wide">
+                  Featured
+                </span>
+              )}
+            </div>
 
             <div className="space-y-3">
               <h1 className="text-4xl font-bold text-surface sm:text-5xl md:text-6xl">
@@ -303,7 +213,7 @@ export default function ChallengeDetail() {
               return (
                 <div key={metric.key} className="rounded-2xl border border-border bg-light/60 p-4">
                   <div className="flex items-center gap-3">
-                    <div className={`h-12 w-12 rounded-full ${metric.accent} flex items-center justify-center`}> 
+                    <div className={`h-12 w-12 rounded-full ${metric.accent} flex items-center justify-center`}>
                       <Icon className="h-5 w-5" />
                     </div>
                     <div>

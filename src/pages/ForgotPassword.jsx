@@ -5,7 +5,6 @@ import Button from '../components/ui/Button.jsx'
 import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
-import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
 import EcoLoader from '../components/EcoLoader.jsx'
 import { Link, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
@@ -16,7 +15,6 @@ const schema = z.object({
 
 export default function ForgotPassword() {
   useDocumentTitle('Forgot Password')
-  const isLoading = useMinimumLoading(300)
   const { resetPassword, loading, auth } = useAuth()
   const navigate = useNavigate()
   const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm({
@@ -40,7 +38,7 @@ export default function ForgotPassword() {
     }
   }
 
-  if (isLoading || loading) {
+  if (loading) {
     return <EcoLoader />
   }
 
@@ -58,7 +56,7 @@ export default function ForgotPassword() {
           {isSubmitting ? 'Sending...' : 'Send Reset Link'}
         </Button>
       </form>
-      
+
       <div className="mt-4 text-center text-sm">
         Remember your password?{' '}
         <Link to="/login" className="text-text hover:text-primary font-medium">Sign In</Link>

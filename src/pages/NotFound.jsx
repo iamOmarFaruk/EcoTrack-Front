@@ -1,17 +1,10 @@
 import Button from '../components/ui/Button.jsx'
 import { Link } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
-import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
-import EcoLoader from '../components/EcoLoader.jsx'
 
 export default function NotFound() {
   useDocumentTitle('404 - Not Found')
-  const isLoading = useMinimumLoading(300)
-  
-  if (isLoading) {
-    return <EcoLoader />
-  }
-  
+
   return (
     <div className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center px-4 text-center">
       <div className="mx-auto max-w-lg">
@@ -28,27 +21,27 @@ export default function NotFound() {
             Don't worry, we'll help you find your way back home.
           </p>
         </div>
-        
+
         {/* Action buttons */}
         <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Button as={Link} to="/" className="min-w-[140px]">
             Go Home
           </Button>
-          <Button 
-            as={Link} 
-            to="/challenges" 
-            variant="secondary" 
+          <Button
+            as={Link}
+            to="/challenges"
+            variant="secondary"
             className="min-w-[140px]"
           >
             View Challenges
           </Button>
         </div>
-        
+
         {/* Additional help text */}
         <p className="mt-6 text-sm text-text/70">
           If you believe this is an error, please{' '}
-          <Link 
-            to="/contact" 
+          <Link
+            to="/contact"
             className="text-primary hover:text-primary underline"
           >
             contact us

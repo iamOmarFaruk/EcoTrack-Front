@@ -13,38 +13,28 @@ import Button from '../components/ui/Button.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver.js'
 import { defaultImages } from '../config/env'
-import { useState, useEffect } from 'react'
-import { tipsApi, eventApi, challengeApi } from '../services/api.js'
+import { useState } from 'react'
 import { useAuth } from '../context/AuthContext.jsx'
 import TipModal from '../components/TipModal.jsx'
 import LoginModal from '../components/LoginModal.jsx'
-import { showSuccess, showError, showDeleteConfirmation } from '../utils/toast.jsx'
+import { showSuccess, showDeleteConfirmation } from '../utils/toast.jsx'
+import {
+  useFeaturedChallenges,
+  useChallenges,
+  useEvents,
+  useTips,
+  useTipMutations
+} from '../hooks/queries'
 
 export default function Home() {
   useDocumentTitle('Home')
 
   const { user } = useAuth()
 
-  // State for real tips from API
-  const [tips, setTips] = useState([])
-  const [loadingTips, setLoadingTips] = useState(true)
-
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingTip, setEditingTip] = useState(null)
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
-
-  // State for real events from API
-  const [events, setEvents] = useState([])
-  const [loadingEvents, setLoadingEvents] = useState(true)
-
-  // State for real challenges from API
-  const [challenges, setChallenges] = useState([])
-  const [loadingChallenges, setLoadingChallenges] = useState(true)
-
-  // State for featured challenges (for hero slider)
-  const [featuredChallenges, setFeaturedChallenges] = useState([])
-  const [loadingFeatured, setLoadingFeatured] = useState(true)
 
   // Intersection observer for Why Go Green section
   const [setWhyGoGreenRef, isWhyGoGreenVisible] = useIntersectionObserver({
@@ -53,192 +43,45 @@ export default function Home() {
     triggerOnce: true
   })
 
-  // Fetch 5 featured challenges for hero slider
-  useEffect(() => {
-    const fetchFeaturedChallenges = async () => {
-      try {
-        setLoadingFeatured(true)
-        const response = await challengeApi.getAll({
-          page: 1,
-          limit: 5,
-          status: 'active',
-          featured: true,
-          sortBy: 'startDate',
-          order: 'asc'
-        })
+  // Queries
+  const {
+    data: featuredChallenges = [],
+    isLoading: loadingFeatured
+  } = useFeaturedChallenges()
 
-        // Handle different API response structures
-        let challengesData = response.data
-        if (response.data?.challenges) {
-          challengesData = response.data.challenges
-        } else if (response.data?.data?.challenges) {
-          challengesData = response.data.data.challenges
-        } else if (response.data?.data) {
-          challengesData = response.data.data
-        }
+  const {
+    data: challenges = [],
+    isLoading: loadingChallenges
+  } = useChallenges({
+    page: 1,
+    limit: 6,
+    status: 'active',
+    sortBy: 'startDate',
+    order: 'asc'
+  })
 
-        // Ensure we have an array
-        const challengesArray = Array.isArray(challengesData) ? challengesData : Object.values(challengesData || {})
+  const {
+    data: events = [],
+    isLoading: loadingEvents
+  } = useEvents({
+    page: 1,
+    limit: 4,
+    sortBy: 'createdAt',
+    order: 'desc'
+  })
 
-        // Enhance challenges with proper data structure for Hero slider
-        const enhancedChallenges = challengesArray.map(challenge => ({
-          ...challenge,
-          _id: challenge._id || challenge.id,
-          id: challenge.id || challenge._id,
-          slug: challenge.slug || '', // Store slug for SEO-friendly URLs
-          participants: challenge.registeredParticipants ?? (Array.isArray(challenge.participants) ? challenge.participants.length : challenge.participants) ?? 0,
-          imageUrl: challenge.image || challenge.imageUrl,
-          description: challenge.shortDescription || challenge.description // Map API shortDescription to description for Hero
-        }))
+  const {
+    data: tips = [],
+    isLoading: loadingTips
+  } = useTips({
+    page: 1,
+    limit: 5,
+    sortBy: 'createdAt',
+    order: 'desc'
+  })
 
-        setFeaturedChallenges(enhancedChallenges)
-      } catch (error) {
-        console.error('Error fetching featured challenges:', error)
-        setFeaturedChallenges([])
-      } finally {
-        setLoadingFeatured(false)
-      }
-    }
-
-    fetchFeaturedChallenges()
-  }, [])
-
-  // Fetch 6 active challenges from API
-  useEffect(() => {
-    const fetchActiveChallenges = async () => {
-      try {
-        setLoadingChallenges(true)
-        const response = await challengeApi.getAll({
-          page: 1,
-          limit: 6,
-          status: 'active',
-          sortBy: 'startDate',
-          order: 'asc'
-        })
-
-        // Handle different API response structures
-        let challengesData = response.data
-        if (response.data?.challenges) {
-          challengesData = response.data.challenges
-        } else if (response.data?.data?.challenges) {
-          challengesData = response.data.data.challenges
-        } else if (response.data?.data) {
-          challengesData = response.data.data
-        }
-
-        // Ensure we have an array
-        const challengesArray = Array.isArray(challengesData) ? challengesData : Object.values(challengesData || {})
-
-        // Enhance challenges with proper data structure
-        const enhancedChallenges = challengesArray.map(challenge => ({
-          ...challenge,
-          _id: challenge._id || challenge.id,
-          id: challenge.id || challenge._id,
-          slug: challenge.slug || '', // Store slug for SEO-friendly URLs
-          participants: challenge.registeredParticipants ?? (Array.isArray(challenge.participants) ? challenge.participants.length : challenge.participants) ?? 0,
-          imageUrl: challenge.image || challenge.imageUrl
-        }))
-
-        setChallenges(enhancedChallenges)
-      } catch (error) {
-        console.error('Error fetching challenges:', error)
-        setChallenges([])
-      } finally {
-        setLoadingChallenges(false)
-      }
-    }
-
-    fetchActiveChallenges()
-  }, [])
-
-  // Fetch 4 latest events from API
-  useEffect(() => {
-    const fetchUpcomingEvents = async () => {
-      try {
-        setLoadingEvents(true)
-        const response = await eventApi.getAll({
-          page: 1,
-          limit: 4,
-          sortBy: 'createdAt',
-          order: 'desc'
-        })
-
-        // Handle different API response structures
-        let eventsData = response.data
-        if (response.data?.events) {
-          eventsData = response.data.events
-        } else if (response.data?.data?.events) {
-          eventsData = response.data.data.events
-        } else if (response.data?.data) {
-          eventsData = response.data.data
-        }
-
-        // Ensure we have an array
-        const eventsArray = Array.isArray(eventsData) ? eventsData : Object.values(eventsData || {})
-
-        // Backend always returns _id and slug
-        // No need to enhance, use as-is
-        setEvents(eventsArray)
-      } catch (error) {
-        console.error('Error fetching events:', error)
-        setEvents([])
-      } finally {
-        setLoadingEvents(false)
-      }
-    }
-
-    fetchUpcomingEvents()
-  }, [])
-
-  // Fetch 5 most recent tips from API
-  useEffect(() => {
-    const fetchRecentTips = async () => {
-      try {
-        setLoadingTips(true)
-        const response = await tipsApi.getAll({
-          page: 1,
-          limit: 5,
-          sortBy: 'createdAt',
-          order: 'desc'
-        })
-
-        // Handle different API response structures
-        let tipsData = response.data
-        if (response.data?.tips) {
-          tipsData = response.data.tips
-        } else if (response.data?.data?.tips) {
-          tipsData = response.data.data.tips
-        } else if (response.data?.data) {
-          tipsData = response.data.data
-        }
-
-        // Ensure we have an array
-        const tipsArray = Array.isArray(tipsData) ? tipsData : Object.values(tipsData || {})
-
-        // Enhance tips with proper data structure
-        const enhancedTips = tipsArray.map(tip => ({
-          ...tip,
-          id: tip.id || tip._id,
-          upvotes: Number.isFinite(Number(tip.upvoteCount))
-            ? Number(tip.upvoteCount)
-            : (Number.isFinite(Number(tip.upvotes)) ? Number(tip.upvotes) : 0),
-          authorId: tip.authorId || (typeof tip.author === 'string' ? tip.author : tip.author?.uid || tip.author?.id),
-          authorName: tip.authorName || tip.author?.name || 'Anonymous',
-          authorImage: tip.authorImage || tip.authorAvatar || tip.author?.avatarUrl || tip.author?.imageUrl,
-          firebaseId: tip.firebaseId || (typeof tip.author === 'string' ? tip.author : tip.author?.firebaseId)
-        }))
-
-        setTips(enhancedTips)
-      } catch (error) {
-        console.error('Error fetching tips:', error)
-        setTips([])
-      } finally {
-        setLoadingTips(false)
-      }
-    }
-
-    fetchRecentTips()
-  }, [])
+  // Mutations
+  const { deleteTip, upvoteTip, updateTip } = useTipMutations()
 
   // Check if user can modify a tip (ownership check)
   const canModifyTip = (tip) => {
@@ -264,109 +107,28 @@ export default function Home() {
   const handleDeleteTip = async (tipId) => {
     showDeleteConfirmation({
       itemName: 'Tip',
-      onConfirm: async () => {
-        try {
-          await tipsApi.delete(tipId)
-          setTips(prevTips => prevTips.filter(tip => tip.id !== tipId))
-          showSuccess('Tip deleted successfully')
-        } catch (error) {
-          showError('Failed to delete tip: ' + error.message)
-        }
-      }
+      onConfirm: () => deleteTip.mutate(tipId)
     })
   }
 
   // Handle upvote tip
-  const handleUpvote = async (tipId) => {
-    const originalTip = tips.find(tip => tip.id === tipId)
-    if (!originalTip) return
-
-    try {
-      // Optimistic update
-      setTips(prevTips =>
-        prevTips.map(tip =>
-          tip.id === tipId ? { ...tip, upvotes: tip.upvotes + 1 } : tip
-        )
-      )
-
-      const response = await tipsApi.upvote(tipId)
-
-      // Update with server response
-      let updatedTip = response.data
-      if (response.data?.tip) {
-        updatedTip = response.data.tip
-      } else if (response.data?.data?.tip) {
-        updatedTip = response.data.data.tip
-      } else if (response.data?.data) {
-        updatedTip = response.data.data
-      }
-
-      const serverUpvotes = updatedTip?.upvotes ?? updatedTip?.upvoteCount ?? null
-
-      setTips(prevTips =>
-        prevTips.map(tip =>
-          tip.id === tipId
-            ? {
-              ...tip,
-              ...updatedTip,
-              upvotes: Number.isFinite(Number(serverUpvotes))
-                ? Number(serverUpvotes)
-                : originalTip.upvotes + 1
-            }
-            : tip
-        )
-      )
-    } catch (error) {
-      // Rollback on error
-      setTips(prevTips =>
-        prevTips.map(tip =>
-          tip.id === tipId ? { ...tip, upvotes: originalTip.upvotes } : tip
-        )
-      )
-      showError('Failed to upvote tip: ' + error.message)
-    }
+  const handleUpvote = (tipId) => {
+    upvoteTip.mutate(tipId)
   }
 
   // Handle submit tip (for edit modal)
   const handleSubmitTip = async (tipData) => {
     try {
       if (editingTip) {
-        const response = await tipsApi.update(editingTip.id, tipData)
-
-        // Handle response
-        let updatedTip = response.data
-        if (response.data?.tip) {
-          updatedTip = response.data.tip
-        } else if (response.data?.data?.tip) {
-          updatedTip = response.data.data.tip
-        } else if (response.data?.data) {
-          updatedTip = response.data.data
-        }
-
-        // Update local state
-        setTips(prevTips =>
-          prevTips.map(tip =>
-            tip.id === editingTip.id
-              ? {
-                ...tip,
-                ...tipData,
-                ...updatedTip,
-                id: editingTip.id,
-                upvotes: Number.isFinite(Number(updatedTip?.upvoteCount))
-                  ? Number(updatedTip.upvoteCount)
-                  : (Number.isFinite(Number(updatedTip?.upvotes)) ? Number(updatedTip.upvotes) : tip.upvotes)
-              }
-              : tip
-          )
-        )
-
-        showSuccess('Tip updated successfully!')
+        // Use mutateAsync to wait for success before closing modal or handling errors locally if needed
+        await updateTip.mutateAsync({ id: editingTip.id, data: tipData })
       }
 
       setIsModalOpen(false)
       setEditingTip(null)
     } catch (error) {
-      throw error
+      // Error is handled by mutation hook global error or local override
+      console.error(error)
     }
   }
 
