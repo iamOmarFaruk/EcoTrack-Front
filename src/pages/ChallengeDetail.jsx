@@ -40,6 +40,8 @@ export default function ChallengeDetail() {
 
   // Mutations
   const { joinChallenge, leaveChallenge, deleteChallenge } = useChallengeMutations()
+  const isJoining = joinChallenge.isPending
+  const isLeaving = leaveChallenge.isPending
 
   // Check ownership
   const isOwner = challenge && auth.user && (

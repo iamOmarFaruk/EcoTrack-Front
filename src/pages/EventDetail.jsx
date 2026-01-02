@@ -22,6 +22,9 @@ export default function EventDetail() {
   } = useEvent(id)
 
   const { joinEvent, leaveEvent, deleteEvent } = useEventMutations()
+  const isJoining = joinEvent.isPending
+  const isLeaving = leaveEvent.isPending
+  const isDeleting = deleteEvent.isPending
 
   useDocumentTitle(event ? event.title : 'Event Details')
 
