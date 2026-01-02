@@ -12,22 +12,26 @@ export function ChallengeCardSkeleton() {
       <Skeleton className="h-48 w-full rounded-none" />
 
       {/* Content skeleton */}
-      <div className="p-4 flex flex-col gap-3">
+      <div className="p-5 flex flex-col gap-3">
         {/* Category skeleton */}
         <Skeleton className="h-3 w-20 mb-1" />
 
         {/* Title skeleton */}
         <Skeleton className="h-6 w-3/4 mb-1" />
 
-        {/* Description skeleton */}
-        <div className="space-y-2 mb-2">
-          <Skeleton className="h-3 w-full" />
-          <Skeleton className="h-3 w-2/3" />
+        {/* Stats skeleton */}
+        <div className="flex items-center mb-1">
+          <Skeleton className="h-4 w-4 rounded-full mr-2" />
+          <Skeleton className="h-3 w-32" />
         </div>
 
-        {/* Stats skeleton */}
-        <div className="flex items-center justify-between mb-2">
-          <Skeleton className="h-3 w-32" />
+        {/* Divider line */}
+        <div className="border-t border-border/60 my-1"></div>
+
+        {/* Description skeleton */}
+        <div className="space-y-2 mb-3">
+          <Skeleton className="h-3 w-full" />
+          <Skeleton className="h-3 w-2/3" />
         </div>
 
         {/* Button skeleton */}

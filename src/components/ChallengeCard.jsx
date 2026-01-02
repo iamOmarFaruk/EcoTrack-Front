@@ -19,19 +19,31 @@ export default function ChallengeCard({ challenge }) {
           e.target.src = utils.getPlaceholderImage(400, 300, challenge.title);
         }}
       />
-      <CardContent className="p-4">
-        <p className="text-sm font-medium text-primary mb-2">{challenge.category}</p>
-        <h3 className="text-xl font-heading font-bold text-heading mb-3">{challenge.title}</h3>
-        <p className="line-clamp-2 text-sm text-text/80 mb-4">{challenge.description || challenge.shortDescription}</p>
-        <div className="flex items-center justify-between text-sm text-text/80 mb-4">
+      <CardContent className="p-5 flex flex-col h-[calc(100%-12rem)]">
+        <p className="text-xs font-bold tracking-wider text-primary uppercase mb-2">{challenge.category}</p>
+        <h3 className="text-xl font-heading font-bold text-heading mb-2 line-clamp-1">{challenge.title}</h3>
+
+        <div className="flex items-center text-sm text-text/70 mb-4">
+          <svg className="w-4 h-4 mr-2 text-primary/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
           <span>
             {(() => {
               const count = challenge.participants || challenge.registeredParticipants || 0;
-              return count === 0 ? 'No one joined yet' : `${count} ${count === 1 ? 'person' : 'people'} joined`;
+              return count === 0 ? 'Be the first to join' : `${count.toLocaleString()} ${count === 1 ? 'person' : 'people'} joined`;
             })()}
           </span>
         </div>
-        <Button as={Link} to={challengeUrl} className="self-start">View Details</Button>
+
+        <div className="border-t border-border/60 mb-4"></div>
+
+        <p className="line-clamp-2 text-sm text-text/80 mb-6 flex-grow leading-relaxed">
+          {challenge.description || challenge.shortDescription}
+        </p>
+
+        <Button as={Link} to={challengeUrl} className="self-start w-full sm:w-auto">
+          View Details
+        </Button>
       </CardContent>
     </Card>
   )
