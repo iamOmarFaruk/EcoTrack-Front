@@ -25,6 +25,8 @@ import {
   useTips,
   useTipMutations
 } from '../hooks/queries'
+import { motion } from 'framer-motion'
+import { containerVariants, itemVariants } from '../utils/animations'
 
 export default function Home() {
   useDocumentTitle('Home')
@@ -174,14 +176,22 @@ export default function Home() {
           title="Active Challenges"
           subtitle="Happening right now"
         />
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.1 }}
+          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        >
           {loadingChallenges && Array.from({ length: 6 }).map((_, i) => (
             <ChallengeCardSkeleton key={i} />
           ))}
           {!loadingChallenges && challenges?.map((c) => (
-            <LazyChallengeCard key={c._id} challenge={c} />
+            <motion.div key={c._id || c.id} variants={itemVariants}>
+              <LazyChallengeCard challenge={c} />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       <section>
@@ -190,23 +200,30 @@ export default function Home() {
           title="Recent Tips"
           subtitle="Practical, bite-sized advice"
         />
-        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.1 }}
+          className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
+        >
           {loadingTips && Array.from({ length: 5 }).map((_, i) => (
             <TipCardSkeleton key={i} />
           ))}
           {!loadingTips && tips?.map((t, i) => (
-            <LazyTipCard
-              key={i}
-              tip={t}
-              showActions={true}
-              canModify={canModifyTip(t)}
-              onEdit={handleEditTip}
-              onDelete={handleDeleteTip}
-              onUpvote={handleUpvote}
-              onLoginRequired={handleLoginRequired}
-            />
+            <motion.div key={t._id || t.id || i} variants={itemVariants}>
+              <LazyTipCard
+                tip={t}
+                showActions={true}
+                canModify={canModifyTip(t)}
+                onEdit={handleEditTip}
+                onDelete={handleDeleteTip}
+                onUpvote={handleUpvote}
+                onLoginRequired={handleLoginRequired}
+              />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       <section>
@@ -215,14 +232,22 @@ export default function Home() {
           title="Upcoming Events"
           subtitle="Join the community"
         />
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.1 }}
+          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+        >
           {loadingEvents && Array.from({ length: 4 }).map((_, i) => (
             <EventCardSkeleton key={i} />
           ))}
           {!loadingEvents && events?.map((e, i) => (
-            <LazyEventCard key={i} event={e} />
+            <motion.div key={e._id || e.id || i} variants={itemVariants}>
+              <LazyEventCard event={e} />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       <section className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center" ref={setWhyGoGreenRef}>

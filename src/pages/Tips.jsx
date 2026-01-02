@@ -9,6 +9,8 @@ import Button from '../components/ui/Button.jsx'
 import { useState, useMemo } from 'react'
 import { showDeleteConfirmation, showError } from '../utils/toast.jsx'
 import { useTips, useTipMutations } from '../hooks/queries'
+import { motion } from 'framer-motion'
+import { containerVariants, itemVariants } from '../utils/animations'
 
 export default function Tips() {
   useDocumentTitle('Recent Tips')
@@ -217,8 +219,8 @@ export default function Tips() {
             <button
               onClick={() => handleSortChange('createdAt')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${sortBy === 'createdAt'
-                  ? 'bg-primary/15 text-primary ring-1 ring-primary/20'
-                  : 'bg-muted text-text hover:bg-muted'
+                ? 'bg-primary/15 text-primary ring-1 ring-primary/20'
+                : 'bg-muted text-text hover:bg-muted'
                 }`}
             >
               Newest
@@ -229,8 +231,8 @@ export default function Tips() {
             <button
               onClick={() => handleSortChange('upvoteCount')}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${sortBy === 'upvoteCount'
-                  ? 'bg-primary/15 text-primary ring-1 ring-primary/20'
-                  : 'bg-muted text-text hover:bg-muted'
+                ? 'bg-primary/15 text-primary ring-1 ring-primary/20'
+                : 'bg-muted text-text hover:bg-muted'
                 }`}
             >
               Popular
@@ -241,21 +243,27 @@ export default function Tips() {
           </div>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {tips?.map((tip) => (
-            <LazyTipCard
-              key={tip.id}
-              tip={tip}
-              showContent={true}
-              showActions={true}
-              onEdit={handleEditTip}
-              onDelete={handleDeleteTip}
-              onUpvote={handleUpvote}
-              onLoginRequired={handleLoginRequired}
-              canModify={canModifyTip(tip)}
-            />
+        <motion.div
+          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+        >
+          {tips?.map((tip, i) => (
+            <motion.div key={tip.id || tip._id || i} variants={itemVariants}>
+              <LazyTipCard
+                tip={tip}
+                showContent={true}
+                showActions={true}
+                onEdit={handleEditTip}
+                onDelete={handleDeleteTip}
+                onUpvote={handleUpvote}
+                onLoginRequired={handleLoginRequired}
+                canModify={canModifyTip(tip)}
+              />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {tips?.length === 0 && !loading && (
           <div className="text-center py-12">

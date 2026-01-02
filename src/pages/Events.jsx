@@ -9,6 +9,8 @@ import { defaultImages } from '../config/env.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { showError } from '../utils/toast.jsx'
 import { useEvents } from '../hooks/queries'
+import { motion } from 'framer-motion'
+import { containerVariants, itemVariants } from '../utils/animations'
 
 export default function Events() {
   useDocumentTitle('Events')
@@ -153,11 +155,18 @@ export default function Events() {
           </div>
         ) : (
           <>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <motion.div
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+            >
               {events.map((event) => (
-                <LazyEventCard key={event._id} event={event} />
+                <motion.div key={event._id || event.id} variants={itemVariants}>
+                  <LazyEventCard event={event} />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
 
             {/* Pagination Placeholder - The current hook doesn't return pagination metadata yet, using simplified view for now */}
             {pagination && pagination.totalPages > 1 && (
