@@ -1,4 +1,4 @@
-export default function SectionHeading({ title, subtitle, badge, centered = true }) {
+export default function SectionHeading({ title, subtitle, badge, centered = true, subtitleClassName = "" }) {
   return (
     <div className={`mb-12 ${centered ? 'text-center' : 'text-left'}`}>
       <div className={`flex flex-col ${centered ? 'items-center' : 'items-start'} space-y-4`}>
@@ -13,7 +13,7 @@ export default function SectionHeading({ title, subtitle, badge, centered = true
         </h2>
 
         {subtitle && (
-          <p className={`text-base sm:text-lg text-text/70 max-w-2xl leading-relaxed ${centered ? 'mx-auto' : ''}`}>
+          <p className={`text-base sm:text-lg text-text/85 max-w-2xl leading-relaxed ${centered ? 'mx-auto' : ''} ${subtitleClassName}`}>
             {subtitle}
           </p>
         )}

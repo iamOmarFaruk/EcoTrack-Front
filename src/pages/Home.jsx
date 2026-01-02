@@ -27,6 +27,7 @@ import {
 } from '../hooks/queries'
 import { motion } from 'framer-motion'
 import { containerVariants, itemVariants } from '../utils/animations'
+import whyGoGreenImg from '../assets/why-go-green.png'
 
 export default function Home() {
   useDocumentTitle('Home')
@@ -252,11 +253,11 @@ export default function Home() {
 
       <section className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center" ref={setWhyGoGreenRef}>
         {/* Left Image */}
-        <div className="order-1">
+        <div className="order-1 h-full">
           <img
-            src={defaultImages.homeFeature}
-            alt="Hands holding a small plant seedling with soil"
-            className={`w-full h-80 sm:h-96 lg:h-[28rem] object-cover rounded-2xl shadow-lg transition-all duration-1000 ease-out ${isWhyGoGreenVisible
+            src={whyGoGreenImg}
+            alt="Sustainable lifestyle gardening and eco-friendly home items"
+            className={`w-full h-[30rem] sm:h-[35rem] lg:h-[42rem] object-cover rounded-2xl shadow-xl transition-all duration-1000 ease-out ${isWhyGoGreenVisible
               ? 'opacity-100 translate-x-0'
               : 'opacity-0 -translate-x-12'
               }`}
@@ -265,43 +266,44 @@ export default function Home() {
         </div>
 
         {/* Content */}
-        <div className="order-2 space-y-4">
+        <div className="order-2 space-y-6">
           <SectionHeading
             badge="Why EcoTrack"
             title="Why Go Green?"
             subtitle="Sustainable living isn't just good for the planet—it's good for you too. Discover the amazing benefits of making eco-friendly choices in your daily life."
+            subtitleClassName="text-text/95 font-medium"
             centered={false}
           />
 
-          <ul className="space-y-3 text-text/80">
+          <ul className="space-y-4 text-text/90">
             <li className="flex items-start space-x-3">
-              <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2"></span>
+              <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2.5"></span>
               <span className="text-base sm:text-lg leading-relaxed">
-                <strong className="text-heading">Save Money:</strong> Reduce utility bills through energy efficiency and waste reduction
+                <strong className="text-heading font-bold">Save Money:</strong> Reduce utility bills through energy efficiency and waste reduction
               </span>
             </li>
             <li className="flex items-start space-x-3">
-              <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2"></span>
+              <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2.5"></span>
               <span className="text-base sm:text-lg leading-relaxed">
-                <strong className="text-heading">Better Health:</strong> Cleaner air, organic foods, and active transportation improve well-being
+                <strong className="text-heading font-bold">Better Health:</strong> Cleaner air, organic foods, and active transportation improve well-being
               </span>
             </li>
             <li className="flex items-start space-x-3">
-              <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2"></span>
+              <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2.5"></span>
               <span className="text-base sm:text-lg leading-relaxed">
-                <strong className="text-heading">Protect the Future:</strong> Preserve natural resources for future generations
+                <strong className="text-heading font-bold">Protect the Future:</strong> Preserve natural resources for future generations
               </span>
             </li>
             <li className="flex items-start space-x-3">
-              <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2"></span>
+              <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2.5"></span>
               <span className="text-base sm:text-lg leading-relaxed">
-                <strong className="text-heading">Create Community:</strong> Connect with like-minded people who share your values
+                <strong className="text-heading font-bold">Create Community:</strong> Connect with like-minded people who share your values
               </span>
             </li>
             <li className="flex items-start space-x-3">
-              <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2"></span>
+              <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2.5"></span>
               <span className="text-base sm:text-lg leading-relaxed">
-                <strong className="text-heading">Feel Empowered:</strong> Take meaningful action that makes a real difference
+                <strong className="text-heading font-bold">Feel Empowered:</strong> Take meaningful action that makes a real difference
               </span>
             </li>
           </ul>
