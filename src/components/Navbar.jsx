@@ -1,4 +1,5 @@
 import { Link, NavLink } from 'react-router-dom'
+import { User, Activity, Calendar, Settings as SettingsIcon, LogOut } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import clsx from 'clsx'
 import { useAuth } from '../context/AuthContext.jsx'
@@ -128,43 +129,53 @@ export default function Navbar() {
                   <Link
                     to="/profile"
                     onClick={() => setProfileOpen(false)}
-                    className="block px-3 py-2 text-sm text-heading hover:bg-primary/10"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-heading transition-colors hover:bg-primary/10"
                     role="menuitem"
                   >
-                    Profile
+                    <User className="h-4 w-4" />
+                    <span>Profile</span>
                   </Link>
                   <Link
                     to="/my-activities"
                     onClick={() => setProfileOpen(false)}
-                    className="block px-3 py-2 text-sm text-heading hover:bg-primary/10"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-heading transition-colors hover:bg-primary/10"
                     role="menuitem"
                   >
-                    My Activities
+                    <Activity className="h-4 w-4" />
+                    <span>My Activities</span>
                   </Link>
                   <Link
                     to="/my-events"
                     onClick={() => setProfileOpen(false)}
-                    className="block px-3 py-2 text-sm text-heading hover:bg-primary/10"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-heading transition-colors hover:bg-primary/10"
                     role="menuitem"
                   >
-                    My Events
+                    <Calendar className="h-4 w-4" />
+                    <span>My Events</span>
                   </Link>
                   <hr className="my-1 border-border" />
                   <Link
                     to="/settings"
                     onClick={() => setProfileOpen(false)}
-                    className="block px-3 py-2 text-sm text-heading hover:bg-primary/10"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-heading transition-colors hover:bg-primary/10"
                     role="menuitem"
                   >
-                    Settings
+                    <SettingsIcon className="h-4 w-4" />
+                    <span>Settings</span>
                   </Link>
-                  <button
-                    onClick={() => { logout(); setProfileOpen(false) }}
-                    className="block w-full px-3 py-2 text-left text-sm text-heading hover:bg-primary/10"
-                    role="menuitem"
-                  >
-                    Logout
-                  </button>
+                  <div className="mt-1 border-t border-border p-1">
+                    <button
+                      onClick={() => {
+                        logout()
+                        setProfileOpen(false)
+                      }}
+                      className="flex w-full items-center gap-2 rounded-md bg-danger/5 px-3 py-2 text-left text-sm font-medium text-danger transition-colors hover:bg-danger/10"
+                      role="menuitem"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span>Logout</span>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -257,42 +268,51 @@ export default function Navbar() {
                 <Link
                   to="/profile"
                   onClick={() => setOpen(false)}
-                  className={clsx('rounded-md px-3 py-2 text-sm text-heading hover:bg-primary/10 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  className={clsx('flex items-center gap-2 rounded-md px-3 py-2 text-sm text-heading hover:bg-primary/10 mobile-menu-item', open && 'mobile-menu-item--open')}
                   style={{ transitionDelay: `${navItems.length * 50}ms` }}
                 >
-                  Profile
+                  <User className="h-4 w-4" />
+                  <span>Profile</span>
                 </Link>
                 <Link
                   to="/my-activities"
                   onClick={() => setOpen(false)}
-                  className={clsx('rounded-md px-3 py-2 text-sm text-heading hover:bg-primary/10 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  className={clsx('flex items-center gap-2 rounded-md px-3 py-2 text-sm text-heading hover:bg-primary/10 mobile-menu-item', open && 'mobile-menu-item--open')}
                   style={{ transitionDelay: `${navItems.length * 50 + 50}ms` }}
                 >
-                  My Activities
+                  <Activity className="h-4 w-4" />
+                  <span>My Activities</span>
                 </Link>
                 <Link
                   to="/my-events"
                   onClick={() => setOpen(false)}
-                  className={clsx('rounded-md px-3 py-2 text-sm text-heading hover:bg-primary/10 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  className={clsx('flex items-center gap-2 rounded-md px-3 py-2 text-sm text-heading hover:bg-primary/10 mobile-menu-item', open && 'mobile-menu-item--open')}
                   style={{ transitionDelay: `${navItems.length * 50 + 100}ms` }}
                 >
-                  My Events
+                  <Calendar className="h-4 w-4" />
+                  <span>My Events</span>
                 </Link>
                 <Link
                   to="/settings"
                   onClick={() => setOpen(false)}
-                  className={clsx('rounded-md px-3 py-2 text-sm text-heading hover:bg-primary/10 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  className={clsx('flex items-center gap-2 rounded-md px-3 py-2 text-sm text-heading hover:bg-primary/10 mobile-menu-item', open && 'mobile-menu-item--open')}
                   style={{ transitionDelay: `${navItems.length * 50 + 150}ms` }}
                 >
-                  Settings
+                  <SettingsIcon className="h-4 w-4" />
+                  <span>Settings</span>
                 </Link>
-                <button
-                  onClick={() => { logout(); setOpen(false) }}
-                  className={clsx('rounded-md px-3 py-2 text-left text-sm text-heading hover:bg-primary/10 mobile-menu-item', open && 'mobile-menu-item--open')}
-                  style={{ transitionDelay: `${navItems.length * 50 + 150}ms` }}
+                <div
+                  className={clsx('mt-2 border-t border-border p-1 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  style={{ transitionDelay: `${navItems.length * 50 + 200}ms` }}
                 >
-                  Logout
-                </button>
+                  <button
+                    onClick={() => { logout(); setOpen(false) }}
+                    className="flex w-full items-center gap-2 rounded-md bg-danger/5 px-3 py-2 text-left text-sm font-medium text-danger hover:bg-danger/10"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Logout</span>
+                  </button>
+                </div>
               </>
             )}
           </div>
