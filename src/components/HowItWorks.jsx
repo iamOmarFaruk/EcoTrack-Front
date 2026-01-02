@@ -50,20 +50,20 @@ export default function HowItWorks() {
               variants={itemVariants}
               className="h-full"
             >
-              <Card className="h-full border-none shadow-none bg-surface/50 backdrop-blur-sm">
-                <CardContent className="p-10 text-center space-y-6">
+              <Card className="h-full border-border/50 shadow-sm bg-white/70 backdrop-blur-sm">
+                <CardContent className="p-8 text-center space-y-6">
                   {/* Icon */}
-                  <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto transition-colors duration-300">
-                    <IconComponent className="w-10 h-10 text-primary" />
+                  <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto transition-colors duration-300">
+                    <IconComponent className="w-8 h-8 text-primary" />
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-2xl font-heading font-bold text-heading">
+                  <h3 className="text-xl font-heading font-bold text-heading">
                     {step.title}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-text/75 leading-relaxed text-lg">
+                  <p className="text-text/80 leading-relaxed">
                     {step.description}
                   </p>
                 </CardContent>
