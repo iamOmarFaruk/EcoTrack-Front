@@ -6,6 +6,8 @@ import ImpactCard from './ui/ImpactCard.jsx'
 import LazySection from './LazySection.jsx'
 import { CommunityStatsCardSkeleton } from './Skeleton.jsx'
 import { challengeApi } from '../services/api.js'
+import { motion } from 'framer-motion'
+import { stackedContainer, stackedItem } from '../utils/animations'
 
 // Animated number using Framer Motion
 function AnimatedNumber({ value, isActive, durationMs = 1600 }) {
@@ -124,10 +126,18 @@ export default function CommunityStats() {
 
         <span ref={triggerRef} aria-hidden="true" className="block h-px w-px opacity-0" />
 
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 px-4 md:px-0">
+        <motion.div
+          className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 px-4 md:px-0"
+          variants={stackedContainer}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.1 }}
+        >
           {loading ? (
             Array.from({ length: 4 }).map((_, i) => (
-              <CommunityStatsCardSkeleton key={i} />
+              <motion.div key={i} variants={stackedItem}>
+                <CommunityStatsCardSkeleton />
+              </motion.div>
             ))
           ) : error ? (
             <div className="sm:col-span-2 lg:col-span-4 text-sm text-secondary bg-secondary/10 border border-secondary/40 rounded-lg px-4 py-3 text-center">
@@ -135,18 +145,19 @@ export default function CommunityStats() {
             </div>
           ) : (
             stats?.map((item) => (
-              <ImpactCard
-                key={item.key}
-                label={item.label}
-                unit={item.unit}
-                icon={item.icon}
-                accentColor={item.key === 'co2SavedKg' ? 'primary' : 'secondary'}
-              >
-                <AnimatedNumber value={item.value} isActive={inView} />
-              </ImpactCard>
+              <motion.div key={item.key} variants={stackedItem}>
+                <ImpactCard
+                  label={item.label}
+                  unit={item.unit}
+                  icon={item.icon}
+                  accentColor={item.key === 'co2SavedKg' ? 'primary' : 'secondary'}
+                >
+                  <AnimatedNumber value={item.value} isActive={inView} />
+                </ImpactCard>
+              </motion.div>
             ))
           )}
-        </div>
+        </motion.div>
       </div>
     </section>
   )

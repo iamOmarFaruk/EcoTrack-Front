@@ -29,7 +29,7 @@ import {
   useTipMutations
 } from '../hooks/queries'
 import { motion } from 'framer-motion'
-import { containerVariants, itemVariants } from '../utils/animations'
+import { stackedContainer, stackedItem } from '../utils/animations'
 import whyGoGreenImg from '../assets/why-go-green.png'
 
 export default function Home() {
@@ -181,7 +181,7 @@ export default function Home() {
           subtitle="Happening right now"
         />
         <motion.div
-          variants={containerVariants}
+          variants={stackedContainer}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.1 }}
@@ -191,7 +191,7 @@ export default function Home() {
             <ChallengeCardSkeleton key={i} />
           ))}
           {!loadingChallenges && challenges?.map((c) => (
-            <motion.div key={c._id || c.id} variants={itemVariants}>
+            <motion.div key={c._id || c.id} variants={stackedItem}>
               <LazyChallengeCard challenge={c} />
             </motion.div>
           ))}
@@ -205,7 +205,7 @@ export default function Home() {
           subtitle="Practical, bite-sized advice"
         />
         <motion.div
-          variants={containerVariants}
+          variants={stackedContainer}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.1 }}
@@ -215,7 +215,7 @@ export default function Home() {
             <TipCardSkeleton key={i} />
           ))}
           {!loadingTips && tips?.map((t, i) => (
-            <motion.div key={t._id || t.id || i} variants={itemVariants}>
+            <motion.div key={t._id || t.id || i} variants={stackedItem}>
               <LazyTipCard
                 tip={t}
                 showActions={true}
@@ -238,7 +238,7 @@ export default function Home() {
             subtitle="Join the community"
           />
           <motion.div
-            variants={containerVariants}
+            variants={stackedContainer}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.1 }}
@@ -248,7 +248,7 @@ export default function Home() {
               <EventCardSkeleton key={i} />
             ))}
             {!loadingEvents && events?.map((e, i) => (
-              <motion.div key={e._id || e.id || i} variants={itemVariants}>
+              <motion.div key={e._id || e.id || i} variants={stackedItem}>
                 <LazyEventCard event={e} />
               </motion.div>
             ))}

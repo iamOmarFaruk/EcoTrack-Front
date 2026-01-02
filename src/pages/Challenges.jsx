@@ -10,7 +10,7 @@ import Button from '../components/ui/Button.jsx'
 import { defaultImages } from '../config/env'
 import { useChallenges } from '../hooks/queries'
 import { motion } from 'framer-motion'
-import { containerVariants, itemVariants } from '../utils/animations'
+import { stackedContainer, stackedItem } from '../utils/animations'
 
 
 export default function Challenges() {
@@ -219,25 +219,25 @@ export default function Challenges() {
 
         <motion.div
           className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-          variants={containerVariants}
+          variants={stackedContainer}
           initial="hidden"
           animate="show"
           key={loading ? 'loading' : 'loaded'}
         >
           {loading ? (
             Array.from({ length: 6 }).map((_, i) => (
-              <motion.div key={`skeleton-${i}`} variants={itemVariants}>
+              <motion.div key={`skeleton-${i}`} variants={stackedItem}>
                 <ChallengeCardSkeleton />
               </motion.div>
             ))
           ) : challenges.length > 0 ? (
             challenges.map((c) => (
-              <motion.div key={c._id || c.id} variants={itemVariants}>
+              <motion.div key={c._id || c.id} variants={stackedItem}>
                 <LazyChallengeCard challenge={c} />
               </motion.div>
             ))
           ) : (
-            <motion.div variants={itemVariants} className="col-span-full py-16 px-4">
+            <motion.div variants={stackedItem} className="col-span-full py-16 px-4">
               <div className="bg-surface rounded-xl p-12 border border-border dashed text-center max-w-2xl mx-auto">
                 <div className="mb-6 flex justify-center">
                   <div className="p-4 rounded-full bg-primary/5">
