@@ -77,7 +77,7 @@ export default function Home() {
     isLoading: loadingTips
   } = useTips({
     page: 1,
-    limit: 5,
+    limit: 4,
     sortBy: 'createdAt',
     order: 'desc'
   })
@@ -205,9 +205,9 @@ export default function Home() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.1 }}
-          className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
+          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
         >
-          {loadingTips && Array.from({ length: 5 }).map((_, i) => (
+          {loadingTips && Array.from({ length: 4 }).map((_, i) => (
             <TipCardSkeleton key={i} />
           ))}
           {!loadingTips && tips?.map((t, i) => (
