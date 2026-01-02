@@ -246,34 +246,43 @@ export default function Tips() {
           variants={containerVariants}
           initial="hidden"
           animate="show"
+          key={loading ? 'loading' : 'loaded'} // Ensure re-animate when switching from skeletons to content
         >
           {loading ? (
             Array.from({ length: 6 }).map((_, i) => (
-              <TipCardSkeleton key={i} />
+              <motion.div key={`skeleton-${i}`} variants={itemVariants}>
+                <TipCardSkeleton />
+              </motion.div>
             ))
-          ) : tips?.map((tip, i) => (
-            <motion.div key={tip.id || tip._id || i} variants={itemVariants}>
-              <LazyTipCard
-                tip={tip}
-                showContent={true}
-                showActions={true}
-                onEdit={handleEditTip}
-                onDelete={handleDeleteTip}
-                onUpvote={handleUpvote}
-                onLoginRequired={handleLoginRequired}
-                canModify={canModifyTip(tip)}
-              />
-            </motion.div>
-          ))}
+          ) : (
+            tips.map((tip) => (
+              <motion.div key={tip.id} variants={itemVariants}>
+                <LazyTipCard
+                  tip={tip}
+                  showContent={true}
+                  showActions={true}
+                  onEdit={handleEditTip}
+                  onDelete={handleDeleteTip}
+                  onUpvote={handleUpvote}
+                  onLoginRequired={handleLoginRequired}
+                  canModify={canModifyTip(tip)}
+                />
+              </motion.div>
+            ))
+          )}
         </motion.div>
 
-        {tips?.length === 0 && !loading && (
-          <div className="text-center py-12">
-            <svg className="mx-auto h-12 w-12 text-text/60 mb-4" fill="none" stroke="currentColor" viewBox="0 0 48 48">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h32l-3 18H11L8 12zm0 0l-2-7m14 25v8m0-8l3 3m-3-3l-3 3" />
-            </svg>
-            <h3 className="text-lg font-medium text-heading mb-2">No tips shared yet</h3>
-            <p className="text-text/80 mb-4">Be the first to share an eco-friendly tip with the community!</p>
+        {!loading && tips.length === 0 && (
+          <div className="text-center py-16 bg-surface rounded-xl border border-border dashed">
+            <div className="mb-4 flex justify-center">
+              <div className="p-4 rounded-full bg-primary/5">
+                <svg className="h-10 w-10 text-primary/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.989-2.386l-.548-.547z" />
+                </svg>
+              </div>
+            </div>
+            <h3 className="text-lg font-semibold text-heading mb-2">No tips shared yet</h3>
+            <p className="text-text/70 mb-8 max-w-sm mx-auto">Be the first to share an eco-friendly tip with the community and inspire others!</p>
             {user ? (
               <Button onClick={handleAddTip} className="mx-auto">
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

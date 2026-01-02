@@ -65,6 +65,17 @@ export const mockChallenges = [
     impactMetric: 'Bags collected',
     startDate: '2025-04-20',
   },
+  {
+    _id: 'c7',
+    title: 'Plant a Tree',
+    category: 'Environment',
+    participants: 240,
+    duration: '1 day',
+    imageUrl: 'https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?q=80&w=1200&auto=format&fit=crop',
+    description: 'Plant a tree in your local area.',
+    impactMetric: 'Trees planted',
+    startDate: '2025-04-25',
+  },
 ]
 
 

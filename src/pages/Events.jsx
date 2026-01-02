@@ -35,7 +35,35 @@ export default function Events() {
     return params
   }, [currentPage, statusFilter, sortBy, searchQuery])
 
-  const { data: events = [], isLoading: loading } = useEvents(filters)
+  const { data: events = [], isLoading: loading, error } = useEvents(filters)
+
+  if (error) {
+    return (
+      <div className="space-y-8">
+        <div className="full-bleed -mt-8">
+          <SubpageHero
+            title="Eco Events"
+            subtitle="Join community events and connect with like-minded environmental advocates"
+            backgroundImage={defaultImages.eventsHero}
+            height="medium"
+            overlayIntensity="medium"
+          />
+        </div>
+        <div className="text-center py-16 bg-surface rounded-xl border border-border">
+          <div className="mb-4 flex justify-center">
+            <div className="p-3 rounded-full bg-danger/10">
+              <svg className="h-8 w-8 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+          <h3 className="text-xl font-bold text-heading mb-2">Failed to load events</h3>
+          <p className="text-text/70 mb-6">{error.message || 'There was an issue connecting to the server.'}</p>
+          <Button onClick={() => window.location.reload()}>Try Again</Button>
+        </div>
+      </div>
+    )
+  }
 
   const handleSearch = (e) => {
     e.preventDefault()
@@ -135,69 +163,44 @@ export default function Events() {
           </div>
         </div>
 
-        {/* Events Grid */}
-        {loading ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <EventCardSkeleton key={i} />
-            ))}
-          </div>
-        ) : events.length === 0 ? (
-          <div className="bg-surface rounded-xl p-12 border border-border shadow-sm text-center">
-            <div className="w-24 h-24 bg-gradient-to-br from-primary/15 to-primary/15 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-4xl">🌍</span>
-            </div>
-            <h3 className="text-2xl font-bold text-heading mb-4">No events found</h3>
-            <p className="text-lg text-text/80 mb-6 max-w-2xl mx-auto">
-              {searchQuery ? 'Try adjusting your search or filters.' : 'Be the first to create an eco-friendly event!'}
-            </p>
-            {user && (
-              <Button onClick={handleCreateEvent} className="bg-primary hover:bg-primary">
-                Create First Event
-              </Button>
-            )}
-          </div>
-        ) : (
-          <>
-            <motion.div
-              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-              variants={containerVariants}
-              initial="hidden"
-              animate="show"
-            >
-              {events.map((event) => (
-                <motion.div key={event._id || event.id} variants={itemVariants}>
-                  <LazyEventCard event={event} />
-                </motion.div>
-              ))}
-            </motion.div>
-
-            {/* Pagination Placeholder - The current hook doesn't return pagination metadata yet, using simplified view for now */}
-            {pagination && pagination.totalPages > 1 && (
-              <div className="flex flex-col items-center gap-4 mt-8">
-                <div className="flex items-center gap-2">
-                  <Button
-                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                    variant="outline"
-                  >
-                    Previous
-                  </Button>
-                  <span className="px-4 py-2 text-text/80">
-                    Page {currentPage}
-                  </span>
-                  <Button
-                    onClick={() => setCurrentPage(p => p + 1)}
-                    disabled={events.length < 9}
-                    variant="outline"
-                  >
-                    Next
-                  </Button>
+        <motion.div
+          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          key={loading ? 'loading' : 'loaded'}
+        >
+          {loading ? (
+            Array.from({ length: 6 }).map((_, i) => (
+              <motion.div key={`skeleton-${i}`} variants={itemVariants}>
+                <EventCardSkeleton />
+              </motion.div>
+            ))
+          ) : events.length > 0 ? (
+            events.map((event) => (
+              <motion.div key={event._id || event.id} variants={itemVariants}>
+                <LazyEventCard event={event} />
+              </motion.div>
+            ))
+          ) : (
+            <motion.div variants={itemVariants} className="col-span-full py-16 px-4">
+              <div className="bg-surface rounded-xl p-12 border border-border dashed text-center max-w-2xl mx-auto">
+                <div className="w-24 h-24 bg-gradient-to-br from-primary/5 to-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <span className="text-4xl opacity-50">🌍</span>
                 </div>
+                <h3 className="text-2xl font-bold text-heading mb-4">No events found</h3>
+                <p className="text-lg text-text/70 mb-8 max-w-2xl mx-auto">
+                  {searchQuery ? 'We couldn\'t find any events matching your search criteria.' : 'Be the first to create an eco-friendly event and lead the way in your community!'}
+                </p>
+                {user && (
+                  <Button onClick={handleCreateEvent} className="bg-primary hover:bg-primary">
+                    Create First Event
+                  </Button>
+                )}
               </div>
-            )}
-          </>
-        )}
+            </motion.div>
+          )}
+        </motion.div>
       </div>
     </div>
   )

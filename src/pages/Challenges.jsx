@@ -9,6 +9,8 @@ import SubpageHero from '../components/SubpageHero.jsx'
 import Button from '../components/ui/Button.jsx'
 import { defaultImages } from '../config/env'
 import { useChallenges } from '../hooks/queries'
+import { motion } from 'framer-motion'
+import { containerVariants, itemVariants } from '../utils/animations'
 
 
 export default function Challenges() {
@@ -215,46 +217,62 @@ export default function Challenges() {
           </div> */}
         </div>
 
-        <div
+        <motion.div
           className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          key={loading ? 'loading' : 'loaded'}
         >
           {loading ? (
             Array.from({ length: 6 }).map((_, i) => (
-              <ChallengeCardSkeleton key={i} />
+              <motion.div key={`skeleton-${i}`} variants={itemVariants}>
+                <ChallengeCardSkeleton />
+              </motion.div>
             ))
           ) : challenges.length > 0 ? (
             challenges.map((c) => (
-              <div key={c._id || c.id}>
+              <motion.div key={c._id || c.id} variants={itemVariants}>
                 <LazyChallengeCard challenge={c} />
-              </div>
+              </motion.div>
             ))
           ) : (
-            <div className="col-span-full flex flex-col items-center justify-center py-16 px-4 text-center">
-              <div className="mb-4 p-3 rounded-full bg-muted">
-                <svg className="w-6 h-6 text-text/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
+            <motion.div variants={itemVariants} className="col-span-full py-16 px-4">
+              <div className="bg-surface rounded-xl p-12 border border-border dashed text-center max-w-2xl mx-auto">
+                <div className="mb-6 flex justify-center">
+                  <div className="p-4 rounded-full bg-primary/5">
+                    <svg className="w-12 h-12 text-primary/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold text-heading mb-3">No challenges found</h3>
+                <p className="text-text/70 mb-8 max-w-md mx-auto">
+                  {category === 'All' && !searchQuery
+                    ? 'Our community is currently preparing new eco-challenges. Check back soon or start one yourself!'
+                    : `We couldn't find any challenges matching your current filters. Try adjusting your search.`
+                  }
+                </p>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                  <Button
+                    onClick={() => {
+                      setCategory('All')
+                      setSearchQuery('')
+                    }}
+                    variant="outline"
+                  >
+                    Clear All Filters
+                  </Button>
+                  {auth.isLoggedIn && (
+                    <Button as={Link} to="/challenges/add">
+                      Create Challenge
+                    </Button>
+                  )}
+                </div>
               </div>
-              <h3 className="text-lg font-medium text-heading mb-2">No challenges found</h3>
-              <p className="text-text/80 mb-4">
-                {category === 'All' && !searchQuery
-                  ? 'No challenges are currently available.'
-                  : `No challenges found matching your filters.`
-                }
-              </p>
-              <Button
-                onClick={() => {
-                  setCategory('All')
-                  setSearchQuery('')
-                }}
-                variant="outline"
-                className="text-sm"
-              >
-                Clear Filters
-              </Button>
-            </div>
+            </motion.div>
           )}
-        </div>
+        </motion.div>
 
         {/* Pagination */}
         {pagination && pagination.pages > 1 && (

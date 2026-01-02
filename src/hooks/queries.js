@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import { challengeApi, tipsApi, eventApi, userApi, authApi } from '../services/api'
 import { showSuccess, showError } from '../utils/toast'
 
@@ -44,15 +44,18 @@ export const queryKeys = {
 /*                              Challenge Hooks                               */
 /* -------------------------------------------------------------------------- */
 
-const normalizeChallenge = (challenge) => ({
-    ...challenge,
-    _id: challenge._id || challenge.id,
-    id: challenge.id || challenge._id,
-    slug: challenge.slug || '',
-    participants: challenge.registeredParticipants ?? (Array.isArray(challenge.participants) ? challenge.participants.length : challenge.participants) ?? 0,
-    imageUrl: challenge.image || challenge.imageUrl,
-    description: challenge.shortDescription || challenge.description
-})
+const normalizeChallenge = (challenge) => {
+    if (!challenge || typeof challenge !== 'object') return null;
+    return {
+        ...challenge,
+        _id: challenge._id || challenge.id,
+        id: challenge.id || challenge._id,
+        slug: challenge.slug || '',
+        participants: challenge.registeredParticipants ?? (Array.isArray(challenge.participants) ? challenge.participants.length : challenge.participants) ?? 0,
+        imageUrl: challenge.image || challenge.imageUrl,
+        description: challenge.shortDescription || challenge.description
+    }
+}
 
 export const useChallenges = (filters = {}) => {
     return useQuery({
@@ -63,9 +66,9 @@ export const useChallenges = (filters = {}) => {
             const data = response.challenges || response.data?.challenges || response.data || response || []
             // Support both Array and Object (map) formats
             const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
-            return array.map(normalizeChallenge)
+            return array.map(normalizeChallenge).filter(Boolean)
         },
-        keepPreviousData: true
+        placeholderData: keepPreviousData
     })
 }
 
@@ -113,7 +116,7 @@ export const useMyCreatedChallenges = () => {
             const response = await challengeApi.getMyCreated()
             const data = response.challenges || response.data?.challenges || response.data || response || []
             const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
-            return array.map(normalizeChallenge)
+            return array.map(normalizeChallenge).filter(Boolean)
         }
     })
 }
@@ -125,7 +128,7 @@ export const useMyJoinedChallenges = (filters = {}) => {
             const response = await challengeApi.getMyJoined(filters)
             const data = response.challenges || response.data?.challenges || response.data || response || []
             const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
-            return array.map(normalizeChallenge)
+            return array.map(normalizeChallenge).filter(Boolean)
         }
     })
 }
@@ -188,17 +191,20 @@ export const useChallengeMutations = () => {
 /*                                  Tip Hooks                                 */
 /* -------------------------------------------------------------------------- */
 
-const normalizeTip = (tip) => ({
-    ...tip,
-    id: tip.id || tip._id,
-    upvotes: Number.isFinite(Number(tip.upvoteCount))
-        ? Number(tip.upvoteCount)
-        : (Number.isFinite(Number(tip.upvotes)) ? Number(tip.upvotes) : 0),
-    authorId: tip.authorId || (typeof tip.author === 'string' ? tip.author : tip.author?.uid || tip.author?.id),
-    authorName: tip.authorName || tip.author?.name || 'Anonymous',
-    authorImage: tip.authorImage || tip.authorAvatar || tip.author?.avatarUrl || tip.author?.imageUrl,
-    firebaseId: tip.firebaseId || (typeof tip.author === 'string' ? tip.author : tip.author?.firebaseId)
-})
+const normalizeTip = (tip) => {
+    if (!tip || typeof tip !== 'object') return null;
+    return {
+        ...tip,
+        id: tip.id || tip._id,
+        upvotes: Number.isFinite(Number(tip.upvoteCount))
+            ? Number(tip.upvoteCount)
+            : (Number.isFinite(Number(tip.upvotes)) ? Number(tip.upvotes) : 0),
+        authorId: tip.authorId || (typeof tip.author === 'string' ? tip.author : tip.author?.uid || tip.author?.id),
+        authorName: tip.authorName || tip.author?.name || 'Anonymous',
+        authorImage: tip.authorImage || tip.authorAvatar || tip.author?.avatarUrl || tip.author?.imageUrl,
+        firebaseId: tip.firebaseId || (typeof tip.author === 'string' ? tip.author : tip.author?.firebaseId)
+    }
+}
 
 export const useTips = (filters = {}) => {
     return useQuery({
@@ -207,9 +213,9 @@ export const useTips = (filters = {}) => {
             const response = await tipsApi.getAll(filters)
             const data = response.tips || response.data?.tips || response.data || response || []
             const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
-            return array.map(normalizeTip)
+            return array.map(normalizeTip).filter(Boolean)
         },
-        keepPreviousData: true
+        placeholderData: keepPreviousData
     })
 }
 
@@ -220,9 +226,9 @@ export const useMyTips = (filters = {}) => {
             const response = await tipsApi.getMyTips(filters)
             const data = response.tips || response.data?.tips || response.data || response || []
             const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
-            return array.map(normalizeTip)
+            return array.map(normalizeTip).filter(Boolean)
         },
-        keepPreviousData: true
+        placeholderData: keepPreviousData
     })
 }
 
@@ -293,7 +299,7 @@ export const useEvents = (filters = {}) => {
             const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
             return array
         },
-        keepPreviousData: true
+        placeholderData: keepPreviousData
     })
 }
 
