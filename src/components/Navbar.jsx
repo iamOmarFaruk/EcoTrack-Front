@@ -75,7 +75,7 @@ export default function Navbar() {
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <Logo className="h-7 w-7 sm:h-8 sm:w-8" />
-          <span className="text-base sm:text-lg font-semibold text-slate-900">EcoTrack</span>
+          <span className="text-lg sm:text-xl font-semibold text-slate-900">EcoTrack</span>
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
@@ -85,7 +85,7 @@ export default function Navbar() {
               to={item.to}
               className={({ isActive }) =>
                 clsx(
-                  'text-sm font-bold transition-colors hover:text-emerald-700 link-underline-sweep',
+                  'text-base font-bold transition-colors hover:text-emerald-700 link-underline-sweep',
                   isActive ? 'text-emerald-800 link-underline-sweep--active' : 'text-slate-900'
                 )
               }
@@ -224,7 +224,7 @@ export default function Navbar() {
               onClick={() => setOpen(false)}
               className={({ isActive }) =>
                 clsx(
-                  'rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-emerald-50 mobile-menu-item',
+                  'rounded-md px-3 py-2 text-base font-bold transition-colors hover:bg-emerald-50 mobile-menu-item',
                   open && 'mobile-menu-item--open',
                   isActive ? 'text-emerald-800' : 'text-slate-900'
                 )
@@ -309,5 +309,4 @@ export default function Navbar() {
     </header>
   )
 }
-
 
