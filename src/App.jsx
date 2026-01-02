@@ -10,8 +10,8 @@ import EcoLoader from './components/EcoLoader.jsx'
 import './index.css'
 import PrivacyToast from './components/PrivacyToast.jsx'
 
-// Lazy load pages
-const Home = lazy(() => import('./pages/Home.jsx'))
+import Home from './pages/Home.jsx'
+// lazy load other pages
 const Challenges = lazy(() => import('./pages/Challenges.jsx'))
 const ChallengeDetail = lazy(() => import('./pages/ChallengeDetail.jsx'))
 const Tips = lazy(() => import('./pages/Tips.jsx'))
@@ -38,98 +38,96 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <ScrollToTop />
-        <Suspense fallback={<EcoLoader />}>
-          <Routes>
-            <Route element={<PublicLayout />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/challenges" element={<Challenges />} />
-              <Route path="/tips" element={<Tips />} />
-              <Route path="/events" element={<Events />} />
-              <Route path="/events/:id" element={<EventDetail />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route
-                path="/events/add"
-                element={
-                  <ProtectedRoute>
-                    <AddEvent />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/events/:id/edit"
-                element={
-                  <ProtectedRoute>
-                    <EditEvent />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/challenges/add"
-                element={
-                  <ProtectedRoute>
-                    <AddChallenge />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/challenges/:slug/edit"
-                element={
-                  <ProtectedRoute>
-                    <EditChallenge />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/challenges/:slug" element={<ChallengeDetail />} />
-              <Route path="*" element={<NotFound />} />
-            </Route>
-            <Route element={<DashboardLayout />}>
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/settings"
-                element={
-                  <ProtectedRoute>
-                    <Settings />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/my-activities"
-                element={
-                  <ProtectedRoute>
-                    <MyActivities />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/challenges/join/:id"
-                element={
-                  <ProtectedRoute>
-                    <JoinChallenge />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/events/my-events"
-                element={
-                  <ProtectedRoute>
-                    <MyEvents />
-                  </ProtectedRoute>
-                }
-              />
-            </Route>
-          </Routes>
-        </Suspense>
+        <Routes>
+          <Route element={<PublicLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/challenges" element={<Challenges />} />
+            <Route path="/tips" element={<Tips />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/events/:id" element={<EventDetail />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route
+              path="/events/add"
+              element={
+                <ProtectedRoute>
+                  <AddEvent />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/events/:id/edit"
+              element={
+                <ProtectedRoute>
+                  <EditEvent />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/challenges/add"
+              element={
+                <ProtectedRoute>
+                  <AddChallenge />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/challenges/:slug/edit"
+              element={
+                <ProtectedRoute>
+                  <EditChallenge />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/challenges/:slug" element={<ChallengeDetail />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+          <Route element={<DashboardLayout />}>
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-activities"
+              element={
+                <ProtectedRoute>
+                  <MyActivities />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/challenges/join/:id"
+              element={
+                <ProtectedRoute>
+                  <JoinChallenge />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/events/my-events"
+              element={
+                <ProtectedRoute>
+                  <MyEvents />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
+        </Routes>
         <Toaster
           position="top-center"
           toastOptions={{

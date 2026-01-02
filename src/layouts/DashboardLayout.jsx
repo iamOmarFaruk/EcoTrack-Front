@@ -1,8 +1,9 @@
 import { Outlet, Link, useLocation } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import clsx from 'clsx'
 import Navbar from '../components/Navbar.jsx'
 import Footer from '../components/Footer.jsx'
+import EcoLoader from '../components/EcoLoader.jsx'
 
 export default function DashboardLayout() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
@@ -78,9 +79,11 @@ export default function DashboardLayout() {
             ))}
           </nav>
         </aside>
-        
+
         <main className="flex-1">
-          <Outlet />
+          <Suspense fallback={<EcoLoader />}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
       <Footer />
