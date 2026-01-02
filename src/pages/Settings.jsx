@@ -11,7 +11,7 @@ export default function Settings() {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [isDeleting, setIsDeleting] = useState(false)
-  
+
   // Profile editing state
   const [isEditingProfile, setIsEditingProfile] = useState(false)
   const [isSavingProfile, setIsSavingProfile] = useState(false)
@@ -89,8 +89,12 @@ export default function Settings() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <SectionHeading title="Settings" subtitle="Manage your account" />
-      
+      <SectionHeading
+        badge="Preferences"
+        title="Settings"
+        subtitle="Manage your account"
+      />
+
       {/* Account Settings */}
       <div className="bg-surface rounded-xl border border-border shadow-sm mb-6">
         <div className="p-6 border-b border-border flex items-center justify-between">
@@ -107,14 +111,14 @@ export default function Settings() {
             </button>
           )}
         </div>
-        
+
         <div className="p-6 space-y-4">
           <div>
             <label className="text-sm font-medium text-text">Email</label>
             <p className="mt-1 text-heading">{user?.email}</p>
             <p className="text-xs text-text/70 mt-1">Email cannot be changed</p>
           </div>
-          
+
           {!isEditingProfile ? (
             <>
               <div>
@@ -125,9 +129,9 @@ export default function Settings() {
                 <div>
                   <label className="text-sm font-medium text-text">Profile Picture</label>
                   <div className="mt-2 flex items-center gap-3">
-                    <img 
-                      src={user.avatarUrl} 
-                      alt="Profile" 
+                    <img
+                      src={user.avatarUrl}
+                      alt="Profile"
                       className="w-12 h-12 rounded-full object-cover border-2 border-border"
                       onError={(e) => e.target.style.display = 'none'}
                     />
@@ -149,18 +153,18 @@ export default function Settings() {
                   disabled={isSavingProfile}
                 />
               </div>
-              
+
               <div>
                 <label className="text-sm font-medium text-text mb-2 block">Profile Picture URL (Optional)</label>
-                
+
                 {/* Image Preview */}
                 {editPhotoUrl && (
                   <div className="mb-3 flex items-center gap-3">
                     <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-border bg-muted flex items-center justify-center">
                       {!imagePreviewError ? (
-                        <img 
-                          src={editPhotoUrl} 
-                          alt="Profile preview" 
+                        <img
+                          src={editPhotoUrl}
+                          alt="Profile preview"
                           className="w-full h-full object-cover"
                           onError={() => setImagePreviewError(true)}
                         />
@@ -180,7 +184,7 @@ export default function Settings() {
                     </div>
                   </div>
                 )}
-                
+
                 <input
                   type="url"
                   value={editPhotoUrl}
@@ -194,7 +198,7 @@ export default function Settings() {
                 />
                 <p className="text-xs text-text/70 mt-1">Enter a URL to an image (leave empty to remove)</p>
               </div>
-              
+
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={handleCancelEdit}
@@ -222,7 +226,7 @@ export default function Settings() {
           <h3 className="text-lg font-semibold text-danger">Danger Zone</h3>
           <p className="text-sm text-danger mt-1">Irreversible actions</p>
         </div>
-        
+
         <div className="p-6">
           <div className="flex items-start justify-between">
             <div className="flex-1">
@@ -267,11 +271,11 @@ export default function Settings() {
               </div>
               <h3 className="text-xl font-bold text-heading">Delete Account</h3>
             </div>
-            
+
             <p className="text-text/80 mb-4">
               This action is permanent and cannot be undone. All your data will be deleted.
             </p>
-            
+
             <div className="mb-4">
               <label className="block text-sm font-medium text-text mb-2">
                 Type <span className="font-bold text-danger">DELETE</span> to confirm:
@@ -285,7 +289,7 @@ export default function Settings() {
                 disabled={isDeleting}
               />
             </div>
-            
+
             <div className="flex gap-3">
               <button
                 onClick={() => {

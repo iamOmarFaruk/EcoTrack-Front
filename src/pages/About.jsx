@@ -3,6 +3,7 @@ import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
 import { Link } from 'react-router-dom'
 import EcoLoader from '../components/EcoLoader.jsx'
 import Button from '../components/ui/Button.jsx'
+import SectionHeading from '../components/SectionHeading.jsx'
 
 export default function About() {
   useDocumentTitle('About')
@@ -15,14 +16,12 @@ export default function About() {
   return (
     <div className="space-y-12 sm:space-y-16 pb-8">
       {/* Hero Section */}
-      <section className="text-center space-y-4 sm:space-y-6 px-4">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-heading mb-2 sm:mb-4">
-          About EcoTrack
-        </h1>
-        <p className="text-lg sm:text-xl text-text/80 max-w-3xl mx-auto leading-relaxed">
-          EcoTrack helps people build sustainable habits through challenges, tips, and events.
-          We care about clean design, great UX, and meaningful impact.
-        </p>
+      <section className="text-center px-4">
+        <SectionHeading
+          badge="Our Mission"
+          title="About EcoTrack"
+          subtitle="EcoTrack helps people build sustainable habits through challenges, tips, and events. We care about clean design, great UX, and meaningful impact."
+        />
       </section>
 
       {/* Main Content with Images */}
@@ -36,12 +35,14 @@ export default function About() {
             loading="lazy"
           />
         </div>
-        
+
         {/* Content */}
-        <div className="order-2 space-y-4 sm:space-y-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-heading">
-            Building a Sustainable Future Together
-          </h2>
+        <div className="order-2 space-y-4">
+          <SectionHeading
+            badge="Sustainability"
+            title="Building a Sustainable Future Together"
+            centered={false}
+          />
           <div className="space-y-3 sm:space-y-4 text-text/80">
             <p className="text-base sm:text-lg leading-relaxed">
               At EcoTrack, we believe that small actions can create big changes. Our platform
@@ -53,7 +54,7 @@ export default function About() {
               it easy and fun to adopt sustainable habits that last a lifetime.
             </p>
           </div>
-          
+
           {/* Events Button */}
           <div className="pt-2 sm:pt-4">
             <Button as={Link} to="/events" variant="primary" className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-2 sm:py-3">
@@ -66,10 +67,12 @@ export default function About() {
       {/* Second Section - Reversed Layout */}
       <section className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center px-4">
         {/* Content - First on desktop, second on mobile */}
-        <div className="order-2 lg:order-1 space-y-4 sm:space-y-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-heading">
-            Join Our Growing Community
-          </h2>
+        <div className="order-2 lg:order-1 space-y-4">
+          <SectionHeading
+            badge="Community"
+            title="Join Our Growing Community"
+            centered={false}
+          />
           <div className="space-y-3 sm:space-y-4 text-text/80">
             <p className="text-base sm:text-lg leading-relaxed">
               Whether you're just starting your sustainability journey or you're a
@@ -81,7 +84,7 @@ export default function About() {
               your achievements as you work towards a more sustainable lifestyle.
             </p>
           </div>
-          
+
           {/* Call to Action */}
           <div className="pt-2 sm:pt-4">
             <Button as={Link} to="/challenges" variant="primary" className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-2 sm:py-3">
@@ -89,7 +92,7 @@ export default function About() {
             </Button>
           </div>
         </div>
-        
+
         {/* Right Image - First on mobile, second on desktop */}
         <div className="order-1 lg:order-2">
           <img
@@ -103,8 +106,11 @@ export default function About() {
 
       {/* Stats Section */}
       <section className="bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 mx-4">
-        <div className="text-center space-y-6 sm:space-y-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-heading">Our Impact</h2>
+        <div className="text-center">
+          <SectionHeading
+            badge="Impact"
+            title="Our Progress So Far"
+          />
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
             <div className="space-y-1 sm:space-y-2">
               <div className="text-2xl sm:text-3xl font-bold text-primary">10,000+</div>

@@ -1,20 +1,29 @@
-export default function SectionHeading({ title, subtitle, centered = false }) {
+export default function SectionHeading({ title, subtitle, badge, centered = true }) {
   return (
-    <div className={`mb-10 ${centered ? 'text-center' : ''}`}>
-      <div className={`flex flex-col ${centered ? 'items-center' : ''}`}>
-        <h2 className="text-3xl sm:text-4xl font-heading font-extrabold tracking-tight text-heading">
+    <div className={`mb-12 ${centered ? 'text-center' : 'text-left'}`}>
+      <div className={`flex flex-col ${centered ? 'items-center' : 'items-start'} space-y-4`}>
+        {badge && (
+          <span className="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20 backdrop-blur-sm">
+            {badge}
+          </span>
+        )}
+
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-extrabold tracking-tight text-heading leading-tight max-w-4xl">
           {title}
         </h2>
-        <div className={`h-1.5 w-20 mt-3 rounded-full bg-gradient-to-r from-primary to-secondary ${centered ? 'mx-auto' : ''}`} />
+
+        {subtitle && (
+          <p className={`text-base sm:text-lg text-text/70 max-w-2xl leading-relaxed ${centered ? 'mx-auto' : ''}`}>
+            {subtitle}
+          </p>
+        )}
+
+        <div className={`h-1.5 w-12 rounded-full bg-primary/30 mt-2 ${centered ? 'mx-auto' : ''}`} />
       </div>
-      {subtitle ? (
-        <p className={`mt-4 text-base sm:text-lg text-text/80 max-w-3xl ${centered ? 'mx-auto' : ''}`}>
-          {subtitle}
-        </p>
-      ) : null}
     </div>
   )
 }
+
 
 
 

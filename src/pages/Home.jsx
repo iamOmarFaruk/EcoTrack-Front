@@ -413,7 +413,11 @@ export default function Home() {
       <CommunityStats />
 
       <section>
-        <SectionHeading title="Active Challenges" subtitle="Happening right now" />
+        <SectionHeading
+          badge="Challenges"
+          title="Active Challenges"
+          subtitle="Happening right now"
+        />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {loadingChallenges && Array.from({ length: 6 }).map((_, i) => (
             <LazySection
@@ -431,7 +435,11 @@ export default function Home() {
       </section>
 
       <section>
-        <SectionHeading title="Recent Tips" subtitle="Practical, bite-sized advice" />
+        <SectionHeading
+          badge="Community Wisdom"
+          title="Recent Tips"
+          subtitle="Practical, bite-sized advice"
+        />
         <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
           {loadingTips && Array.from({ length: 5 }).map((_, i) => (
             <LazySection
@@ -458,7 +466,11 @@ export default function Home() {
       </section>
 
       <section>
-        <SectionHeading title="Upcoming Events" subtitle="Join the community" />
+        <SectionHeading
+          badge="Events"
+          title="Upcoming Events"
+          subtitle="Join the community"
+        />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {loadingEvents && Array.from({ length: 4 }).map((_, i) => (
             <LazySection
@@ -482,8 +494,8 @@ export default function Home() {
             src={defaultImages.homeFeature}
             alt="Hands holding a small plant seedling with soil"
             className={`w-full h-80 sm:h-96 lg:h-[28rem] object-cover rounded-2xl shadow-lg transition-all duration-1000 ease-out ${isWhyGoGreenVisible
-                ? 'opacity-100 translate-x-0'
-                : 'opacity-0 -translate-x-12'
+              ? 'opacity-100 translate-x-0'
+              : 'opacity-0 -translate-x-12'
               }`}
             loading="lazy"
           />
@@ -492,8 +504,10 @@ export default function Home() {
         {/* Content */}
         <div className="order-2 space-y-4">
           <SectionHeading
+            badge="Why EcoTrack"
             title="Why Go Green?"
             subtitle="Sustainable living isn't just good for the planet—it's good for you too. Discover the amazing benefits of making eco-friendly choices in your daily life."
+            centered={false}
           />
 
           <ul className="space-y-3 text-text/80">

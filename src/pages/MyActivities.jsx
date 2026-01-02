@@ -25,21 +25,21 @@ export default function MyActivities() {
   const fetchActivities = async () => {
     try {
       setLoading(true)
-      
+
       // Use the new challenges API endpoints
       const params = {
         page: currentPage,
         limit: 12
       }
-      
+
       // Get joined challenges
       const joinedResponse = await challengeApi.getMyJoined(params)
       const joinedData = joinedResponse?.data || joinedResponse || []
-      
+
       // Get created challenges
       const createdResponse = await challengeApi.getMyCreated()
       const createdData = createdResponse?.data || createdResponse || []
-      
+
       // Transform data
       const transformedJoined = Array.isArray(joinedData) ? joinedData.map(challenge => ({
         _id: challenge.id || challenge._id,
@@ -57,7 +57,7 @@ export default function MyActivities() {
           impactAchieved: 0 // Backend doesn't provide this yet
         }
       })) : []
-      
+
       const transformedCreated = Array.isArray(createdData) ? createdData.map(challenge => ({
         _id: challenge.id || challenge._id,
         challenge: {
@@ -74,10 +74,10 @@ export default function MyActivities() {
           impactAchieved: 0
         }
       })) : []
-      
+
       // Combine activities
       const allActivities = [...transformedCreated, ...transformedJoined]
-      
+
       // Apply status filter
       let filteredActivities = allActivities
       if (statusFilter === 'active') {
@@ -85,16 +85,16 @@ export default function MyActivities() {
       } else if (statusFilter === 'completed') {
         filteredActivities = allActivities.filter(a => a.userProgress.status === 'Completed')
       }
-      
+
       setActivities(filteredActivities)
-      
+
       // Calculate summary
       setSummary({
         total: allActivities.length,
         active: allActivities.filter(a => a.userProgress.status === 'Active' || a.userProgress.status === 'Creator').length,
         completed: allActivities.filter(a => a.userProgress.status === 'Completed').length
       })
-      
+
       // Set pagination (simplified for now)
       setPagination(joinedResponse?.pagination || null)
     } catch (error) {
@@ -111,8 +111,12 @@ export default function MyActivities() {
 
   return (
     <div className="max-w-6xl mx-auto">
-      <SectionHeading title="My Activities" subtitle="Track your eco-friendly journey and achievements" />
-      
+      <SectionHeading
+        badge="Your Journey"
+        title="My Activities"
+        subtitle="Track your eco-friendly journey and achievements"
+      />
+
       {/* Summary Stats */}
       {summary && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -135,31 +139,28 @@ export default function MyActivities() {
       <div className="flex gap-2 mb-6">
         <button
           onClick={() => setStatusFilter('all')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            statusFilter === 'all'
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${statusFilter === 'all'
               ? 'bg-primary text-surface'
               : 'bg-surface text-text/80 border border-border hover:bg-light'
-          }`}
+            }`}
         >
           All
         </button>
         <button
           onClick={() => setStatusFilter('active')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            statusFilter === 'active'
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${statusFilter === 'active'
               ? 'bg-primary text-surface'
               : 'bg-surface text-text/80 border border-border hover:bg-light'
-          }`}
+            }`}
         >
           Active
         </button>
         <button
           onClick={() => setStatusFilter('completed')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            statusFilter === 'completed'
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${statusFilter === 'completed'
               ? 'bg-primary text-surface'
               : 'bg-surface text-text/80 border border-border hover:bg-light'
-          }`}
+            }`}
         >
           Completed
         </button>
@@ -205,11 +206,10 @@ export default function MyActivities() {
                       {activity.challenge?.category || 'Challenge'}
                     </span>
                     <span
-                      className={`text-xs font-medium px-2 py-1 rounded ${
-                        activity.userProgress?.status === 'Completed'
+                      className={`text-xs font-medium px-2 py-1 rounded ${activity.userProgress?.status === 'Completed'
                           ? 'bg-secondary/10 text-secondary'
                           : 'bg-secondary/10 text-secondary'
-                      }`}
+                        }`}
                     >
                       {activity.userProgress?.status || 'Ongoing'}
                     </span>
@@ -220,7 +220,7 @@ export default function MyActivities() {
                   <p className="text-sm text-text/80 mb-4 line-clamp-2">
                     {activity.challenge?.description}
                   </p>
-                  
+
                   {/* Progress Bar */}
                   <div className="mb-4">
                     <div className="flex items-center justify-between mb-1">

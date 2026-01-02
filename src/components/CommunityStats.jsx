@@ -170,6 +170,7 @@ export default function CommunityStats() {
   return (
     <section>
       <SectionHeading
+        badge="Statistics"
         title="Live Community Impact"
         subtitle="Community-wide impact at a glance"
       />

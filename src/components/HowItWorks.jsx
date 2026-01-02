@@ -27,6 +27,7 @@ export default function HowItWorks() {
   return (
     <section className="space-y-8">
       <SectionHeading
+        badge="Process"
         title="How It Works"
         subtitle="Getting started with EcoTrack is simple. Follow these three easy steps to begin your sustainable living journey."
         centered={true}
