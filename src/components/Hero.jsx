@@ -40,7 +40,7 @@ const itemVariants = {
   },
 }
 
-export default function Hero({ slides = [], effect = 'creative' }) {
+export default function Hero({ slides = [], effect = 'fade' }) {
   return (
     <section className="hero-swiper relative isolate overflow-hidden">
       <Swiper

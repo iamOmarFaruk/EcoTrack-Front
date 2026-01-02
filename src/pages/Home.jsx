@@ -155,7 +155,7 @@ export default function Home() {
             </div>
           </div>
         ) : featuredChallenges.length > 0 ? (
-          <Hero slides={featuredChallenges} effect="creative" />
+          <Hero slides={featuredChallenges} effect="fade" />
         ) : (
           <div className="relative h-[500px] bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
             <div className="text-center text-surface px-4">
