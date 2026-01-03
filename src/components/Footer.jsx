@@ -9,7 +9,6 @@ const footerLinks = {
     { label: 'Challenges', path: '/challenges', icon: RiPlantLine },
     { label: 'Impact Tips', path: '/tips', icon: RiLightbulbLine },
     { label: 'Local Events', path: '/events', icon: RiCalendarEventLine },
-    { label: 'Community', path: '/community', icon: RiTeamLine },
   ],
   resources: [
     { label: 'About Us', path: '/about' },
