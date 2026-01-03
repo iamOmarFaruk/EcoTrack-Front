@@ -10,7 +10,7 @@ import { useState, useMemo } from 'react'
 import { defaultImages } from '../config/env.js'
 import { showDeleteConfirmation, showError } from '../utils/toast.jsx'
 import { useTips, useTipMutations } from '../hooks/queries'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { containerVariants, itemVariants } from '../utils/animations'
 
 
@@ -257,35 +257,47 @@ export default function Tips() {
           </div>
         </div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-        >
+        <AnimatePresence mode="wait">
           {loading ? (
-            Array.from({ length: 6 }).map((_, i) => (
-              <motion.div key={`skeleton-${i}`} variants={itemVariants}>
-                <TipCardSkeleton />
-              </motion.div>
-            ))
+            <motion.div
+              key="loading-skeletons"
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+              exit="hidden"
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              {Array.from({ length: 6 }).map((_, i) => (
+                <motion.div key={`skeleton-${i}`} variants={itemVariants}>
+                  <TipCardSkeleton />
+                </motion.div>
+              ))}
+            </motion.div>
           ) : (
-            tips.map((tip) => (
-              <motion.div key={tip.id} variants={itemVariants}>
-                <LazyTipCard
-                  tip={tip}
-                  showContent={true}
-                  showActions={true}
-                  onEdit={handleEditTip}
-                  onDelete={handleDeleteTip}
-                  onUpvote={handleUpvote}
-                  onLoginRequired={handleLoginRequired}
-                  canModify={canModifyTip(tip)}
-                />
-              </motion.div>
-            ))
+            <motion.div
+              key="tips-content"
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              {tips.map((tip) => (
+                <motion.div key={tip.id} variants={itemVariants}>
+                  <LazyTipCard
+                    tip={tip}
+                    showContent={true}
+                    showActions={true}
+                    onEdit={handleEditTip}
+                    onDelete={handleDeleteTip}
+                    onUpvote={handleUpvote}
+                    onLoginRequired={handleLoginRequired}
+                    canModify={canModifyTip(tip)}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
           )}
-        </motion.div>
+        </AnimatePresence>
 
         {!loading && tips.length === 0 && (
           <div className="bg-surface rounded-xl p-12 border border-border dashed text-center max-w-2xl mx-auto">
