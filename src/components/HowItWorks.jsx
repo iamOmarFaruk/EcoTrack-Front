@@ -52,7 +52,7 @@ export default function HowItWorks() {
                   variants={itemVariants}
                   className="h-full"
                 >
-                  <Card className="h-full border-border/50 shadow-sm bg-white/70 backdrop-blur-sm">
+                  <Card className="h-full border-border/50 shadow-sm bg-surface/70 backdrop-blur-sm">
                     <CardContent className="p-8 text-center space-y-6">
                       {/* Icon */}
                       <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto transition-colors duration-300">
