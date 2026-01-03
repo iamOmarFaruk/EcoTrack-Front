@@ -71,7 +71,7 @@ export default function ForgotPassword() {
           </div>
 
           <div className="text-sm text-white/60">
-            © 2024 EcoTrack. All rights reserved.
+            © {new Date().getFullYear()} EcoTrack. All rights reserved.
           </div>
         </div>
       </div>
