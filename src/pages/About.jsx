@@ -11,7 +11,7 @@ export default function About() {
   useDocumentTitle('About')
 
   return (
-    <div className="space-y-12 sm:space-y-16">
+    <div className="space-y-8">
       {/* Hero Section */}
       <div className="full-bleed -mt-8">
         <SubpageHero
@@ -24,41 +24,43 @@ export default function About() {
       </div>
 
       {/* Main Content with Images */}
-      <section className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center px-4">
-        {/* Left Image */}
-        <div className="order-1">
-          <img
-            src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=600&h=400&auto=format&fit=crop"
-            alt="Community volunteers planting trees"
-            className="w-full h-64 sm:h-72 lg:h-80 object-cover rounded-2xl shadow-lg transition-transform duration-500 hover:scale-[1.02]"
-            loading="lazy"
-          />
-        </div>
-
-        {/* Content */}
-        <div className="order-2 space-y-4">
-          <SectionHeading
-            badge="Sustainability"
-            title="Building a Sustainable Future Together"
-            centered={false}
-          />
-          <div className="space-y-3 sm:space-y-4 text-text/80">
-            <p className="text-base sm:text-lg leading-relaxed">
-              At EcoTrack, we believe that small actions can create big changes. Our platform
-              brings together a community of eco-conscious individuals who are passionate
-              about making a positive impact on the environment.
-            </p>
-            <p className="text-base sm:text-lg leading-relaxed">
-              Through engaging challenges, practical tips, and community events, we make
-              it easy and fun to adopt sustainable habits that last a lifetime.
-            </p>
+      <section className="space-y-6">
+        <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
+          {/* Left Image */}
+          <div className="order-1">
+            <img
+              src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=600&h=400&auto=format&fit=crop"
+              alt="Community volunteers planting trees"
+              className="w-full h-64 sm:h-72 lg:h-80 object-cover rounded-2xl shadow-lg transition-transform duration-500 hover:scale-[1.02]"
+              loading="lazy"
+            />
           </div>
 
-          {/* Events Button */}
-          <div className="pt-2 sm:pt-4">
-            <Button as={Link} to="/events" variant="primary" className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-2 sm:py-3 text-center">
-              Explore Events
-            </Button>
+          {/* Content */}
+          <div className="order-2 space-y-4">
+            <SectionHeading
+              badge="Sustainability"
+              title="Building a Sustainable Future Together"
+              centered={false}
+            />
+            <div className="space-y-3 sm:space-y-4 text-text/80">
+              <p className="text-base sm:text-lg leading-relaxed">
+                At EcoTrack, we believe that small actions can create big changes. Our platform
+                brings together a community of eco-conscious individuals who are passionate
+                about making a positive impact on the environment.
+              </p>
+              <p className="text-base sm:text-lg leading-relaxed">
+                Through engaging challenges, practical tips, and community events, we make
+                it easy and fun to adopt sustainable habits that last a lifetime.
+              </p>
+            </div>
+
+            {/* Events Button */}
+            <div className="pt-2 sm:pt-4">
+              <Button as={Link} to="/events" variant="primary" className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-2 sm:py-3 text-center">
+                Explore Events
+              </Button>
+            </div>
           </div>
         </div>
       </section>
