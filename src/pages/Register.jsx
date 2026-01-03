@@ -127,8 +127,8 @@ export default function Register() {
             <StaggerItem className="mt-8">
               <Button
                 type="button"
-                variant="outline"
-                className="w-full h-11 flex items-center justify-center gap-3 border-border hover:bg-muted/50 font-semibold"
+                variant="secondary"
+                className="w-full h-11 flex items-center justify-center gap-3 border shadow-sm hover:bg-muted/50 font-semibold"
                 onClick={handleGoogleSignup}
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
