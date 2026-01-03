@@ -49,17 +49,28 @@ export default function Events() {
             overlayIntensity="medium"
           />
         </div>
-        <div className="text-center py-16 bg-surface rounded-xl border border-border">
-          <div className="mb-4 flex justify-center">
-            <div className="p-3 rounded-full bg-danger/10">
-              <svg className="h-8 w-8 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
+        {/* Error Message */}
+        <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+          <div className="mb-6 p-4 rounded-full bg-danger/15">
+            <svg className="w-8 h-8 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
           </div>
-          <h3 className="text-xl font-bold text-heading mb-2">Failed to load events</h3>
-          <p className="text-text/70 mb-6">{error.message || 'There was an issue connecting to the server.'}</p>
-          <Button onClick={() => window.location.reload()}>Try Again</Button>
+          <h3 className="text-xl font-semibold text-heading mb-2">
+            Unable to Load Events
+          </h3>
+          <p className="text-text/80 mb-6 max-w-md">
+            {error.message || 'There was an issue connecting to the server.'}
+          </p>
+          <Button
+            onClick={() => window.location.reload()}
+            className="flex items-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Try Again
+          </Button>
         </div>
       </div>
     )
@@ -185,18 +196,34 @@ export default function Events() {
           ) : (
             <motion.div variants={itemVariants} className="col-span-full py-16 px-4">
               <div className="bg-surface rounded-xl p-12 border border-border dashed text-center max-w-2xl mx-auto">
-                <div className="w-24 h-24 bg-gradient-to-br from-primary/5 to-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <span className="text-4xl opacity-50">🌍</span>
+                <div className="mb-6 flex justify-center">
+                  <div className="p-4 rounded-full bg-primary/5">
+                    <svg className="w-12 h-12 text-primary/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    </svg>
+                  </div>
                 </div>
-                <h3 className="text-2xl font-bold text-heading mb-4">No events found</h3>
-                <p className="text-lg text-text/70 mb-8 max-w-2xl mx-auto">
-                  {searchQuery ? 'We couldn\'t find any events matching your search criteria.' : 'Be the first to create an eco-friendly event and lead the way in your community!'}
+                <h3 className="text-xl font-bold text-heading mb-3">No events found</h3>
+                <p className="text-text/70 mb-8 max-w-md mx-auto">
+                  {searchQuery
+                    ? `We couldn't find any events matching "${searchQuery}". Try a different search term.`
+                    : 'Be the first to create an eco-friendly event and lead the way in your community!'}
                 </p>
-                {user && (
-                  <Button onClick={handleCreateEvent} className="bg-primary hover:bg-primary">
-                    Create First Event
-                  </Button>
-                )}
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                  {searchQuery && (
+                    <Button variant="outline" onClick={() => setSearchQuery('')}>
+                      Clear Search
+                    </Button>
+                  )}
+                  {user && (
+                    <Button onClick={handleCreateEvent} className="flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                      Create First Event
+                    </Button>
+                  )}
+                </div>
               </div>
             </motion.div>
           )}

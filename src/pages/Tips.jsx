@@ -128,13 +128,27 @@ export default function Tips() {
             overlayIntensity="medium"
           />
         </div>
-        <div className="text-center py-8">
-          <p className="text-danger">Error loading tips. Please try again.</p>
+        {/* Error Message */}
+        <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+          <div className="mb-6 p-4 rounded-full bg-danger/15">
+            <svg className="w-8 h-8 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h3 className="text-xl font-semibold text-heading mb-2">
+            Unable to Load Tips
+          </h3>
+          <p className="text-text/80 mb-6 max-w-md">
+            {error.message || 'There was an issue connecting to the server.'}
+          </p>
           <Button
             onClick={() => window.location.reload()}
-            className="mt-4"
+            className="flex items-center gap-2"
           >
-            Refresh
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Try Again
           </Button>
         </div>
       </div>
@@ -273,28 +287,39 @@ export default function Tips() {
         </motion.div>
 
         {!loading && tips.length === 0 && (
-          <div className="text-center py-16 bg-surface rounded-xl border border-border dashed">
-            <div className="mb-4 flex justify-center">
+          <div className="bg-surface rounded-xl p-12 border border-border dashed text-center max-w-2xl mx-auto">
+            <div className="mb-6 flex justify-center">
               <div className="p-4 rounded-full bg-primary/5">
-                <svg className="h-10 w-10 text-primary/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-12 w-12 text-primary/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.989-2.386l-.548-.547z" />
                 </svg>
               </div>
             </div>
-            <h3 className="text-lg font-semibold text-heading mb-2">No tips shared yet</h3>
-            <p className="text-text/70 mb-8 max-w-sm mx-auto">Be the first to share an eco-friendly tip with the community and inspire others!</p>
-            {user ? (
-              <Button onClick={handleAddTip} className="mx-auto">
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                Share Your First Tip
-              </Button>
-            ) : (
-              <Button onClick={handleLoginRequired} className="mx-auto">
-                Login to Share Tips
-              </Button>
-            )}
+            <h3 className="text-xl font-bold text-heading mb-3">No tips shared yet</h3>
+            <p className="text-text/70 mb-8 max-w-md mx-auto">
+              {searchQuery
+                ? `We couldn't find any tips matching "${searchQuery}". Try a different search term.`
+                : 'Be the first to share an eco-friendly tip with the community and inspire others!'}
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              {searchQuery && (
+                <Button variant="outline" onClick={() => setSearchQuery('')}>
+                  Clear Search
+                </Button>
+              )}
+              {user ? (
+                <Button onClick={handleAddTip} className="flex items-center gap-2">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Share Your Tip
+                </Button>
+              ) : (
+                <Button onClick={handleLoginRequired}>
+                  Login to Share Tips
+                </Button>
+              )}
+            </div>
           </div>
         )}
       </div>
