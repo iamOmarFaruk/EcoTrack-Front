@@ -20,7 +20,7 @@ export default function PrivacyPolicy() {
             </div>
 
             {/* Main Content */}
-            <section className="container mx-auto px-4 max-w-4xl pb-20">
+            <section className="container mx-auto px-4 pb-20">
                 <div className="space-y-10">
                     <div className="space-y-4">
                         <SectionHeading
