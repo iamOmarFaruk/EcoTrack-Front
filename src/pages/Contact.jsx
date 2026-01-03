@@ -81,87 +81,59 @@ export default function Contact() {
             centered={true}
           />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-16 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-12 mt-16 items-start">
             {/* Contact Info */}
-            <div className="space-y-8 order-2 lg:order-1">
-              <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6" viewportAmount={0.1}>
+            <div className="space-y-6">
+              <StaggerContainer className="grid grid-cols-1 gap-6" viewportAmount={0.1}>
                 {contactInfo.map((info, idx) => (
                   <StaggerItem key={idx}>
                     <a
                       href={info.link}
-                      className="group flex items-start p-6 rounded-2xl bg-surface border border-border hover:border-primary/30 transition-all hover:shadow-lg hover:shadow-primary/5 active:scale-[0.98]"
+                      className="group flex items-start p-8 rounded-2xl bg-surface border border-border hover:border-primary/30 transition-all hover:shadow-lg hover:shadow-primary/5 active:scale-[0.98]"
                     >
-                      <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                      <div className="flex-shrink-0 w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
                         {info.icon}
                       </div>
-                      <div className="ml-4">
-                        <h3 className="text-lg font-bold text-heading leading-tight">{info.label}</h3>
-                        <p className="mt-1 text-primary font-semibold">{info.value}</p>
-                        <p className="mt-1 text-sm text-text/60">{info.description}</p>
+                      <div className="ml-6">
+                        <h3 className="text-xl font-bold text-heading leading-tight">{info.label}</h3>
+                        <p className="mt-1 text-primary font-semibold text-lg">{info.value}</p>
+                        <p className="mt-1 text-base text-text/60">{info.description}</p>
                       </div>
                     </a>
                   </StaggerItem>
                 ))}
               </StaggerContainer>
-
-              {/* Newsletter / Additional Info */}
-              <StaggerContainer>
-                <StaggerItem className="p-8 rounded-2xl bg-primary/5 border border-primary/10 relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-colors duration-500"></div>
-                  <h3 className="text-xl font-bold text-heading mb-4 relative z-10">Follow our journey</h3>
-                  <p className="text-text/70 mb-6 relative z-10">Join our community on social media to stay updated with the latest eco-tips and events.</p>
-                  <div className="flex space-x-4 relative z-10">
-                    <div className="w-10 h-10 rounded-full bg-surface border border-border flex items-center justify-center text-text/60 hover:text-primary hover:border-primary transition-all cursor-pointer">
-                      <span className="sr-only">X (Twitter)</span>
-                      <SiX className="w-5 h-5" />
-                    </div>
-                    <div className="w-10 h-10 rounded-full bg-surface border border-border flex items-center justify-center text-text/60 hover:text-primary hover:border-primary transition-all cursor-pointer">
-                      <span className="sr-only">LinkedIn</span>
-                      <SiLinkedin className="w-5 h-5" />
-                    </div>
-                    <div className="w-10 h-10 rounded-full bg-surface border border-border flex items-center justify-center text-text/60 hover:text-primary hover:border-primary transition-all cursor-pointer">
-                      <span className="sr-only">Instagram</span>
-                      <SiInstagram className="w-5 h-5" />
-                    </div>
-                    <div className="w-10 h-10 rounded-full bg-surface border border-border flex items-center justify-center text-text/60 hover:text-primary hover:border-primary transition-all cursor-pointer">
-                      <span className="sr-only">GitHub</span>
-                      <SiGithub className="w-5 h-5" />
-                    </div>
-                  </div>
-                </StaggerItem>
-              </StaggerContainer>
             </div>
 
             {/* Contact Form */}
-            <StaggerContainer className="order-1 lg:order-2" viewportAmount={0.2}>
+            <StaggerContainer viewportAmount={0.2}>
               <StaggerItem className="bg-surface p-8 rounded-3xl border border-border shadow-xl shadow-black/5">
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-heading ml-1">Full Name</label>
-                      <input
-                        className={`w-full rounded-xl border ${errors.name ? 'border-danger' : 'border-border'} px-4 py-3.5 transition-all bg-bg-light focus:bg-surface focus:ring-4 focus:ring-primary/10`}
-                        placeholder="John Doe"
-                        {...register('name')}
-                      />
-                      {errors.name && <p className="text-xs text-danger font-medium ml-1">{errors.name.message}</p>}
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold text-heading ml-1">Email Address</label>
-                      <input
-                        className={`w-full rounded-xl border ${errors.email ? 'border-danger' : 'border-border'} px-4 py-3.5 transition-all bg-bg-light focus:bg-surface focus:ring-4 focus:ring-primary/10`}
-                        placeholder="john@example.com"
-                        {...register('email')}
-                      />
-                      {errors.email && <p className="text-xs text-danger font-medium ml-1">{errors.email.message}</p>}
-                    </div>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-heading ml-1">Full Name</label>
+                    <input
+                      className={`w-full rounded-xl border ${errors.name ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-bg-light focus:bg-surface focus:ring-4 focus:ring-primary/10`}
+                      placeholder="John Doe"
+                      {...register('name')}
+                    />
+                    {errors.name && <p className="text-xs text-danger font-medium ml-1">{errors.name.message}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-heading ml-1">Email Address</label>
+                    <input
+                      className={`w-full rounded-xl border ${errors.email ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-bg-light focus:bg-surface focus:ring-4 focus:ring-primary/10`}
+                      placeholder="john@example.com"
+                      {...register('email')}
+                    />
+                    {errors.email && <p className="text-xs text-danger font-medium ml-1">{errors.email.message}</p>}
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-sm font-bold text-heading ml-1">Message</label>
                     <textarea
-                      className={`w-full rounded-xl border ${errors.message ? 'border-danger' : 'border-border'} px-4 py-3.5 transition-all bg-bg-light focus:bg-surface focus:ring-4 focus:ring-primary/10 resize-none`}
-                      rows="6"
+                      className={`w-full rounded-xl border ${errors.message ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-bg-light focus:bg-surface focus:ring-4 focus:ring-primary/10 resize-none`}
+                      rows="4"
                       placeholder="Tell us how we can help..."
                       {...register('message')}
                     />
@@ -170,18 +142,10 @@ export default function Contact() {
 
                   <Button
                     type="submit"
-                    className="w-full h-14 text-lg font-bold shadow-lg shadow-primary/20"
+                    className="w-full h-12 text-lg font-bold shadow-lg shadow-primary/20 mt-2"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? (
-                      <span className="flex items-center justify-center">
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Sending...
-                      </span>
-                    ) : 'Send Message'}
+                    {isSubmitting ? 'Sending...' : 'Send Message'}
                   </Button>
                 </form>
               </StaggerItem>
