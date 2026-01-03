@@ -11,10 +11,10 @@ import ProfileAvatar from './ProfileAvatar.jsx'
 
 const navItems = [
   { to: '/', label: 'Home' },
+  { to: '/about', label: 'About' },
   { to: '/challenges', label: 'Challenges' },
   { to: '/tips', label: 'Tips' },
   { to: '/events', label: 'Events' },
-  { to: '/about', label: 'About' },
   { to: '/contact', label: 'Contact' },
 ]
 
