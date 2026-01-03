@@ -98,8 +98,8 @@ export default function Navbar() {
             </div>
           ) : !auth.isLoggedIn ? (
             <>
-              <Link to="/login" className="text-sm text-heading hover:text-primary">Login</Link>
-              <Button as={Link} to="/register">Register</Button>
+              <Button as={Link} to="/login" variant="outline" size="sm">Login</Button>
+              <Button as={Link} to="/register" size="sm">Register</Button>
             </>
           ) : (
             <div className="relative" ref={profileRef}>
@@ -261,14 +261,16 @@ export default function Navbar() {
               </div>
             ) : !auth.isLoggedIn ? (
               <>
-                <Link
+                <Button
+                  as={Link}
                   to="/login"
+                  variant="outline"
                   onClick={() => setOpen(false)}
-                  className={clsx('rounded-md px-3 py-2 text-sm text-heading hover:bg-primary/10 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  className={clsx('w-full mobile-menu-item', open && 'mobile-menu-item--open')}
                   style={{ transitionDelay: `${navItems.length * 50}ms` }}
                 >
                   Login
-                </Link>
+                </Button>
                 <Button
                   as={Link}
                   to="/register"
