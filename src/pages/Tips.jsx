@@ -215,7 +215,7 @@ export default function Tips() {
                 placeholder="Search tips..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 pl-10 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                className="w-full px-4 py-2 pl-10 bg-surface text-text border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary placeholder:text-text/40 transition-colors"
               />
               <svg
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text/60"
@@ -232,9 +232,9 @@ export default function Tips() {
           <div className="flex gap-2">
             <button
               onClick={() => handleSortChange('createdAt')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${sortBy === 'createdAt'
-                ? 'bg-primary/15 text-primary ring-1 ring-primary/20'
-                : 'bg-muted text-text hover:bg-muted'
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${sortBy === 'createdAt'
+                ? 'bg-primary/20 text-primary ring-1 ring-primary/30 shadow-sm shadow-primary/10'
+                : 'bg-surface text-text/70 hover:text-text hover:bg-muted border border-border'
                 }`}
             >
               Newest
@@ -244,9 +244,9 @@ export default function Tips() {
             </button>
             <button
               onClick={() => handleSortChange('upvoteCount')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${sortBy === 'upvoteCount'
-                ? 'bg-primary/15 text-primary ring-1 ring-primary/20'
-                : 'bg-muted text-text hover:bg-muted'
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${sortBy === 'upvoteCount'
+                ? 'bg-primary/20 text-primary ring-1 ring-primary/30 shadow-sm shadow-primary/10'
+                : 'bg-surface text-text/70 hover:text-text hover:bg-muted border border-border'
                 }`}
             >
               Popular
