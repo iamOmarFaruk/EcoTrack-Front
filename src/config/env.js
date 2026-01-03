@@ -31,6 +31,9 @@ export const defaultImages = {
   challengesHero: import.meta.env.VITE_CHALLENGES_HERO_IMAGE || 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2070&auto=format&fit=crop',
   eventsHero: import.meta.env.VITE_EVENTS_HERO_IMAGE || 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?q=80&w=2070&auto=format&fit=crop',
   homeFeature: import.meta.env.VITE_HOME_FEATURE_IMAGE || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&h=500&q=80',
+  aboutHero: import.meta.env.VITE_ABOUT_HERO_IMAGE || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop',
+  contactHero: import.meta.env.VITE_CONTACT_HERO_IMAGE || 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?q=80&w=2070&auto=format&fit=crop',
+  tipsHero: import.meta.env.VITE_TIPS_HERO_IMAGE || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop',
 }
 
 // App Configuration
@@ -67,14 +70,14 @@ export const utils = {
       'VITE_FIREBASE_AUTH_DOMAIN',
       'VITE_FIREBASE_PROJECT_ID',
     ]
-    
+
     const missing = required.filter(key => !import.meta.env[key])
-    
+
     if (missing.length > 0) {
       console.error('Missing required environment variables:', missing)
       return false
     }
-    
+
     return true
   },
 

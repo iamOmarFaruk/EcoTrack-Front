@@ -7,6 +7,7 @@ import { TipCardSkeleton } from '../components/Skeleton.jsx'
 import SubpageHero from '../components/SubpageHero.jsx'
 import Button from '../components/ui/Button.jsx'
 import { useState, useMemo } from 'react'
+import { defaultImages } from '../config/env.js'
 import { showDeleteConfirmation, showError } from '../utils/toast.jsx'
 import { useTips, useTipMutations } from '../hooks/queries'
 import { motion } from 'framer-motion'
@@ -123,7 +124,7 @@ export default function Tips() {
           <SubpageHero
             title="Eco Tips"
             subtitle="Discover practical tips and advice from our eco-conscious community"
-            backgroundImage="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop"
+            backgroundImage={defaultImages.tipsHero}
             height="medium"
             overlayIntensity="medium"
           />
@@ -162,7 +163,7 @@ export default function Tips() {
         <SubpageHero
           title="Eco Tips"
           subtitle="Discover practical tips and advice from our eco-conscious community"
-          backgroundImage="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop"
+          backgroundImage={defaultImages.tipsHero}
           height="medium"
           overlayIntensity="medium"
         />

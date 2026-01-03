@@ -2,29 +2,34 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { Link } from 'react-router-dom'
 import Button from '../components/ui/Button.jsx'
 import SectionHeading from '../components/SectionHeading.jsx'
+import SubpageHero from '../components/SubpageHero.jsx'
+import CTA from '../components/CTA.jsx'
+import { defaultImages } from '../config/env.js'
 
 export default function About() {
   useDocumentTitle('About')
 
   return (
-    <div className="space-y-12 sm:space-y-16 pb-8">
+    <div className="space-y-12 sm:space-y-16">
       {/* Hero Section */}
-      <section className="text-center px-4">
-        <SectionHeading
-          badge="Our Mission"
+      <div className="full-bleed -mt-8">
+        <SubpageHero
           title="About EcoTrack"
           subtitle="EcoTrack helps people build sustainable habits through challenges, tips, and events. We care about clean design, great UX, and meaningful impact."
+          backgroundImage={defaultImages.aboutHero}
+          height="medium"
+          overlayIntensity="medium"
         />
-      </section>
+      </div>
 
       {/* Main Content with Images */}
       <section className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center px-4">
         {/* Left Image */}
         <div className="order-1">
           <img
-            src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop&crop=center"
-            alt="People planting trees together"
-            className="w-full h-64 sm:h-72 lg:h-80 object-cover rounded-2xl shadow-lg"
+            src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=600&h=400&auto=format&fit=crop"
+            alt="Community volunteers planting trees"
+            className="w-full h-64 sm:h-72 lg:h-80 object-cover rounded-2xl shadow-lg transition-transform duration-500 hover:scale-[1.02]"
             loading="lazy"
           />
         </div>
@@ -50,78 +55,62 @@ export default function About() {
 
           {/* Events Button */}
           <div className="pt-2 sm:pt-4">
-            <Button as={Link} to="/events" variant="primary" className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-2 sm:py-3">
+            <Button as={Link} to="/events" variant="primary" className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-2 sm:py-3 text-center">
               Explore Events
             </Button>
           </div>
         </div>
       </section>
 
-      {/* Second Section - Reversed Layout */}
-      <section className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center px-4">
-        {/* Content - First on desktop, second on mobile */}
-        <div className="order-2 lg:order-1 space-y-4">
-          <SectionHeading
-            badge="Community"
-            title="Join Our Growing Community"
-            centered={false}
-          />
-          <div className="space-y-3 sm:space-y-4 text-text/80">
-            <p className="text-base sm:text-lg leading-relaxed">
-              Whether you're just starting your sustainability journey or you're a
-              seasoned environmental advocate, EcoTrack provides the tools and
-              community support you need to make a real difference.
-            </p>
-            <p className="text-base sm:text-lg leading-relaxed">
-              Track your progress, connect with like-minded individuals, and celebrate
-              your achievements as you work towards a more sustainable lifestyle.
-            </p>
+      {/* Second Section - Community with Background */}
+      <section className="full-bleed bg-primary/5 py-12 sm:py-16 md:py-20">
+        <div className="container mx-auto px-4 grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
+          {/* Content - First on desktop, second on mobile */}
+          <div className="order-2 lg:order-1 space-y-4">
+            <SectionHeading
+              badge="Community"
+              title="Join Our Growing Community"
+              centered={false}
+            />
+            <div className="space-y-3 sm:space-y-4 text-text/80">
+              <p className="text-base sm:text-lg leading-relaxed">
+                Whether you're just starting your sustainability journey or you're a
+                seasoned environmental advocate, EcoTrack provides the tools and
+                community support you need to make a real difference.
+              </p>
+              <p className="text-base sm:text-lg leading-relaxed">
+                Track your progress, connect with like-minded individuals, and celebrate
+                your achievements as you work towards a more sustainable lifestyle.
+              </p>
+            </div>
+
+            {/* Call to Action */}
+            <div className="pt-2 sm:pt-4">
+              <Button as={Link} to="/challenges" variant="primary" className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-2 sm:py-3 shadow-lg shadow-primary/20 text-center">
+                Check Challenges
+              </Button>
+            </div>
           </div>
 
-          {/* Call to Action */}
-          <div className="pt-2 sm:pt-4">
-            <Button as={Link} to="/challenges" variant="primary" className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-2 sm:py-3">
-              Check Challenges
-            </Button>
-          </div>
-        </div>
-
-        {/* Right Image - First on mobile, second on desktop */}
-        <div className="order-1 lg:order-2">
-          <img
-            src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&h=400&q=80"
-            alt="Sustainable living items and plants"
-            className="w-full h-64 sm:h-72 lg:h-80 object-cover rounded-2xl shadow-lg"
-            loading="lazy"
-          />
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 mx-4">
-        <div className="text-center">
-          <SectionHeading
-            badge="Impact"
-            title="Our Progress So Far"
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
-            <div className="space-y-1 sm:space-y-2">
-              <div className="text-2xl sm:text-3xl font-bold text-primary">10,000+</div>
-              <div className="text-sm sm:text-base text-text/80">Active Members</div>
-            </div>
-            <div className="space-y-1 sm:space-y-2">
-              <div className="text-2xl sm:text-3xl font-bold text-primary">500+</div>
-              <div className="text-sm sm:text-base text-text/80">Challenges Completed</div>
-            </div>
-            <div className="space-y-1 sm:space-y-2">
-              <div className="text-2xl sm:text-3xl font-bold text-primary">50+</div>
-              <div className="text-sm sm:text-base text-text/80">Community Events</div>
-            </div>
+          {/* Right Image - First on mobile, second on desktop */}
+          <div className="order-1 lg:order-2">
+            <img
+              src="https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=800&auto=format&fit=crop"
+              alt="Eco-friendly community gathering"
+              className="w-full h-64 sm:h-72 lg:h-[28rem] object-cover rounded-2xl shadow-xl transition-transform duration-500 hover:scale-[1.02]"
+              loading="lazy"
+            />
           </div>
         </div>
       </section>
+
+      {/* CTA Section */}
+      <div className="full-bleed !mt-0">
+        <CTA />
+      </div>
     </div>
   )
 }
+
 
 
