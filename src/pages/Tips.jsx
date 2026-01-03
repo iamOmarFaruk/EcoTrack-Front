@@ -12,6 +12,7 @@ import { showDeleteConfirmation, showError } from '../utils/toast.jsx'
 import { useTips, useTipMutations } from '../hooks/queries'
 import { motion } from 'framer-motion'
 import { containerVariants, itemVariants } from '../utils/animations'
+import { StaggerContainer, StaggerItem } from '../components/ui/Stagger.jsx'
 
 export default function Tips() {
   useDocumentTitle('Recent Tips')
@@ -256,22 +257,18 @@ export default function Tips() {
           </div>
         </div>
 
-        <motion.div
+        <StaggerContainer
           className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-          key={loading ? 'loading' : 'loaded'} // Ensure re-animate when switching from skeletons to content
         >
           {loading ? (
             Array.from({ length: 6 }).map((_, i) => (
-              <motion.div key={`skeleton-${i}`} variants={itemVariants}>
+              <StaggerItem key={`skeleton-${i}`}>
                 <TipCardSkeleton />
-              </motion.div>
+              </StaggerItem>
             ))
           ) : (
             tips.map((tip) => (
-              <motion.div key={tip.id} variants={itemVariants}>
+              <StaggerItem key={tip.id}>
                 <LazyTipCard
                   tip={tip}
                   showContent={true}
@@ -282,10 +279,10 @@ export default function Tips() {
                   onLoginRequired={handleLoginRequired}
                   canModify={canModifyTip(tip)}
                 />
-              </motion.div>
+              </StaggerItem>
             ))
           )}
-        </motion.div>
+        </StaggerContainer>
 
         {!loading && tips.length === 0 && (
           <div className="bg-surface rounded-xl p-12 border border-border dashed text-center max-w-2xl mx-auto">

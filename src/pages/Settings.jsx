@@ -4,6 +4,7 @@ import SectionHeading from '../components/SectionHeading.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { showError, showSuccess } from '../utils/toast.jsx'
 import { userApi } from '../services/api.js'
+import { StaggerContainer, StaggerItem } from '../components/ui/Stagger.jsx'
 
 export default function Settings() {
   const { deleteAccount, user, updateUserProfile } = useAuth()
@@ -95,169 +96,171 @@ export default function Settings() {
         subtitle="Manage your account"
       />
 
-      {/* Account Settings */}
-      <div className="bg-surface rounded-xl border border-border shadow-sm mb-6">
-        <div className="p-6 border-b border-border flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-semibold text-heading">Account Information</h3>
-            <p className="text-sm text-text/80 mt-1">Your current account details</p>
-          </div>
-          {!isEditingProfile && (
-            <button
-              onClick={handleEditProfile}
-              className="px-4 py-2 bg-primary hover:bg-primary text-surface rounded-lg font-medium transition-colors text-sm"
-            >
-              Edit Profile
-            </button>
-          )}
-        </div>
-
-        <div className="p-6 space-y-4">
-          <div>
-            <label className="text-sm font-medium text-text">Email</label>
-            <p className="mt-1 text-heading">{user?.email}</p>
-            <p className="text-xs text-text/70 mt-1">Email cannot be changed</p>
+      <StaggerContainer>
+        {/* Account Settings */}
+        <StaggerItem className="bg-surface rounded-xl border border-border shadow-sm mb-6">
+          <div className="p-6 border-b border-border flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-heading">Account Information</h3>
+              <p className="text-sm text-text/80 mt-1">Your current account details</p>
+            </div>
+            {!isEditingProfile && (
+              <button
+                onClick={handleEditProfile}
+                className="px-4 py-2 bg-primary hover:bg-primary text-surface rounded-lg font-medium transition-colors text-sm"
+              >
+                Edit Profile
+              </button>
+            )}
           </div>
 
-          {!isEditingProfile ? (
-            <>
-              <div>
-                <label className="text-sm font-medium text-text">Name</label>
-                <p className="mt-1 text-heading">{user?.name}</p>
-              </div>
-              {user?.avatarUrl && (
+          <div className="p-6 space-y-4">
+            <div>
+              <label className="text-sm font-medium text-text">Email</label>
+              <p className="mt-1 text-heading">{user?.email}</p>
+              <p className="text-xs text-text/70 mt-1">Email cannot be changed</p>
+            </div>
+
+            {!isEditingProfile ? (
+              <>
                 <div>
-                  <label className="text-sm font-medium text-text">Profile Picture</label>
-                  <div className="mt-2 flex items-center gap-3">
-                    <img
-                      src={user.avatarUrl}
-                      alt="Profile"
-                      className="w-12 h-12 rounded-full object-cover border-2 border-border"
-                      onError={(e) => e.target.style.display = 'none'}
-                    />
-                    <span className="text-xs text-text/70">Current profile picture</span>
-                  </div>
+                  <label className="text-sm font-medium text-text">Name</label>
+                  <p className="mt-1 text-heading">{user?.name}</p>
                 </div>
-              )}
-            </>
-          ) : (
-            <>
-              <div>
-                <label className="text-sm font-medium text-text mb-2 block">Name</label>
-                <input
-                  type="text"
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                  placeholder="Your name"
-                  disabled={isSavingProfile}
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium text-text mb-2 block">Profile Picture URL (Optional)</label>
-
-                {/* Image Preview */}
-                {editPhotoUrl && (
-                  <div className="mb-3 flex items-center gap-3">
-                    <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-border bg-muted flex items-center justify-center">
-                      {!imagePreviewError ? (
-                        <img
-                          src={editPhotoUrl}
-                          alt="Profile preview"
-                          className="w-full h-full object-cover"
-                          onError={() => setImagePreviewError(true)}
-                        />
-                      ) : (
-                        <div className="text-text/60 text-center">
-                          <svg className="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-xs text-text/80">Profile Picture Preview</p>
-                      {imagePreviewError && (
-                        <p className="text-xs text-secondary mt-1">Unable to load image</p>
-                      )}
+                {user?.avatarUrl && (
+                  <div>
+                    <label className="text-sm font-medium text-text">Profile Picture</label>
+                    <div className="mt-2 flex items-center gap-3">
+                      <img
+                        src={user.avatarUrl}
+                        alt="Profile"
+                        className="w-12 h-12 rounded-full object-cover border-2 border-border"
+                        onError={(e) => e.target.style.display = 'none'}
+                      />
+                      <span className="text-xs text-text/70">Current profile picture</span>
                     </div>
                   </div>
                 )}
+              </>
+            ) : (
+              <>
+                <div>
+                  <label className="text-sm font-medium text-text mb-2 block">Name</label>
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="Your name"
+                    disabled={isSavingProfile}
+                  />
+                </div>
 
-                <input
-                  type="url"
-                  value={editPhotoUrl}
-                  onChange={(e) => {
-                    setEditPhotoUrl(e.target.value)
-                    setImagePreviewError(false)
-                  }}
-                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                  placeholder="https://example.com/photo.jpg"
-                  disabled={isSavingProfile}
-                />
-                <p className="text-xs text-text/70 mt-1">Enter a URL to an image (leave empty to remove)</p>
-              </div>
+                <div>
+                  <label className="text-sm font-medium text-text mb-2 block">Profile Picture URL (Optional)</label>
 
-              <div className="flex gap-3 pt-2">
-                <button
-                  onClick={handleCancelEdit}
-                  disabled={isSavingProfile}
-                  className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-light transition-colors disabled:opacity-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSaveProfile}
-                  disabled={isSavingProfile || !editName.trim()}
-                  className="flex-1 px-4 py-2 bg-primary hover:bg-primary text-surface rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSavingProfile ? 'Saving...' : 'Save Changes'}
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
+                  {/* Image Preview */}
+                  {editPhotoUrl && (
+                    <div className="mb-3 flex items-center gap-3">
+                      <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-border bg-muted flex items-center justify-center">
+                        {!imagePreviewError ? (
+                          <img
+                            src={editPhotoUrl}
+                            alt="Profile preview"
+                            className="w-full h-full object-cover"
+                            onError={() => setImagePreviewError(true)}
+                          />
+                        ) : (
+                          <div className="text-text/60 text-center">
+                            <svg className="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-xs text-text/80">Profile Picture Preview</p>
+                        {imagePreviewError && (
+                          <p className="text-xs text-secondary mt-1">Unable to load image</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
-      {/* Danger Zone */}
-      <div className="bg-surface rounded-xl border border-danger shadow-sm">
-        <div className="p-6 border-b border-danger bg-danger/10">
-          <h3 className="text-lg font-semibold text-danger">Danger Zone</h3>
-          <p className="text-sm text-danger mt-1">Irreversible actions</p>
-        </div>
+                  <input
+                    type="url"
+                    value={editPhotoUrl}
+                    onChange={(e) => {
+                      setEditPhotoUrl(e.target.value)
+                      setImagePreviewError(false)
+                    }}
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                    placeholder="https://example.com/photo.jpg"
+                    disabled={isSavingProfile}
+                  />
+                  <p className="text-xs text-text/70 mt-1">Enter a URL to an image (leave empty to remove)</p>
+                </div>
 
-        <div className="p-6">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <h4 className="text-base font-semibold text-heading mb-1">Delete Account</h4>
-              <p className="text-sm text-text/80 mb-4">
-                Permanently delete your account and all associated data. This action cannot be undone.
-              </p>
-              <ul className="text-sm text-text/80 space-y-1 mb-4">
-                <li className="flex items-start">
-                  <span className="text-danger mr-2">•</span>
-                  All your challenges and events will be removed
-                </li>
-                <li className="flex items-start">
-                  <span className="text-danger mr-2">•</span>
-                  Your tips and contributions will be deleted
-                </li>
-                <li className="flex items-start">
-                  <span className="text-danger mr-2">•</span>
-                  Your profile and statistics will be permanently lost
-                </li>
-              </ul>
-            </div>
+                <div className="flex gap-3 pt-2">
+                  <button
+                    onClick={handleCancelEdit}
+                    disabled={isSavingProfile}
+                    className="flex-1 px-4 py-2 border border-border rounded-lg hover:bg-light transition-colors disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSaveProfile}
+                    disabled={isSavingProfile || !editName.trim()}
+                    className="flex-1 px-4 py-2 bg-primary hover:bg-primary text-surface rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSavingProfile ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
-          <button
-            onClick={() => setShowDeleteModal(true)}
-            className="px-4 py-2 bg-danger hover:bg-danger text-surface rounded-lg font-medium transition-colors"
-          >
-            Delete Account
-          </button>
-        </div>
-      </div>
+        </StaggerItem>
+
+        {/* Danger Zone */}
+        <StaggerItem className="bg-surface rounded-xl border border-danger shadow-sm">
+          <div className="p-6 border-b border-danger bg-danger/10">
+            <h3 className="text-lg font-semibold text-danger">Danger Zone</h3>
+            <p className="text-sm text-danger mt-1">Irreversible actions</p>
+          </div>
+
+          <div className="p-6">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <h4 className="text-base font-semibold text-heading mb-1">Delete Account</h4>
+                <p className="text-sm text-text/80 mb-4">
+                  Permanently delete your account and all associated data. This action cannot be undone.
+                </p>
+                <ul className="text-sm text-text/80 space-y-1 mb-4">
+                  <li className="flex items-start">
+                    <span className="text-danger mr-2">•</span>
+                    All your challenges and events will be removed
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-danger mr-2">•</span>
+                    Your tips and contributions will be deleted
+                  </li>
+                  <li className="flex items-start">
+                    <span className="text-danger mr-2">•</span>
+                    Your profile and statistics will be permanently lost
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="px-4 py-2 bg-danger hover:bg-danger text-surface rounded-lg font-medium transition-colors"
+            >
+              Delete Account
+            </button>
+          </div>
+        </StaggerItem>
+      </StaggerContainer>
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (

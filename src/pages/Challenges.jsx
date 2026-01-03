@@ -11,6 +11,7 @@ import { defaultImages } from '../config/env'
 import { useChallenges } from '../hooks/queries'
 import { motion } from 'framer-motion'
 import { stackedContainer, stackedItem } from '../utils/animations'
+import { StaggerContainer, StaggerItem } from '../components/ui/Stagger.jsx'
 
 
 export default function Challenges() {
@@ -217,27 +218,23 @@ export default function Challenges() {
           </div> */}
         </div>
 
-        <motion.div
+        <StaggerContainer
           className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-          variants={stackedContainer}
-          initial="hidden"
-          animate="show"
-          key={loading ? 'loading' : 'loaded'}
         >
           {loading ? (
             Array.from({ length: 6 }).map((_, i) => (
-              <motion.div key={`skeleton-${i}`} variants={stackedItem}>
+              <StaggerItem key={`skeleton-${i}`}>
                 <ChallengeCardSkeleton />
-              </motion.div>
+              </StaggerItem>
             ))
           ) : challenges.length > 0 ? (
             challenges.map((c) => (
-              <motion.div key={c._id || c.id} variants={stackedItem}>
+              <StaggerItem key={c._id || c.id}>
                 <LazyChallengeCard challenge={c} />
-              </motion.div>
+              </StaggerItem>
             ))
           ) : (
-            <motion.div variants={stackedItem} className="col-span-full py-16 px-4">
+            <StaggerItem className="col-span-full py-16 px-4">
               <div className="bg-surface rounded-xl p-12 border border-border dashed text-center max-w-2xl mx-auto">
                 <div className="mb-6 flex justify-center">
                   <div className="p-4 rounded-full bg-primary/5">
@@ -270,9 +267,9 @@ export default function Challenges() {
                   )}
                 </div>
               </div>
-            </motion.div>
+            </StaggerItem>
           )}
-        </motion.div>
+        </StaggerContainer>
 
         {/* Pagination */}
         {pagination && pagination.pages > 1 && (

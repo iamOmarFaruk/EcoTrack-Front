@@ -6,6 +6,7 @@ import SubpageHero from '../components/SubpageHero.jsx'
 import CommunityStats from '../components/CommunityStats.jsx'
 import CTA from '../components/CTA.jsx'
 import { defaultImages } from '../config/env.js'
+import { StaggerContainer, StaggerItem } from '../components/ui/Stagger.jsx'
 
 export default function About() {
   useDocumentTitle('About')
@@ -37,13 +38,16 @@ export default function About() {
           </div>
 
           {/* Content */}
-          <div className="order-2 space-y-4">
-            <SectionHeading
-              badge="Sustainability"
-              title="Building a Sustainable Future Together"
-              centered={false}
-            />
-            <div className="space-y-3 sm:space-y-4 text-text/80">
+          {/* Content */}
+          <StaggerContainer className="order-2 space-y-4">
+            <StaggerItem>
+              <SectionHeading
+                badge="Sustainability"
+                title="Building a Sustainable Future Together"
+                centered={false}
+              />
+            </StaggerItem>
+            <StaggerItem className="space-y-3 sm:space-y-4 text-text/80">
               <p className="text-base sm:text-lg leading-relaxed">
                 At EcoTrack, we believe that small actions can create big changes. Our platform
                 brings together a community of eco-conscious individuals who are passionate
@@ -53,15 +57,15 @@ export default function About() {
                 Through engaging challenges, practical tips, and community events, we make
                 it easy and fun to adopt sustainable habits that last a lifetime.
               </p>
-            </div>
+            </StaggerItem>
 
             {/* Events Button */}
-            <div className="pt-2 sm:pt-4">
+            <StaggerItem className="pt-2 sm:pt-4">
               <Button as={Link} to="/events" variant="primary" className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-2 sm:py-3 text-center">
                 Explore Events
               </Button>
-            </div>
-          </div>
+            </StaggerItem>
+          </StaggerContainer>
         </div>
       </section>
 
@@ -69,13 +73,15 @@ export default function About() {
       <section className="full-bleed bg-primary/5 py-12 sm:py-16 md:py-20">
         <div className="container mx-auto px-4 grid gap-8 lg:grid-cols-2 lg:gap-12 items-center">
           {/* Content - First on desktop, second on mobile */}
-          <div className="order-2 lg:order-1 space-y-4">
-            <SectionHeading
-              badge="Community"
-              title="Join Our Growing Community"
-              centered={false}
-            />
-            <div className="space-y-3 sm:space-y-4 text-text/80">
+          <StaggerContainer className="order-2 lg:order-1 space-y-4">
+            <StaggerItem>
+              <SectionHeading
+                badge="Community"
+                title="Join Our Growing Community"
+                centered={false}
+              />
+            </StaggerItem>
+            <StaggerItem className="space-y-3 sm:space-y-4 text-text/80">
               <p className="text-base sm:text-lg leading-relaxed">
                 Whether you're just starting your sustainability journey or you're a
                 seasoned environmental advocate, EcoTrack provides the tools and
@@ -85,15 +91,15 @@ export default function About() {
                 Track your progress, connect with like-minded individuals, and celebrate
                 your achievements as you work towards a more sustainable lifestyle.
               </p>
-            </div>
+            </StaggerItem>
 
             {/* Call to Action */}
-            <div className="pt-2 sm:pt-4">
+            <StaggerItem className="pt-2 sm:pt-4">
               <Button as={Link} to="/challenges" variant="primary" className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-2 sm:py-3 text-center">
                 Check Challenges
               </Button>
-            </div>
-          </div>
+            </StaggerItem>
+          </StaggerContainer>
 
           {/* Right Image - First on mobile, second on desktop */}
           <div className="order-1 lg:order-2">

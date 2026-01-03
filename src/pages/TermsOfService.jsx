@@ -2,6 +2,7 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import SubpageHero from '../components/SubpageHero.jsx'
 import SectionHeading from '../components/SectionHeading.jsx'
 import { defaultImages } from '../config/env.js'
+import { StaggerContainer, StaggerItem } from '../components/ui/Stagger.jsx'
 
 export default function TermsOfService() {
     useDocumentTitle('Terms of Service')
@@ -21,8 +22,8 @@ export default function TermsOfService() {
 
             {/* Main Content */}
             <section className="container mx-auto px-4 pb-20">
-                <div className="space-y-10">
-                    <div className="space-y-4">
+                <StaggerContainer className="space-y-10">
+                    <StaggerItem className="space-y-4">
                         <SectionHeading
                             badge="Agreement"
                             title="Standard Terms & Conditions"
@@ -33,35 +34,35 @@ export default function TermsOfService() {
                             terms and conditions of use. Our goal is to maintain a positive and productive environment
                             for all community members.
                         </p>
-                    </div>
+                    </StaggerItem>
 
                     <div className="grid gap-8 md:grid-cols-1">
-                        <div className="space-y-4 p-8 bg-primary/5 rounded-2xl border border-primary/10">
+                        <StaggerItem className="space-y-4 p-8 bg-primary/5 rounded-2xl border border-primary/10">
                             <h3 className="text-2xl font-bold text-text">1. Use of Service</h3>
                             <p className="text-text/70 leading-relaxed">
                                 You agree to use EcoTrack only for lawful purposes and in a way that does not infringe
                                 on the rights of others or restrict their use and enjoyment of the platform.
                             </p>
-                        </div>
+                        </StaggerItem>
 
-                        <div className="space-y-4 p-8 bg-surface rounded-2xl border border-border">
+                        <StaggerItem className="space-y-4 p-8 bg-surface rounded-2xl border border-border">
                             <h3 className="text-2xl font-bold text-text">2. Account Responsibility</h3>
                             <p className="text-text/70 leading-relaxed">
                                 You are responsible for maintaining the confidentiality of your account credentials
                                 and for all activities that occur under your account. Please notify us immediately
                                 of any unauthorized access.
                             </p>
-                        </div>
+                        </StaggerItem>
 
-                        <div className="space-y-4 p-8 bg-surface rounded-2xl border border-border">
+                        <StaggerItem className="space-y-4 p-8 bg-surface rounded-2xl border border-border">
                             <h3 className="text-2xl font-bold text-text">3. Community Conduct</h3>
                             <p className="text-text/70 leading-relaxed">
                                 We expect all members to treat others with respect. Harassment, abusive language,
                                 or any form of discrimination will not be tolerated and may result in account termination.
                             </p>
-                        </div>
+                        </StaggerItem>
                     </div>
-                </div>
+                </StaggerContainer>
             </section>
         </div>
     )

@@ -4,6 +4,7 @@ import ProfileAvatar from '../components/ProfileAvatar.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import { useUserProfile } from '../hooks/queries'
+import { StaggerContainer, StaggerItem } from '../components/ui/Stagger.jsx'
 
 export default function Profile() {
   const { auth } = useAuth()
@@ -37,9 +38,9 @@ export default function Profile() {
         subtitle="Your personal eco-journey dashboard"
       />
 
-      <div className="grid gap-6">
+      <StaggerContainer className="grid gap-6">
         {/* Profile Card */}
-        <div className="bg-surface rounded-xl p-8 border border-border shadow-sm">
+        <StaggerItem className="bg-surface rounded-xl p-8 border border-border shadow-sm">
           <div className="text-center mb-8">
             {/* Use photoURL from database if available, fallback to auth user avatar */}
             <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden bg-primary/15 flex items-center justify-center relative">
@@ -97,10 +98,10 @@ export default function Profile() {
               </div>
             </div>
           )}
-        </div>
+        </StaggerItem>
 
         {/* Coming Soon Card */}
-        <div className="bg-surface rounded-xl p-8 border border-border shadow-sm text-center">
+        <StaggerItem className="bg-surface rounded-xl p-8 border border-border shadow-sm text-center">
           <div className="w-16 h-16 bg-gradient-to-br from-primary/15 to-secondary/15 rounded-full flex items-center justify-center mx-auto mb-6">
             <span className="text-2xl">🚀</span>
           </div>
@@ -116,8 +117,8 @@ export default function Profile() {
             <span className="w-2 h-2 bg-primary/100 rounded-full animate-pulse"></span>
             In Development
           </div>
-        </div>
-      </div>
+        </StaggerItem>
+      </StaggerContainer>
     </div>
   )
 }

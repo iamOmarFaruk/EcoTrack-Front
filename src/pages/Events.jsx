@@ -11,6 +11,7 @@ import { showError } from '../utils/toast.jsx'
 import { useEvents } from '../hooks/queries'
 import { motion } from 'framer-motion'
 import { containerVariants, itemVariants } from '../utils/animations'
+import { StaggerContainer, StaggerItem } from '../components/ui/Stagger.jsx'
 
 export default function Events() {
   useDocumentTitle('Events')
@@ -174,27 +175,23 @@ export default function Events() {
           </div>
         </div>
 
-        <motion.div
+        <StaggerContainer
           className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-          key={loading ? 'loading' : 'loaded'}
         >
           {loading ? (
             Array.from({ length: 6 }).map((_, i) => (
-              <motion.div key={`skeleton-${i}`} variants={itemVariants}>
+              <StaggerItem key={`skeleton-${i}`}>
                 <EventCardSkeleton />
-              </motion.div>
+              </StaggerItem>
             ))
           ) : events.length > 0 ? (
             events.map((event) => (
-              <motion.div key={event._id || event.id} variants={itemVariants}>
+              <StaggerItem key={event._id || event.id}>
                 <LazyEventCard event={event} />
-              </motion.div>
+              </StaggerItem>
             ))
           ) : (
-            <motion.div variants={itemVariants} className="col-span-full py-16 px-4">
+            <StaggerItem className="col-span-full py-16 px-4">
               <div className="bg-surface rounded-xl p-12 border border-border dashed text-center max-w-2xl mx-auto">
                 <div className="mb-6 flex justify-center">
                   <div className="p-4 rounded-full bg-primary/5">
@@ -225,9 +222,9 @@ export default function Events() {
                   )}
                 </div>
               </div>
-            </motion.div>
+            </StaggerItem>
           )}
-        </motion.div>
+        </StaggerContainer>
       </div>
     </div>
   )
