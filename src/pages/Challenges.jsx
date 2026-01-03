@@ -10,6 +10,7 @@ import FilterSidebar from '../components/FilterSidebar.jsx'
 import { defaultImages } from '../config/env'
 import { useChallenges } from '../hooks/queries'
 import { motion, AnimatePresence } from 'framer-motion'
+import { containerVariants, itemVariants } from '../utils/animations'
 
 export default function Challenges() {
   useDocumentTitle('Challenges')
@@ -220,19 +221,43 @@ export default function Challenges() {
             Showing {challenges.length} challenges
           </div>
 
-          <div
-            className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3"
-          >
+          <AnimatePresence mode="wait">
             {loading ? (
-              Array.from({ length: 6 }).map((_, i) => (
-                <ChallengeCardSkeleton key={`skeleton-${i}`} />
-              ))
+              <motion.div
+                key="loading-skeletons"
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
+                exit="hidden"
+                className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3"
+              >
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <motion.div key={`skeleton-${i}`} variants={itemVariants}>
+                    <ChallengeCardSkeleton />
+                  </motion.div>
+                ))}
+              </motion.div>
             ) : challenges.length > 0 ? (
-              challenges.map((c) => (
-                <LazyChallengeCard key={c._id || c.id} challenge={c} />
-              ))
+              <motion.div
+                key="challenges-content"
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
+                className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3"
+              >
+                {challenges.map((c) => (
+                  <motion.div key={c._id || c.id} variants={itemVariants}>
+                    <LazyChallengeCard challenge={c} />
+                  </motion.div>
+                ))}
+              </motion.div>
             ) : (
-              <div className="col-span-full py-12">
+              <motion.div
+                key="no-results"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="col-span-full py-12"
+              >
                 <div className="bg-surface rounded-xl p-12 border border-border dashed text-center max-w-2xl mx-auto">
                   <div className="mb-6 flex justify-center">
                     <div className="p-4 rounded-full bg-primary/5">
@@ -253,9 +278,9 @@ export default function Challenges() {
                     Clear All Filters
                   </Button>
                 </div>
-              </div>
+              </motion.div>
             )}
-          </div>
+          </AnimatePresence>
 
           {/* Pagination */}
           {pagination && pagination.pages > 1 && (

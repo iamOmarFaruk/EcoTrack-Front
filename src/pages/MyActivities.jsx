@@ -6,7 +6,8 @@ import { challengeApi } from '../services/api.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
 import { useMyCreatedChallenges, useMyJoinedChallenges } from '../hooks/queries'
-import { StaggerContainer, StaggerItem } from '../components/ui/Stagger.jsx'
+import { motion, AnimatePresence } from 'framer-motion'
+import { containerVariants, itemVariants } from '../utils/animations'
 
 export default function MyActivities() {
   const { auth } = useAuth()
@@ -124,26 +125,36 @@ export default function MyActivities() {
 
       {/* Summary Stats */}
       {summary && (
-        <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <StaggerItem className="bg-surface p-6 rounded-xl border border-border text-center">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
+        >
+          <motion.div variants={itemVariants} className="bg-surface p-6 rounded-xl border border-border text-center">
             <div className="text-3xl font-bold text-primary">{summary.total}</div>
             <div className="text-sm text-text/80 mt-1">Total Challenges</div>
-          </StaggerItem>
-          <StaggerItem className="bg-surface p-6 rounded-xl border border-border text-center">
+          </motion.div>
+          <motion.div variants={itemVariants} className="bg-surface p-6 rounded-xl border border-border text-center">
             <div className="text-3xl font-bold text-secondary">{summary.active}</div>
             <div className="text-sm text-text/80 mt-1">Active Challenges</div>
-          </StaggerItem>
-          <StaggerItem className="bg-surface p-6 rounded-xl border border-border text-center">
+          </motion.div>
+          <motion.div variants={itemVariants} className="bg-surface p-6 rounded-xl border border-border text-center">
             <div className="text-3xl font-bold text-secondary">{summary.completed}</div>
             <div className="text-sm text-text/80 mt-1">Completed</div>
-          </StaggerItem>
-        </StaggerContainer>
+          </motion.div>
+        </motion.div>
       )}
 
       {/* Filter Tabs */}
-      <StaggerContainer className="flex gap-2 mb-6">
-        <StaggerItem
-          isButton
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="flex gap-2 mb-6"
+      >
+        <motion.button
+          variants={itemVariants}
           onClick={() => setStatusFilter('all')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${statusFilter === 'all'
             ? 'bg-primary text-surface'
@@ -151,9 +162,9 @@ export default function MyActivities() {
             }`}
         >
           All
-        </StaggerItem>
-        <StaggerItem
-          isButton
+        </motion.button>
+        <motion.button
+          variants={itemVariants}
           onClick={() => setStatusFilter('active')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${statusFilter === 'active'
             ? 'bg-primary text-surface'
@@ -161,9 +172,9 @@ export default function MyActivities() {
             }`}
         >
           Active
-        </StaggerItem>
-        <StaggerItem
-          isButton
+        </motion.button>
+        <motion.button
+          variants={itemVariants}
           onClick={() => setStatusFilter('completed')}
           className={`px-4 py-2 rounded-lg font-medium transition-colors ${statusFilter === 'completed'
             ? 'bg-primary text-surface'
@@ -171,21 +182,34 @@ export default function MyActivities() {
             }`}
         >
           Completed
-        </StaggerItem>
-      </StaggerContainer>
+        </motion.button>
+      </motion.div>
 
       {/* Activities Grid */}
-      <StaggerContainer>
+      <AnimatePresence mode="wait">
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div
+            key="loading"
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            exit="hidden"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
             {Array.from({ length: 9 }).map((_, i) => (
-              <StaggerItem key={i}>
+              <motion.div key={i} variants={itemVariants}>
                 <ChallengeCardSkeleton />
-              </StaggerItem>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         ) : activities.length === 0 ? (
-          <StaggerItem className="bg-surface rounded-xl p-12 border border-border shadow-sm text-center">
+          <motion.div
+            key="empty"
+            variants={itemVariants}
+            initial="hidden"
+            animate="show"
+            className="bg-surface rounded-xl p-12 border border-border shadow-sm text-center"
+          >
             <div className="w-24 h-24 bg-gradient-to-br from-primary/15 to-primary/15 rounded-full flex items-center justify-center mx-auto mb-6">
               <span className="text-4xl">🌱</span>
             </div>
@@ -199,12 +223,19 @@ export default function MyActivities() {
             >
               Browse Challenges
             </Link>
-          </StaggerItem>
+          </motion.div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div
+            key="content"
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
             {activities.map((activity) => (
-              <StaggerItem
+              <motion.div
                 key={activity._id}
+                variants={itemVariants}
               >
                 <div className="bg-surface rounded-xl border border-border overflow-hidden hover:shadow-lg transition-shadow h-full">
                   {activity.challenge?.imageUrl && (
@@ -271,11 +302,11 @@ export default function MyActivities() {
                     </Link>
                   </div>
                 </div>
-              </StaggerItem>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         )}
-      </StaggerContainer>
+      </AnimatePresence>
 
       {/* Pagination */}
       {pagination && pagination.totalPages > 1 && (

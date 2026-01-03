@@ -9,9 +9,8 @@ import { defaultImages } from '../config/env.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import { showError } from '../utils/toast.jsx'
 import { useEvents } from '../hooks/queries'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { containerVariants, itemVariants } from '../utils/animations'
-import { StaggerContainer, StaggerItem } from '../components/ui/Stagger.jsx'
 
 export default function Events() {
   useDocumentTitle('Events')
@@ -175,56 +174,77 @@ export default function Events() {
           </div>
         </div>
 
-        <StaggerContainer
-          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-        >
+        <AnimatePresence mode="wait">
           {loading ? (
-            Array.from({ length: 6 }).map((_, i) => (
-              <StaggerItem key={`skeleton-${i}`}>
-                <EventCardSkeleton />
-              </StaggerItem>
-            ))
-          ) : events.length > 0 ? (
-            events.map((event) => (
-              <StaggerItem key={event._id || event.id}>
-                <LazyEventCard event={event} />
-              </StaggerItem>
-            ))
+            <motion.div
+              key="loading-skeletons"
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+              exit="hidden"
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              {Array.from({ length: 6 }).map((_, i) => (
+                <motion.div key={`skeleton-${i}`} variants={itemVariants}>
+                  <EventCardSkeleton />
+                </motion.div>
+              ))}
+            </motion.div>
           ) : (
-            <StaggerItem className="col-span-full py-16 px-4">
-              <div className="bg-surface rounded-xl p-12 border border-border dashed text-center max-w-2xl mx-auto">
-                <div className="mb-6 flex justify-center">
-                  <div className="p-4 rounded-full bg-primary/5">
-                    <svg className="w-12 h-12 text-primary/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                    </svg>
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold text-heading mb-3">No events found</h3>
-                <p className="text-text/70 mb-8 max-w-md mx-auto">
-                  {searchQuery
-                    ? `We couldn't find any events matching "${searchQuery}". Try a different search term.`
-                    : 'Be the first to create an eco-friendly event and lead the way in your community!'}
-                </p>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  {searchQuery && (
-                    <Button variant="outline" onClick={() => setSearchQuery('')}>
-                      Clear Search
-                    </Button>
-                  )}
-                  {user && (
-                    <Button onClick={handleCreateEvent} className="flex items-center gap-2">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                      </svg>
-                      Create First Event
-                    </Button>
-                  )}
+            <motion.div
+              key="events-content"
+              variants={containerVariants}
+              initial="hidden"
+              animate="show"
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              {events.map((event) => (
+                <motion.div key={event._id || event.id} variants={itemVariants}>
+                  <LazyEventCard event={event} />
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {!loading && events.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="py-16 px-4"
+          >
+            <div className="bg-surface rounded-xl p-12 border border-border dashed text-center max-w-2xl mx-auto">
+              <div className="mb-6 flex justify-center">
+                <div className="p-4 rounded-full bg-primary/5">
+                  <svg className="w-12 h-12 text-primary/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
                 </div>
               </div>
-            </StaggerItem>
-          )}
-        </StaggerContainer>
+              <h3 className="text-xl font-bold text-heading mb-3">No events found</h3>
+              <p className="text-text/70 mb-8 max-w-md mx-auto">
+                {searchQuery
+                  ? `We couldn't find any events matching "${searchQuery}". Try a different search term.`
+                  : 'Be the first to create an eco-friendly event and lead the way in your community!'}
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                {searchQuery && (
+                  <Button variant="outline" onClick={() => setSearchQuery('')}>
+                    Clear Search
+                  </Button>
+                )}
+                {user && (
+                  <Button onClick={handleCreateEvent} className="flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Create First Event
+                  </Button>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
       </div>
     </div>
   )

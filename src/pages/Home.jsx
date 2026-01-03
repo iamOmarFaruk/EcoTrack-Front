@@ -28,7 +28,7 @@ import {
   useTips,
   useTipMutations
 } from '../hooks/queries'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { stackedContainer, stackedItem } from '../utils/animations'
 import whyGoGreenImg from '../assets/why-go-green.png'
 
@@ -180,22 +180,48 @@ export default function Home() {
           title="Active Challenges"
           subtitle="Happening right now"
         />
-        <motion.div
-          variants={stackedContainer}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.1 }}
-          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-        >
-          {loadingChallenges && Array.from({ length: 6 }).map((_, i) => (
-            <ChallengeCardSkeleton key={i} />
-          ))}
-          {!loadingChallenges && challenges?.map((c) => (
-            <motion.div key={c._id || c.id} variants={stackedItem}>
-              <LazyChallengeCard challenge={c} />
+        <AnimatePresence mode="wait">
+          {loadingChallenges ? (
+            <motion.div
+              key="loading-challenges"
+              variants={stackedContainer}
+              initial="hidden"
+              animate="show"
+              exit="hidden"
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              {Array.from({ length: 6 }).map((_, i) => (
+                <motion.div key={`skeleton-${i}`} variants={stackedItem}>
+                  <ChallengeCardSkeleton />
+                </motion.div>
+              ))}
             </motion.div>
-          ))}
-        </motion.div>
+          ) : challenges.length > 0 ? (
+            <motion.div
+              key="challenges-content"
+              variants={stackedContainer}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.1 }}
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              {challenges.map((c) => (
+                <motion.div key={c._id || c.id} variants={stackedItem}>
+                  <LazyChallengeCard challenge={c} />
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="no-challenges"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="relative h-[200px] bg-surface flex items-center justify-center overflow-hidden rounded-2xl border border-border dashed"
+            >
+              <p className="text-text/60">No active challenges at the moment.</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </section>
 
       <section>
@@ -204,30 +230,56 @@ export default function Home() {
           title="Recent Tips"
           subtitle="Practical, bite-sized advice"
         />
-        <motion.div
-          variants={stackedContainer}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.1 }}
-          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
-        >
-          {loadingTips && Array.from({ length: 4 }).map((_, i) => (
-            <TipCardSkeleton key={i} />
-          ))}
-          {!loadingTips && tips?.map((t, i) => (
-            <motion.div key={t._id || t.id || i} variants={stackedItem}>
-              <LazyTipCard
-                tip={t}
-                showActions={true}
-                canModify={canModifyTip(t)}
-                onEdit={handleEditTip}
-                onDelete={handleDeleteTip}
-                onUpvote={handleUpvote}
-                onLoginRequired={handleLoginRequired}
-              />
+        <AnimatePresence mode="wait">
+          {loadingTips ? (
+            <motion.div
+              key="loading-tips"
+              variants={stackedContainer}
+              initial="hidden"
+              animate="show"
+              exit="hidden"
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+            >
+              {Array.from({ length: 4 }).map((_, i) => (
+                <motion.div key={`skeleton-${i}`} variants={stackedItem}>
+                  <TipCardSkeleton />
+                </motion.div>
+              ))}
             </motion.div>
-          ))}
-        </motion.div>
+          ) : tips.length > 0 ? (
+            <motion.div
+              key="tips-content"
+              variants={stackedContainer}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.1 }}
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+            >
+              {tips.map((t, i) => (
+                <motion.div key={t._id || t.id || i} variants={stackedItem}>
+                  <LazyTipCard
+                    tip={t}
+                    showActions={true}
+                    canModify={canModifyTip(t)}
+                    onEdit={handleEditTip}
+                    onDelete={handleDeleteTip}
+                    onUpvote={handleUpvote}
+                    onLoginRequired={handleLoginRequired}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="no-tips"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="relative h-[150px] bg-surface flex items-center justify-center overflow-hidden rounded-2xl border border-border dashed"
+            >
+              <p className="text-text/60">No recent tips shared yet.</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </section>
 
       <section className="full-bleed bg-primary/5">
@@ -237,22 +289,48 @@ export default function Home() {
             title="Upcoming Events"
             subtitle="Join the community"
           />
-          <motion.div
-            variants={stackedContainer}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.1 }}
-            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
-          >
-            {loadingEvents && Array.from({ length: 4 }).map((_, i) => (
-              <EventCardSkeleton key={i} />
-            ))}
-            {!loadingEvents && events?.map((e, i) => (
-              <motion.div key={e._id || e.id || i} variants={stackedItem}>
-                <LazyEventCard event={e} />
+          <AnimatePresence mode="wait">
+            {loadingEvents ? (
+              <motion.div
+                key="loading-events"
+                variants={stackedContainer}
+                initial="hidden"
+                animate="show"
+                exit="hidden"
+                className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+              >
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <motion.div key={`skeleton-${i}`} variants={stackedItem}>
+                    <EventCardSkeleton />
+                  </motion.div>
+                ))}
               </motion.div>
-            ))}
-          </motion.div>
+            ) : events.length > 0 ? (
+              <motion.div
+                key="events-content"
+                variants={stackedContainer}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, amount: 0.1 }}
+                className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+              >
+                {events.map((e, i) => (
+                  <motion.div key={e._id || e.id || i} variants={stackedItem}>
+                    <LazyEventCard event={e} />
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="no-events"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="relative h-[150px] bg-surface flex items-center justify-center overflow-hidden rounded-2xl border border-border dashed"
+              >
+                <p className="text-text/60">No upcoming events scheduled.</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </section>
 
