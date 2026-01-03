@@ -152,18 +152,18 @@ export default function Home() {
         ) : featuredChallenges.length > 0 ? (
           <Hero slides={featuredChallenges} effect="fade" />
         ) : (
-          <div className="relative h-[500px] bg-bg-dark flex items-center justify-center overflow-hidden">
+          <div className="relative h-[500px] bg-surface flex items-center justify-center overflow-hidden">
             {/* Soft decorative glow */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full pointer-events-none"></div>
 
-            <div className="text-center text-surface px-4 relative z-10">
+            <div className="text-center text-text px-4 relative z-10">
               <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-primary/10 border border-primary/20 mb-6">
                 <svg className="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
               </div>
-              <h2 className="text-3xl font-heading font-bold mb-3 tracking-tight">No Featured Challenges Yet</h2>
-              <p className="text-lg text-surface/60 mb-8 max-w-md mx-auto">We're currently preparing new exciting eco-challenges for you. Browse our community to see what else is happening!</p>
+              <h2 className="text-3xl font-heading font-bold mb-3 tracking-tight text-heading">No Featured Challenges Yet</h2>
+              <p className="text-lg text-text/60 mb-8 max-w-md mx-auto">We're currently preparing new exciting eco-challenges for you. Browse our community to see what else is happening!</p>
               <Button as={Link} to="/challenges" variant="primary" size="lg">
                 Explore All Challenges
               </Button>
