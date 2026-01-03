@@ -1,8 +1,10 @@
+
 import { Link, NavLink } from 'react-router-dom'
-import { User, Activity, Calendar, Settings as SettingsIcon, LogOut } from 'lucide-react'
+import { User, Activity, Calendar, Settings as SettingsIcon, LogOut, Sun, Moon, Monitor } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import clsx from 'clsx'
 import { useAuth } from '../context/AuthContext.jsx'
+import { useTheme } from '../context/ThemeContext.jsx'
 import Logo from './Logo.jsx'
 import Button from './ui/Button.jsx'
 import ProfileAvatar from './ProfileAvatar.jsx'
@@ -19,6 +21,7 @@ const navItems = [
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const { auth, logout, loading } = useAuth()
+  const { theme, setTheme } = useTheme()
   const [isScrolled, setIsScrolled] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const profileRef = useRef(null)
@@ -180,6 +183,19 @@ export default function Navbar() {
               )}
             </div>
           )}
+          <button
+            onClick={() => {
+              if (theme === 'light') setTheme('dark')
+              else if (theme === 'dark') setTheme('system')
+              else setTheme('light')
+            }}
+            className="flex h-9 w-9 items-center justify-center rounded-md border border-border text-heading transition-colors hover:bg-light hover:text-primary dark:hover:bg-primary/20"
+            title={`Current theme: ${theme}`}
+          >
+            {theme === 'light' && <Sun className="h-4 w-4" />}
+            {theme === 'dark' && <Moon className="h-4 w-4" />}
+            {theme === 'system' && <Monitor className="h-4 w-4" />}
+          </button>
         </div>
 
         <button
@@ -192,19 +208,19 @@ export default function Navbar() {
           <div className="relative h-5 w-5" aria-hidden="true">
             <span
               className={clsx(
-                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-dark transition-transform duration-300 ease-out',
+                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-heading transition-transform duration-300 ease-out',
                 open ? 'translate-y-0 rotate-45' : '-translate-y-2 rotate-0'
               )}
             />
             <span
               className={clsx(
-                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-dark transition-all duration-300 ease-out',
+                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-heading transition-all duration-300 ease-out',
                 open ? 'opacity-0 scale-x-0' : 'opacity-100 scale-x-100'
               )}
             />
             <span
               className={clsx(
-                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-dark transition-transform duration-300 ease-out',
+                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-heading transition-transform duration-300 ease-out',
                 open ? 'translate-y-0 -rotate-45' : 'translate-y-2 rotate-0'
               )}
             />
@@ -315,6 +331,23 @@ export default function Navbar() {
                 </div>
               </>
             )}
+            <div
+              className={clsx('mt-2 border-t border-border p-2 flex justify-center mobile-menu-item', open && 'mobile-menu-item--open')}
+              style={{ transitionDelay: `${navItems.length * 50 + 250}ms` }}
+            >
+              <button
+                onClick={() => {
+                  if (theme === 'light') setTheme('dark')
+                  else if (theme === 'dark') setTheme('system')
+                  else setTheme('light')
+                }}
+                className="flex items-center gap-2 px-4 py-2 rounded-md bg-white dark:bg-black/20 border border-border text-heading shadow-sm"
+              >
+                {theme === 'light' && <><Sun className="h-4 w-4" /> Light Mode</>}
+                {theme === 'dark' && <><Moon className="h-4 w-4" /> Dark Mode</>}
+                {theme === 'system' && <><Monitor className="h-4 w-4" /> System</>}
+              </button>
+            </div>
           </div>
         </div>
       </div>

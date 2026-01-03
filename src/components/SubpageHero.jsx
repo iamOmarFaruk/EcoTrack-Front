@@ -61,7 +61,7 @@ export default function SubpageHero({
           >
             {title && (
               <motion.h1
-                className="text-3xl font-heading font-bold tracking-tight text-surface sm:text-4xl md:text-5xl"
+                className="text-3xl font-heading font-bold tracking-tight text-white sm:text-4xl md:text-5xl"
                 variants={itemVariants}
               >
                 {title}
@@ -70,7 +70,7 @@ export default function SubpageHero({
 
             {subtitle && (
               <motion.p
-                className="mt-3 text-lg text-surface/90 sm:text-xl md:text-2xl"
+                className="mt-3 text-lg text-white/90 sm:text-xl md:text-2xl"
                 variants={itemVariants}
               >
                 {subtitle}

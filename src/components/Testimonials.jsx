@@ -8,7 +8,7 @@ const testimonials = [
         role: "Eco Enthusiast",
         quote: "EcoTrack has completely transformed how I view my daily impact. The challenges are fun and the community is incredibly supportive!",
         initials: "SJ",
-        color: "bg-blue-100 text-blue-600"
+        color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300"
     },
     {
         id: 2,
@@ -16,7 +16,7 @@ const testimonials = [
         role: "Sustainability Lead",
         quote: "As a professional in the field, I love how data-driven this platform is. It makes tracking carbon footprint reductions tangible and accurate.",
         initials: "MC",
-        color: "bg-green-100 text-green-600"
+        color: "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300"
     },
     {
         id: 3,
@@ -24,7 +24,7 @@ const testimonials = [
         role: "Student",
         quote: "I started using this for a class project and couldn't stop. It's addictive in the best way possible. Five stars!",
         initials: "ER",
-        color: "bg-purple-100 text-purple-600"
+        color: "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300"
     },
     {
         id: 4,
@@ -32,7 +32,7 @@ const testimonials = [
         role: "Urban Gardener",
         quote: "The specific tips for urban living have helped me reduce waste significantly. Highly recommend for city dwellers.",
         initials: "DK",
-        color: "bg-yellow-100 text-yellow-600"
+        color: "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-300"
     },
     {
         id: 5,
@@ -40,7 +40,7 @@ const testimonials = [
         role: "Homeowner",
         quote: "Finally, an app that doesn't just preach but gives practical steps. My energy bills are down 15% since following the tips.",
         initials: "JA",
-        color: "bg-orange-100 text-orange-600"
+        color: "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300"
     }
 ]
 
@@ -82,8 +82,8 @@ export default function Testimonials() {
 
             <div className="relative w-full overflow-hidden mask-linear-fade">
                 {/* Gradient overlays for seamless feel edges */}
-                <div className="absolute left-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-r from-background via-background/80 to-transparent z-10 hidden" />
-                <div className="absolute right-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-l from-background via-background/80 to-transparent z-10 hidden" />
+                <div className="absolute left-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-r from-light via-light/80 to-transparent dark:from-black dark:via-black/80 z-10 hidden" />
+                <div className="absolute right-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-l from-light via-light/80 to-transparent dark:from-black dark:via-black/80 z-10 hidden" />
 
                 <div className="flex">
                     <motion.div

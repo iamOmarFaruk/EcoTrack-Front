@@ -17,6 +17,19 @@
     --color-bg-dark: 15 23 42; /* #0f172a */
     --color-border: 226 232 240; /* #e2e8f0 */
   }
+
+  .dark {
+    --color-primary: 16 185 129; /* Emerald 500 - slightly lighter/brighter for dark mode */
+    --color-primary-darker: 5 150 105; /* Emerald 600 */
+    --color-secondary: 20 184 166; /* Teal 500 */
+    --color-text: 226 232 240; /* Slate 200 */
+    --color-heading: 248 250 252; /* Slate 50 */
+    --color-surface: 24 24 27; /* Zinc 900 - Dark card background */
+    --color-bg-light: 0 0 0; /* Pure black body background */
+    --color-bg-muted: 9 9 11; /* Zinc 950 - Very dark for muted areas */
+    --color-bg-dark: 0 0 0; /* Explicit dark bg */
+    --color-border: 39 39 42; /* Zinc 800 */
+  }
   /* Consistent vertical rhythm for all sections */
   section {
     @apply py-12 md:py-16;

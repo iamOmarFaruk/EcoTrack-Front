@@ -6,6 +6,7 @@ import PublicLayout from './layouts/PublicLayout.jsx'
 import DashboardLayout from './layouts/DashboardLayout.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
+import { ThemeProvider } from './context/ThemeContext.jsx'
 import EcoLoader from './components/EcoLoader.jsx'
 import './index.css'
 import PrivacyToast from './components/PrivacyToast.jsx'
@@ -39,141 +40,143 @@ const CookiePolicy = lazy(() => import('./pages/CookiePolicy.jsx'))
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <ScrollToTop />
-        <Routes>
-          <Route element={<PublicLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/challenges" element={<Challenges />} />
-            <Route path="/tips" element={<Tips />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/events/:id" element={<EventDetail />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/privacy" element={<PrivacyPolicy />} />
-            <Route path="/terms" element={<TermsOfService />} />
-            <Route path="/cookies" element={<CookiePolicy />} />
-            <Route
-              path="/events/add"
-              element={
-                <ProtectedRoute>
-                  <AddEvent />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/events/:id/edit"
-              element={
-                <ProtectedRoute>
-                  <EditEvent />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/challenges/add"
-              element={
-                <ProtectedRoute>
-                  <AddChallenge />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/challenges/:slug/edit"
-              element={
-                <ProtectedRoute>
-                  <EditChallenge />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/challenges/:slug" element={<ChallengeDetail />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-          <Route element={<DashboardLayout />}>
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute>
-                  <Settings />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/my-activities"
-              element={
-                <ProtectedRoute>
-                  <MyActivities />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/challenges/join/:id"
-              element={
-                <ProtectedRoute>
-                  <JoinChallenge />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/events/my-events"
-              element={
-                <ProtectedRoute>
-                  <MyEvents />
-                </ProtectedRoute>
-              }
-            />
-          </Route>
-        </Routes>
-        <Toaster
-          position="top-center"
-          toastOptions={{
-            duration: 3000,
-            style: {
-              background: 'rgb(var(--color-surface))',
-              color: 'rgb(var(--color-text))',
-              borderRadius: 'var(--radius)',
-              padding: '16px',
-              border: '1px solid rgb(var(--color-border))',
-            },
-            success: {
+      <ThemeProvider>
+        <BrowserRouter>
+          <ScrollToTop />
+          <Routes>
+            <Route element={<PublicLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/challenges" element={<Challenges />} />
+              <Route path="/tips" element={<Tips />} />
+              <Route path="/events" element={<Events />} />
+              <Route path="/events/:id" element={<EventDetail />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsOfService />} />
+              <Route path="/cookies" element={<CookiePolicy />} />
+              <Route
+                path="/events/add"
+                element={
+                  <ProtectedRoute>
+                    <AddEvent />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/events/:id/edit"
+                element={
+                  <ProtectedRoute>
+                    <EditEvent />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/challenges/add"
+                element={
+                  <ProtectedRoute>
+                    <AddChallenge />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/challenges/:slug/edit"
+                element={
+                  <ProtectedRoute>
+                    <EditChallenge />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/challenges/:slug" element={<ChallengeDetail />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
+            <Route element={<DashboardLayout />}>
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-activities"
+                element={
+                  <ProtectedRoute>
+                    <MyActivities />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/challenges/join/:id"
+                element={
+                  <ProtectedRoute>
+                    <JoinChallenge />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/events/my-events"
+                element={
+                  <ProtectedRoute>
+                    <MyEvents />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
+          </Routes>
+          <Toaster
+            position="top-center"
+            toastOptions={{
+              duration: 3000,
               style: {
                 background: 'rgb(var(--color-surface))',
-                border: '1px solid rgb(var(--color-primary) / 0.2)',
-                color: 'rgb(var(--color-primary))',
+                color: 'rgb(var(--color-text))',
+                borderRadius: 'var(--radius)',
+                padding: '16px',
+                border: '1px solid rgb(var(--color-border))',
               },
-              iconTheme: {
-                primary: 'rgb(var(--color-primary))',
-                secondary: 'rgb(var(--color-surface))',
+              success: {
+                style: {
+                  background: 'rgb(var(--color-surface))',
+                  border: '1px solid rgb(var(--color-primary) / 0.2)',
+                  color: 'rgb(var(--color-primary))',
+                },
+                iconTheme: {
+                  primary: 'rgb(var(--color-primary))',
+                  secondary: 'rgb(var(--color-surface))',
+                },
               },
-            },
-            error: {
-              style: {
-                background: 'rgb(var(--color-surface))',
-                border: '1px solid rgb(var(--color-danger) / 0.25)',
-                color: 'rgb(var(--color-danger))',
+              error: {
+                style: {
+                  background: 'rgb(var(--color-surface))',
+                  border: '1px solid rgb(var(--color-danger) / 0.25)',
+                  color: 'rgb(var(--color-danger))',
+                },
+                iconTheme: {
+                  primary: 'rgb(var(--color-danger))',
+                  secondary: 'rgb(var(--color-surface))',
+                },
               },
-              iconTheme: {
-                primary: 'rgb(var(--color-danger))',
-                secondary: 'rgb(var(--color-surface))',
-              },
-            },
-          }}
-          containerStyle={{
-            top: 80,
-          }}
-        />
-        <PrivacyToast />
-      </BrowserRouter>
+            }}
+            containerStyle={{
+              top: 80,
+            }}
+          />
+          <PrivacyToast />
+        </BrowserRouter>
+      </ThemeProvider>
     </AuthProvider>
   )
 }
