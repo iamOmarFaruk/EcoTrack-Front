@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import Button from '../components/ui/Button.jsx'
 import SectionHeading from '../components/SectionHeading.jsx'
 import SubpageHero from '../components/SubpageHero.jsx'
+import CommunityStats from '../components/CommunityStats.jsx'
 import CTA from '../components/CTA.jsx'
 import { defaultImages } from '../config/env.js'
 
@@ -104,6 +105,11 @@ export default function About() {
         </div>
       </section>
 
+      {/* Live Impact Section */}
+      <div className="full-bleed">
+        <CommunityStats />
+      </div>
+
       {/* CTA Section */}
       <div className="full-bleed !mt-0">
         <CTA />
@@ -111,6 +117,7 @@ export default function About() {
     </div>
   )
 }
+
 
 
 
