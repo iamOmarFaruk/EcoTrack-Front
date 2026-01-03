@@ -10,6 +10,7 @@ import EcoLoader from '../components/EcoLoader.jsx'
 import { useEffect, useState } from 'react'
 import { defaultImages } from '../config/env.js'
 import Logo from '../components/Logo.jsx'
+import { Typewriter } from '../components/ui/Typewriter.jsx'
 
 const passwordRules = z.string()
   .min(6, 'Min 6 characters')
@@ -98,8 +99,11 @@ export default function Register() {
             <h2 className="text-4xl font-bold leading-tight text-white">
               Begin your journey towards <span className="underline decoration-primary decoration-4 underline-offset-8">conscious living</span>.
             </h2>
-            <p className="max-w-md text-lg text-white/80">
-              Create an account to track your carbon footprint, join challenges, and connect with a community that cares.
+            <p className="max-w-md text-lg text-white/80 min-h-[4.5rem]">
+              <Typewriter
+                text="Create an account to track your carbon footprint, join challenges, and connect with a community that cares."
+                delay={1000}
+              />
             </p>
           </div>
 

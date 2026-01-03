@@ -11,6 +11,7 @@ import { useEffect } from 'react'
 import { defaultImages } from '../config/env.js'
 import { StaggerContainer, StaggerItem } from '../components/ui/Stagger.jsx'
 import Logo from '../components/Logo.jsx'
+import { Typewriter } from '../components/ui/Typewriter.jsx'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -65,8 +66,11 @@ export default function ForgotPassword() {
             <h2 className="text-4xl font-bold leading-tight text-white">
               Don't worry, even nature has <span className="underline decoration-primary decoration-4 underline-offset-8">cycles of renewal</span>.
             </h2>
-            <p className="max-w-md text-lg text-white/80">
-              Recover your account and continue your journey towards a greener world.
+            <p className="max-w-md text-lg text-white/80 min-h-[3rem]">
+              <Typewriter
+                text="Recover your account and continue your journey towards a greener world."
+                delay={1000}
+              />
             </p>
           </div>
 

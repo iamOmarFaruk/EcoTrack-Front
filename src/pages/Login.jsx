@@ -10,6 +10,7 @@ import EcoLoader from '../components/EcoLoader.jsx'
 import { useEffect } from 'react'
 import { defaultImages } from '../config/env.js'
 import Logo from '../components/Logo.jsx'
+import { Typewriter } from '../components/ui/Typewriter.jsx'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -78,8 +79,11 @@ export default function Login() {
             <h2 className="text-4xl font-bold leading-tight text-white">
               Powering the transition to a <span className="underline decoration-primary decoration-4 underline-offset-8">sustainable future</span>.
             </h2>
-            <p className="max-w-md text-lg text-white/80">
-              Join thousands of eco-conscious individuals making a real impact every single day.
+            <p className="max-w-md text-lg text-white/80 min-h-[3rem]">
+              <Typewriter
+                text="Join thousands of eco-conscious individuals making a real impact every single day."
+                delay={1000}
+              />
             </p>
           </div>
 
