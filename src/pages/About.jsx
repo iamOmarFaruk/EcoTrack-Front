@@ -87,7 +87,7 @@ export default function About() {
 
             {/* Call to Action */}
             <div className="pt-2 sm:pt-4">
-              <Button as={Link} to="/challenges" variant="primary" className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-2 sm:py-3 shadow-lg shadow-primary/20 text-center">
+              <Button as={Link} to="/challenges" variant="primary" className="w-full sm:w-auto text-base sm:text-lg px-6 sm:px-8 py-2 sm:py-3 text-center">
                 Check Challenges
               </Button>
             </div>
