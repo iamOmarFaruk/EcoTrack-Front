@@ -57,8 +57,15 @@ const normalizeChallenge = (challenge) => {
     }
 }
 
+const defaultQueryOptions = {
+    staleTime: 60 * 1000, // 1 minute
+    retry: 2,
+    refetchOnWindowFocus: false,
+}
+
 export const useChallenges = (filters = {}) => {
     return useQuery({
+        ...defaultQueryOptions,
         queryKey: queryKeys.challenges.list(filters),
         queryFn: async () => {
             const response = await challengeApi.getAll(filters)
@@ -208,6 +215,7 @@ const normalizeTip = (tip) => {
 
 export const useTips = (filters = {}) => {
     return useQuery({
+        ...defaultQueryOptions,
         queryKey: queryKeys.tips.list(filters),
         queryFn: async () => {
             const response = await tipsApi.getAll(filters)
@@ -292,6 +300,7 @@ export const useTipMutations = () => {
 
 export const useEvents = (filters = {}) => {
     return useQuery({
+        ...defaultQueryOptions,
         queryKey: queryKeys.events.list(filters),
         queryFn: async () => {
             const response = await eventApi.getAll(filters)
