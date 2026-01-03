@@ -7,16 +7,17 @@ import EcoLoader from '../components/EcoLoader.jsx'
 export default function PublicLayout() {
   const location = useLocation()
   const isHome = location.pathname === '/'
+  const isAuthPage = ['/login', '/register', '/forgot-password'].includes(location.pathname)
+
   return (
     <div className="flex min-h-screen flex-col">
-      <Navbar />
-      {/* Add padding-top to account for fixed navbar (h-16) */}
-      <main className={`container flex-1 ${isHome ? 'pt-16' : 'pt-24'} ${isHome || location.pathname === '/about' ? 'pb-0' : 'pb-8'}`}>
+      {!isAuthPage && <Navbar />}
+      <main className={`flex-1 ${!isAuthPage ? (isHome ? 'pt-16' : 'pt-24') : ''} ${!isAuthPage && (isHome || location.pathname === '/about') ? 'pb-0' : (!isAuthPage ? 'pb-8' : '')} ${!isAuthPage ? 'container' : ''}`}>
         <Suspense fallback={<EcoLoader />}>
           <Outlet />
         </Suspense>
       </main>
-      <Footer />
+      {!isAuthPage && <Footer />}
     </div>
   )
 }
