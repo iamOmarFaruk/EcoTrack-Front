@@ -5,61 +5,94 @@
 @layer base {
   :root {
     --radius: 0.75rem;
-    --color-primary: 5 150 105; /* #059669 */
-    --color-primary-darker: 4 120 84; /* A darker shade of #059669 for hover */
-    --color-secondary: 15 118 110; /* #0f766e */
-    --color-danger: 185 28 28; /* #b91c1c */
-    --color-text: 30 41 59; /* #1f2937 */
-    --color-heading: 15 23 42; /* #0f172a */
-    --color-surface: 255 255 255; /* #ffffff */
-    --color-bg-light: 248 250 252; /* #f8fafc */
-    --color-bg-muted: 241 245 249; /* #f1f5f9 */
-    --color-bg-dark: 15 23 42; /* #0f172a */
-    --color-border: 226 232 240; /* #e2e8f0 */
+    --color-primary: 5 150 105;
+    /* #059669 */
+    --color-primary-darker: 4 120 84;
+    /* A darker shade of #059669 for hover */
+    --color-secondary: 15 118 110;
+    /* #0f766e */
+    --color-danger: 185 28 28;
+    /* #b91c1c */
+    --color-text: 30 41 59;
+    /* #1f2937 */
+    --color-heading: 15 23 42;
+    /* #0f172a */
+    --color-surface: 255 255 255;
+    /* #ffffff */
+    --color-bg-light: 248 250 252;
+    /* #f8fafc */
+    --color-bg-muted: 241 245 249;
+    /* #f1f5f9 */
+    --color-bg-dark: 15 23 42;
+    /* #0f172a */
+    --color-border: 226 232 240;
+    /* #e2e8f0 */
   }
 
   .dark {
-    --color-primary: 16 185 129; /* Emerald 500 - slightly lighter/brighter for dark mode */
-    --color-primary-darker: 5 150 105; /* Emerald 600 */
-    --color-secondary: 20 184 166; /* Teal 500 */
-    --color-text: 226 232 240; /* Slate 200 */
-    --color-heading: 248 250 252; /* Slate 50 */
-    --color-surface: 24 24 27; /* Zinc 900 - Dark card background */
-    --color-bg-light: 0 0 0; /* Pure black body background */
-    --color-bg-muted: 9 9 11; /* Zinc 950 - Very dark for muted areas */
-    --color-bg-dark: 0 0 0; /* Explicit dark bg */
-    --color-border: 39 39 42; /* Zinc 800 */
+    --color-primary: 16 185 129;
+    /* Emerald 500 - slightly lighter/brighter for dark mode */
+    --color-primary-darker: 5 150 105;
+    /* Emerald 600 */
+    --color-secondary: 20 184 166;
+    /* Teal 500 */
+    --color-text: 226 232 240;
+    /* Slate 200 */
+    --color-heading: 248 250 252;
+    /* Slate 50 */
+    --color-surface: 24 24 27;
+    /* Zinc 900 - Dark card background */
+    --color-bg-light: 0 0 0;
+    /* Pure black body background */
+    --color-bg-muted: 9 9 11;
+    /* Zinc 950 - Very dark for muted areas */
+    --color-bg-dark: 0 0 0;
+    /* Explicit dark bg */
+    --color-border: 15 15 16;
+    /* Soft black/charcoal border for dark mode */
   }
+
   /* Consistent vertical rhythm for all sections */
   section {
     @apply py-12 md:py-16;
   }
+
   html {
     /* Reserve space for the vertical scrollbar to prevent layout shift
        between pages that do and don't overflow */
-    overflow-y: scroll; /* broad browser fallback */
-    scrollbar-gutter: stable; /* avoid left gutter; keeps layout stable */
-    scroll-behavior: smooth; /* smooth scrolling for in-page navigation */
+    overflow-y: scroll;
+    /* broad browser fallback */
+    scrollbar-gutter: stable;
+    /* avoid left gutter; keeps layout stable */
+    scroll-behavior: smooth;
+    /* smooth scrolling for in-page navigation */
   }
-  html, body {
+
+  html,
+  body {
     margin: 0;
     padding: 0;
   }
+
   /* Global scrollbar styling (WebKit/Blink: Chrome, Edge, Safari) */
   html::-webkit-scrollbar,
   body::-webkit-scrollbar {
     width: 10px;
   }
+
   html::-webkit-scrollbar-track,
   body::-webkit-scrollbar-track {
     background: rgb(var(--color-bg-muted));
   }
+
   html::-webkit-scrollbar-thumb,
   body::-webkit-scrollbar-thumb {
     background: rgb(var(--color-primary));
     border-radius: 999px;
-    border: 2px solid rgb(var(--color-bg-muted)); /* gives a pill effect */
+    border: 2px solid rgb(var(--color-bg-muted));
+    /* gives a pill effect */
   }
+
   html::-webkit-scrollbar-thumb:hover,
   body::-webkit-scrollbar-thumb:hover {
     background: rgb(var(--color-primary) / 0.85);
@@ -69,17 +102,21 @@
   html,
   body {
     scrollbar-width: thin;
-    scrollbar-color: rgb(var(--color-primary)) rgb(var(--color-bg-muted)); /* thumb track */
+    scrollbar-color: rgb(var(--color-primary)) rgb(var(--color-bg-muted));
+    /* thumb track */
   }
+
   #root {
     min-height: 100vh;
   }
+
   body {
     @apply antialiased font-sans;
     background-color: rgb(var(--color-bg-light));
     color: rgb(var(--color-text));
     box-sizing: border-box;
-    overflow-x: hidden; /* avoid horizontal scrollbars from full-bleed/3D effects */
+    overflow-x: hidden;
+    /* avoid horizontal scrollbars from full-bleed/3D effects */
     /* Improve mobile touch scrolling */
     -webkit-overflow-scrolling: touch;
     /* Prevent text size adjustment on mobile */
@@ -87,10 +124,19 @@
     -moz-text-size-adjust: 100%;
     text-size-adjust: 100%;
   }
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: "Poppins", ui-sans-serif, system-ui, sans-serif;
     color: rgb(var(--color-heading));
     font-weight: 700;
@@ -99,9 +145,12 @@
 
 /* Fix for aggressive skeleton animations */
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.75;
   }
+
   50% {
     opacity: 0.35;
   }
@@ -112,6 +161,7 @@
     opacity: 0;
     transform: translateX(-48px);
   }
+
   100% {
     opacity: 1;
     transform: translateX(0);
@@ -123,15 +173,17 @@
 }
 
 @layer components {
+
   /* Responsive container padding utility */
   .container {
     @apply px-4 sm:px-6 lg:px-8;
   }
-  
+
   .link-underline-sweep {
     position: relative;
     text-decoration: none;
   }
+
   .link-underline-sweep::after {
     content: '';
     position: absolute;
@@ -144,6 +196,7 @@
     transform-origin: left;
     transition: transform 200ms ease;
   }
+
   .link-underline-sweep:hover::after,
   .link-underline-sweep:focus-visible::after,
   .link-underline-sweep--active::after {
@@ -160,12 +213,14 @@
       transform 300ms ease;
     will-change: max-height, opacity, transform;
   }
+
   .mobile-menu--closed {
     max-height: 0;
     opacity: 0;
     transform: translateY(-4px);
     pointer-events: none;
   }
+
   .mobile-menu--open {
     max-height: 480px;
     opacity: 1;
@@ -178,6 +233,7 @@
     transition: transform 300ms ease, opacity 300ms ease;
     will-change: transform, opacity;
   }
+
   .mobile-menu-item--open {
     opacity: 1;
     transform: translateY(0);
@@ -185,6 +241,7 @@
 }
 
 @layer components {
+
   /* Make a section span the full viewport width even inside a centered container */
   .full-bleed {
     margin-left: calc(50% - 50vw);
@@ -199,8 +256,10 @@
     text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
     width: 44px;
     height: 44px;
-    border-radius: 0; /* remove circle */
-    background: transparent; /* remove circle */
+    border-radius: 0;
+    /* remove circle */
+    background: transparent;
+    /* remove circle */
     backdrop-filter: none;
     border: none;
     box-shadow: none;
@@ -211,31 +270,42 @@
     transition: opacity 180ms ease, transform 180ms ease;
     z-index: 20;
   }
-  .hero-swiper .swiper-button-prev { left: 12px; }
-  .hero-swiper .swiper-button-next { right: 12px; }
+
+  .hero-swiper .swiper-button-prev {
+    left: 12px;
+  }
+
+  .hero-swiper .swiper-button-next {
+    right: 12px;
+  }
+
   .hero-swiper:hover :is(.swiper-button-next, .swiper-button-prev),
   .hero-swiper :is(.swiper-button-next, .swiper-button-prev):focus-visible {
     opacity: 1;
     transform: translateY(-50%) translateY(0);
   }
+
   /* Hide arrows on small screens */
   @media (max-width: 768px) {
     .hero-swiper :is(.swiper-button-next, .swiper-button-prev) {
       display: none !important;
     }
   }
+
   .hero-swiper .swiper-pagination-bullet {
     width: 10px;
     height: 10px;
     margin: 0 4px !important;
     background: transparent;
-    border: 2px solid rgba(255,255,255,0.55);
+    border: 2px solid rgba(255, 255, 255, 0.55);
     opacity: 1;
   }
+
   .hero-swiper .swiper-pagination-bullet-active {
     background: rgb(var(--color-primary));
     border-color: rgb(var(--color-surface));
   }
+
   /* Remove default section padding for the full-bleed hero */
   .hero-swiper {
     @apply py-0;

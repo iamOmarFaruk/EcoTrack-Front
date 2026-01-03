@@ -87,7 +87,7 @@ export function TipCardSkeleton() {
       </div>
 
       {/* Footer */}
-      <div className="p-4 flex items-center justify-between border-t">
+      <div className="p-4 flex items-center justify-between border-t border-border">
         <Skeleton className="h-7 w-16 rounded-full" />
         <Skeleton className="h-8 w-16" />
       </div>
