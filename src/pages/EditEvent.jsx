@@ -26,6 +26,7 @@ export default function EditEvent() {
     requirements: '',
     benefits: '',
     image: '',
+    category: '',
     status: 'active'
   })
 
@@ -80,6 +81,7 @@ export default function EditEvent() {
         requirements: eventData.requirements || '',
         benefits: eventData.benefits || '',
         image: eventData.image || '',
+        category: eventData.category || '',
         status: eventData.status || 'active'
       })
     } catch (error) {
@@ -185,6 +187,11 @@ export default function EditEvent() {
       }
     }
 
+    // Category validation
+    if (!formData.category) {
+      newErrors.category = 'Category is required'
+    }
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -214,7 +221,7 @@ export default function EditEvent() {
       const updatedEvent = response?.data?.event || response?.event
 
       showSuccess('Event updated successfully!')
-      
+
       // Navigate to the event detail page using slug (SEO-friendly)
       if (updatedEvent?.slug) {
         navigate(`/events/${updatedEvent.slug}`)
@@ -225,7 +232,7 @@ export default function EditEvent() {
       }
     } catch (error) {
       console.error('Error updating event:', error)
-      
+
       // Handle validation errors from backend
       if (error.data?.error?.details) {
         const backendErrors = {}
@@ -307,13 +314,35 @@ export default function EditEvent() {
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-                    errors.title ? 'border-danger' : 'border-border'
-                  }`}
                   placeholder="e.g., City Tree Planting Marathon"
                 />
                 {errors.title && <p className="mt-1 text-sm text-danger">{errors.title}</p>}
                 <p className="mt-1 text-xs text-text/70">{formData.title.length}/100 characters</p>
+              </div>
+
+              {/* Category */}
+              <div>
+                <label htmlFor="category" className="block text-sm font-medium text-heading mb-2">
+                  Category <span className="text-danger">*</span>
+                </label>
+                <select
+                  id="category"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.category ? 'border-danger' : 'border-border'
+                    }`}
+                >
+                  <option value="">Select a category</option>
+                  <option value="Tree Planting">Tree Planting</option>
+                  <option value="Waste Management">Waste Management</option>
+                  <option value="Ocean Cleanup">Ocean Cleanup</option>
+                  <option value="Solar & Energy">Solar & Energy</option>
+                  <option value="Community Workshop">Community Workshop</option>
+                  <option value="Sustainable Gardening">Sustainable Gardening</option>
+                  <option value="Other">Other</option>
+                </select>
+                {errors.category && <p className="mt-1 text-sm text-danger">{errors.category}</p>}
               </div>
 
               {/* Short Description */}
@@ -327,9 +356,8 @@ export default function EditEvent() {
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-                    errors.description ? 'border-danger' : 'border-border'
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.description ? 'border-danger' : 'border-border'
+                    }`}
                   placeholder="Brief description for event cards (10-200 characters)"
                 />
                 {errors.description && <p className="mt-1 text-sm text-danger">{errors.description}</p>}
@@ -347,9 +375,8 @@ export default function EditEvent() {
                   value={formData.detailedDescription}
                   onChange={handleChange}
                   rows={6}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-                    errors.detailedDescription ? 'border-danger' : 'border-border'
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.detailedDescription ? 'border-danger' : 'border-border'
+                    }`}
                   placeholder="Full description with all details about the event (50-2000 characters)"
                 />
                 {errors.detailedDescription && <p className="mt-1 text-sm text-danger">{errors.detailedDescription}</p>}
@@ -369,9 +396,8 @@ export default function EditEvent() {
                     name="date"
                     value={formData.date}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-                      errors.date ? 'border-danger' : 'border-border'
-                    }`}
+                    className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.date ? 'border-danger' : 'border-border'
+                      }`}
                   />
                   {errors.date && <p className="mt-1 text-sm text-danger">{errors.date}</p>}
                 </div>
@@ -387,9 +413,8 @@ export default function EditEvent() {
                     name="location"
                     value={formData.location}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-                      errors.location ? 'border-danger' : 'border-border'
-                    }`}
+                    className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.location ? 'border-danger' : 'border-border'
+                      }`}
                     placeholder="e.g., Central Park, New York"
                   />
                   {errors.location && <p className="mt-1 text-sm text-danger">{errors.location}</p>}
@@ -407,9 +432,8 @@ export default function EditEvent() {
                   name="duration"
                   value={formData.duration}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-                    errors.duration ? 'border-danger' : 'border-border'
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.duration ? 'border-danger' : 'border-border'
+                    }`}
                   placeholder="e.g., 4 hours"
                 />
                 {errors.duration && <p className="mt-1 text-sm text-danger">{errors.duration}</p>}
@@ -428,9 +452,8 @@ export default function EditEvent() {
                   onChange={handleChange}
                   min={event?.registeredParticipants || 1}
                   max="10000"
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-                    errors.capacity ? 'border-danger' : 'border-border'
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.capacity ? 'border-danger' : 'border-border'
+                    }`}
                   placeholder="e.g., 100"
                 />
                 {errors.capacity && <p className="mt-1 text-sm text-danger">{errors.capacity}</p>}
@@ -450,9 +473,8 @@ export default function EditEvent() {
                   value={formData.requirements}
                   onChange={handleChange}
                   rows={3}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-                    errors.requirements ? 'border-danger' : 'border-border'
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.requirements ? 'border-danger' : 'border-border'
+                    }`}
                   placeholder="What participants need to bring or prepare (10-500 characters)"
                 />
                 {errors.requirements && <p className="mt-1 text-sm text-danger">{errors.requirements}</p>}
@@ -470,9 +492,8 @@ export default function EditEvent() {
                   value={formData.benefits}
                   onChange={handleChange}
                   rows={3}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-                    errors.benefits ? 'border-danger' : 'border-border'
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.benefits ? 'border-danger' : 'border-border'
+                    }`}
                   placeholder="What participants will receive or gain (10-500 characters)"
                 />
                 {errors.benefits && <p className="mt-1 text-sm text-danger">{errors.benefits}</p>}
@@ -490,21 +511,20 @@ export default function EditEvent() {
                   name="image"
                   value={formData.image}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-                    errors.image ? 'border-danger' : 'border-border'
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.image ? 'border-danger' : 'border-border'
+                    }`}
                   placeholder="https://images.unsplash.com/photo-... or any valid image URL"
                 />
                 {errors.image && <p className="mt-1 text-sm text-danger">{errors.image}</p>}
                 <p className="mt-1 text-xs text-text/70">
                   Enter a valid landscape image URL (from Unsplash, Pexels, or any other source)
                 </p>
-                
+
                 {/* Image Preview */}
                 {formData.image && (formData.image.startsWith('http://') || formData.image.startsWith('https://')) && (
                   <div className="mt-4 rounded-lg overflow-hidden border-2 border-primary shadow-md">
-                    <img 
-                      src={formData.image} 
+                    <img
+                      src={formData.image}
                       alt="Event preview"
                       className="w-full h-64 object-cover"
                       onError={(e) => {
