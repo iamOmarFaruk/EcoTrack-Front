@@ -32,6 +32,9 @@ const Settings = lazy(() => import('./pages/Settings.jsx'))
 const AddChallenge = lazy(() => import('./pages/AddChallenge.jsx'))
 const EditChallenge = lazy(() => import('./pages/EditChallenge.jsx'))
 const JoinChallenge = lazy(() => import('./pages/JoinChallenge.jsx'))
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy.jsx'))
+const TermsOfService = lazy(() => import('./pages/TermsOfService.jsx'))
+const CookiePolicy = lazy(() => import('./pages/CookiePolicy.jsx'))
 
 export default function App() {
   return (
@@ -50,6 +53,9 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/cookies" element={<CookiePolicy />} />
             <Route
               path="/events/add"
               element={
