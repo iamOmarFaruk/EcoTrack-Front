@@ -37,7 +37,7 @@ export default function PrivacyPolicy() {
                     </StaggerItem>
 
                     <div className="grid gap-8 md:grid-cols-1">
-                        <StaggerItem className="space-y-4 p-8 bg-primary/5 rounded-2xl border border-primary/10">
+                        <StaggerItem className="space-y-4 p-8 bg-surface rounded-2xl border border-border">
                             <h3 className="text-2xl font-bold text-text">1. Information Collection</h3>
                             <p className="text-text/70 leading-relaxed">
                                 We collect information you provide directly to us, such as when you create an account,
