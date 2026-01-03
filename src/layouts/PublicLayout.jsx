@@ -12,7 +12,7 @@ export default function PublicLayout() {
   return (
     <div className="flex min-h-screen flex-col">
       {!isAuthPage && <Navbar />}
-      <main className={`flex-1 ${!isAuthPage ? (isHome ? 'pt-16' : 'pt-24') : ''} ${!isAuthPage && (isHome || location.pathname === '/about') ? 'pb-0' : (!isAuthPage ? 'pb-8' : '')} ${!isAuthPage ? 'container' : ''}`}>
+      <main className={`flex-1 ${!isAuthPage ? (isHome ? 'pt-16' : 'pt-24') : ''} ${!isAuthPage && (isHome || location.pathname === '/about' || location.pathname === '/contact') ? 'pb-0' : (!isAuthPage ? 'pb-8' : '')} ${!isAuthPage ? 'container' : ''}`}>
         <Suspense fallback={<EcoLoader />}>
           <Outlet />
         </Suspense>
