@@ -53,6 +53,12 @@ export default function Challenges() {
     error
   } = useChallenges(filters)
 
+  // Debug logs
+  console.log('[Challenges Page] Filters:', filters)
+  console.log('[Challenges Page] Loading:', loading)
+  console.log('[Challenges Page] Challenges:', challenges)
+  if (error) console.error('[Challenges Page] Error:', error)
+
   // Determine pagination (Placeholder logic as useChallenges returns array currently)
   const pagination = {
     page: currentPage,
@@ -212,24 +218,23 @@ export default function Challenges() {
           </AnimatePresence>
 
           {/* Results Grid */}
-          <StaggerContainer
+          <div className="text-sm text-text/50 mb-2 px-1">
+            Showing {challenges.length} challenges
+          </div>
+
+          <div
             className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3"
-            viewport={{ once: true, margin: "0px 0px -100px 0px" }}
           >
             {loading ? (
               Array.from({ length: 6 }).map((_, i) => (
-                <StaggerItem key={`skeleton-${i}`}>
-                  <ChallengeCardSkeleton />
-                </StaggerItem>
+                <ChallengeCardSkeleton key={`skeleton-${i}`} />
               ))
             ) : challenges.length > 0 ? (
               challenges.map((c) => (
-                <StaggerItem key={c._id || c.id}>
-                  <LazyChallengeCard challenge={c} />
-                </StaggerItem>
+                <LazyChallengeCard key={c._id || c.id} challenge={c} />
               ))
             ) : (
-              <StaggerItem className="col-span-full py-12">
+              <div className="col-span-full py-12">
                 <div className="bg-surface rounded-xl p-12 border border-border dashed text-center max-w-2xl mx-auto">
                   <div className="mb-6 flex justify-center">
                     <div className="p-4 rounded-full bg-primary/5">
@@ -250,9 +255,9 @@ export default function Challenges() {
                     Clear All Filters
                   </Button>
                 </div>
-              </StaggerItem>
+              </div>
             )}
-          </StaggerContainer>
+          </div>
 
           {/* Pagination */}
           {pagination && pagination.pages > 1 && (

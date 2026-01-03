@@ -68,12 +68,24 @@ export const useChallenges = (filters = {}) => {
         ...defaultQueryOptions,
         queryKey: queryKeys.challenges.list(filters),
         queryFn: async () => {
-            const response = await challengeApi.getAll(filters)
-            // Handle various response structures
-            const data = response.challenges || response.data?.challenges || response.data || response || []
-            // Support both Array and Object (map) formats
-            const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
-            return array.map(normalizeChallenge).filter(Boolean)
+            console.log('[useChallenges] Fetching with filters:', filters)
+            try {
+                const response = await challengeApi.getAll(filters)
+                console.log('[useChallenges] Raw Response:', response)
+
+                // Handle various response structures
+                const data = response.challenges || response.data?.challenges || response.data || response || []
+                console.log('[useChallenges] Extracted Data:', data)
+
+                // Support both Array and Object (map) formats
+                const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
+                const normalized = array.map(normalizeChallenge).filter(Boolean)
+                console.log('[useChallenges] Normalized Array:', normalized)
+                return normalized
+            } catch (err) {
+                console.error('[useChallenges] Fetch Error:', err)
+                throw err
+            }
         },
         placeholderData: keepPreviousData
     })
@@ -218,10 +230,20 @@ export const useTips = (filters = {}) => {
         ...defaultQueryOptions,
         queryKey: queryKeys.tips.list(filters),
         queryFn: async () => {
-            const response = await tipsApi.getAll(filters)
-            const data = response.tips || response.data?.tips || response.data || response || []
-            const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
-            return array.map(normalizeTip).filter(Boolean)
+            console.log('[useTips] Fetching with filters:', filters)
+            try {
+                const response = await tipsApi.getAll(filters)
+                console.log('[useTips] Raw Response:', response)
+                const data = response.tips || response.data?.tips || response.data || response || []
+                console.log('[useTips] Extracted Data:', data)
+                const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
+                const normalized = array.map(normalizeTip).filter(Boolean)
+                console.log('[useTips] Normalized Array:', normalized)
+                return normalized
+            } catch (err) {
+                console.error('[useTips] Fetch Error:', err)
+                throw err
+            }
         },
         placeholderData: keepPreviousData
     })
@@ -303,10 +325,19 @@ export const useEvents = (filters = {}) => {
         ...defaultQueryOptions,
         queryKey: queryKeys.events.list(filters),
         queryFn: async () => {
-            const response = await eventApi.getAll(filters)
-            const data = response.events || response.data?.events || response.data || response || []
-            const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
-            return array
+            console.log('[useEvents] Fetching with filters:', filters)
+            try {
+                const response = await eventApi.getAll(filters)
+                console.log('[useEvents] Raw Response:', response)
+                const data = response.events || response.data?.events || response.data || response || []
+                console.log('[useEvents] Extracted Data:', data)
+                const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
+                console.log('[useEvents] Final Array:', array)
+                return array
+            } catch (err) {
+                console.error('[useEvents] Fetch Error:', err)
+                throw err
+            }
         },
         placeholderData: keepPreviousData
     })
