@@ -10,8 +10,6 @@ import FilterSidebar from '../components/FilterSidebar.jsx'
 import { defaultImages } from '../config/env'
 import { useChallenges } from '../hooks/queries'
 import { motion, AnimatePresence } from 'framer-motion'
-import { StaggerContainer, StaggerItem } from '../components/ui/Stagger.jsx'
-
 
 export default function Challenges() {
   useDocumentTitle('Challenges')
@@ -54,9 +52,9 @@ export default function Challenges() {
   } = useChallenges(filters)
 
   // Debug logs
-  console.log('[Challenges Page] Filters:', filters)
-  console.log('[Challenges Page] Loading:', loading)
-  console.log('[Challenges Page] Challenges:', challenges)
+  // console.log('[Challenges Page] Filters:', filters)
+  // console.log('[Challenges Page] Loading:', loading)
+  // console.log('[Challenges Page] Challenges:', challenges)
   if (error) console.error('[Challenges Page] Error:', error)
 
   // Determine pagination (Placeholder logic as useChallenges returns array currently)
