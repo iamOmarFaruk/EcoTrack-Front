@@ -45,7 +45,7 @@ const testimonials = [
 ]
 
 const TestimonialCard = ({ testimonial }) => (
-    <div className="w-[350px] md:w-[400px] flex-shrink-0 p-6 md:p-8 rounded-2xl bg-surface border border-border/60 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] mx-4">
+    <div className="w-[350px] md:w-[400px] flex-shrink-0 p-6 md:p-8 rounded-2xl bg-surface border border-border shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] mx-4">
         <div className="flex items-center mb-4">
             <div className={`w-12 h-12 rounded-full ${testimonial.color} flex items-center justify-center font-bold text-lg mr-4`}>
                 {testimonial.initials}

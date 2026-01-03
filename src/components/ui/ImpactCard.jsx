@@ -19,7 +19,7 @@ export default function ImpactCard({
 
     return (
         <Card className={clsx(
-            "relative overflow-hidden border-border/50 bg-white",
+            "relative overflow-hidden border-border",
             className
         )}>
             <div className="p-5 sm:p-6">
