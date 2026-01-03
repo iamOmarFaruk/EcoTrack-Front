@@ -58,7 +58,7 @@ export default function Navbar() {
   return (
     <header
       className={clsx(
-        'fixed top-0 left-0 right-0 z-40 w-full border-b bg-surface/95 shadow-sm backdrop-blur transition-all duration-300'
+        'fixed top-0 left-0 right-0 z-40 w-full border-b border-border bg-surface/95 shadow-sm backdrop-blur transition-all duration-300'
       )}
     >
       <div
@@ -108,7 +108,7 @@ export default function Navbar() {
                 aria-haspopup="menu"
                 aria-expanded={profileOpen}
                 className={clsx(
-                  'flex items-center gap-2 rounded-md border px-2 py-1.5 transition-colors hover:bg-light',
+                  'flex items-center gap-2 rounded-md border border-border px-2 py-1.5 transition-colors hover:bg-light',
                   profileOpen && 'bg-light'
                 )}
               >
@@ -127,7 +127,7 @@ export default function Navbar() {
               {profileOpen && (
                 <div
                   role="menu"
-                  className="absolute right-0 mt-2 w-52 overflow-hidden rounded-md border bg-surface py-1 shadow-lg"
+                  className="absolute right-0 mt-2 w-52 overflow-hidden rounded-md border border-border bg-surface py-1 shadow-lg"
                 >
                   <Link
                     to="/profile"
@@ -199,7 +199,7 @@ export default function Navbar() {
         </div>
 
         <button
-          className="inline-flex h-10 w-10 items-center justify-center rounded-md border md:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border md:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
@@ -231,7 +231,7 @@ export default function Navbar() {
       <div
         id="mobile-menu"
         className={clsx(
-          'border-b md:hidden mobile-menu',
+          'border-b border-border md:hidden mobile-menu',
           open ? 'mobile-menu--open' : 'mobile-menu--closed'
         )}
       >
