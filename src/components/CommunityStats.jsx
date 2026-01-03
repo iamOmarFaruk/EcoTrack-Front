@@ -116,7 +116,7 @@ export default function CommunityStats() {
   }, [])
 
   return (
-    <section className="bg-bg-light/50">
+    <section className="bg-light/50">
       <div className="container mx-auto">
         <SectionHeading
           badge="Live Impact"

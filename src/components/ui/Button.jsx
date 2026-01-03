@@ -15,7 +15,7 @@ const variants = {
     'bg-primary text-surface shadow-[0_2px_0_0_rgba(4,120,84,1)] hover:shadow-[0_1px_0_0_rgba(4,120,84,1)] hover:translate-y-[1px] active:translate-y-[2px] active:shadow-none border-0',
 
   secondary:
-    'bg-white text-primary border-2 border-primary/10 shadow-sm hover:border-primary/30 hover:bg-bg-light hover:-translate-y-0.5 active:translate-y-0',
+    'bg-white text-primary border-2 border-primary/10 shadow-sm hover:border-primary/30 hover:bg-light hover:-translate-y-0.5 active:translate-y-0',
 
   glass:
     'bg-primary/10 text-primary backdrop-blur-md border border-primary/20 hover:bg-primary/20 hover:border-primary/40 transition-all duration-300',

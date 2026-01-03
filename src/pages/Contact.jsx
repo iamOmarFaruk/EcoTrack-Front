@@ -112,7 +112,7 @@ export default function Contact() {
                   <div className="space-y-2">
                     <label className="text-sm font-bold text-heading ml-1">Full Name</label>
                     <input
-                      className={`w-full rounded-xl border ${errors.name ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-bg-light focus:bg-surface focus:ring-4 focus:ring-primary/10`}
+                      className={`w-full rounded-xl border ${errors.name ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading placeholder:text-text/40`}
                       placeholder="John Doe"
                       {...register('name')}
                     />
@@ -122,7 +122,7 @@ export default function Contact() {
                   <div className="space-y-2">
                     <label className="text-sm font-bold text-heading ml-1">Email Address</label>
                     <input
-                      className={`w-full rounded-xl border ${errors.email ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-bg-light focus:bg-surface focus:ring-4 focus:ring-primary/10`}
+                      className={`w-full rounded-xl border ${errors.email ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading placeholder:text-text/40`}
                       placeholder="john@example.com"
                       {...register('email')}
                     />
@@ -132,7 +132,7 @@ export default function Contact() {
                   <div className="space-y-2">
                     <label className="text-sm font-bold text-heading ml-1">Message</label>
                     <textarea
-                      className={`w-full rounded-xl border ${errors.message ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-bg-light focus:bg-surface focus:ring-4 focus:ring-primary/10 resize-none`}
+                      className={`w-full rounded-xl border ${errors.message ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading placeholder:text-text/40 resize-none`}
                       rows="4"
                       placeholder="Tell us how we can help..."
                       {...register('message')}
