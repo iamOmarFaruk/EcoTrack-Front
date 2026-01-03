@@ -141,6 +141,16 @@
     color: rgb(var(--color-heading));
     font-weight: 700;
   }
+
+  /* Global Input Focus Styles to override default blue ring */
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none !important;
+    --tw-ring-color: rgb(var(--color-primary) / 0.5);
+    border-color: rgb(var(--color-primary));
+    box-shadow: 0 0 0 4px rgb(var(--color-primary) / 0.1);
+  }
 }
 
 /* Fix for aggressive skeleton animations */

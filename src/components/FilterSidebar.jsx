@@ -36,7 +36,7 @@ export default function FilterSidebar({
                         placeholder="Search challenges..."
                         value={filters.search}
                         onChange={(e) => setFilter('search', e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-surface/50 backdrop-blur-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-300 shadow-sm group-hover:shadow-md"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-primary/10 bg-surface/50 backdrop-blur-sm focus:border-primary focus:ring-4 focus:ring-primary/10 focus:outline-none focus:bg-surface hover:border-primary/30 transition-all duration-300 shadow-sm group-hover:shadow-md placeholder:text-text/40 text-heading font-medium"
                     />
                     <svg
                         className="absolute left-3.5 top-3.5 w-5 h-5 text-text/40 group-focus-within:text-primary transition-colors duration-300"
@@ -81,8 +81,8 @@ export default function FilterSidebar({
                         <label
                             key={option.value}
                             className={`flex items-center p-3 rounded-lg border cursor-pointer transition-all duration-200 ${filters.sortBy === option.value
-                                    ? 'border-primary/50 bg-primary/5 shadow-sm'
-                                    : 'border-transparent hover:bg-surface/50 hover:border-border'
+                                ? 'border-primary/50 bg-primary/5 shadow-sm'
+                                : 'border-transparent hover:bg-surface/50 hover:border-border'
                                 }`}
                             onClick={() => {
                                 setFilter('sortBy', option.value)
@@ -114,8 +114,8 @@ export default function FilterSidebar({
                                 key={category}
                                 onClick={() => setFilter('category', isSelected ? 'All' : category)}
                                 className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 border ${isSelected
-                                        ? 'bg-primary text-white border-primary shadow-md shadow-primary/20'
-                                        : 'bg-surface border-border text-text/70 hover:border-primary/30 hover:text-primary'
+                                    ? 'bg-primary text-white border-primary shadow-md shadow-primary/20'
+                                    : 'bg-surface border-border text-text/70 hover:border-primary/30 hover:text-primary'
                                     }`}
                             >
                                 {category}

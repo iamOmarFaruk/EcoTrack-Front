@@ -4,14 +4,12 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import LazyChallengeCard from '../components/LazyChallengeCard.jsx'
 import { ChallengeCardSkeleton } from '../components/Skeleton.jsx'
-import EcoLoader from '../components/EcoLoader.jsx'
 import SubpageHero from '../components/SubpageHero.jsx'
 import Button from '../components/ui/Button.jsx'
 import FilterSidebar from '../components/FilterSidebar.jsx'
 import { defaultImages } from '../config/env'
 import { useChallenges } from '../hooks/queries'
 import { motion, AnimatePresence } from 'framer-motion'
-import { stackedContainer, stackedItem } from '../utils/animations'
 import { StaggerContainer, StaggerItem } from '../components/ui/Stagger.jsx'
 
 
@@ -56,9 +54,6 @@ export default function Challenges() {
   } = useChallenges(filters)
 
   // Determine pagination (Placeholder logic as useChallenges returns array currently)
-  // In a real scenario, the API response would include metadata (total pages, current page).
-  // Currently we just show page 1 of 1 if array is returned. 
-  // If the hook is improved to return { data, metadata }, we would use that.
   const pagination = {
     page: currentPage,
     pages: 1, // Placeholder
@@ -146,8 +141,20 @@ export default function Challenges() {
       {/* Main Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-        {/* Main Content Area (Left) */}
-        <div className="lg:col-span-9 space-y-6 order-2 lg:order-1">
+        {/* Left Side: Filter Sidebar (Desktop) */}
+        <aside className="hidden lg:block lg:col-span-3 sticky top-24">
+          <div className="bg-surface rounded-2xl border border-border p-6 shadow-sm">
+            <FilterSidebar
+              filters={filterState}
+              setFilter={handleSetFilter}
+              clearFilters={clearFilters}
+              categories={categories}
+            />
+          </div>
+        </aside>
+
+        {/* Main Content Area (Right) */}
+        <div className="lg:col-span-9 space-y-6">
 
           {/* Header & Mobile Controls */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between px-1">
@@ -272,18 +279,6 @@ export default function Challenges() {
             </div>
           )}
         </div>
-
-        {/* Right Side: Filter Sidebar (Desktop) */}
-        <aside className="hidden lg:block lg:col-span-3 sticky top-24 order-1 lg:order-2">
-          <div className="bg-surface rounded-2xl border border-border p-6 shadow-sm">
-            <FilterSidebar
-              filters={filterState}
-              setFilter={handleSetFilter}
-              clearFilters={clearFilters}
-              categories={categories}
-            />
-          </div>
-        </aside>
 
       </div>
     </div>
