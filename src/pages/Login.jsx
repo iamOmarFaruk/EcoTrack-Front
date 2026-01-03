@@ -9,6 +9,7 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import EcoLoader from '../components/EcoLoader.jsx'
 import { useEffect } from 'react'
 import { defaultImages } from '../config/env.js'
+import Logo from '../components/Logo.jsx'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -69,10 +70,8 @@ export default function Login() {
         <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
         <div className="absolute inset-0 flex flex-col justify-between p-12 text-white">
           <Link to="/" className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-              <span className="text-xl">🌱</span>
-            </div>
-            EcoTrack
+            <Logo className="h-8 w-8 text-primary-light" />
+            <span className="font-heading font-bold">EcoTrack</span>
           </Link>
 
           <div className="space-y-6">
@@ -95,10 +94,8 @@ export default function Login() {
         <div className="w-full max-w-sm">
           {/* Mobile Logo */}
           <Link to="/" className="mb-8 flex items-center justify-center gap-2 text-2xl font-bold tracking-tight lg:hidden">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-              <span className="text-xl">🌱</span>
-            </div>
-            EcoTrack
+            <Logo className="h-8 w-8 text-primary" />
+            <span className="font-heading font-bold text-heading">EcoTrack</span>
           </Link>
 
           <StaggerContainer>

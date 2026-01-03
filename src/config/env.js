@@ -34,8 +34,8 @@ export const defaultImages = {
   aboutHero: import.meta.env.VITE_ABOUT_HERO_IMAGE || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop',
   contactHero: import.meta.env.VITE_CONTACT_HERO_IMAGE || 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?q=80&w=2070&auto=format&fit=crop',
   tipsHero: import.meta.env.VITE_TIPS_HERO_IMAGE || 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop',
-  loginHero: import.meta.env.VITE_LOGIN_HERO_IMAGE || 'https://images.unsplash.com/photo-1466611653911-95282fc3656b?q=80&w=2070&auto=format&fit=crop',
-  registerHero: import.meta.env.VITE_REGISTER_HERO_IMAGE || 'https://images.unsplash.com/photo-1470114716159-e389f8712faf?q=80&w=2070&auto=format&fit=crop',
+  loginHero: import.meta.env.VITE_LOGIN_HERO_IMAGE || 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=2348&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  registerHero: import.meta.env.VITE_REGISTER_HERO_IMAGE || 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=2348&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
 }
 
 // App Configuration
