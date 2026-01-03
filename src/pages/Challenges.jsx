@@ -239,7 +239,7 @@ export default function Challenges() {
               </motion.div>
             ) : challenges.length > 0 ? (
               <motion.div
-                key="challenges-content"
+                key={`challenges-grid-${challenges.length}-${filterState.category}-${filterState.search}-${filterState.sortBy}`}
                 variants={containerVariants}
                 initial="hidden"
                 animate="show"

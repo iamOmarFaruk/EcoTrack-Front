@@ -273,9 +273,9 @@ export default function Tips() {
                 </motion.div>
               ))}
             </motion.div>
-          ) : (
+          ) : tips.length > 0 ? (
             <motion.div
-              key="tips-content"
+              key={`tips-grid-${tips.length}-${sortBy}-${order}-${searchQuery}`}
               variants={containerVariants}
               initial="hidden"
               animate="show"
@@ -296,45 +296,51 @@ export default function Tips() {
                 </motion.div>
               ))}
             </motion.div>
+          ) : (
+            <motion.div
+              key="no-results"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="py-12"
+            >
+              <div className="bg-surface rounded-xl p-12 border border-border dashed text-center max-w-2xl mx-auto">
+                <div className="mb-6 flex justify-center">
+                  <div className="p-4 rounded-full bg-primary/5">
+                    <svg className="h-12 w-12 text-primary/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.989-2.386l-.548-.547z" />
+                    </svg>
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold text-heading mb-3">No tips shared yet</h3>
+                <p className="text-text/70 mb-8 max-w-md mx-auto">
+                  {searchQuery
+                    ? `We couldn't find any tips matching "${searchQuery}". Try a different search term.`
+                    : 'Be the first to share an eco-friendly tip with the community and inspire others!'}
+                </p>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                  {searchQuery && (
+                    <Button variant="outline" onClick={() => setSearchQuery('')}>
+                      Clear Search
+                    </Button>
+                  )}
+                  {user ? (
+                    <Button onClick={handleAddTip} className="flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                      Share Your Tip
+                    </Button>
+                  ) : (
+                    <Button onClick={handleLoginRequired}>
+                      Login to Share Tips
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
           )}
         </AnimatePresence>
-
-        {!loading && tips.length === 0 && (
-          <div className="bg-surface rounded-xl p-12 border border-border dashed text-center max-w-2xl mx-auto">
-            <div className="mb-6 flex justify-center">
-              <div className="p-4 rounded-full bg-primary/5">
-                <svg className="h-12 w-12 text-primary/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.989-2.386l-.548-.547z" />
-                </svg>
-              </div>
-            </div>
-            <h3 className="text-xl font-bold text-heading mb-3">No tips shared yet</h3>
-            <p className="text-text/70 mb-8 max-w-md mx-auto">
-              {searchQuery
-                ? `We couldn't find any tips matching "${searchQuery}". Try a different search term.`
-                : 'Be the first to share an eco-friendly tip with the community and inspire others!'}
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              {searchQuery && (
-                <Button variant="outline" onClick={() => setSearchQuery('')}>
-                  Clear Search
-                </Button>
-              )}
-              {user ? (
-                <Button onClick={handleAddTip} className="flex items-center gap-2">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                  Share Your Tip
-                </Button>
-              ) : (
-                <Button onClick={handleLoginRequired}>
-                  Login to Share Tips
-                </Button>
-              )}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Tip Modal */}
