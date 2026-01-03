@@ -62,8 +62,8 @@ export default function ForgotPassword() {
           </Link>
 
           <div className="space-y-6">
-            <h2 className="text-4xl font-bold leading-tight">
-              Don't worry, even nature has <span className="text-primary-light">cycles of renewal</span>.
+            <h2 className="text-4xl font-bold leading-tight text-white">
+              Don't worry, even nature has <span className="underline decoration-primary decoration-4 underline-offset-8">cycles of renewal</span>.
             </h2>
             <p className="max-w-md text-lg text-white/80">
               Recover your account and continue your journey towards a greener world.

@@ -95,8 +95,8 @@ export default function Register() {
           </Link>
 
           <div className="space-y-6">
-            <h2 className="text-4xl font-bold leading-tight">
-              Begin your journey towards <span className="text-primary-light">conscious living</span>.
+            <h2 className="text-4xl font-bold leading-tight text-white">
+              Begin your journey towards <span className="underline decoration-primary decoration-4 underline-offset-8">conscious living</span>.
             </h2>
             <p className="max-w-md text-lg text-white/80">
               Create an account to track your carbon footprint, join challenges, and connect with a community that cares.
