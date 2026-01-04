@@ -28,6 +28,7 @@ import { useAuth } from '../context/AuthContext.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import { useUserProfile } from '../hooks/queries'
 import { containerVariants, itemVariants } from '../utils/animations'
+import { showSuccess } from '../utils/toast.jsx'
 
 // Mock data for the impact chart - in a real app, this would come from the backend
 const impactData = [
@@ -202,7 +203,12 @@ export default function Profile() {
         >
           <div className="mb-6 flex items-center justify-between">
             <h3 className="text-lg font-bold text-heading">Featured Badges</h3>
-            <button className="text-sm font-medium text-primary hover:underline">View All</button>
+            <button
+              onClick={() => showSuccess("I didn't develop this feature yet because this is a demo project.")}
+              className="text-sm font-medium text-primary hover:underline"
+            >
+              View All
+            </button>
           </div>
 
           <div className="space-y-4">
@@ -211,7 +217,11 @@ export default function Profile() {
               { name: 'Water Saver', icon: Droplets, category: 'Resources', color: 'text-blue-500' },
               { name: 'Elite Member', icon: Star, category: 'Community', color: 'text-amber-500' }
             ]).slice(0, 3).map((badge, i) => (
-              <div key={i} className="group flex items-center gap-4 rounded-xl border border-transparent p-2 transition-all hover:bg-light hover:border-border">
+              <div
+                key={i}
+                onClick={() => showSuccess(`The details for "${badge.name}" aren't developed yet as this is a demo project.`)}
+                className="group flex items-center gap-4 rounded-xl border border-transparent p-2 transition-all hover:bg-light hover:border-border cursor-pointer"
+              >
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-light shadow-inner group-hover:scale-110 transition-transform">
                   {typeof badge.icon === 'string' ? (
                     <span className="text-2xl">{badge.icon}</span>
