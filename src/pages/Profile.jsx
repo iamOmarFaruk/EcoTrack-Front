@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import {
   Award,
@@ -32,20 +32,47 @@ import { useUserProfile } from '../hooks/queries'
 import { containerVariants, itemVariants } from '../utils/animations'
 import { showSuccess } from '../utils/toast.jsx'
 
-// Mock data for the impact chart - in a real app, this would come from the backend
-const impactData = [
-  { name: 'Mon', value: 40 },
-  { name: 'Tue', value: 30 },
-  { name: 'Wed', value: 65 },
-  { name: 'Thu', value: 45 },
-  { name: 'Fri', value: 90 },
-  { name: 'Sat', value: 70 },
-  { name: 'Sun', value: 85 },
-]
+// Mock data sets for different metrics
+const impactDataSets = {
+  co2: [
+    { name: 'Mon', value: 40 },
+    { name: 'Tue', value: 30 },
+    { name: 'Wed', value: 65 },
+    { name: 'Thu', value: 45 },
+    { name: 'Fri', value: 90 },
+    { name: 'Sat', value: 70 },
+    { name: 'Sun', value: 85 },
+  ],
+  water: [
+    { name: 'Mon', value: 20 },
+    { name: 'Tue', value: 50 },
+    { name: 'Wed', value: 35 },
+    { name: 'Thu', value: 80 },
+    { name: 'Fri', value: 60 },
+    { name: 'Sat', value: 95 },
+    { name: 'Sun', value: 75 },
+  ],
+  score: [
+    { name: 'Mon', value: 60 },
+    { name: 'Tue', value: 40 },
+    { name: 'Wed', value: 55 },
+    { name: 'Thu', value: 30 },
+    { name: 'Fri', value: 70 },
+    { name: 'Sat', value: 50 },
+    { name: 'Sun', value: 90 },
+  ],
+}
+
+const metricConfigs = {
+  co2: { label: 'CO2 Saved', icon: Leaf, color: 'text-emerald-500', gradient: 'colorCO2', stopColor: '#10b981' },
+  water: { label: 'Water Saved', icon: Droplets, color: 'text-blue-500', gradient: 'colorWater', stopColor: '#3b82f6' },
+  score: { label: 'Activity Score', icon: Zap, color: 'text-amber-500', gradient: 'colorScore', stopColor: '#f59e0b' },
+}
 
 export default function Profile() {
   const { auth } = useAuth()
   const { data: userData, isLoading } = useUserProfile()
+  const [activeMetric, setActiveMetric] = useState('co2')
 
   if (isLoading) {
     return <EcoLoader />
@@ -152,9 +179,27 @@ export default function Profile() {
           animate={{ opacity: 1, scale: 1 }}
           className="col-span-1 flex flex-col rounded-2xl border border-border bg-surface p-6 shadow-sm lg:col-span-2"
         >
-          <div className="mb-8 flex items-center justify-between">
-            <h3 className="text-xl font-bold tracking-tight text-heading">Over Time</h3>
-            <div className="relative group">
+          <div className="mb-8 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              <h3 className="text-xl font-bold tracking-tight text-heading">Over Time</h3>
+              <div className="flex items-center gap-1.5 rounded-xl bg-light p-1 shadow-inner">
+                {Object.entries(metricConfigs).map(([key, config]) => (
+                  <button
+                    key={key}
+                    onClick={() => setActiveMetric(key)}
+                    className={`flex h-8 w-8 items-center justify-center rounded-lg transition-all ${activeMetric === key
+                        ? 'bg-surface text-primary shadow-sm scale-110'
+                        : 'text-text/40 hover:text-text/60 hover:bg-surface/50'
+                      }`}
+                    title={config.label}
+                  >
+                    <config.icon size={16} />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="relative group self-end sm:self-auto">
               <select className="appearance-none rounded-full border border-border bg-surface hover:bg-light/50 pl-5 pr-10 py-2.5 text-sm font-semibold text-heading outline-none transition-all cursor-pointer shadow-sm">
                 <option>Last 7 Days</option>
                 <option>Last 30 Days</option>
@@ -167,11 +212,19 @@ export default function Profile() {
           </div>
           <div className="h-[250px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={impactData}>
+              <AreaChart data={impactDataSets[activeMetric]}>
                 <defs>
-                  <linearGradient id="colorImpact" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="rgb(var(--color-primary))" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="rgb(var(--color-primary))" stopOpacity={0} />
+                  <linearGradient id="colorMetric" x1="0" y1="0" x2="0" y2="1">
+                    <stop
+                      offset="5%"
+                      stopColor={metricConfigs[activeMetric].stopColor}
+                      stopOpacity={0.3}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor={metricConfigs[activeMetric].stopColor}
+                      stopOpacity={0}
+                    />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgb(var(--color-border))" />
@@ -187,16 +240,24 @@ export default function Profile() {
                   contentStyle={{
                     backgroundColor: 'rgb(var(--color-surface))',
                     border: '1px solid rgb(var(--color-border))',
-                    borderRadius: '12px'
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                   }}
+                  itemStyle={{
+                    color: metricConfigs[activeMetric].stopColor,
+                    fontWeight: 'bold'
+                  }}
+                  formatter={(value) => [`${value} units`, metricConfigs[activeMetric].label]}
                 />
                 <Area
+                  key={activeMetric}
                   type="monotone"
                   dataKey="value"
-                  stroke="rgb(var(--color-primary))"
+                  stroke={metricConfigs[activeMetric].stopColor}
                   strokeWidth={3}
                   fillOpacity={1}
-                  fill="url(#colorImpact)"
+                  fill="url(#colorMetric)"
+                  animationDuration={1000}
                 />
               </AreaChart>
             </ResponsiveContainer>
