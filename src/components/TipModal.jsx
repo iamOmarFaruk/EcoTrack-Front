@@ -116,7 +116,7 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
 
       {/* Modal - Don't close when clicking inside */}
       <div
-        className="relative bg-surface rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+        className="relative bg-surface rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -138,7 +138,7 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* Title */}
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-text mb-1">
+            <label htmlFor="title" className="block text-sm font-bold text-heading mb-2 ml-1">
               Title *
             </label>
             <input
@@ -148,7 +148,7 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
               value={formData.title}
               onChange={handleChange}
               placeholder="Enter a catchy title for your tip"
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.title ? 'border-danger' : 'border-border'
+              className={`w-full rounded-xl border px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading placeholder:text-text/40 ${errors.title ? 'border-danger' : 'border-border'
                 }`}
               maxLength={100}
             />
@@ -162,7 +162,7 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
 
           {/* Category */}
           <div>
-            <label htmlFor="category" className="block text-sm font-medium text-text mb-1">
+            <label htmlFor="category" className="block text-sm font-bold text-heading mb-2 ml-1">
               Category *
             </label>
             <select
@@ -170,7 +170,7 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
               name="category"
               value={formData.category}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary bg-surface"
+              className="w-full rounded-xl border border-border px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading cursor-pointer"
             >
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
@@ -182,7 +182,7 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
 
           {/* Status */}
           <div>
-            <label htmlFor="status" className="block text-sm font-medium text-text mb-1">
+            <label htmlFor="status" className="block text-sm font-bold text-heading mb-2 ml-1">
               Status *
             </label>
             <select
@@ -190,7 +190,7 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
               name="status"
               value={formData.status}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary bg-surface"
+              className="w-full rounded-xl border border-border px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading cursor-pointer"
             >
               <option value="published">Published (Visible to all)</option>
               <option value="draft">Draft (Visible only to you)</option>
@@ -199,7 +199,7 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
 
           {/* Content */}
           <div>
-            <label htmlFor="content" className="block text-sm font-medium text-text mb-1">
+            <label htmlFor="content" className="block text-sm font-bold text-heading mb-2 ml-1">
               Content *
             </label>
             <textarea
@@ -209,7 +209,7 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
               onChange={handleChange}
               placeholder="Share your eco-friendly tip with the community..."
               rows={4}
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none ${errors.content ? 'border-danger' : 'border-border'
+              className={`w-full rounded-xl border px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading placeholder:text-text/40 resize-none ${errors.content ? 'border-danger' : 'border-border'
                 }`}
               maxLength={500}
             />
