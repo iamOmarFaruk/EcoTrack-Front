@@ -8,7 +8,8 @@ import {
   Settings as SettingsIcon,
   ChevronRight,
   Menu,
-  X
+  X,
+  Lightbulb
 } from 'lucide-react'
 import clsx from 'clsx'
 import Navbar from '../components/Navbar.jsx'
@@ -160,8 +161,11 @@ export default function DashboardLayout() {
           </nav>
 
           <div className="mt-8 rounded-xl bg-gradient-to-br from-primary/5 to-secondary/5 p-4 border border-primary/10">
-            <p className="text-xs font-medium text-primary/80">Pro Tip</p>
-            <p className="mt-1 text-[11px] leading-relaxed text-text/60">
+            <div className="flex items-center gap-2 text-primary/80">
+              <Lightbulb size={14} strokeWidth={2.5} />
+              <p className="text-xs font-bold uppercase tracking-wider">Pro Tip</p>
+            </div>
+            <p className="mt-2 text-[11px] leading-relaxed text-text/60">
               Complete weekly challenges to level up your eco-rank faster!
             </p>
           </div>
