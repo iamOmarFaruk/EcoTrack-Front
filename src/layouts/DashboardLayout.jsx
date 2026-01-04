@@ -34,12 +34,12 @@ export default function DashboardLayout() {
     },
     {
       to: '/my-activities',
-      label: 'My Activities',
+      label: 'My Challenges',
       icon: Activity,
       description: 'Track your challenges'
     },
     {
-      to: '/events/my-events',
+      to: '/my-events',
       label: 'My Events',
       icon: Calendar,
       description: 'Events you create or join'

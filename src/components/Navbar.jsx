@@ -149,7 +149,7 @@ export default function Navbar() {
                     role="menuitem"
                   >
                     <Activity className="h-4 w-4" />
-                    <span>My Activities</span>
+                    <span>My Challenges</span>
                   </Link>
                   <Link
                     to="/my-events"
@@ -303,7 +303,7 @@ export default function Navbar() {
                   style={{ transitionDelay: `${navItems.length * 50 + 50}ms` }}
                 >
                   <Activity className="h-4 w-4" />
-                  <span>My Activities</span>
+                  <span>My Challenges</span>
                 </Link>
                 <Link
                   to="/my-events"

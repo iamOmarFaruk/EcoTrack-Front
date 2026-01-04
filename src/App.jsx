@@ -79,7 +79,7 @@ export default function App() {
                 }
               />
               <Route
-                path="/events/my-events"
+                path="/my-events"
                 element={
                   <ProtectedRoute>
                     <MyEvents />

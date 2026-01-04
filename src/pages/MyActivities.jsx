@@ -102,7 +102,7 @@ export default function MyActivities() {
 
   return (
     <motion.div
-      key={`my-activities-${statusFilter}-${searchQuery}-${activities.length}`}
+      key={`my-challenges-${statusFilter}-${searchQuery}-${activities.length}`}
       initial="hidden"
       animate="show"
       variants={containerVariants}
@@ -113,7 +113,7 @@ export default function MyActivities() {
         className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
       >
         <div>
-          <h1 className="text-3xl font-bold text-heading">My Activities</h1>
+          <h1 className="text-3xl font-bold text-heading">My Challenges</h1>
           <p className="text-text/60">Track your eco-journey and achievements</p>
         </div>
         <Link
