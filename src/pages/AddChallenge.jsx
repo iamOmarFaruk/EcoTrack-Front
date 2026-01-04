@@ -452,7 +452,7 @@ export default function AddChallenge() {
                                   <option key={cat.id} value={cat.id}>{cat.label}</option>
                                 ))}
                               </select>
-                              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text/40">
+                              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text/40 dark:text-text/80">
                                 <Leaf className="w-4 h-4" />
                               </div>
                             </div>
@@ -471,7 +471,7 @@ export default function AddChallenge() {
                                 </>
                               ) : (
                                 <>
-                                  <Calendar className="w-4 h-4 opacity-40" />
+                                  <Calendar className="w-4 h-4 opacity-50 dark:opacity-100 dark:text-text" />
                                   <span>Select dates below</span>
                                 </>
                               )}

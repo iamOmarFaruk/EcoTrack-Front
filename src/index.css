@@ -50,6 +50,15 @@
     /* Explicit dark bg */
     --color-border: 15 15 16;
     /* Soft black/charcoal border for dark mode */
+    color-scheme: dark;
+  }
+
+  /* Fix for date picker icon in dark mode */
+  /* Fix for date picker icon in dark mode */
+  .dark input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: none;
+    opacity: 1;
+    cursor: pointer;
   }
 
   /* Consistent vertical rhythm for all sections */
