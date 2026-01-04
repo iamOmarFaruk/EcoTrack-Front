@@ -317,77 +317,75 @@ export default function EditChallenge() {
                       <div className="h-2 bg-primary w-full" />
                       <CardContent className="p-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div className="md:col-span-2">
-                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">Challenge Title</label>
+                          <div className="md:col-span-2 space-y-2">
+                            <label className="text-sm font-bold text-heading ml-1">Challenge Title</label>
                             <input
                               type="text"
                               name="title"
                               value={formData.title}
                               onChange={handleChange}
-                              className={`w-full px-6 py-5 bg-muted/30 border-2 rounded-2xl outline-none transition-all focus:bg-surface text-base ${errors.title ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/40 focus:border-primary ring-4 ring-primary/10'
-                                }`}
+                              className={`w-full rounded-xl border ${errors.title ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading placeholder:text-text/40`}
                             />
-                            {errors.title && <p className="mt-2.5 text-sm text-danger flex items-center gap-1.5 font-medium"><AlertCircle className="w-4 h-4" /> {errors.title}</p>}
+                            {errors.title && <p className="text-xs text-danger font-medium ml-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.title}</p>}
                           </div>
 
-                          <div className="md:col-span-2">
-                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">Short Description</label>
+                          <div className="md:col-span-2 space-y-2">
+                            <label className="text-sm font-bold text-heading ml-1">Short Description</label>
                             <textarea
                               name="shortDescription"
                               value={formData.shortDescription}
                               onChange={handleChange}
                               rows={3}
-                              className={`w-full px-6 py-5 bg-muted/30 border-2 rounded-2xl outline-none transition-all focus:bg-surface resize-none text-base ${errors.shortDescription ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/40 focus:border-primary ring-4 ring-primary/10'
-                                }`}
+                              className={`w-full rounded-xl border ${errors.shortDescription ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading placeholder:text-text/40 resize-none`}
                             />
                           </div>
 
-                          <div>
-                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">Category</label>
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold text-heading ml-1">Category</label>
                             <div className="relative">
                               <select
                                 name="category"
                                 value={formData.category}
                                 onChange={handleChange}
-                                className="w-full px-6 py-5 bg-muted/30 border-2 border-border/40 rounded-2xl outline-none transition-all focus:bg-surface focus:border-primary focus:ring-4 focus:ring-primary/10 cursor-pointer font-medium text-base appearance-none"
+                                className="w-full rounded-xl border border-border px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading appearance-none cursor-pointer"
                               >
                                 {CATEGORIES.map(cat => <option key={cat.id} value={cat.id}>{cat.label}</option>)}
                               </select>
-                              <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-text/40">
-                                <Leaf className="w-5 h-5" />
+                              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text/40">
+                                <Leaf className="w-4 h-4" />
                               </div>
                             </div>
                           </div>
 
-                          <div>
-                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">Duration Status</label>
-                            <div className="w-full px-6 py-5 bg-muted/20 border-2 border-border/30 rounded-2xl text-text/60 font-semibold flex items-center gap-3 text-base">
-                              {formData.duration ? <><CheckCircle2 className="w-5 h-5 text-primary" /> <span>{formData.duration}</span></> : <><Calendar className="w-5 h-5 opacity-40" /> <span>Update dates</span></>}
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold text-heading ml-1">Duration Status</label>
+                            <div className="w-full rounded-xl border border-border px-4 py-3 bg-muted/50 text-text/60 font-medium flex items-center gap-3">
+                              {formData.duration ? <><CheckCircle2 className="w-4 h-4 text-primary" /> <span>{formData.duration}</span></> : <><Calendar className="w-4 h-4 opacity-40" /> <span>Update dates</span></>}
                             </div>
                           </div>
 
-                          <div>
-                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">Start Date</label>
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold text-heading ml-1">Start Date</label>
                             <div className="relative">
                               <input
                                 type="date"
                                 name="startDate"
                                 value={formData.startDate}
                                 onChange={handleChange}
-                                className={`w-full px-6 py-5 bg-muted/30 border-2 rounded-2xl outline-none transition-all focus:bg-surface text-base ${errors.startDate ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/40 focus:border-primary ring-4 ring-primary/10'}`}
+                                className={`w-full rounded-xl border ${errors.startDate ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading`}
                               />
                             </div>
                           </div>
 
-                          <div>
-                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">End Date</label>
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold text-heading ml-1">End Date</label>
                             <div className="relative">
                               <input
                                 type="date"
                                 name="endDate"
                                 value={formData.endDate}
                                 onChange={handleChange}
-                                className={`w-full px-6 py-5 bg-muted/30 border-2 rounded-2xl outline-none transition-all focus:bg-surface text-base ${errors.endDate ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/40 focus:border-primary ring-4 ring-primary/10'}`}
+                                className={`w-full rounded-xl border ${errors.endDate ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading`}
                               />
                             </div>
                           </div>
@@ -408,14 +406,14 @@ export default function EditChallenge() {
                             { name: 'waterSavedL', label: 'Water Saved (L)', icon: Droplets, color: 'blue' },
                             { name: 'energySavedKwh', label: 'Energy Saved (kWh)', icon: Zap, color: 'yellow' }
                           ].map((metric) => (
-                            <div key={metric.name} className="p-5 rounded-2xl bg-muted/30 border-2 border-border/50 hover:border-primary/20 transition-all">
-                              <label className="block text-sm font-semibold text-heading mb-2">{metric.label}</label>
+                            <div key={metric.name} className="p-5 rounded-2xl bg-muted/30 border-2 border-border/50 hover:border-primary/20 transition-all space-y-2">
+                              <label className="text-sm font-bold text-heading ml-1">{metric.label}</label>
                               <input
                                 type="number"
                                 name={metric.name}
                                 value={formData.communityImpact[metric.name]}
                                 onChange={handleImpactChange}
-                                className="w-full px-5 py-4 bg-surface border-2 border-border/40 rounded-2xl focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all outline-none text-base"
+                                className="w-full rounded-xl border border-border px-4 py-3 transition-all bg-surface focus:ring-4 focus:ring-primary/10 text-heading placeholder:text-text/40"
                               />
                             </div>
                           ))}
@@ -431,14 +429,14 @@ export default function EditChallenge() {
                       <CardContent className="p-8">
                         <div className="space-y-8">
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="space-y-4">
-                              <label className="block text-sm font-bold text-heading uppercase tracking-wide">Image URL</label>
+                            <div className="space-y-2">
+                              <label className="text-sm font-bold text-heading ml-1">Image URL</label>
                               <input
                                 type="url"
                                 name="image"
                                 value={formData.image}
                                 onChange={handleChange}
-                                className={`w-full px-6 py-5 bg-muted/30 border-2 rounded-2xl outline-none focus:bg-surface transition-all text-base ${errors.image ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/40 focus:border-primary ring-4 ring-primary/10'}`}
+                                className={`w-full rounded-xl border ${errors.image ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading placeholder:text-text/40`}
                               />
                               <p className="text-xs text-text/50 leading-relaxed bg-primary/5 p-4 rounded-xl border border-primary/10 italic flex items-start gap-3">
                                 <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" />
@@ -450,14 +448,14 @@ export default function EditChallenge() {
                             </div>
                           </div>
 
-                          <div>
-                            <label className="block text-sm font-bold text-heading mb-4 uppercase tracking-wide">Detailed Description</label>
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold text-heading ml-1">Detailed Description</label>
                             <textarea
                               name="detailedDescription"
                               value={formData.detailedDescription}
                               onChange={handleChange}
                               rows={6}
-                              className="w-full px-6 py-5 bg-muted/30 border-2 border-border/40 rounded-2xl outline-none transition-all focus:bg-surface focus:border-primary focus:ring-4 focus:ring-primary/10 resize-none text-base"
+                              className="w-full rounded-xl border border-border px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading placeholder:text-text/40 resize-none"
                             />
                           </div>
 

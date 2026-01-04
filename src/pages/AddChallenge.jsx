@@ -339,8 +339,8 @@ export default function AddChallenge() {
                       <div className="h-2 bg-primary w-full" />
                       <CardContent className="p-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div className="md:col-span-2">
-                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">
+                          <div className="md:col-span-2 space-y-2">
+                            <label className="text-sm font-bold text-heading ml-1">
                               Challenge Title <span className="text-danger">*</span>
                             </label>
                             <input
@@ -349,14 +349,13 @@ export default function AddChallenge() {
                               value={formData.title}
                               onChange={handleChange}
                               placeholder="e.g., Plastic-Free Journey"
-                              className={`w-full px-6 py-5 bg-muted/30 border-2 rounded-2xl outline-none transition-all focus:bg-surface text-base ${errors.title ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/40 focus:border-primary ring-4 ring-primary/10'
-                                }`}
+                              className={`w-full rounded-xl border ${errors.title ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading placeholder:text-text/40`}
                             />
-                            {errors.title && <p className="mt-2.5 text-sm text-danger flex items-center gap-1.5 font-medium"><AlertCircle className="w-4 h-4" /> {errors.title}</p>}
+                            {errors.title && <p className="text-xs text-danger font-medium ml-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.title}</p>}
                           </div>
 
-                          <div className="md:col-span-2 group">
-                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">
+                          <div className="md:col-span-2 space-y-2 group">
+                            <label className="text-sm font-bold text-heading ml-1">
                               Short Description <span className="text-danger">*</span>
                             </label>
                             <textarea
@@ -365,19 +364,18 @@ export default function AddChallenge() {
                               onChange={handleChange}
                               rows={3}
                               placeholder="A brief catchy description for the challenge card..."
-                              className={`w-full px-6 py-5 bg-muted/30 border-2 rounded-2xl outline-none transition-all focus:bg-surface resize-none text-base ${errors.shortDescription ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/40 focus:border-primary ring-4 ring-primary/10'
-                                }`}
+                              className={`w-full rounded-xl border ${errors.shortDescription ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading placeholder:text-text/40 resize-none`}
                             />
-                            <div className="flex justify-between mt-2.5">
+                            <div className="flex justify-between mt-1 px-1">
                               {errors.shortDescription ? (
-                                <p className="text-sm text-danger flex items-center gap-1.5 font-medium"><AlertCircle className="w-4 h-4" /> {errors.shortDescription}</p>
+                                <p className="text-xs text-danger font-medium flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.shortDescription}</p>
                               ) : <div />}
-                              <p className="text-[11px] text-text/40 font-bold uppercase tracking-tight">{formData.shortDescription.length}/250 characters</p>
+                              <p className="text-[10px] text-text/40 font-bold uppercase tracking-tight">{formData.shortDescription.length}/250 characters</p>
                             </div>
                           </div>
 
-                          <div>
-                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold text-heading ml-1">
                               Category <span className="text-danger">*</span>
                             </label>
                             <div className="relative">
@@ -385,40 +383,40 @@ export default function AddChallenge() {
                                 name="category"
                                 value={formData.category}
                                 onChange={handleChange}
-                                className="w-full px-6 py-5 bg-muted/30 border-2 border-border/40 rounded-2xl outline-none transition-all focus:bg-surface focus:border-primary focus:ring-4 focus:ring-primary/10 appearance-none cursor-pointer font-medium text-base"
+                                className="w-full rounded-xl border border-border px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading appearance-none cursor-pointer"
                               >
                                 {CATEGORIES.map(cat => (
                                   <option key={cat.id} value={cat.id}>{cat.label}</option>
                                 ))}
                               </select>
-                              <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-text/40">
-                                <Leaf className="w-5 h-5" />
+                              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text/40">
+                                <Leaf className="w-4 h-4" />
                               </div>
                             </div>
-                            {errors.category && <p className="mt-2 text-sm text-danger flex items-center gap-1.5"><AlertCircle className="w-4 h-4" /> {errors.category}</p>}
+                            {errors.category && <p className="text-xs text-danger font-medium ml-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.category}</p>}
                           </div>
 
-                          <div>
-                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold text-heading ml-1">
                               Target Duration
                             </label>
-                            <div className="w-full px-6 py-5 bg-muted/20 border-2 border-border/30 rounded-2xl text-text/60 font-semibold flex items-center gap-3 text-base">
+                            <div className="w-full rounded-xl border border-border px-4 py-3 bg-muted/50 text-text/60 font-medium flex items-center gap-3">
                               {formData.duration ? (
                                 <>
-                                  <CheckCircle2 className="w-5 h-5 text-primary" />
+                                  <CheckCircle2 className="w-4 h-4 text-primary" />
                                   <span>{formData.duration} (auto-calculated)</span>
                                 </>
                               ) : (
                                 <>
-                                  <Calendar className="w-5 h-5 opacity-40" />
+                                  <Calendar className="w-4 h-4 opacity-40" />
                                   <span>Select dates below</span>
                                 </>
                               )}
                             </div>
                           </div>
 
-                          <div>
-                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold text-heading ml-1">
                               Start Date <span className="text-danger">*</span>
                             </label>
                             <div className="relative">
@@ -428,15 +426,14 @@ export default function AddChallenge() {
                                 value={formData.startDate}
                                 onChange={handleChange}
                                 min={getMinDate()}
-                                className={`w-full px-6 py-5 bg-muted/30 border-2 rounded-2xl outline-none transition-all focus:bg-surface text-base ${errors.startDate ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/40 focus:border-primary ring-4 ring-primary/10'
-                                  }`}
+                                className={`w-full rounded-xl border ${errors.startDate ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading`}
                               />
                             </div>
-                            {errors.startDate && <p className="mt-2.5 text-sm text-danger flex items-center gap-1.5 font-medium"><AlertCircle className="w-4 h-4" /> {errors.startDate}</p>}
+                            {errors.startDate && <p className="text-xs text-danger font-medium ml-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.startDate}</p>}
                           </div>
 
-                          <div>
-                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold text-heading ml-1">
                               End Date <span className="text-danger">*</span>
                             </label>
                             <div className="relative">
@@ -446,11 +443,10 @@ export default function AddChallenge() {
                                 value={formData.endDate}
                                 onChange={handleChange}
                                 min={formData.startDate || getMinDate()}
-                                className={`w-full px-6 py-5 bg-muted/30 border-2 rounded-2xl outline-none transition-all focus:bg-surface text-base ${errors.endDate ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/40 focus:border-primary ring-4 ring-primary/10'
-                                  }`}
+                                className={`w-full rounded-xl border ${errors.endDate ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading`}
                               />
                             </div>
-                            {errors.endDate && <p className="mt-2.5 text-sm text-danger flex items-center gap-1.5 font-medium"><AlertCircle className="w-4 h-4" /> {errors.endDate}</p>}
+                            {errors.endDate && <p className="text-xs text-danger font-medium ml-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.endDate}</p>}
                           </div>
                         </div>
                       </CardContent>
@@ -504,8 +500,7 @@ export default function AddChallenge() {
                                   onChange={handleImpactChange}
                                   min="0"
                                   step="0.1"
-                                  className={`w-full px-5 py-4 bg-surface border-2 rounded-2xl outline-none transition-all focus:border-primary/50 text-base ${errors[metric.name] ? 'border-danger' : 'border-border/40'
-                                    }`}
+                                  className={`w-full rounded-xl border ${errors[metric.name] ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-surface focus:ring-4 focus:ring-primary/10 text-heading placeholder:text-text/40`}
                                 />
                                 <div className="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
                                   +
@@ -544,18 +539,17 @@ export default function AddChallenge() {
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                              <div className="space-y-4">
-                                <label className="block text-sm font-bold text-heading uppercase tracking-wide">Image URL <span className="text-danger">*</span></label>
+                              <div className="space-y-2">
+                                <label className="text-sm font-bold text-heading ml-1">Image URL <span className="text-danger">*</span></label>
                                 <input
                                   type="url"
                                   name="image"
                                   value={formData.image}
                                   onChange={handleChange}
                                   placeholder="https://images.unsplash.com/..."
-                                  className={`w-full px-6 py-5 bg-muted/30 border-2 rounded-2xl outline-none transition-all focus:bg-surface text-base ${errors.image ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/40 focus:border-primary ring-4 ring-primary/10'
-                                    }`}
+                                  className={`w-full rounded-xl border ${errors.image ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading placeholder:text-text/40`}
                                 />
-                                {errors.image && <p className="text-sm text-danger flex items-center gap-1"><AlertCircle className="w-4 h-4" /> {errors.image}</p>}
+                                {errors.image && <p className="text-xs text-danger font-medium ml-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.image}</p>}
                                 <p className="text-xs text-text/50 leading-relaxed bg-primary/5 p-4 rounded-xl border border-primary/10 italic flex items-start gap-3">
                                   <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                                   <span>Professional tip: Use Unsplash for high-quality eco-themed images. Make sure the URL begins with <span className="font-bold text-primary">https://</span></span>
@@ -597,7 +591,7 @@ export default function AddChallenge() {
                               onChange={handleChange}
                               rows={6}
                               placeholder="Provide in-depth details, steps, and motivation for participants..."
-                              className="w-full px-6 py-5 bg-muted/30 border-2 border-border/40 rounded-2xl outline-none transition-all focus:bg-surface focus:border-primary focus:ring-4 focus:ring-primary/10 resize-none text-base"
+                              className="w-full rounded-xl border border-border px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading placeholder:text-text/40 resize-none"
                             />
                             <div className="flex justify-end mt-2">
                               <p className="text-xs text-text/40 font-medium">{formData.detailedDescription?.length || 0}/2000</p>
