@@ -58,18 +58,22 @@ export default function Navbar() {
   return (
     <header
       className={clsx(
-        'fixed top-0 left-0 right-0 z-40 w-full border-b border-border bg-surface/95 shadow-sm backdrop-blur transition-all duration-300'
+        'fixed top-0 left-0 right-0 z-40 w-full border-b border-border shadow-sm backdrop-blur transition-all duration-500 ease-in-out',
+        isScrolled ? 'bg-surface/100 shadow-md py-0' : 'bg-surface/95 shadow-sm py-1'
       )}
     >
       <div
         className={clsx(
-          'container flex items-center justify-between transition-all duration-300',
+          'container flex items-center justify-between transition-all duration-500 ease-in-out',
           isScrolled ? 'h-16' : 'h-20'
         )}
       >
-        <Link to="/" className="flex items-center gap-2">
-          <Logo className="h-7 w-7 sm:h-8 sm:w-8" />
-          <span className={clsx('font-heading font-bold text-heading', isScrolled ? 'text-base sm:text-lg' : 'text-lg sm:text-xl')}>
+        <Link to="/" className="flex items-center gap-2 group">
+          <Logo className={clsx('transition-all duration-500 ease-in-out', isScrolled ? 'h-6 w-6 sm:h-7 sm:w-7' : 'h-7 w-7 sm:h-8 sm:w-8')} />
+          <span className={clsx(
+            'font-heading font-bold text-heading transition-all duration-500 ease-in-out',
+            isScrolled ? 'text-lg sm:text-xl' : 'text-xl sm:text-2xl'
+          )}>
             EcoTrack
           </span>
         </Link>
