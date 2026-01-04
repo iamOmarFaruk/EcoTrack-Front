@@ -182,7 +182,7 @@ export default function EventDetail() {
 
             <motion.h1
               variants={itemVariants}
-              className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight"
+              className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 leading-tight"
             >
               {event.title}
             </motion.h1>
