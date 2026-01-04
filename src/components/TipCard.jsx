@@ -123,6 +123,11 @@ export default function TipCard({
         </div>
       </CardHeader>
       <CardContent className="flex-1">
+        <div className="mb-2">
+          <span className="inline-flex items-center rounded-full bg-secondary/10 px-2 py-0.5 text-[10px] font-medium text-secondary ring-1 ring-inset ring-secondary/20 uppercase tracking-wider">
+            {tip.category || 'General'}
+          </span>
+        </div>
         <h3 className="text-base font-heading font-semibold text-heading">{tip.title}</h3>
         {showContent && (
           <p className="mt-2 line-clamp-3 text-sm text-heading">{tip.content}</p>

@@ -4,22 +4,29 @@ import Button from './ui/Button.jsx'
 export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) {
   const [formData, setFormData] = useState({
     title: '',
-    content: ''
+    content: '',
+    category: 'General'
   })
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const categories = [
+    'General', 'Energy', 'Water', 'Waste', 'Transportation', 'Food', 'Home', 'Biodiversity'
+  ]
 
   // Pre-fill form if editing
   useEffect(() => {
     if (editTip) {
       setFormData({
         title: editTip.title || '',
-        content: editTip.content || ''
+        content: editTip.content || '',
+        category: editTip.category || 'General'
       })
     } else {
       setFormData({
         title: '',
-        content: ''
+        content: '',
+        category: 'General'
       })
     }
     setErrors({})
@@ -46,7 +53,7 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
 
   const validateForm = () => {
     const newErrors = {}
-    
+
     if (!formData.title.trim()) {
       newErrors.title = 'Title is required'
     } else if (formData.title.trim().length < 5) {
@@ -54,7 +61,7 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
     } else if (formData.title.length > 100) {
       newErrors.title = 'Title must be less than 100 characters'
     }
-    
+
     if (!formData.content.trim()) {
       newErrors.content = 'Content is required'
     } else if (formData.content.trim().length < 20) {
@@ -62,33 +69,33 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
     } else if (formData.content.length > 500) {
       newErrors.content = 'Content must be less than 500 characters'
     }
-    
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     if (!validateForm()) return
-    
+
     setIsSubmitting(true)
-    
+
     try {
       const tipData = {
         ...formData
       }
-      
+
       await onSubmit(tipData)
       // Only close modal on success
-      setFormData({ title: '', content: '' })
+      setFormData({ title: '', content: '', category: 'General' })
       setErrors({})
       onClose()
     } catch (error) {
       // Keep modal open and show error
       console.error('Error submitting tip:', error)
-      setErrors({ 
-        submit: error.message || 'Failed to save tip. Please try again.' 
+      setErrors({
+        submit: error.message || 'Failed to save tip. Please try again.'
       })
     } finally {
       setIsSubmitting(false)
@@ -100,12 +107,12 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop - Don't close on click */}
-      <div 
+      <div
         className="absolute inset-0 bg-dark/50 backdrop-blur-sm"
       />
-      
+
       {/* Modal - Don't close when clicking inside */}
-      <div 
+      <div
         className="relative bg-surface rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
@@ -138,9 +145,8 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
               value={formData.title}
               onChange={handleChange}
               placeholder="Enter a catchy title for your tip"
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-                errors.title ? 'border-danger' : 'border-border'
-              }`}
+              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.title ? 'border-danger' : 'border-border'
+                }`}
               maxLength={100}
             />
             {errors.title && (
@@ -149,6 +155,26 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
             <p className="mt-1 text-xs text-text/70">
               {formData.title.length}/100 characters
             </p>
+          </div>
+
+          {/* Category */}
+          <div>
+            <label htmlFor="category" className="block text-sm font-medium text-text mb-1">
+              Category *
+            </label>
+            <select
+              id="category"
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary bg-surface"
+            >
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Content */}
@@ -163,9 +189,8 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
               onChange={handleChange}
               placeholder="Share your eco-friendly tip with the community..."
               rows={4}
-              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none ${
-                errors.content ? 'border-danger' : 'border-border'
-              }`}
+              className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none ${errors.content ? 'border-danger' : 'border-border'
+                }`}
               maxLength={500}
             />
             {errors.content && (

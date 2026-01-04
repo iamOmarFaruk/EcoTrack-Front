@@ -28,18 +28,27 @@ export default function Tips() {
   const [order, setOrder] = useState('desc')
   const [searchQuery, setSearchQuery] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
+  const [activeTab, setActiveTab] = useState('all') // 'all', 'trending', 'my'
+  const [selectedCategory, setSelectedCategory] = useState('All')
+
+  const categories = [
+    'All', 'Energy', 'Water', 'Waste', 'Transportation', 'Food', 'Home', 'Biodiversity'
+  ]
 
   // Memoize filters for React Query
   const filters = useMemo(() => {
     const params = {
       page: currentPage,
       limit: 20,
-      sortBy,
-      order
+      sortBy: activeTab === 'trending' ? 'upvoteCount' : sortBy,
+      order: activeTab === 'trending' ? 'desc' : order
     }
     if (searchQuery) params.search = searchQuery
+    if (selectedCategory !== 'All') params.category = selectedCategory
+    if (activeTab === 'my' && user) params.authorId = user.uid
+
     return params
-  }, [currentPage, sortBy, order, searchQuery])
+  }, [currentPage, sortBy, order, searchQuery, activeTab, selectedCategory, user])
 
   // React Query Hooks
   const {
@@ -205,56 +214,132 @@ export default function Tips() {
           </div>
         )}
 
-        {/* Search and Sort Controls */}
-        <div className="flex flex-col sm:flex-row gap-4">
-          {/* Search Bar */}
-          <div className="flex-1">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search tips..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 pl-10 bg-surface text-text border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary placeholder:text-text/40 transition-colors"
-              />
-              <svg
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-text/60"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+        {/* Filter Toolbar */}
+        <div className="bg-surface rounded-2xl border border-border p-4 sm:p-6 shadow-sm space-y-6">
+          {/* Top Row: Tabs and Search */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            {/* View Tabs */}
+            <div className="flex p-1 bg-muted rounded-xl w-fit">
+              {[
+                { id: 'all', label: 'All Tips' },
+                { id: 'trending', label: 'Trending' },
+                { id: 'my', label: 'My Tips', auth: true }
+              ].map((tab) => {
+                if (tab.auth && !user) return null;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      setActiveTab(tab.id);
+                      setCurrentPage(1);
+                    }}
+                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${activeTab === tab.id
+                      ? 'bg-surface text-primary shadow-sm ring-1 ring-border'
+                      : 'text-text/60 hover:text-text hover:bg-surface/50'
+                      }`}
+                  >
+                    {tab.label}
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Search and Sort */}
+            <div className="flex flex-col sm:flex-row items-center gap-3 flex-1 lg:max-w-2xl">
+              <div className="relative flex-1 w-full">
+                <input
+                  type="text"
+                  placeholder="Search tips..."
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="w-full px-4 py-2.5 pl-10 bg-muted/50 text-text border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-surface transition-all placeholder:text-text/40"
+                />
+                <svg
+                  className="absolute left-3.5 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text/40"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+
+              {activeTab !== 'trending' && (
+                <div className="flex items-center gap-2 p-1 bg-muted/50 rounded-xl border border-border/50">
+                  <button
+                    onClick={() => handleSortChange('createdAt')}
+                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${sortBy === 'createdAt'
+                      ? 'bg-surface text-primary shadow-sm'
+                      : 'text-text/60 hover:text-text'
+                      }`}
+                  >
+                    Newest {sortBy === 'createdAt' && (order === 'desc' ? '↓' : '↑')}
+                  </button>
+                  <button
+                    onClick={() => handleSortChange('upvoteCount')}
+                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${sortBy === 'upvoteCount'
+                      ? 'bg-surface text-primary shadow-sm'
+                      : 'text-text/60 hover:text-text'
+                      }`}
+                  >
+                    Popular {sortBy === 'upvoteCount' && (order === 'desc' ? '↓' : '↑')}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Sort Dropdown */}
-          <div className="flex gap-2">
-            <button
-              onClick={() => handleSortChange('createdAt')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${sortBy === 'createdAt'
-                ? 'bg-primary/20 text-primary ring-1 ring-primary/30 shadow-sm shadow-primary/10'
-                : 'bg-surface text-text/70 hover:text-text hover:bg-muted border border-border'
-                }`}
-            >
-              Newest
-              {sortBy === 'createdAt' && (
-                <span className="ml-1">{order === 'desc' ? '↓' : '↑'}</span>
-              )}
-            </button>
-            <button
-              onClick={() => handleSortChange('upvoteCount')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${sortBy === 'upvoteCount'
-                ? 'bg-primary/20 text-primary ring-1 ring-primary/30 shadow-sm shadow-primary/10'
-                : 'bg-surface text-text/70 hover:text-text hover:bg-muted border border-border'
-                }`}
-            >
-              Popular
-              {sortBy === 'upvoteCount' && (
-                <span className="ml-1">{order === 'desc' ? '↓' : '↑'}</span>
-              )}
-            </button>
+          {/* Bottom Row: Category Pills */}
+          <div className="flex flex-col gap-3">
+            <span className="text-xs font-semibold uppercase tracking-wider text-text/40 px-1">
+              Explore by category
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => {
+                    setSelectedCategory(cat);
+                    setCurrentPage(1);
+                  }}
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all border ${selectedCategory === cat
+                    ? 'bg-primary/10 border-primary text-primary shadow-sm shadow-primary/5'
+                    : 'bg-surface border-border text-text/70 hover:border-text/30 hover:text-text'
+                    }`}
+                >
+                  {cat === 'All' ? '🌍 All' : cat}
+                </button>
+              ))}
+            </div>
           </div>
+        </div>
+
+        {/* Results Info */}
+        <div className="flex items-center justify-between px-1">
+          <p className="text-sm text-text/60">
+            {loading ? 'Finding tips...' : `Showing ${tips.length} tips`}
+            {selectedCategory !== 'All' && <span className="ml-1 text-primary">in {selectedCategory}</span>}
+          </p>
+          {(searchQuery || selectedCategory !== 'All' || activeTab !== 'all') && (
+            <button
+              onClick={() => {
+                setSearchQuery('');
+                setSelectedCategory('All');
+                setActiveTab('all');
+                setSortBy('createdAt');
+                setOrder('desc');
+              }}
+              className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
+            >
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Reset Filters
+            </button>
+          )}
         </div>
 
         <AnimatePresence mode="wait">
