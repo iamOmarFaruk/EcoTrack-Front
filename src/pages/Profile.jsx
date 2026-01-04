@@ -10,7 +10,9 @@ import {
   Calendar,
   ChevronRight,
   TrendingUp,
-  Target
+  Target,
+  Leaf,
+  Star
 } from 'lucide-react'
 import {
   AreaChart,
@@ -205,13 +207,17 @@ export default function Profile() {
 
           <div className="space-y-4">
             {(user.badges && user.badges.length > 0 ? user.badges : [
-              { name: 'Eco Pioneer', icon: '🌱', category: 'General' },
-              { name: 'Water Saver', icon: '💧', category: 'Resources' },
-              { name: 'Elite Member', icon: '⭐', category: 'Community' }
+              { name: 'Eco Pioneer', icon: Leaf, category: 'General', color: 'text-green-500' },
+              { name: 'Water Saver', icon: Droplets, category: 'Resources', color: 'text-blue-500' },
+              { name: 'Elite Member', icon: Star, category: 'Community', color: 'text-amber-500' }
             ]).slice(0, 3).map((badge, i) => (
               <div key={i} className="group flex items-center gap-4 rounded-xl border border-transparent p-2 transition-all hover:bg-light hover:border-border">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-light text-2xl shadow-inner group-hover:scale-110 transition-transform">
-                  {badge.icon}
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-light shadow-inner group-hover:scale-110 transition-transform">
+                  {typeof badge.icon === 'string' ? (
+                    <span className="text-2xl">{badge.icon}</span>
+                  ) : (
+                    <badge.icon size={20} className={badge.color || 'text-primary'} />
+                  )}
                 </div>
                 <div className="flex-1">
                   <p className="font-bold text-heading text-sm">{badge.name}</p>
