@@ -48,8 +48,17 @@ export default function MyEvents() {
   }
 
   return (
-    <div className="space-y-8 pb-12">
-      <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <motion.div
+      key={`my-events-page-${activeTab}-${events.length}`}
+      initial="hidden"
+      animate="show"
+      variants={containerVariants}
+      className="space-y-8 pb-12"
+    >
+      <motion.header
+        variants={itemVariants}
+        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+      >
         <div>
           <h1 className="text-3xl font-bold text-heading">My Events</h1>
           <p className="text-text/60">Manage events you've created or joined</p>
@@ -61,10 +70,13 @@ export default function MyEvents() {
           <Plus size={18} />
           Create Event
         </button>
-      </header>
+      </motion.header>
 
       {/* Tabs */}
-      <div className="flex w-fit items-center gap-2 rounded-2xl bg-surface p-1.5 shadow-sm border border-border">
+      <motion.div
+        variants={itemVariants}
+        className="flex w-fit items-center gap-2 rounded-2xl bg-surface p-1.5 shadow-sm border border-border"
+      >
         {[
           { id: 'created', label: 'Organized', icon: Users },
           { id: 'joined', label: 'Participating', icon: Calendar }
@@ -79,10 +91,13 @@ export default function MyEvents() {
             {tab.label}
           </button>
         ))}
-      </div>
+      </motion.div>
 
       {/* Stats Section */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <motion.div
+        variants={containerVariants}
+        className="grid grid-cols-2 gap-4 lg:grid-cols-4"
+      >
         {activeTab === 'created' ? (
           <>
             {[
@@ -91,11 +106,15 @@ export default function MyEvents() {
               { label: 'Cancelled', value: stats?.cancelled || 0, icon: XCircle, color: 'text-red-500' },
               { label: 'Total Joined', value: stats?.totalParticipants || 0, icon: Users, color: 'text-purple-500' }
             ].map((stat) => (
-              <div key={stat.label} className="rounded-2xl border border-border bg-surface p-5 shadow-sm">
+              <motion.div
+                key={stat.label}
+                variants={itemVariants}
+                className="rounded-2xl border border-border bg-surface p-5 shadow-sm"
+              >
                 <stat.icon className={stat.color} size={20} />
                 <p className="mt-4 text-2xl font-bold text-heading">{stat.value}</p>
                 <p className="text-xs font-medium text-text/40">{stat.label}</p>
-              </div>
+              </motion.div>
             ))}
           </>
         ) : (
@@ -105,15 +124,19 @@ export default function MyEvents() {
               { label: 'Past', value: stats?.past || 0, icon: History, color: 'text-text/40' },
               { label: 'Total Joined', value: stats?.total || 0, icon: Users, color: 'text-purple-500' }
             ].map((stat) => (
-              <div key={stat.label} className="rounded-2xl border border-border bg-surface p-5 shadow-sm">
+              <motion.div
+                key={stat.label}
+                variants={itemVariants}
+                className="rounded-2xl border border-border bg-surface p-5 shadow-sm"
+              >
                 <stat.icon className={stat.color} size={20} />
                 <p className="mt-4 text-2xl font-bold text-heading">{stat.value}</p>
                 <p className="text-xs font-medium text-text/40">{stat.label}</p>
-              </div>
+              </motion.div>
             ))}
           </>
         )}
-      </div>
+      </motion.div>
 
       {/* Events List */}
       <AnimatePresence mode="wait">
@@ -231,6 +254,6 @@ export default function MyEvents() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   )
 }

@@ -94,10 +94,18 @@ export default function MyTips() {
         setIsModalOpen(false)
         setEditingTip(null)
     }
-
     return (
-        <div className="space-y-8 pb-12">
-            <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <motion.div
+            key={`my-tips-page-${statusFilter}-${searchQuery}-${tips.length}`}
+            initial="hidden"
+            animate="show"
+            variants={containerVariants}
+            className="space-y-8 pb-12"
+        >
+            <motion.header
+                variants={itemVariants}
+                className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <div>
                     <h1 className="text-3xl font-bold text-heading">My Tips</h1>
                     <p className="text-text/60">Share your eco-wisdom and manage your contributions</p>
@@ -112,26 +120,33 @@ export default function MyTips() {
                     <Plus size={18} />
                     Craft New Tip
                 </Button>
-            </header>
+            </motion.header>
 
             {/* Summary Stats */}
-            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <motion.div
+                variants={containerVariants}
+                className="grid grid-cols-2 gap-4 lg:grid-cols-4"
+            >
                 {[
                     { label: 'Total Tips', value: stats.total, icon: BookOpen, color: 'text-primary' },
                     { label: 'Published', value: stats.published, icon: Eye, color: 'text-green-500' },
                     { label: 'Drafts', value: stats.drafts, icon: EyeOff, color: 'text-orange-500' },
                     { label: 'Total Upvotes', value: stats.upvotes, icon: ThumbsUp, color: 'text-amber-500' }
                 ].map((stat) => (
-                    <div key={stat.label} className="rounded-2xl border border-border bg-surface p-5 shadow-sm">
+                    <motion.div
+                        key={stat.label}
+                        variants={itemVariants}
+                        className="rounded-2xl border border-border bg-surface p-5 shadow-sm"
+                    >
                         <div className="flex items-center justify-between">
                             <stat.icon className={stat.color} size={20} />
                             <div className="h-6 w-1 rounded-full bg-light" />
                         </div>
                         <p className="mt-4 text-2xl font-bold text-heading">{stat.value}</p>
                         <p className="text-xs font-medium text-text/40">{stat.label}</p>
-                    </div>
+                    </motion.div>
                 ))}
-            </div>
+            </motion.div>
 
             {/* Filters & Search */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -281,6 +296,6 @@ export default function MyTips() {
                 onSubmit={handleSubmitTip}
                 editTip={editingTip}
             />
-        </div>
+        </motion.div>
     )
 }

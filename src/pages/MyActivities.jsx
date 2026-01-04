@@ -101,8 +101,17 @@ export default function MyActivities() {
   const loading = loadingJoined || loadingCreated
 
   return (
-    <div className="space-y-8 pb-12">
-      <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <motion.div
+      key={`my-activities-${statusFilter}-${searchQuery}-${activities.length}`}
+      initial="hidden"
+      animate="show"
+      variants={containerVariants}
+      className="space-y-8 pb-12"
+    >
+      <motion.header
+        variants={itemVariants}
+        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+      >
         <div>
           <h1 className="text-3xl font-bold text-heading">My Activities</h1>
           <p className="text-text/60">Track your eco-journey and achievements</p>
@@ -114,26 +123,33 @@ export default function MyActivities() {
           Explore More
           <ArrowUpRight size={16} />
         </Link>
-      </header>
+      </motion.header>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <motion.div
+        variants={containerVariants}
+        className="grid grid-cols-2 gap-4 lg:grid-cols-4"
+      >
         {[
           { label: 'Total', value: summary.total, icon: Activity, color: 'text-primary' },
           { label: 'Active', value: summary.active, icon: Flame, color: 'text-orange-500' },
           { label: 'Completed', value: summary.completed, icon: CheckCircle2, color: 'text-green-500' },
           { label: 'Streak', value: `${summary.streak}d`, icon: Trophy, color: 'text-amber-500' }
         ].map((stat) => (
-          <div key={stat.label} className="rounded-2xl border border-border bg-surface p-5 shadow-sm">
+          <motion.div
+            key={stat.label}
+            variants={itemVariants}
+            className="rounded-2xl border border-border bg-surface p-5 shadow-sm"
+          >
             <div className="flex items-center justify-between">
               <stat.icon className={stat.color} size={20} />
               <div className="h-6 w-1 rounded-full bg-light" />
             </div>
             <p className="mt-4 text-2xl font-bold text-heading">{stat.value}</p>
             <p className="text-xs font-medium text-text/40">{stat.label}</p>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       {/* Filters & Search */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -257,6 +273,6 @@ export default function MyActivities() {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   )
 }

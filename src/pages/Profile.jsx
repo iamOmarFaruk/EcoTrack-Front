@@ -25,6 +25,7 @@ import SectionHeading from '../components/SectionHeading.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import { useUserProfile } from '../hooks/queries'
+import { containerVariants, itemVariants } from '../utils/animations'
 
 // Mock data for the impact chart - in a real app, this would come from the backend
 const impactData = [
@@ -57,9 +58,18 @@ export default function Profile() {
   ]
 
   return (
-    <div className="space-y-8 pb-12">
+    <motion.div
+      key={`profile-page-${user.id || 'loading'}`}
+      initial="hidden"
+      animate="show"
+      variants={containerVariants}
+      className="space-y-8 pb-12"
+    >
       {/* Premium Hero Section */}
-      <section className="relative overflow-hidden rounded-3xl border border-border bg-surface p-8 shadow-xl">
+      <motion.section
+        variants={itemVariants}
+        className="relative overflow-hidden rounded-3xl border border-border bg-surface p-8 shadow-xl"
+      >
         <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
         <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-secondary/5 blur-3xl" />
 
@@ -102,10 +112,13 @@ export default function Profile() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <motion.div
+        variants={containerVariants}
+        className="grid grid-cols-2 gap-4 lg:grid-cols-4"
+      >
         {stats.map((stat, index) => (
           <motion.div
             key={stat.label}
@@ -121,10 +134,13 @@ export default function Profile() {
             <p className="text-2xl font-bold text-heading">{stat.value}</p>
           </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       {/* Main Content Grid */}
-      <div className="grid gap-6 lg:grid-cols-3">
+      <motion.div
+        variants={containerVariants}
+        className="grid gap-6 lg:grid-cols-3"
+      >
         {/* Impact Chart */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -218,7 +234,7 @@ export default function Profile() {
             <p className="mt-2 text-[10px] text-text/50">85% to Next Milestone</p>
           </div>
         </motion.div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }
