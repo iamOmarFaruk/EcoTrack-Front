@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Award,
   Zap,
@@ -73,6 +73,7 @@ export default function Profile() {
   const { auth } = useAuth()
   const { data: userData, isLoading } = useUserProfile()
   const [activeMetric, setActiveMetric] = useState('co2')
+  const [hoveredMetric, setHoveredMetric] = useState(null)
 
   if (isLoading) {
     return <EcoLoader />
@@ -184,17 +185,34 @@ export default function Profile() {
               <h3 className="text-xl font-bold tracking-tight text-heading">Over Time</h3>
               <div className="flex items-center gap-1.5 rounded-xl bg-light p-1 shadow-inner">
                 {Object.entries(metricConfigs).map(([key, config]) => (
-                  <button
-                    key={key}
-                    onClick={() => setActiveMetric(key)}
-                    className={`flex h-8 w-8 items-center justify-center rounded-lg transition-all ${activeMetric === key
-                        ? 'bg-surface text-primary shadow-sm scale-110'
+                  <div key={key} className="relative">
+                    <button
+                      onClick={() => setActiveMetric(key)}
+                      onMouseEnter={() => setHoveredMetric(key)}
+                      onMouseLeave={() => setHoveredMetric(null)}
+                      className={`flex h-8 w-8 items-center justify-center rounded-lg transition-all ${activeMetric === key
+                        ? `bg-surface ${config.color} shadow-sm scale-110`
                         : 'text-text/40 hover:text-text/60 hover:bg-surface/50'
-                      }`}
-                    title={config.label}
-                  >
-                    <config.icon size={16} />
-                  </button>
+                        }`}
+                    >
+                      <config.icon size={16} />
+                    </button>
+
+                    <AnimatePresence>
+                      {hoveredMetric === key && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10, x: '-50%' }}
+                          animate={{ opacity: 1, y: 0, x: '-50%' }}
+                          exit={{ opacity: 0, y: 5, x: '-50%' }}
+                          className="absolute -top-10 left-1/2 z-50 whitespace-nowrap rounded-lg bg-zinc-900 px-2.5 py-1.5 text-[10px] font-bold text-white shadow-2xl dark:bg-zinc-800 dark:border dark:border-white/10"
+                        >
+                          {config.label}
+                          {/* Triangle Pointer */}
+                          <div className="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 bg-zinc-900 dark:bg-zinc-800 dark:border-b dark:border-r dark:border-white/10" />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 ))}
               </div>
             </div>
