@@ -45,7 +45,7 @@ export default function MyTips() {
         if (searchQuery) {
             result = result.filter(tip =>
                 tip.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                tip.category.toLowerCase().includes(searchQuery.toLowerCase())
+                (tip.category || 'General').toLowerCase().includes(searchQuery.toLowerCase())
             )
         }
 
@@ -211,7 +211,7 @@ export default function MyTips() {
                                 <div className="p-6 flex-1">
                                     <div className="mb-4 flex items-center justify-between">
                                         <span className="rounded-lg bg-primary/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-primary">
-                                            {tip.category}
+                                            {tip.category || 'General'}
                                         </span>
                                         <span className={clsx(
                                             "flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold",

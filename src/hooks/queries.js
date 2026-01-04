@@ -215,6 +215,7 @@ const normalizeTip = (tip) => {
     return {
         ...tip,
         status: tip.status || 'published',
+        category: tip.category || 'General',
         id: tip.id || tip._id,
         upvotes: Number.isFinite(Number(tip.upvoteCount))
             ? Number(tip.upvoteCount)
