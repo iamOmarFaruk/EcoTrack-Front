@@ -196,7 +196,7 @@ export default function MyTips() {
                     </motion.div>
                 ) : (
                     <motion.div
-                        key="content"
+                        key={`tips-grid-${statusFilter}-${searchQuery}-${filteredTips.length}`}
                         initial="hidden"
                         animate="show"
                         variants={containerVariants}
