@@ -159,7 +159,7 @@ export default function EditChallenge() {
 
     const start = new Date(formData.startDate)
     const end = new Date(formData.endDate)
-    if (isNaN(start) || iNaN(end) || end <= start) return
+    if (isNaN(start) || isNaN(end) || end <= start) return
 
     const diffMs = end.getTime() - start.getTime()
     const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24)) + 1
