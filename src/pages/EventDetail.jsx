@@ -126,7 +126,7 @@ export default function EventDetail() {
   return (
     <div className="min-h-screen bg-light pb-20">
       {/* Immersive Hero Section */}
-      <div className="full-bleed relative h-[60vh] min-h-[400px] w-full overflow-hidden mb-8">
+      <div className="full-bleed relative h-[50vh] min-h-[350px] w-full overflow-hidden mb-8">
         <div className="absolute inset-0 bg-dark/20" />
         {/* Background Image */}
         <div
@@ -136,7 +136,7 @@ export default function EventDetail() {
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-dark via-dark/60 to-transparent" />
 
-        <div className="container relative h-full flex flex-col justify-end pb-12">
+        <div className="container relative h-full flex flex-col justify-end pb-10">
           <motion.div
             initial="hidden"
             animate="visible"
@@ -168,7 +168,7 @@ export default function EventDetail() {
               )}
             </motion.div>
 
-            <motion.h1 variants={itemVariants} className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+            <motion.h1 variants={itemVariants} className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">
               {event.title}
             </motion.h1>
 
