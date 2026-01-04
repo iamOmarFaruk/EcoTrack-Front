@@ -184,6 +184,69 @@ export default function AddChallenge() {
     return Object.keys(newErrors).length === 0
   }
 
+  const validateStep = (step) => {
+    const stepErrors = {}
+    let isValid = true
+
+    if (step === 'info') {
+      if (!formData.category) stepErrors.category = 'Category is required'
+
+      if (!formData.title.trim()) {
+        stepErrors.title = 'Title is required'
+      } else if (formData.title.length < 5 || formData.title.length > 100) {
+        stepErrors.title = 'Title must be 5-100 characters'
+      }
+
+      if (!formData.shortDescription.trim()) {
+        stepErrors.shortDescription = 'Short description is required'
+      } else if (formData.shortDescription.length < 20 || formData.shortDescription.length > 250) {
+        stepErrors.shortDescription = 'Description must be 20-250 characters'
+      }
+
+      if (!formData.startDate) {
+        stepErrors.startDate = 'Required'
+      } else {
+        const selectedDate = new Date(formData.startDate)
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+        if (selectedDate < today) stepErrors.startDate = 'Cannot be in past'
+      }
+
+      if (!formData.endDate) {
+        stepErrors.endDate = 'Required'
+      } else if (formData.startDate && formData.endDate) {
+        const start = new Date(formData.startDate)
+        const end = new Date(formData.endDate)
+        if (end <= start) stepErrors.endDate = 'Must be after start date'
+      }
+    }
+
+    if (step === 'impact') {
+      if (formData.communityImpact.co2SavedKg < 0) stepErrors.co2SavedKg = 'Must be positive'
+      if (formData.communityImpact.plasticReducedKg < 0) stepErrors.plasticReducedKg = 'Must be positive'
+      if (formData.communityImpact.waterSavedL < 0) stepErrors.waterSavedL = 'Must be positive'
+      if (formData.communityImpact.energySavedKwh < 0) stepErrors.energySavedKwh = 'Must be positive'
+    }
+
+    if (Object.keys(stepErrors).length > 0) {
+      setErrors(prev => ({ ...prev, ...stepErrors }))
+      showError('Please fix errors before proceeding')
+      isValid = false
+    } else {
+      const keysToCheck = step === 'info'
+        ? ['category', 'title', 'shortDescription', 'startDate', 'endDate']
+        : ['co2SavedKg', 'plasticReducedKg', 'waterSavedL', 'energySavedKwh']
+
+      setErrors(prev => {
+        const newErr = { ...prev }
+        keysToCheck.forEach(k => delete newErr[k])
+        return newErr
+      })
+    }
+
+    return isValid
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -648,8 +711,11 @@ export default function AddChallenge() {
                       size="sm"
                       variant="primary"
                       onClick={() => {
-                        if (activeTab === 'info') setActiveTab('impact')
-                        else if (activeTab === 'impact') setActiveTab('details')
+                        if (activeTab === 'info') {
+                          if (validateStep('info')) setActiveTab('impact')
+                        } else if (activeTab === 'impact') {
+                          if (validateStep('impact')) setActiveTab('details')
+                        }
                       }}
                       className="whitespace-nowrap shadow-lg shadow-primary/10"
                     >
