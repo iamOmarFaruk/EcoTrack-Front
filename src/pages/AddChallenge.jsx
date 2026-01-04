@@ -340,7 +340,7 @@ export default function AddChallenge() {
                       <CardContent className="p-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div className="md:col-span-2">
-                            <label className="block text-sm font-bold text-heading mb-2 uppercase tracking-wide">
+                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">
                               Challenge Title <span className="text-danger">*</span>
                             </label>
                             <input
@@ -349,14 +349,14 @@ export default function AddChallenge() {
                               value={formData.title}
                               onChange={handleChange}
                               placeholder="e.g., Plastic-Free Journey"
-                              className={`w-full px-5 py-4 bg-muted/30 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.title ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/50 focus:border-primary ring-4 ring-primary/10'
+                              className={`w-full px-6 py-5 bg-muted/30 border-2 rounded-2xl outline-none transition-all focus:bg-surface text-base ${errors.title ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/40 focus:border-primary ring-4 ring-primary/10'
                                 }`}
                             />
-                            {errors.title && <p className="mt-2 text-sm text-danger flex items-center gap-1"><AlertCircle className="w-4 h-4" /> {errors.title}</p>}
+                            {errors.title && <p className="mt-2.5 text-sm text-danger flex items-center gap-1.5 font-medium"><AlertCircle className="w-4 h-4" /> {errors.title}</p>}
                           </div>
 
                           <div className="md:col-span-2 group">
-                            <label className="block text-sm font-bold text-heading mb-2 uppercase tracking-wide">
+                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">
                               Short Description <span className="text-danger">*</span>
                             </label>
                             <textarea
@@ -365,19 +365,19 @@ export default function AddChallenge() {
                               onChange={handleChange}
                               rows={3}
                               placeholder="A brief catchy description for the challenge card..."
-                              className={`w-full px-5 py-4 bg-muted/30 border-2 rounded-xl outline-none transition-all focus:bg-surface resize-none ${errors.shortDescription ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/50 focus:border-primary ring-4 ring-primary/10'
+                              className={`w-full px-6 py-5 bg-muted/30 border-2 rounded-2xl outline-none transition-all focus:bg-surface resize-none text-base ${errors.shortDescription ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/40 focus:border-primary ring-4 ring-primary/10'
                                 }`}
                             />
-                            <div className="flex justify-between mt-2">
+                            <div className="flex justify-between mt-2.5">
                               {errors.shortDescription ? (
-                                <p className="text-sm text-danger flex items-center gap-1"><AlertCircle className="w-4 h-4" /> {errors.shortDescription}</p>
+                                <p className="text-sm text-danger flex items-center gap-1.5 font-medium"><AlertCircle className="w-4 h-4" /> {errors.shortDescription}</p>
                               ) : <div />}
-                              <p className="text-xs text-text/50 font-medium">{formData.shortDescription.length}/250 characters</p>
+                              <p className="text-[11px] text-text/40 font-bold uppercase tracking-tight">{formData.shortDescription.length}/250 characters</p>
                             </div>
                           </div>
 
                           <div>
-                            <label className="block text-sm font-bold text-heading mb-2 uppercase tracking-wide">
+                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">
                               Category <span className="text-danger">*</span>
                             </label>
                             <div className="relative">
@@ -385,23 +385,24 @@ export default function AddChallenge() {
                                 name="category"
                                 value={formData.category}
                                 onChange={handleChange}
-                                className="w-full px-5 py-4 bg-muted/30 border-2 border-border/50 rounded-xl outline-none transition-all focus:bg-surface focus:border-primary focus:ring-4 focus:ring-primary/10 appearance-none cursor-pointer font-medium"
+                                className="w-full px-6 py-5 bg-muted/30 border-2 border-border/40 rounded-2xl outline-none transition-all focus:bg-surface focus:border-primary focus:ring-4 focus:ring-primary/10 appearance-none cursor-pointer font-medium text-base"
                               >
                                 {CATEGORIES.map(cat => (
                                   <option key={cat.id} value={cat.id}>{cat.label}</option>
                                 ))}
                               </select>
-                              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text/40">
+                              <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-text/40">
                                 <Leaf className="w-5 h-5" />
                               </div>
                             </div>
+                            {errors.category && <p className="mt-2 text-sm text-danger flex items-center gap-1.5"><AlertCircle className="w-4 h-4" /> {errors.category}</p>}
                           </div>
 
                           <div>
-                            <label className="block text-sm font-bold text-heading mb-2 uppercase tracking-wide">
+                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">
                               Target Duration
                             </label>
-                            <div className="w-full px-5 py-4 bg-muted/20 border-2 border-border/30 rounded-xl text-text/60 font-semibold flex items-center gap-2">
+                            <div className="w-full px-6 py-5 bg-muted/20 border-2 border-border/30 rounded-2xl text-text/60 font-semibold flex items-center gap-3 text-base">
                               {formData.duration ? (
                                 <>
                                   <CheckCircle2 className="w-5 h-5 text-primary" />
@@ -416,38 +417,40 @@ export default function AddChallenge() {
                             </div>
                           </div>
 
-                          <div className="space-y-4">
-                            <label className="block text-sm font-bold text-heading mb-2 uppercase tracking-wide">
+                          <div>
+                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">
                               Start Date <span className="text-danger">*</span>
                             </label>
-                            <div className="relative group">
+                            <div className="relative">
                               <input
                                 type="date"
                                 name="startDate"
                                 value={formData.startDate}
                                 onChange={handleChange}
                                 min={getMinDate()}
-                                className={`w-full px-5 py-4 bg-muted/30 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.startDate ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/50 focus:border-primary ring-4 ring-primary/10'
+                                className={`w-full px-6 py-5 bg-muted/30 border-2 rounded-2xl outline-none transition-all focus:bg-surface text-base ${errors.startDate ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/40 focus:border-primary ring-4 ring-primary/10'
                                   }`}
                               />
                             </div>
-                            {errors.startDate && <p className="mt-1 text-sm text-danger flex items-center gap-1"><AlertCircle className="w-4 h-4" /> {errors.startDate}</p>}
+                            {errors.startDate && <p className="mt-2.5 text-sm text-danger flex items-center gap-1.5 font-medium"><AlertCircle className="w-4 h-4" /> {errors.startDate}</p>}
                           </div>
 
-                          <div className="space-y-4">
-                            <label className="block text-sm font-bold text-heading mb-2 uppercase tracking-wide">
+                          <div>
+                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">
                               End Date <span className="text-danger">*</span>
                             </label>
-                            <input
-                              type="date"
-                              name="endDate"
-                              value={formData.endDate}
-                              onChange={handleChange}
-                              min={formData.startDate || getMinDate()}
-                              className={`w-full px-5 py-4 bg-muted/30 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.endDate ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/50 focus:border-primary ring-4 ring-primary/10'
-                                }`}
-                            />
-                            {errors.endDate && <p className="mt-1 text-sm text-danger flex items-center gap-1"><AlertCircle className="w-4 h-4" /> {errors.endDate}</p>}
+                            <div className="relative">
+                              <input
+                                type="date"
+                                name="endDate"
+                                value={formData.endDate}
+                                onChange={handleChange}
+                                min={formData.startDate || getMinDate()}
+                                className={`w-full px-6 py-5 bg-muted/30 border-2 rounded-2xl outline-none transition-all focus:bg-surface text-base ${errors.endDate ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/40 focus:border-primary ring-4 ring-primary/10'
+                                  }`}
+                              />
+                            </div>
+                            {errors.endDate && <p className="mt-2.5 text-sm text-danger flex items-center gap-1.5 font-medium"><AlertCircle className="w-4 h-4" /> {errors.endDate}</p>}
                           </div>
                         </div>
                       </CardContent>
@@ -501,7 +504,7 @@ export default function AddChallenge() {
                                   onChange={handleImpactChange}
                                   min="0"
                                   step="0.1"
-                                  className={`w-full px-4 py-3 bg-surface border-2 rounded-xl outline-none transition-all focus:border-primary/50 ${errors[metric.name] ? 'border-danger' : 'border-border'
+                                  className={`w-full px-5 py-4 bg-surface border-2 rounded-2xl outline-none transition-all focus:border-primary/50 text-base ${errors[metric.name] ? 'border-danger' : 'border-border/40'
                                     }`}
                                 />
                                 <div className="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
@@ -549,7 +552,7 @@ export default function AddChallenge() {
                                   value={formData.image}
                                   onChange={handleChange}
                                   placeholder="https://images.unsplash.com/..."
-                                  className={`w-full px-5 py-4 bg-muted/30 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.image ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/50 focus:border-primary ring-4 ring-primary/10'
+                                  className={`w-full px-6 py-5 bg-muted/30 border-2 rounded-2xl outline-none transition-all focus:bg-surface text-base ${errors.image ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/40 focus:border-primary ring-4 ring-primary/10'
                                     }`}
                                 />
                                 {errors.image && <p className="text-sm text-danger flex items-center gap-1"><AlertCircle className="w-4 h-4" /> {errors.image}</p>}
@@ -594,7 +597,7 @@ export default function AddChallenge() {
                               onChange={handleChange}
                               rows={6}
                               placeholder="Provide in-depth details, steps, and motivation for participants..."
-                              className="w-full px-5 py-4 bg-muted/30 border-2 border-border/50 rounded-2xl outline-none transition-all focus:bg-surface focus:border-primary focus:ring-4 focus:ring-primary/10 resize-none"
+                              className="w-full px-6 py-5 bg-muted/30 border-2 border-border/40 rounded-2xl outline-none transition-all focus:bg-surface focus:border-primary focus:ring-4 focus:ring-primary/10 resize-none text-base"
                             />
                             <div className="flex justify-end mt-2">
                               <p className="text-xs text-text/40 font-medium">{formData.detailedDescription?.length || 0}/2000</p>

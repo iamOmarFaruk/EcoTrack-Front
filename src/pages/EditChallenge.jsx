@@ -318,69 +318,78 @@ export default function EditChallenge() {
                       <CardContent className="p-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div className="md:col-span-2">
-                            <label className="block text-sm font-bold text-heading mb-2 uppercase tracking-wide">Challenge Title</label>
+                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">Challenge Title</label>
                             <input
                               type="text"
                               name="title"
                               value={formData.title}
                               onChange={handleChange}
-                              className={`w-full px-5 py-4 bg-muted/30 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.title ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/50 focus:border-primary ring-4 ring-primary/10'
+                              className={`w-full px-6 py-5 bg-muted/30 border-2 rounded-2xl outline-none transition-all focus:bg-surface text-base ${errors.title ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/40 focus:border-primary ring-4 ring-primary/10'
                                 }`}
                             />
-                            {errors.title && <p className="mt-2 text-sm text-danger flex items-center gap-1"><AlertCircle className="w-4 h-4" /> {errors.title}</p>}
+                            {errors.title && <p className="mt-2.5 text-sm text-danger flex items-center gap-1.5 font-medium"><AlertCircle className="w-4 h-4" /> {errors.title}</p>}
                           </div>
 
                           <div className="md:col-span-2">
-                            <label className="block text-sm font-bold text-heading mb-2 uppercase tracking-wide">Short Description</label>
+                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">Short Description</label>
                             <textarea
                               name="shortDescription"
                               value={formData.shortDescription}
                               onChange={handleChange}
                               rows={3}
-                              className={`w-full px-5 py-4 bg-muted/30 border-2 rounded-xl outline-none transition-all focus:bg-surface resize-none ${errors.shortDescription ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/50 focus:border-primary ring-4 ring-primary/10'
+                              className={`w-full px-6 py-5 bg-muted/30 border-2 rounded-2xl outline-none transition-all focus:bg-surface resize-none text-base ${errors.shortDescription ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/40 focus:border-primary ring-4 ring-primary/10'
                                 }`}
                             />
                           </div>
 
                           <div>
-                            <label className="block text-sm font-bold text-heading mb-2 uppercase tracking-wide">Category</label>
-                            <select
-                              name="category"
-                              value={formData.category}
-                              onChange={handleChange}
-                              className="w-full px-5 py-4 bg-muted/30 border-2 border-border/50 rounded-xl outline-none transition-all focus:bg-surface focus:border-primary focus:ring-4 focus:ring-primary/10 cursor-pointer font-medium"
-                            >
-                              {CATEGORIES.map(cat => <option key={cat.id} value={cat.id}>{cat.label}</option>)}
-                            </select>
+                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">Category</label>
+                            <div className="relative">
+                              <select
+                                name="category"
+                                value={formData.category}
+                                onChange={handleChange}
+                                className="w-full px-6 py-5 bg-muted/30 border-2 border-border/40 rounded-2xl outline-none transition-all focus:bg-surface focus:border-primary focus:ring-4 focus:ring-primary/10 cursor-pointer font-medium text-base appearance-none"
+                              >
+                                {CATEGORIES.map(cat => <option key={cat.id} value={cat.id}>{cat.label}</option>)}
+                              </select>
+                              <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-text/40">
+                                <Leaf className="w-5 h-5" />
+                              </div>
+                            </div>
                           </div>
 
                           <div>
-                            <label className="block text-sm font-bold text-heading mb-2 uppercase tracking-wide">Duration Status</label>
-                            <div className="w-full px-5 py-4 bg-muted/20 border-2 border-border/30 rounded-xl text-text/60 font-semibold flex items-center gap-2">
+                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">Duration Status</label>
+                            <div className="w-full px-6 py-5 bg-muted/20 border-2 border-border/30 rounded-2xl text-text/60 font-semibold flex items-center gap-3 text-base">
                               {formData.duration ? <><CheckCircle2 className="w-5 h-5 text-primary" /> <span>{formData.duration}</span></> : <><Calendar className="w-5 h-5 opacity-40" /> <span>Update dates</span></>}
                             </div>
                           </div>
 
-                          <div className="space-y-4">
-                            <label className="block text-sm font-bold text-heading mb-2 uppercase tracking-wide">Start Date</label>
-                            <input
-                              type="date"
-                              name="startDate"
-                              value={formData.startDate}
-                              onChange={handleChange}
-                              className={`w-full px-5 py-4 bg-muted/30 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.startDate ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/50 focus:border-primary ring-4 ring-primary/10'}`}
-                            />
+                          <div>
+                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">Start Date</label>
+                            <div className="relative">
+                              <input
+                                type="date"
+                                name="startDate"
+                                value={formData.startDate}
+                                onChange={handleChange}
+                                className={`w-full px-6 py-5 bg-muted/30 border-2 rounded-2xl outline-none transition-all focus:bg-surface text-base ${errors.startDate ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/40 focus:border-primary ring-4 ring-primary/10'}`}
+                              />
+                            </div>
                           </div>
 
-                          <div className="space-y-4">
-                            <label className="block text-sm font-bold text-heading mb-2 uppercase tracking-wide">End Date</label>
-                            <input
-                              type="date"
-                              name="endDate"
-                              value={formData.endDate}
-                              onChange={handleChange}
-                              className={`w-full px-5 py-4 bg-muted/30 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.endDate ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/50 focus:border-primary ring-4 ring-primary/10'}`}
-                            />
+                          <div>
+                            <label className="block text-[13px] font-bold text-heading mb-3 uppercase tracking-wider">End Date</label>
+                            <div className="relative">
+                              <input
+                                type="date"
+                                name="endDate"
+                                value={formData.endDate}
+                                onChange={handleChange}
+                                className={`w-full px-6 py-5 bg-muted/30 border-2 rounded-2xl outline-none transition-all focus:bg-surface text-base ${errors.endDate ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/40 focus:border-primary ring-4 ring-primary/10'}`}
+                              />
+                            </div>
                           </div>
                         </div>
                       </CardContent>
@@ -406,7 +415,7 @@ export default function EditChallenge() {
                                 name={metric.name}
                                 value={formData.communityImpact[metric.name]}
                                 onChange={handleImpactChange}
-                                className="w-full px-4 py-3 bg-surface border-2 border-border/50 rounded-xl focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all outline-none"
+                                className="w-full px-5 py-4 bg-surface border-2 border-border/40 rounded-2xl focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all outline-none text-base"
                               />
                             </div>
                           ))}
@@ -429,7 +438,7 @@ export default function EditChallenge() {
                                 name="image"
                                 value={formData.image}
                                 onChange={handleChange}
-                                className={`w-full px-5 py-4 bg-muted/30 border-2 rounded-xl outline-none focus:bg-surface transition-all ${errors.image ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/50 focus:border-primary ring-4 ring-primary/10'}`}
+                                className={`w-full px-6 py-5 bg-muted/30 border-2 rounded-2xl outline-none focus:bg-surface transition-all text-base ${errors.image ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/40 focus:border-primary ring-4 ring-primary/10'}`}
                               />
                               <p className="text-xs text-text/50 leading-relaxed bg-primary/5 p-4 rounded-xl border border-primary/10 italic flex items-start gap-3">
                                 <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" />
@@ -448,7 +457,7 @@ export default function EditChallenge() {
                               value={formData.detailedDescription}
                               onChange={handleChange}
                               rows={6}
-                              className="w-full px-5 py-4 bg-muted/30 border-2 border-border/50 rounded-2xl outline-none transition-all focus:bg-surface focus:border-primary focus:ring-4 focus:ring-primary/10 resize-none"
+                              className="w-full px-6 py-5 bg-muted/30 border-2 border-border/40 rounded-2xl outline-none transition-all focus:bg-surface focus:border-primary focus:ring-4 focus:ring-primary/10 resize-none text-base"
                             />
                           </div>
 
