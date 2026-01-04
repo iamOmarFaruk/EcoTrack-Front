@@ -178,14 +178,14 @@ export default function EventDetail() {
               </Link>
 
               {isJoined && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary text-white text-sm font-bold shadow-lg shadow-secondary/20">
                   <CheckCircle2 className="w-4 h-4" />
                   Registered
                 </span>
               )}
 
               {isCreator && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary text-white text-sm font-bold shadow-lg shadow-secondary/20">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20">
                   <User className="w-4 h-4" />
                   Organizer
                 </span>

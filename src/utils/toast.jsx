@@ -74,22 +74,22 @@ export const showConfirmation = ({
   type = 'danger', // 'danger' or 'warning'
 }) => {
   const isDanger = type === 'danger'
-  
+
   return toast(
     (t) => (
       <div className="flex items-start gap-3">
         <div className="flex-shrink-0">
-          <svg 
-            className={`w-5 h-5 mt-0.5 ${isDanger ? 'text-danger' : 'text-secondary'}`} 
-            fill="none" 
-            stroke="currentColor" 
+          <svg
+            className={`w-5 h-5 mt-0.5 ${isDanger ? 'text-danger' : 'text-secondary'}`}
+            fill="none"
+            stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
         </div>
@@ -111,11 +111,10 @@ export const showConfirmation = ({
                 toast.dismiss(t.id)
                 if (onConfirm) await onConfirm()
               }}
-              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                isDanger
+              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${isDanger
                   ? 'bg-danger/15 text-danger hover:bg-danger/20'
                   : 'bg-secondary/15 text-secondary hover:bg-secondary/20'
-              }`}
+                }`}
             >
               {confirmText}
             </button>
@@ -124,14 +123,14 @@ export const showConfirmation = ({
       </div>
     ),
     {
+      id: 'confirmation-toast',
       duration: Infinity,
       style: {
         background: 'rgb(var(--color-surface))',
-        border: `1px solid ${
-          isDanger
+        border: `1px solid ${isDanger
             ? 'rgb(var(--color-danger) / 0.25)'
             : 'rgb(var(--color-secondary) / 0.25)'
-        }`,
+          }`,
         borderRadius: 'var(--radius)',
         padding: '16px',
         maxWidth: '400px',
