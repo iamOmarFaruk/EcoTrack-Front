@@ -243,7 +243,7 @@ export default function AddChallenge() {
   const getMinDate = () => new Date().toISOString().split('T')[0]
 
   return (
-    <div className="min-h-screen bg-bg-light pb-20">
+    <div className="min-h-screen bg-light pb-20">
       {/* Decorative Background */}
       <div className="absolute top-0 left-0 w-full h-[300px] bg-gradient-to-b from-primary/10 via-primary/5 to-transparent pointer-events-none" />
 
@@ -305,7 +305,7 @@ export default function AddChallenge() {
           {/* Main Form Area */}
           <div className="lg:col-span-8 space-y-6">
             {/* Tab Navigation */}
-            <div className="flex p-1 bg-surface border border-border rounded-xl shadow-sm mb-6">
+            <div className="flex p-1 bg-surface border border-border/50 rounded-xl shadow-sm mb-6 backdrop-blur-sm">
               {[
                 { id: 'info', label: 'General Info', icon: Info },
                 { id: 'impact', label: 'Impact Metrics', icon: Globe },
@@ -316,7 +316,7 @@ export default function AddChallenge() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all ${activeTab === tab.id
                     ? 'bg-primary text-white shadow-md'
-                    : 'text-text/60 hover:text-text hover:bg-bg-muted'
+                    : 'text-text/60 hover:text-text hover:bg-muted/50'
                     }`}
                 >
                   <tab.icon className={`w-4 h-4 ${activeTab === tab.id ? 'text-white' : ''}`} />
@@ -349,7 +349,7 @@ export default function AddChallenge() {
                               value={formData.title}
                               onChange={handleChange}
                               placeholder="e.g., Plastic-Free Journey"
-                              className={`w-full px-5 py-4 bg-bg-muted/50 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.title ? 'border-danger/50 focus:border-danger' : 'border-transparent focus:border-primary'
+                              className={`w-full px-5 py-4 bg-muted/30 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.title ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/50 focus:border-primary ring-4 ring-primary/10'
                                 }`}
                             />
                             {errors.title && <p className="mt-2 text-sm text-danger flex items-center gap-1"><AlertCircle className="w-4 h-4" /> {errors.title}</p>}
@@ -365,7 +365,7 @@ export default function AddChallenge() {
                               onChange={handleChange}
                               rows={3}
                               placeholder="A brief catchy description for the challenge card..."
-                              className={`w-full px-5 py-4 bg-bg-muted/50 border-2 rounded-xl outline-none transition-all focus:bg-surface resize-none ${errors.shortDescription ? 'border-danger/50 focus:border-danger' : 'border-transparent focus:border-primary'
+                              className={`w-full px-5 py-4 bg-muted/30 border-2 rounded-xl outline-none transition-all focus:bg-surface resize-none ${errors.shortDescription ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/50 focus:border-primary ring-4 ring-primary/10'
                                 }`}
                             />
                             <div className="flex justify-between mt-2">
@@ -385,7 +385,7 @@ export default function AddChallenge() {
                                 name="category"
                                 value={formData.category}
                                 onChange={handleChange}
-                                className="w-full px-5 py-4 bg-bg-muted/50 border-2 border-transparent rounded-xl outline-none transition-all focus:bg-surface focus:border-primary appearance-none cursor-pointer font-medium"
+                                className="w-full px-5 py-4 bg-muted/30 border-2 border-border/50 rounded-xl outline-none transition-all focus:bg-surface focus:border-primary focus:ring-4 focus:ring-primary/10 appearance-none cursor-pointer font-medium"
                               >
                                 {CATEGORIES.map(cat => (
                                   <option key={cat.id} value={cat.id}>{cat.label}</option>
@@ -401,7 +401,7 @@ export default function AddChallenge() {
                             <label className="block text-sm font-bold text-heading mb-2 uppercase tracking-wide">
                               Target Duration
                             </label>
-                            <div className="w-full px-5 py-4 bg-bg-muted border-2 border-transparent rounded-xl text-text/60 font-semibold flex items-center gap-2">
+                            <div className="w-full px-5 py-4 bg-muted/20 border-2 border-border/30 rounded-xl text-text/60 font-semibold flex items-center gap-2">
                               {formData.duration ? (
                                 <>
                                   <CheckCircle2 className="w-5 h-5 text-primary" />
@@ -427,7 +427,7 @@ export default function AddChallenge() {
                                 value={formData.startDate}
                                 onChange={handleChange}
                                 min={getMinDate()}
-                                className={`w-full px-5 py-4 bg-bg-muted/50 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.startDate ? 'border-danger/50 focus:border-danger' : 'border-transparent focus:border-primary'
+                                className={`w-full px-5 py-4 bg-muted/30 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.startDate ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/50 focus:border-primary ring-4 ring-primary/10'
                                   }`}
                               />
                             </div>
@@ -444,7 +444,7 @@ export default function AddChallenge() {
                               value={formData.endDate}
                               onChange={handleChange}
                               min={formData.startDate || getMinDate()}
-                              className={`w-full px-5 py-4 bg-bg-muted/50 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.endDate ? 'border-danger/50 focus:border-danger' : 'border-transparent focus:border-primary'
+                              className={`w-full px-5 py-4 bg-muted/30 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.endDate ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/50 focus:border-primary ring-4 ring-primary/10'
                                 }`}
                             />
                             {errors.endDate && <p className="mt-1 text-sm text-danger flex items-center gap-1"><AlertCircle className="w-4 h-4" /> {errors.endDate}</p>}
@@ -484,7 +484,7 @@ export default function AddChallenge() {
                           ].map((metric) => (
                             <div
                               key={metric.name}
-                              className="p-5 rounded-2xl bg-bg-muted/30 border-2 border-transparent hover:border-primary/20 transition-all group"
+                              className="p-5 rounded-2xl bg-muted/30 border-2 border-border/50 hover:border-primary/20 transition-all group"
                             >
                               <div className="flex items-center justify-between mb-4">
                                 <div className={`p-2 rounded-lg bg-${metric.color}-500/10 text-${metric.color}-600`}>
@@ -549,7 +549,7 @@ export default function AddChallenge() {
                                   value={formData.image}
                                   onChange={handleChange}
                                   placeholder="https://images.unsplash.com/..."
-                                  className={`w-full px-5 py-4 bg-bg-muted/50 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.image ? 'border-danger/50 focus:border-danger' : 'border-transparent focus:border-primary'
+                                  className={`w-full px-5 py-4 bg-muted/30 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.image ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/50 focus:border-primary ring-4 ring-primary/10'
                                     }`}
                                 />
                                 {errors.image && <p className="text-sm text-danger flex items-center gap-1"><AlertCircle className="w-4 h-4" /> {errors.image}</p>}
@@ -573,7 +573,7 @@ export default function AddChallenge() {
                                     </div>
                                   </div>
                                 ) : (
-                                  <div className="w-full h-full rounded-2xl border-2 border-dashed border-border flex flex-col items-center justify-center text-text/30 p-8 text-center bg-bg-muted/20">
+                                  <div className="w-full h-full rounded-2xl border-2 border-dashed border-border flex flex-col items-center justify-center text-text/30 p-8 text-center bg-muted/20">
                                     <ImageIcon className="w-12 h-12 mb-4 opacity-10" />
                                     <p className="text-sm font-semibold">No Image Preview</p>
                                     <p className="text-xs mt-2">Add a valid HTTPS image URL to see preview</p>
@@ -594,7 +594,7 @@ export default function AddChallenge() {
                               onChange={handleChange}
                               rows={6}
                               placeholder="Provide in-depth details, steps, and motivation for participants..."
-                              className="w-full px-5 py-4 bg-bg-muted/50 border-2 border-transparent rounded-2xl outline-none transition-all focus:bg-surface focus:border-primary resize-none"
+                              className="w-full px-5 py-4 bg-muted/30 border-2 border-border/50 rounded-2xl outline-none transition-all focus:bg-surface focus:border-primary focus:ring-4 focus:ring-primary/10 resize-none"
                             />
                             <div className="flex justify-end mt-2">
                               <p className="text-xs text-text/40 font-medium">{formData.detailedDescription?.length || 0}/2000</p>
@@ -703,22 +703,22 @@ export default function AddChallenge() {
                 <CardContent className="p-6">
                   <h4 className="font-bold text-heading mb-4">Preview Summary</h4>
                   <div className="space-y-4">
-                    <div className="p-4 rounded-xl bg-bg-muted/50">
+                    <div className="p-4 rounded-xl bg-muted/50">
                       <p className="text-[10px] font-bold text-text/40 uppercase mb-1">Challenge Idea</p>
                       <p className="font-bold text-sm text-heading truncate">{formData.title || 'Untitled Challenge'}</p>
                     </div>
-                    <div className="p-4 rounded-xl bg-bg-muted/50">
+                    <div className="p-4 rounded-xl bg-muted/50">
                       <p className="text-[10px] font-bold text-text/40 uppercase mb-1">Category</p>
                       <p className="font-bold text-sm text-primary flex items-center gap-1">
                         <Leaf className="w-3 h-3" /> {formData.category}
                       </p>
                     </div>
                     <div className="flex gap-4">
-                      <div className="flex-1 p-4 rounded-xl bg-bg-muted/50 text-center">
+                      <div className="flex-1 p-4 rounded-xl bg-muted/50 text-center">
                         <p className="text-[10px] font-bold text-text/40 uppercase mb-1">CO₂ Goal</p>
                         <p className="font-bold text-sm text-heading">{formData.communityImpact.co2SavedKg}kg</p>
                       </div>
-                      <div className="flex-1 p-4 rounded-xl bg-bg-muted/50 text-center">
+                      <div className="flex-1 p-4 rounded-xl bg-muted/50 text-center">
                         <p className="text-[10px] font-bold text-text/40 uppercase mb-1">Water Goal</p>
                         <p className="font-bold text-sm text-heading">{formData.communityImpact.waterSavedL}L</p>
                       </div>

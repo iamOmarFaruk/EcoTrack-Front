@@ -235,7 +235,7 @@ export default function EditChallenge() {
   if (loading) return <EcoLoader />
   if (notFound) return <NotFound />
   if (notAuthorized) return (
-    <div className="min-h-screen bg-bg-light flex items-center justify-center p-4">
+    <div className="min-h-screen bg-light flex items-center justify-center p-4">
       <Card className="max-w-md w-full border-none shadow-2xl">
         <CardContent className="p-8 text-center">
           <div className="w-20 h-20 rounded-full bg-danger/10 flex items-center justify-center mx-auto mb-6 text-danger">
@@ -250,7 +250,7 @@ export default function EditChallenge() {
   )
 
   return (
-    <div className="min-h-screen bg-bg-light pb-20">
+    <div className="min-h-screen bg-light pb-20">
       <div className="absolute top-0 left-0 w-full h-[300px] bg-gradient-to-b from-primary/10 via-primary/5 to-transparent pointer-events-none" />
 
       <div className="container max-w-5xl mx-auto pt-8 relative z-10">
@@ -291,7 +291,7 @@ export default function EditChallenge() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8 space-y-6">
-            <div className="flex p-1 bg-surface border border-border rounded-xl shadow-sm mb-6">
+            <div className="flex p-1 bg-surface border border-border/50 rounded-xl shadow-sm mb-6 backdrop-blur-sm">
               {[
                 { id: 'info', label: 'Basics', icon: Info },
                 { id: 'impact', label: 'Impact', icon: Globe },
@@ -300,7 +300,7 @@ export default function EditChallenge() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all ${activeTab === tab.id ? 'bg-primary text-white shadow-md' : 'text-text/60 hover:text-text hover:bg-bg-muted'
+                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all ${activeTab === tab.id ? 'bg-primary text-white shadow-md' : 'text-text/60 hover:text-text hover:bg-muted/50'
                     }`}
                 >
                   <tab.icon className={`w-4 h-4 ${activeTab === tab.id ? 'text-white' : ''}`} />
@@ -324,7 +324,7 @@ export default function EditChallenge() {
                               name="title"
                               value={formData.title}
                               onChange={handleChange}
-                              className={`w-full px-5 py-4 bg-bg-muted/50 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.title ? 'border-danger/50 focus:border-danger' : 'border-transparent focus:border-primary'
+                              className={`w-full px-5 py-4 bg-muted/30 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.title ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/50 focus:border-primary ring-4 ring-primary/10'
                                 }`}
                             />
                             {errors.title && <p className="mt-2 text-sm text-danger flex items-center gap-1"><AlertCircle className="w-4 h-4" /> {errors.title}</p>}
@@ -337,7 +337,7 @@ export default function EditChallenge() {
                               value={formData.shortDescription}
                               onChange={handleChange}
                               rows={3}
-                              className={`w-full px-5 py-4 bg-bg-muted/50 border-2 rounded-xl outline-none transition-all focus:bg-surface resize-none ${errors.shortDescription ? 'border-danger/50 focus:border-danger' : 'border-transparent focus:border-primary'
+                              className={`w-full px-5 py-4 bg-muted/30 border-2 rounded-xl outline-none transition-all focus:bg-surface resize-none ${errors.shortDescription ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/50 focus:border-primary ring-4 ring-primary/10'
                                 }`}
                             />
                           </div>
@@ -348,7 +348,7 @@ export default function EditChallenge() {
                               name="category"
                               value={formData.category}
                               onChange={handleChange}
-                              className="w-full px-5 py-4 bg-bg-muted/50 border-2 border-transparent rounded-xl outline-none transition-all focus:bg-surface focus:border-primary cursor-pointer font-medium"
+                              className="w-full px-5 py-4 bg-muted/30 border-2 border-border/50 rounded-xl outline-none transition-all focus:bg-surface focus:border-primary focus:ring-4 focus:ring-primary/10 cursor-pointer font-medium"
                             >
                               {CATEGORIES.map(cat => <option key={cat.id} value={cat.id}>{cat.label}</option>)}
                             </select>
@@ -356,7 +356,7 @@ export default function EditChallenge() {
 
                           <div>
                             <label className="block text-sm font-bold text-heading mb-2 uppercase tracking-wide">Duration Status</label>
-                            <div className="w-full px-5 py-4 bg-bg-muted border-2 border-transparent rounded-xl text-text/60 font-semibold flex items-center gap-2">
+                            <div className="w-full px-5 py-4 bg-muted/20 border-2 border-border/30 rounded-xl text-text/60 font-semibold flex items-center gap-2">
                               {formData.duration ? <><CheckCircle2 className="w-5 h-5 text-primary" /> <span>{formData.duration}</span></> : <><Calendar className="w-5 h-5 opacity-40" /> <span>Update dates</span></>}
                             </div>
                           </div>
@@ -368,7 +368,7 @@ export default function EditChallenge() {
                               name="startDate"
                               value={formData.startDate}
                               onChange={handleChange}
-                              className={`w-full px-5 py-4 bg-bg-muted/50 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.startDate ? 'border-danger' : 'border-transparent'}`}
+                              className={`w-full px-5 py-4 bg-muted/30 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.startDate ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/50 focus:border-primary ring-4 ring-primary/10'}`}
                             />
                           </div>
 
@@ -379,7 +379,7 @@ export default function EditChallenge() {
                               name="endDate"
                               value={formData.endDate}
                               onChange={handleChange}
-                              className={`w-full px-5 py-4 bg-bg-muted/50 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.endDate ? 'border-danger' : 'border-transparent'}`}
+                              className={`w-full px-5 py-4 bg-muted/30 border-2 rounded-xl outline-none transition-all focus:bg-surface ${errors.endDate ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/50 focus:border-primary ring-4 ring-primary/10'}`}
                             />
                           </div>
                         </div>
@@ -399,14 +399,14 @@ export default function EditChallenge() {
                             { name: 'waterSavedL', label: 'Water Saved (L)', icon: Droplets, color: 'blue' },
                             { name: 'energySavedKwh', label: 'Energy Saved (kWh)', icon: Zap, color: 'yellow' }
                           ].map((metric) => (
-                            <div key={metric.name} className="p-5 rounded-2xl bg-bg-muted/30 border-2 border-transparent hover:border-primary/20 transition-all">
+                            <div key={metric.name} className="p-5 rounded-2xl bg-muted/30 border-2 border-border/50 hover:border-primary/20 transition-all">
                               <label className="block text-sm font-semibold text-heading mb-2">{metric.label}</label>
                               <input
                                 type="number"
                                 name={metric.name}
                                 value={formData.communityImpact[metric.name]}
                                 onChange={handleImpactChange}
-                                className="w-full px-4 py-3 bg-surface border-2 border-border rounded-xl focus:border-primary/50 outline-none"
+                                className="w-full px-4 py-3 bg-surface border-2 border-border/50 rounded-xl focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all outline-none"
                               />
                             </div>
                           ))}
@@ -429,14 +429,14 @@ export default function EditChallenge() {
                                 name="image"
                                 value={formData.image}
                                 onChange={handleChange}
-                                className={`w-full px-5 py-4 bg-bg-muted/50 border-2 rounded-xl outline-none focus:bg-surface ${errors.image ? 'border-danger' : 'border-transparent'}`}
+                                className={`w-full px-5 py-4 bg-muted/30 border-2 rounded-xl outline-none focus:bg-surface transition-all ${errors.image ? 'border-danger focus:border-danger ring-4 ring-danger/10' : 'border-border/50 focus:border-primary ring-4 ring-primary/10'}`}
                               />
                               <p className="text-xs text-text/50 leading-relaxed bg-primary/5 p-4 rounded-xl border border-primary/10 italic flex items-start gap-3">
                                 <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                                 <span>Keep images high-resolution for professional look.</span>
                               </p>
                             </div>
-                            <div className="aspect-video rounded-2xl overflow-hidden border-2 border-border bg-bg-muted">
+                            <div className="aspect-video rounded-2xl overflow-hidden border-2 border-border/50 bg-muted/20 relative group">
                               {formData.image && <img src={formData.image} className="w-full h-full object-cover" alt="Preview" />}
                             </div>
                           </div>
@@ -448,7 +448,7 @@ export default function EditChallenge() {
                               value={formData.detailedDescription}
                               onChange={handleChange}
                               rows={6}
-                              className="w-full px-5 py-4 bg-bg-muted/50 border-2 border-transparent rounded-2xl outline-none focus:border-primary resize-none"
+                              className="w-full px-5 py-4 bg-muted/30 border-2 border-border/50 rounded-2xl outline-none transition-all focus:bg-surface focus:border-primary focus:ring-4 focus:ring-primary/10 resize-none"
                             />
                           </div>
 
