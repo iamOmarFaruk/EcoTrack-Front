@@ -362,9 +362,9 @@ export default function EventDetail() {
                   {/* Organizer Mini Profile */}
                   <div className="pt-6 border-t border-border">
                     <div className="flex items-center gap-3">
-                      {event.organizerImage ? (
+                      {(event.organizerImage || (isCreator && user?.avatarUrl)) ? (
                         <img
-                          src={event.organizerImage}
+                          src={event.organizerImage || (isCreator && user?.avatarUrl)}
                           alt={event.organizer}
                           className="w-10 h-10 rounded-full object-cover border border-border shadow-md"
                         />
