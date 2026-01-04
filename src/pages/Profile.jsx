@@ -59,44 +59,44 @@ export default function Profile() {
   return (
     <div className="space-y-8 pb-12">
       {/* Premium Hero Section */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-secondary p-8 text-surface shadow-2xl">
-        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-surface/10 blur-3xl" />
-        <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-dark/10 blur-3xl" />
+      <section className="relative overflow-hidden rounded-3xl border border-border bg-surface p-8 shadow-xl">
+        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-secondary/5 blur-3xl" />
 
         <div className="relative flex flex-col items-center gap-6 md:flex-row md:items-start md:gap-8">
           {/* Avatar */}
           <div className="group relative">
-            <div className="h-24 w-24 overflow-hidden rounded-2xl border-4 border-surface/20 shadow-xl transition-transform duration-500 group-hover:scale-105 md:h-32 md:w-32">
+            <div className="h-24 w-24 overflow-hidden rounded-2xl border-4 border-light/5 shadow-xl transition-transform duration-500 group-hover:scale-105 md:h-32 md:w-32">
               {user.avatarUrl || user.photoURL ? (
                 <img src={user.avatarUrl || user.photoURL} alt={displayName} className="h-full w-full object-cover" />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-surface/20 text-4xl font-bold uppercase backdrop-blur-md">
+                <div className="flex h-full w-full items-center justify-center bg-primary/10 text-4xl font-bold uppercase text-primary backdrop-blur-md">
                   {displayName.charAt(0)}
                 </div>
               )}
             </div>
-            <div className="absolute -bottom-2 -right-2 flex h-8 w-8 items-center justify-center rounded-lg bg-surface text-primary shadow-lg">
+            <div className="absolute -bottom-2 -right-2 flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-surface shadow-lg">
               <Award size={18} />
             </div>
           </div>
 
           <div className="flex-1 text-center md:text-left">
             <div className="flex flex-col items-center gap-2 md:flex-row md:gap-4">
-              <h1 className="text-3xl font-bold tracking-tight md:text-4xl">{displayName}</h1>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-surface/20 px-4 py-1 text-sm font-semibold backdrop-blur-md">
+              <h1 className="text-3xl font-bold tracking-tight text-heading md:text-4xl">{displayName}</h1>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-4 py-1 text-sm font-semibold text-primary">
                 <Target size={14} />
                 {userRank}
               </span>
             </div>
-            <p className="mt-2 text-surface/80">{user.email}</p>
+            <p className="mt-2 text-text/60">{user.email}</p>
 
             <div className="mt-6 flex flex-wrap justify-center gap-4 md:justify-start">
-              <div className="flex items-center gap-2 rounded-xl bg-surface/10 px-4 py-2 text-sm backdrop-blur-sm">
-                <Calendar size={16} />
+              <div className="flex items-center gap-2 rounded-xl bg-light px-4 py-2 text-sm font-semibold text-heading shadow-sm">
+                <Calendar size={16} className="text-primary" />
                 <span>Joined {user.membershipDuration || 'recently'}</span>
               </div>
-              <div className="flex items-center gap-2 rounded-xl bg-surface/10 px-4 py-2 text-sm backdrop-blur-sm">
-                <TrendingUp size={16} />
+              <div className="flex items-center gap-2 rounded-xl bg-light px-4 py-2 text-sm font-semibold text-heading shadow-sm">
+                <TrendingUp size={16} className="text-primary" />
                 <span>Level 4 Eco Hero</span>
               </div>
             </div>
