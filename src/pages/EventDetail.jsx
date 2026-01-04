@@ -126,40 +126,52 @@ export default function EventDetail() {
   return (
     <div className="min-h-screen bg-light pb-20">
       {/* Immersive Hero Section */}
-      <div className="full-bleed relative h-[50vh] min-h-[350px] w-full overflow-hidden mb-8">
-        <div className="absolute inset-0 bg-dark/20" />
-        {/* Background Image */}
+      <div className="relative h-[50vh] min-h-[350px] w-full overflow-hidden mb-8">
+        {/* Background Image - Full Bleed */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000 hover:scale-105"
-          style={{ backgroundImage: `url(${event.image || 'https://images.unsplash.com/photo-1523301386673-98fe0c2f3254?auto=format&fit=crop&q=80'})` }}
+          style={{
+            backgroundImage: `url(${event.image || 'https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&q=80'})`,
+          }}
         />
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-dark via-dark/60 to-transparent" />
 
-        <div className="container relative h-full flex flex-col justify-end pb-10">
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-black/20" />
+
+        {/* Gradient Overlay - Bottom to Top */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+
+        {/* Content Container - Centered and Constrained */}
+        <div className="container relative mx-auto px-4 h-full flex flex-col justify-end pb-10">
           <motion.div
             initial="hidden"
             animate="visible"
             variants={containerVariants}
             className="max-w-4xl"
           >
-            <motion.div variants={itemVariants} className="mb-4 flex items-center gap-3">
-              <Link to="/events" className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full text-sm font-medium hover:bg-white/20">
+            <motion.div variants={itemVariants} className="mb-4 flex items-center gap-3 flex-wrap">
+              <Link
+                to="/events"
+                className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full text-sm font-medium hover:bg-white/20"
+              >
                 <ChevronLeft className="w-4 h-4" />
                 Back to Events
               </Link>
+
               {isJoined && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20">
                   <CheckCircle2 className="w-4 h-4" />
                   Registered
                 </span>
               )}
+
               {isCreator && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary text-white text-sm font-bold shadow-lg shadow-secondary/20">
                   <User className="w-4 h-4" />
                   Organizer
                 </span>
               )}
+
               {isCancelled && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-danger text-white text-sm font-bold">
                   <AlertCircle className="w-4 h-4" />
@@ -168,20 +180,25 @@ export default function EventDetail() {
               )}
             </motion.div>
 
-            <motion.h1 variants={itemVariants} className="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">
+            <motion.h1
+              variants={itemVariants}
+              className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight"
+            >
               {event.title}
             </motion.h1>
 
             <motion.div variants={itemVariants} className="flex flex-wrap gap-6 text-white/90">
-              <div className="flex items-center gap-2 bg-white/5 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/10">
+              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-5 py-3 rounded-xl border border-white/20">
                 <Calendar className="w-5 h-5 text-primary" />
                 <span className="font-medium">{formatDate(event.date)}</span>
               </div>
-              <div className="flex items-center gap-2 bg-white/5 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/10">
+
+              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-5 py-3 rounded-xl border border-white/20">
                 <MapPin className="w-5 h-5 text-secondary" />
                 <span className="font-medium">{event.location}</span>
               </div>
-              <div className="flex items-center gap-2 bg-white/5 backdrop-blur-sm px-4 py-2 rounded-xl border border-white/10">
+
+              <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-5 py-3 rounded-xl border border-white/20">
                 <Clock className="w-5 h-5 text-yellow-400" />
                 <span className="font-medium">{event.duration || '2 hours'}</span>
               </div>
@@ -189,8 +206,7 @@ export default function EventDetail() {
           </motion.div>
         </div>
       </div>
-
-      <div className="container relative z-10 -mt-8">
+      <div className="container mx-auto px-4 relative z-10 -mt-8">
         <motion.div
           className="grid grid-cols-1 lg:grid-cols-12 gap-8"
           initial="hidden"
