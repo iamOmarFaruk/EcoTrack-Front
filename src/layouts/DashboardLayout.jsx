@@ -136,16 +136,18 @@ export default function DashboardLayout() {
                   )}
                 >
                   <div className={clsx(
-                    'flex h-10 w-10 items-center justify-center rounded-lg transition-colors group-hover:bg-primary/10',
-                    isActive ? 'bg-primary text-surface' : 'bg-light text-text/50 group-hover:text-primary'
+                    'flex h-10 w-10 items-center justify-center rounded-lg transition-all duration-300',
+                    isActive
+                      ? 'bg-primary text-surface -rotate-12 shadow-sm shadow-primary/20'
+                      : 'bg-light text-text/50 group-hover:bg-primary/10 group-hover:text-primary group-hover:-rotate-12'
                   )}>
                     <item.icon size={18} strokeWidth={2.5} />
                   </div>
                   <div className="flex flex-col">
-                    <span className={clsx('text-sm font-semibold', isActive ? 'text-primary' : 'text-heading')}>
+                    <span className={clsx('text-sm font-semibold transition-colors', isActive ? 'text-primary' : 'text-heading')}>
                       {item.label}
                     </span>
-                    <span className="text-[10px] text-text/50">{item.description}</span>
+                    <span className="text-[10px] text-text/50 transition-colors">{item.description}</span>
                   </div>
                   {isActive && (
                     <motion.div
