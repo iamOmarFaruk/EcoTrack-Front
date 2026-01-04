@@ -9,6 +9,8 @@ import {
   Clock,
   Calendar,
   ChevronRight,
+  ChevronDown,
+  TrendingDown,
   TrendingUp,
   Target,
   Leaf,
@@ -150,12 +152,18 @@ export default function Profile() {
           animate={{ opacity: 1, scale: 1 }}
           className="col-span-1 flex flex-col rounded-2xl border border-border bg-surface p-6 shadow-sm lg:col-span-2"
         >
-          <div className="mb-6 flex items-center justify-between">
-            <h3 className="text-lg font-bold text-heading">Impact Over Time</h3>
-            <select className="rounded-lg border bg-light px-3 py-1 text-sm outline-none">
-              <option>Last 7 Days</option>
-              <option>Last 30 Days</option>
-            </select>
+          <div className="mb-8 flex items-center justify-between">
+            <h3 className="text-xl font-bold tracking-tight text-heading">Over Time</h3>
+            <div className="relative group">
+              <select className="appearance-none rounded-full border border-border bg-surface hover:bg-light/50 pl-5 pr-10 py-2.5 text-sm font-semibold text-heading outline-none transition-all cursor-pointer shadow-sm">
+                <option>Last 7 Days</option>
+                <option>Last 30 Days</option>
+                <option>Last 90 Days</option>
+              </select>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text/60 group-hover:text-primary transition-colors">
+                <ChevronDown size={14} strokeWidth={3} />
+              </div>
+            </div>
           </div>
           <div className="h-[250px] w-full">
             <ResponsiveContainer width="100%" height="100%">
