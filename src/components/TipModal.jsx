@@ -5,7 +5,8 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    category: 'General'
+    category: 'General',
+    status: 'published'
   })
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -20,13 +21,15 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
       setFormData({
         title: editTip.title || '',
         content: editTip.content || '',
-        category: editTip.category || 'General'
+        category: editTip.category || 'General',
+        status: editTip.status || 'published'
       })
     } else {
       setFormData({
         title: '',
         content: '',
-        category: 'General'
+        category: 'General',
+        status: 'published'
       })
     }
     setErrors({})
@@ -88,7 +91,7 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
 
       await onSubmit(tipData)
       // Only close modal on success
-      setFormData({ title: '', content: '', category: 'General' })
+      setFormData({ title: '', content: '', category: 'General', status: 'published' })
       setErrors({})
       onClose()
     } catch (error) {
@@ -174,6 +177,23 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
                   {cat}
                 </option>
               ))}
+            </select>
+          </div>
+
+          {/* Status */}
+          <div>
+            <label htmlFor="status" className="block text-sm font-medium text-text mb-1">
+              Status *
+            </label>
+            <select
+              id="status"
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary bg-surface"
+            >
+              <option value="published">Published (Visible to all)</option>
+              <option value="draft">Draft (Visible only to you)</option>
             </select>
           </div>
 

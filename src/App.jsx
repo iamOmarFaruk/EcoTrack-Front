@@ -30,6 +30,7 @@ const ForgotPassword = lazy(() => import('./pages/ForgotPassword.jsx'))
 const MyActivities = lazy(() => import('./pages/MyActivities.jsx'))
 const Profile = lazy(() => import('./pages/Profile.jsx'))
 const Settings = lazy(() => import('./pages/Settings.jsx'))
+const MyTips = lazy(() => import('./pages/MyTips.jsx'))
 const AddChallenge = lazy(() => import('./pages/AddChallenge.jsx'))
 const EditChallenge = lazy(() => import('./pages/EditChallenge.jsx'))
 const JoinChallenge = lazy(() => import('./pages/JoinChallenge.jsx'))
@@ -44,6 +45,57 @@ export default function App() {
         <BrowserRouter>
           <ScrollToTop />
           <Routes>
+            <Route element={<DashboardLayout />}>
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-activities"
+                element={
+                  <ProtectedRoute>
+                    <MyActivities />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/challenges/join/:id"
+                element={
+                  <ProtectedRoute>
+                    <JoinChallenge />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/events/my-events"
+                element={
+                  <ProtectedRoute>
+                    <MyEvents />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-tips"
+                element={
+                  <ProtectedRoute>
+                    <MyTips />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
+
             <Route element={<PublicLayout />}>
               <Route path="/" element={<Home />} />
               <Route path="/challenges" element={<Challenges />} />
@@ -91,50 +143,8 @@ export default function App() {
                 }
               />
               <Route path="/challenges/:slug" element={<ChallengeDetail />} />
-              <Route path="*" element={<NotFound />} />
             </Route>
-            <Route element={<DashboardLayout />}>
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/settings"
-                element={
-                  <ProtectedRoute>
-                    <Settings />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/my-activities"
-                element={
-                  <ProtectedRoute>
-                    <MyActivities />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/challenges/join/:id"
-                element={
-                  <ProtectedRoute>
-                    <JoinChallenge />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/events/my-events"
-                element={
-                  <ProtectedRoute>
-                    <MyEvents />
-                  </ProtectedRoute>
-                }
-              />
-            </Route>
+            <Route path="*" element={<NotFound />} />
           </Routes>
           <Toaster
             position="top-center"

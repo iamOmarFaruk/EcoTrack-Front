@@ -45,7 +45,6 @@ export default function Tips() {
     }
     if (searchQuery) params.search = searchQuery
     if (selectedCategory !== 'All') params.category = selectedCategory
-    if (activeTab === 'my' && user) params.authorId = user.uid
 
     return params
   }, [currentPage, sortBy, order, searchQuery, activeTab, selectedCategory, user])
@@ -222,26 +221,22 @@ export default function Tips() {
             <div className="flex p-1 bg-muted rounded-xl w-fit">
               {[
                 { id: 'all', label: 'All Tips' },
-                { id: 'trending', label: 'Trending' },
-                { id: 'my', label: 'My Tips', auth: true }
-              ].map((tab) => {
-                if (tab.auth && !user) return null;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => {
-                      setActiveTab(tab.id);
-                      setCurrentPage(1);
-                    }}
-                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${activeTab === tab.id
-                      ? 'bg-surface text-primary shadow-sm ring-1 ring-border'
-                      : 'text-text/60 hover:text-text hover:bg-surface/50'
-                      }`}
-                  >
-                    {tab.label}
-                  </button>
-                )
-              })}
+                { id: 'trending', label: 'Trending' }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveTab(tab.id)
+                    setCurrentPage(1)
+                  }}
+                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${activeTab === tab.id
+                    ? 'bg-surface text-primary shadow-sm ring-1 ring-border'
+                    : 'text-text/60 hover:text-text hover:bg-surface/50'
+                    }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
 
             {/* Search and Sort */}

@@ -9,7 +9,8 @@ import {
   ChevronRight,
   Menu,
   X,
-  Lightbulb
+  Lightbulb,
+  BookOpen
 } from 'lucide-react'
 import clsx from 'clsx'
 import Navbar from '../components/Navbar.jsx'
@@ -42,6 +43,12 @@ export default function DashboardLayout() {
       label: 'My Events',
       icon: Calendar,
       description: 'Events you create or join'
+    },
+    {
+      to: '/my-tips',
+      label: 'My Tips',
+      icon: BookOpen,
+      description: 'Manage your eco-tips'
     },
     {
       to: '/settings',
