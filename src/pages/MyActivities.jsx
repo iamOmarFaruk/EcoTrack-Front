@@ -1,50 +1,38 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  Activity,
+  CheckCircle2,
+  Clock,
+  ArrowUpRight,
+  Trophy,
+  Flame,
+  Search,
+  Filter
+} from 'lucide-react'
 import SectionHeading from '../components/SectionHeading.jsx'
 import { ChallengeCardSkeleton } from '../components/Skeleton.jsx'
-import { challengeApi } from '../services/api.js'
 import { useAuth } from '../context/AuthContext.jsx'
-import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
 import { useMyCreatedChallenges, useMyJoinedChallenges } from '../hooks/queries'
-import { motion, AnimatePresence } from 'framer-motion'
 import { containerVariants, itemVariants } from '../utils/animations'
 
 export default function MyActivities() {
   const { auth } = useAuth()
-  const [currentPage, setCurrentPage] = useState(1)
   const [statusFilter, setStatusFilter] = useState('all')
+  const [searchQuery, setSearchQuery] = useState('')
 
   const {
     data: joinedChallenges = [],
     isLoading: loadingJoined
-  } = useMyJoinedChallenges({ page: currentPage, limit: 12 })
+  } = useMyJoinedChallenges({ limit: 50 })
 
   const {
     data: createdChallenges = [],
     isLoading: loadingCreated
   } = useMyCreatedChallenges()
 
-  const { activities, summary, pagination } = useMemo(() => {
-    // Transform joined challenges
-    // Note: useMyJoinedChallenges already returns normalized data array from queries.js
-    // But we need to match the structure MyActivities expects which includes userProgress
-
-    // The previous implementation fetched raw data. The hook returns normalized challenges.
-    // However, for "activities", we need extra info like "userProgress".
-    // Normalized challenge object from queries.js:
-    /*
-      {
-        id: ...,
-        title: ...,
-        ...
-      }
-    */
-    // The previous code mapped raw response.
-    // If the unified hook returns just the challenge details, we might be missing specific "userProgress" if it was in the joined response.
-    // Queries.js normalizeChallenge doesn't seem to include "userProgress" explicitly unless it was part of the challenge object.
-
-    // Let's assume standard properties for now.
-
+  const { activities, summary } = useMemo(() => {
     const transformedJoined = Array.isArray(joinedChallenges) ? joinedChallenges.map(challenge => ({
       _id: challenge.id,
       challenge: {
@@ -81,9 +69,17 @@ export default function MyActivities() {
       }
     })) : []
 
-    const all = [...transformedCreated, ...transformedJoined]
+    let all = [...transformedCreated, ...transformedJoined]
 
-    // Filter
+    // Search filter
+    if (searchQuery) {
+      all = all.filter(a =>
+        a.challenge.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        a.challenge.category.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    }
+
+    // Status filter
     let filtered = all
     if (statusFilter === 'active') {
       filtered = all.filter(a => a.userProgress.status === 'Active' || a.userProgress.status === 'Creator')
@@ -96,209 +92,163 @@ export default function MyActivities() {
       summary: {
         total: all.length,
         active: all.filter(a => a.userProgress.status === 'Active' || a.userProgress.status === 'Creator').length,
-        completed: all.filter(a => a.userProgress.status === 'Completed').length
-      },
-      // Pagination only applies to joined challenges effectively in this UI as verified by previous code
-      // But since we merge them, true pagination is complex. 
-      // The previous code just passed "joinedResponse?.pagination".
-      // Our hook returns an array, not the full response object with pagination.
-      // We might need to update the hook to return pagination info if we want to keep it.
-      // For now, I'll omit pagination or set it to null to avoid errors.
-      pagination: null
+        completed: all.filter(a => a.userProgress.status === 'Completed').length,
+        streak: 5 // Mock streak
+      }
     }
-  }, [joinedChallenges, createdChallenges, statusFilter])
+  }, [joinedChallenges, createdChallenges, statusFilter, searchQuery])
 
   const loading = loadingJoined || loadingCreated
 
-  // ... (rest of render code)
-
-
-
-
   return (
-    <div className="max-w-6xl mx-auto">
-      <SectionHeading
-        badge="Your Journey"
-        title="My Activities"
-        subtitle="Track your eco-friendly journey and achievements"
-      />
+    <div className="space-y-8 pb-12">
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-heading">My Activities</h1>
+          <p className="text-text/60">Track your eco-journey and achievements</p>
+        </div>
+        <Link
+          to="/challenges"
+          className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-surface shadow-lg shadow-primary/20 transition-transform active:scale-95"
+        >
+          Explore More
+          <ArrowUpRight size={16} />
+        </Link>
+      </header>
 
       {/* Summary Stats */}
-      {summary && (
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
-        >
-          <motion.div variants={itemVariants} className="bg-surface p-6 rounded-xl border border-border text-center">
-            <div className="text-3xl font-bold text-primary">{summary.total}</div>
-            <div className="text-sm text-text/80 mt-1">Total Challenges</div>
-          </motion.div>
-          <motion.div variants={itemVariants} className="bg-surface p-6 rounded-xl border border-border text-center">
-            <div className="text-3xl font-bold text-secondary">{summary.active}</div>
-            <div className="text-sm text-text/80 mt-1">Active Challenges</div>
-          </motion.div>
-          <motion.div variants={itemVariants} className="bg-surface p-6 rounded-xl border border-border text-center">
-            <div className="text-3xl font-bold text-secondary">{summary.completed}</div>
-            <div className="text-sm text-text/80 mt-1">Completed</div>
-          </motion.div>
-        </motion.div>
-      )}
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {[
+          { label: 'Total', value: summary.total, icon: Activity, color: 'text-primary' },
+          { label: 'Active', value: summary.active, icon: Flame, color: 'text-orange-500' },
+          { label: 'Completed', value: summary.completed, icon: CheckCircle2, color: 'text-green-500' },
+          { label: 'Streak', value: `${summary.streak}d`, icon: Trophy, color: 'text-amber-500' }
+        ].map((stat) => (
+          <div key={stat.label} className="rounded-2xl border border-border bg-surface p-5 shadow-sm">
+            <div className="flex items-center justify-between">
+              <stat.icon className={stat.color} size={20} />
+              <div className="h-6 w-1 rounded-full bg-light" />
+            </div>
+            <p className="mt-4 text-2xl font-bold text-heading">{stat.value}</p>
+            <p className="text-xs font-medium text-text/40">{stat.label}</p>
+          </div>
+        ))}
+      </div>
 
-      {/* Filter Tabs */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-        className="flex gap-2 mb-6"
-      >
-        <motion.button
-          variants={itemVariants}
-          onClick={() => setStatusFilter('all')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${statusFilter === 'all'
-            ? 'bg-primary text-surface'
-            : 'bg-surface text-text/80 border border-border hover:bg-light'
-            }`}
-        >
-          All
-        </motion.button>
-        <motion.button
-          variants={itemVariants}
-          onClick={() => setStatusFilter('active')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${statusFilter === 'active'
-            ? 'bg-primary text-surface'
-            : 'bg-surface text-text/80 border border-border hover:bg-light'
-            }`}
-        >
-          Active
-        </motion.button>
-        <motion.button
-          variants={itemVariants}
-          onClick={() => setStatusFilter('completed')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${statusFilter === 'completed'
-            ? 'bg-primary text-surface'
-            : 'bg-surface text-text/80 border border-border hover:bg-light'
-            }`}
-        >
-          Completed
-        </motion.button>
-      </motion.div>
+      {/* Filters & Search */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text/40" size={18} />
+          <input
+            type="text"
+            placeholder="Search activities..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full rounded-xl border border-border bg-surface py-2.5 pl-10 pr-4 outline-none focus:ring-2 focus:ring-primary/20"
+          />
+        </div>
+        <div className="flex items-center gap-2 rounded-xl border border-border bg-surface p-1">
+          {['all', 'active', 'completed'].map((status) => (
+            <button
+              key={status}
+              onClick={() => setStatusFilter(status)}
+              className={`rounded-lg px-4 py-1.5 text-xs font-semibold capitalize transition-all ${statusFilter === status ? 'bg-primary text-surface shadow-md' : 'text-text/60 hover:text-text'
+                }`}
+            >
+              {status}
+            </button>
+          ))}
+        </div>
+      </div>
 
-      {/* Activities Grid */}
+      {/* Activities Table/Grid */}
       <AnimatePresence mode="wait">
         {loading ? (
           <motion.div
             key="loading"
-            variants={containerVariants}
-            initial="hidden"
-            animate="show"
-            exit="hidden"
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
           >
-            {Array.from({ length: 9 }).map((_, i) => (
-              <motion.div key={i} variants={itemVariants}>
-                <ChallengeCardSkeleton />
-              </motion.div>
-            ))}
+            {Array.from({ length: 6 }).map((_, i) => <ChallengeCardSkeleton key={i} />)}
           </motion.div>
         ) : activities.length === 0 ? (
           <motion.div
             key="empty"
-            variants={itemVariants}
-            initial="hidden"
-            animate="show"
-            className="bg-surface rounded-xl p-12 border border-border shadow-sm text-center"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-border py-20 text-center"
           >
-            <div className="w-24 h-24 bg-gradient-to-br from-primary/15 to-primary/15 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-4xl">🌱</span>
-            </div>
-            <h3 className="text-2xl font-bold text-heading mb-4">No activities yet</h3>
-            <p className="text-lg text-text/80 mb-6 max-w-2xl mx-auto">
-              Start joining challenges to track your eco-friendly journey!
-            </p>
-            <Link
-              to="/challenges"
-              className="inline-block px-6 py-3 bg-primary text-surface rounded-lg font-medium hover:bg-primary transition-colors"
-            >
-              Browse Challenges
-            </Link>
+            <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-light text-4xl">🌱</div>
+            <h3 className="text-xl font-bold text-heading">No activities found</h3>
+            <p className="mt-2 text-text/60">Start joining challenges to track your impact!</p>
+            <Link to="/challenges" className="mt-6 text-sm font-bold text-primary hover:underline">Browse Challenges</Link>
           </motion.div>
         ) : (
           <motion.div
             key="content"
-            variants={containerVariants}
             initial="hidden"
             animate="show"
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={containerVariants}
+            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
           >
             {activities.map((activity) => (
               <motion.div
                 key={activity._id}
                 variants={itemVariants}
+                className="group relative overflow-hidden rounded-2xl border border-border bg-surface transition-all hover:shadow-xl hover:shadow-primary/5"
               >
-                <div className="bg-surface rounded-xl border border-border overflow-hidden hover:shadow-lg transition-shadow h-full">
-                  {activity.challenge?.imageUrl && (
-                    <div className="h-48 bg-muted">
-                      <img
-                        src={activity.challenge.imageUrl}
-                        alt={activity.challenge.title}
-                        className="w-full h-full object-cover"
+                {activity.challenge?.imageUrl && (
+                  <div className="h-40 overflow-hidden">
+                    <img
+                      src={activity.challenge.imageUrl}
+                      alt={activity.challenge.title}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                  </div>
+                )}
+                <div className="p-5">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
+                      {activity.challenge?.category}
+                    </span>
+                    <span className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${activity.userProgress?.status === 'Completed' ? 'bg-green-500/10 text-green-500' : 'bg-primary/10 text-primary'
+                      }`}>
+                      {activity.userProgress?.status === 'Completed' ? <CheckCircle2 size={10} /> : <Clock size={10} />}
+                      {activity.userProgress?.status}
+                    </span>
+                  </div>
+                  <h3 className="line-clamp-1 font-bold text-heading">{activity.challenge?.title}</h3>
+
+                  {/* Progress Section */}
+                  <div className="mt-4">
+                    <div className="mb-1.5 flex items-center justify-between text-[11px] font-bold">
+                      <span className="text-text/40">Progress</span>
+                      <span className="text-heading">{activity.userProgress?.progress}%</span>
+                    </div>
+                    <div className="h-1.5 w-full rounded-full bg-light overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${activity.userProgress?.progress}%` }}
+                        transition={{ duration: 1, ease: "easeOut" }}
+                        className="h-full bg-gradient-to-r from-primary to-secondary"
                       />
                     </div>
-                  )}
-                  <div className="p-6">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded">
-                        {activity.challenge?.category || 'Challenge'}
-                      </span>
-                      <span
-                        className={`text-xs font-medium px-2 py-1 rounded ${activity.userProgress?.status === 'Completed'
-                          ? 'bg-secondary/10 text-secondary'
-                          : 'bg-secondary/10 text-secondary'
-                          }`}
-                      >
-                        {activity.userProgress?.status || 'Ongoing'}
-                      </span>
-                    </div>
-                    <h3 className="font-bold text-lg text-heading mb-2 line-clamp-2">
-                      {activity.challenge?.title}
-                    </h3>
-                    <p className="text-sm text-text/80 mb-4 line-clamp-2">
-                      {activity.challenge?.description}
-                    </p>
+                  </div>
 
-                    {/* Progress Bar */}
-                    <div className="mb-4">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs text-text/80">Progress</span>
-                        <span className="text-xs font-semibold text-heading">
-                          {activity.userProgress?.progress || 0}%
-                        </span>
+                  <div className="mt-6 flex items-center justify-between">
+                    {activity.userProgress?.impactAchieved > 0 ? (
+                      <div className="flex items-center gap-1 text-xs font-bold text-primary">
+                        <Flame size={14} />
+                        {activity.userProgress.impactAchieved} {activity.challenge?.impactMetric}
                       </div>
-                      <div className="w-full bg-muted rounded-full h-2">
-                        <div
-                          className="bg-gradient-to-r from-primary to-secondary h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${activity.userProgress?.progress || 0}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Impact */}
-                    {activity.userProgress?.impactAchieved > 0 && (
-                      <div className="text-sm text-text/80 mb-3">
-                        <span className="font-semibold text-primary">
-                          {activity.userProgress.impactAchieved}
-                        </span>{' '}
-                        {activity.challenge?.impactMetric || 'impact points'}
-                      </div>
-                    )}
-
+                    ) : <div />}
                     <Link
                       to={`/challenges/${activity.challenge?.slug || activity.challenge?._id}`}
-                      className="block w-full text-center px-4 py-2 bg-primary/10 text-primary rounded-lg font-medium hover:bg-primary/15 transition-colors"
+                      className="rounded-lg bg-light p-2 text-text transition-colors hover:bg-primary hover:text-surface"
                     >
-                      View Details
+                      <ArrowUpRight size={18} />
                     </Link>
                   </div>
                 </div>
@@ -307,30 +257,6 @@ export default function MyActivities() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Pagination */}
-      {pagination && pagination.totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 mt-8">
-          <button
-            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-            disabled={!pagination.hasPrev}
-            className="px-4 py-2 rounded-lg border border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-light"
-          >
-            Previous
-          </button>
-          <span className="px-4 py-2 text-text/80">
-            Page {pagination.page} of {pagination.totalPages}
-          </span>
-          <button
-            onClick={() => setCurrentPage(p => p + 1)}
-            disabled={!pagination.hasNext}
-            className="px-4 py-2 rounded-lg border border-border font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-light"
-          >
-            Next
-          </button>
-        </div>
-      )}
-
-    </div >
+    </div>
   )
 }
