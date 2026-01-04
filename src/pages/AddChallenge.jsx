@@ -310,7 +310,7 @@ export default function AddChallenge() {
       {/* Decorative Background */}
       <div className="absolute top-0 left-0 w-full h-[300px] bg-gradient-to-b from-primary/10 via-primary/5 to-transparent pointer-events-none" />
 
-      <div className="container max-w-5xl mx-auto pt-8 relative z-10">
+      <div className="container max-w-7xl mx-auto pt-8 relative z-10">
         {/* Navigation */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}

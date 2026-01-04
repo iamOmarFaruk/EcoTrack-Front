@@ -253,7 +253,7 @@ export default function EditChallenge() {
     <div className="min-h-screen bg-light pb-20">
       <div className="absolute top-0 left-0 w-full h-[300px] bg-gradient-to-b from-primary/10 via-primary/5 to-transparent pointer-events-none" />
 
-      <div className="container max-w-5xl mx-auto pt-8 relative z-10">
+      <div className="container max-w-7xl mx-auto pt-8 relative z-10">
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="mb-8">
           <Link to={`/challenges/${slug}`} className="inline-flex items-center gap-2 text-text/60 hover:text-primary transition-colors group">
             <div className="w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center group-hover:border-primary/30 group-hover:bg-primary/5 transition-all">
