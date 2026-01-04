@@ -160,7 +160,7 @@ export const useChallengeMutations = () => {
         mutationFn: (data) => challengeApi.create(data),
         onSuccess: () => {
             showSuccess('Challenge created successfully!')
-            queryClient.invalidateQueries(queryKeys.challenges.all)
+            queryClient.invalidateQueries({ queryKey: queryKeys.challenges.all })
         },
         onError: (error) => showError(error.message || 'Failed to create challenge')
     })
@@ -169,8 +169,8 @@ export const useChallengeMutations = () => {
         mutationFn: ({ id, data }) => challengeApi.update(id, data),
         onSuccess: (data, variables) => {
             showSuccess('Challenge updated!')
-            queryClient.invalidateQueries(queryKeys.challenges.detail(variables.id))
-            queryClient.invalidateQueries(queryKeys.challenges.lists())
+            queryClient.invalidateQueries({ queryKey: queryKeys.challenges.detail(variables.id) })
+            queryClient.invalidateQueries({ queryKey: queryKeys.challenges.lists() })
         },
         onError: (error) => showError(error.message)
     })
@@ -179,7 +179,7 @@ export const useChallengeMutations = () => {
         mutationFn: (id) => challengeApi.delete(id),
         onSuccess: () => {
             showSuccess('Challenge deleted')
-            queryClient.invalidateQueries(queryKeys.challenges.all)
+            queryClient.invalidateQueries({ queryKey: queryKeys.challenges.all })
         },
         onError: (error) => showError(error.message)
     })
@@ -188,8 +188,8 @@ export const useChallengeMutations = () => {
         mutationFn: (id) => challengeApi.join(id),
         onSuccess: (data, id) => {
             showSuccess('Joined challenge!')
-            queryClient.invalidateQueries(queryKeys.challenges.detail(id))
-            queryClient.invalidateQueries(queryKeys.challenges.lists())
+            queryClient.invalidateQueries({ queryKey: queryKeys.challenges.detail(id) })
+            queryClient.invalidateQueries({ queryKey: queryKeys.challenges.lists() })
         },
         onError: (error) => showError(error.message)
     })
@@ -198,7 +198,7 @@ export const useChallengeMutations = () => {
         mutationFn: (id) => challengeApi.leave(id),
         onSuccess: (data, id) => {
             showSuccess('Left challenge')
-            queryClient.invalidateQueries(queryKeys.challenges.detail(id))
+            queryClient.invalidateQueries({ queryKey: queryKeys.challenges.detail(id) })
         },
         onError: (error) => showError(error.message)
     })
@@ -214,6 +214,7 @@ const normalizeTip = (tip) => {
     if (!tip || typeof tip !== 'object') return null;
     return {
         ...tip,
+        status: tip.status || 'published',
         id: tip.id || tip._id,
         upvotes: Number.isFinite(Number(tip.upvoteCount))
             ? Number(tip.upvoteCount)
@@ -269,7 +270,7 @@ export const useTipMutations = () => {
         mutationFn: (data) => tipsApi.create(data),
         onSuccess: () => {
             showSuccess('Tip shared successfully!')
-            queryClient.invalidateQueries(queryKeys.tips.all)
+            queryClient.invalidateQueries({ queryKey: queryKeys.tips.all })
         },
         onError: (error) => showError(error.message)
     })
@@ -278,7 +279,7 @@ export const useTipMutations = () => {
         mutationFn: ({ id, data }) => tipsApi.update(id, data),
         onSuccess: (data, variables) => {
             showSuccess('Tip updated!')
-            queryClient.invalidateQueries(queryKeys.tips.all)
+            queryClient.invalidateQueries({ queryKey: queryKeys.tips.all })
         },
         onError: (error) => showError(error.message)
     })
@@ -287,7 +288,7 @@ export const useTipMutations = () => {
         mutationFn: (id) => tipsApi.delete(id),
         onSuccess: () => {
             showSuccess('Tip deleted')
-            queryClient.invalidateQueries(queryKeys.tips.all)
+            queryClient.invalidateQueries({ queryKey: queryKeys.tips.all })
         },
         onError: (error) => showError(error.message)
     })
@@ -308,7 +309,7 @@ export const useTipMutations = () => {
         },
         onSuccess: () => {
             // Invalidate all tip lists to show new vote counts
-            queryClient.invalidateQueries(queryKeys.tips.lists())
+            queryClient.invalidateQueries({ queryKey: queryKeys.tips.lists() })
         },
         onError: (error) => showError(error.message)
     })
@@ -397,7 +398,7 @@ export const useEventMutations = () => {
         mutationFn: (data) => eventApi.create(data),
         onSuccess: () => {
             showSuccess('Event created!')
-            queryClient.invalidateQueries(queryKeys.events.all)
+            queryClient.invalidateQueries({ queryKey: queryKeys.events.all })
         },
         onError: (error) => showError(error.message)
     })
@@ -406,8 +407,8 @@ export const useEventMutations = () => {
         mutationFn: (id) => eventApi.join(id),
         onSuccess: (data, id) => {
             showSuccess('Joined event!')
-            queryClient.invalidateQueries(queryKeys.events.detail(id))
-            queryClient.invalidateQueries(queryKeys.events.lists())
+            queryClient.invalidateQueries({ queryKey: queryKeys.events.detail(id) })
+            queryClient.invalidateQueries({ queryKey: queryKeys.events.lists() })
         },
         onError: (error) => showError(error.message)
     })
@@ -416,8 +417,8 @@ export const useEventMutations = () => {
         mutationFn: (id) => eventApi.leave(id),
         onSuccess: (data, id) => {
             showSuccess('Left event')
-            queryClient.invalidateQueries(queryKeys.events.detail(id))
-            queryClient.invalidateQueries(queryKeys.events.lists())
+            queryClient.invalidateQueries({ queryKey: queryKeys.events.detail(id) })
+            queryClient.invalidateQueries({ queryKey: queryKeys.events.lists() })
         },
         onError: (error) => showError(error.message)
     })
@@ -426,7 +427,7 @@ export const useEventMutations = () => {
         mutationFn: (id) => eventApi.delete(id),
         onSuccess: () => {
             showSuccess('Event deleted')
-            queryClient.invalidateQueries(queryKeys.events.all)
+            queryClient.invalidateQueries({ queryKey: queryKeys.events.all })
         },
         onError: (error) => showError(error.message)
     })
