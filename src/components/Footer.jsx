@@ -1,36 +1,80 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { SiGithub, SiX, SiInstagram, SiLinkedin } from 'react-icons/si'
-import { RiMailLine, RiSendPlaneFill, RiMapPinLine, RiPhoneLine, RiPlantLine, RiLightbulbLine, RiCalendarEventLine, RiTeamLine } from 'react-icons/ri'
+import { RiMailLine, RiSendPlaneFill, RiMapPinLine, RiPhoneLine, RiPlantLine, RiLightbulbLine, RiCalendarEventLine } from 'react-icons/ri'
 import Logo from './Logo.jsx'
+import { useSiteContent } from '../hooks/queries'
 
-const footerLinks = {
-  explore: [
-    { label: 'Challenges', path: '/challenges', icon: RiPlantLine },
-    { label: 'Impact Tips', path: '/tips', icon: RiLightbulbLine },
-    { label: 'Local Events', path: '/events', icon: RiCalendarEventLine },
+const defaultFooter = {
+  brand: {
+    title: 'EcoTrack',
+    description: 'Empowering individuals to track their environmental impact and build a sustainable future through community-driven action.'
+  },
+  exploreLinks: [
+    { label: 'Challenges', path: '/challenges', icon: 'plant' },
+    { label: 'Impact Tips', path: '/tips', icon: 'bulb' },
+    { label: 'Local Events', path: '/events', icon: 'calendar' },
   ],
-  resources: [
+  resourceLinks: [
     { label: 'About Us', path: '/about' },
     { label: 'Contact', path: '/contact' },
     { label: 'FAQ', path: '/faq' },
     { label: 'Sustainability Guide', path: '/guide' },
   ],
-  legal: [
+  legalLinks: [
     { label: 'Privacy Policy', path: '/privacy' },
     { label: 'Terms of Service', path: '/terms' },
     { label: 'Cookie Policy', path: '/cookies' },
-  ]
+  ],
+  contact: {
+    address: 'Green District, Eco Avenue 42, Earth',
+    phone: '+1 (555) ECO-TRACK',
+    email: 'hello@ecotrack.com'
+  },
+  socialLinks: [
+    { label: 'GitHub', href: '#', icon: 'github' },
+    { label: 'X (Twitter)', href: '#', icon: 'x' },
+    { label: 'Instagram', href: '#', icon: 'instagram' },
+    { label: 'LinkedIn', href: '#', icon: 'linkedin' },
+  ],
+  newsletter: {
+    title: 'Stay Updated',
+    subtitle: 'Get monthly sustainability tips and community updates directly.'
+  },
+  credits: {
+    author: 'Omar Faruk',
+    authorUrl: 'https://github.com/iamOmarFaruk'
+  }
 }
 
-const socialLinks = [
-  { icon: SiGithub, href: '#', label: 'GitHub' },
-  { icon: SiX, href: '#', label: 'X (Twitter)' },
-  { icon: SiInstagram, href: '#', label: 'Instagram' },
-  { icon: SiLinkedin, href: '#', label: 'LinkedIn' },
-]
+const exploreIcons = {
+  plant: RiPlantLine,
+  bulb: RiLightbulbLine,
+  calendar: RiCalendarEventLine
+}
+
+const socialIcons = {
+  github: SiGithub,
+  x: SiX,
+  instagram: SiInstagram,
+  linkedin: SiLinkedin
+}
 
 export default function Footer() {
+  const { data } = useSiteContent()
+  const footer = {
+    ...defaultFooter,
+    ...(data?.footer || {}),
+    exploreLinks: data?.footer?.exploreLinks?.length ? data.footer.exploreLinks : defaultFooter.exploreLinks,
+    resourceLinks: data?.footer?.resourceLinks?.length ? data.footer.resourceLinks : defaultFooter.resourceLinks,
+    legalLinks: data?.footer?.legalLinks?.length ? data.footer.legalLinks : defaultFooter.legalLinks,
+    socialLinks: data?.footer?.socialLinks?.length ? data.footer.socialLinks : defaultFooter.socialLinks,
+    contact: { ...defaultFooter.contact, ...(data?.footer?.contact || {}) },
+    newsletter: { ...defaultFooter.newsletter, ...(data?.footer?.newsletter || {}) },
+    credits: { ...defaultFooter.credits, ...(data?.footer?.credits || {}) },
+    brand: { ...defaultFooter.brand, ...(data?.footer?.brand || {}) }
+  }
+
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -65,24 +109,27 @@ export default function Footer() {
           <motion.div variants={itemVariants} className="space-y-6">
             <div className="flex items-center gap-3">
               <Logo className="h-9 w-9" />
-              <span className="text-xl font-heading font-bold tracking-tight text-white">EcoTrack</span>
+              <span className="text-xl font-heading font-bold tracking-tight text-white">{footer.brand.title}</span>
             </div>
             <p className="text-sm leading-relaxed max-w-xs">
-              Empowering individuals to track their environmental impact and build a sustainable future through community-driven action.
+              {footer.brand.description}
             </p>
             <div className="flex items-center gap-4">
-              {socialLinks.map((social, index) => (
-                <motion.a
-                  key={index}
-                  href={social.href}
-                  aria-label={social.label}
-                  className="p-2 rounded-full bg-white/5 text-white/60 hover:bg-primary hover:text-white transition-all duration-300"
-                  whileHover={{ y: -3 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <social.icon size={18} />
-                </motion.a>
-              ))}
+              {footer.socialLinks.map((social, index) => {
+                const Icon = socialIcons[social.icon] || SiGithub
+                return (
+                  <motion.a
+                    key={index}
+                    href={social.href}
+                    aria-label={social.label}
+                    className="p-2 rounded-full bg-white/5 text-white/60 hover:bg-primary hover:text-white transition-all duration-300"
+                    whileHover={{ y: -3 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Icon size={18} />
+                  </motion.a>
+                )
+              })}
             </div>
           </motion.div>
 
@@ -90,17 +137,20 @@ export default function Footer() {
           <motion.div variants={itemVariants} className="space-y-6">
             <h3 className="text-sm font-bold uppercase tracking-wider text-white">Explore</h3>
             <ul className="space-y-3">
-              {footerLinks.explore.map((link, index) => (
-                <li key={index}>
-                  <Link
-                    to={link.path}
-                    className="flex items-center gap-2 text-sm transition-colors hover:text-white group"
-                  >
-                    <link.icon className="text-primary shrink-0" size={18} />
-                    <span>{link.label}</span>
-                  </Link>
-                </li>
-              ))}
+              {footer.exploreLinks.map((link, index) => {
+                const Icon = exploreIcons[link.icon] || RiPlantLine
+                return (
+                  <li key={index}>
+                    <Link
+                      to={link.path}
+                      className="flex items-center gap-2 text-sm transition-colors hover:text-white group"
+                    >
+                      <Icon className="text-primary shrink-0" size={18} />
+                      <span>{link.label}</span>
+                    </Link>
+                  </li>
+                )
+              })}
             </ul>
           </motion.div>
 
@@ -110,24 +160,24 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2">
                 <RiMapPinLine className="mt-1 text-primary shrink-0" />
-                <span>Green District, Eco Avenue 42, Earth</span>
+                <span>{footer.contact.address}</span>
               </li>
               <li className="flex items-center gap-2">
-                < RiPhoneLine className="text-primary shrink-0" />
-                <span>+1 (555) ECO-TRACK</span>
+                <RiPhoneLine className="text-primary shrink-0" />
+                <span>{footer.contact.phone}</span>
               </li>
               <li className="flex items-center gap-2 pt-2">
                 <RiMailLine className="text-primary shrink-0" />
-                <a href="mailto:hello@ecotrack.com" className="hover:text-white transition-colors">hello@ecotrack.com</a>
+                <a href={`mailto:${footer.contact.email}`} className="hover:text-white transition-colors">{footer.contact.email}</a>
               </li>
             </ul>
           </motion.div>
 
           {/* Newsletter Section */}
           <motion.div variants={itemVariants} className="space-y-6">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-white">Stay Updated</h3>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-white">{footer.newsletter.title}</h3>
             <p className="text-sm leading-relaxed">
-              Get monthly sustainability tips and community updates directly.
+              {footer.newsletter.subtitle}
             </p>
             <form className="relative group" onSubmit={(e) => e.preventDefault()}>
               <input
@@ -152,7 +202,7 @@ export default function Footer() {
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs">
               <span>© {new Date().getFullYear()} EcoTrack. All rights reserved.</span>
               <div className="flex gap-4">
-                {footerLinks.legal.map((link, index) => (
+                {footer.legalLinks.map((link, index) => (
                   <Link
                     key={index}
                     to={link.path}
@@ -167,13 +217,13 @@ export default function Footer() {
             <div className="flex items-center gap-2 text-xs font-medium">
               <span className="opacity-60">Built with ❤️ by</span>
               <a
-                href="https://github.com/iamOmarFaruk"
+                href={footer.credits.authorUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-center gap-1.5 text-white/90 hover:text-primary transition-colors duration-300"
               >
                 <span className="bg-primary/20 text-primary px-1.5 py-0.5 rounded text-[10px] uppercase tracking-tighter group-hover:bg-primary group-hover:text-white transition-colors">Dev</span>
-                <span className="font-bold underline decoration-primary/20 underline-offset-4 group-hover:decoration-primary">Omar Faruk</span>
+                <span className="font-bold underline decoration-primary/20 underline-offset-4 group-hover:decoration-primary">{footer.credits.author}</span>
                 <SiGithub className="text-[12px] opacity-50 group-hover:opacity-100" />
               </a>
             </div>
@@ -183,4 +233,3 @@ export default function Footer() {
     </footer>
   )
 }
-

@@ -4,7 +4,9 @@ import { lazy, Suspense } from 'react'
 import ScrollToTop from './components/ScrollToTop.jsx'
 import PublicLayout from './layouts/PublicLayout.jsx'
 import DashboardLayout from './layouts/DashboardLayout.jsx'
+import AdminLayout from './layouts/AdminLayout.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
+import ProtectedAdminRoute from './components/ProtectedAdminRoute.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { ThemeProvider } from './context/ThemeContext.jsx'
 import EcoLoader from './components/EcoLoader.jsx'
@@ -37,6 +39,12 @@ const JoinChallenge = lazy(() => import('./pages/JoinChallenge.jsx'))
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy.jsx'))
 const TermsOfService = lazy(() => import('./pages/TermsOfService.jsx'))
 const CookiePolicy = lazy(() => import('./pages/CookiePolicy.jsx'))
+const AdminLogin = lazy(() => import('./pages/admin/AdminLogin.jsx'))
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard.jsx'))
+const AdminContent = lazy(() => import('./pages/admin/AdminContent.jsx'))
+const AdminModeration = lazy(() => import('./pages/admin/AdminModeration.jsx'))
+const AdminUsers = lazy(() => import('./pages/admin/AdminUsers.jsx'))
+const AdminActivity = lazy(() => import('./pages/admin/AdminActivity.jsx'))
 
 export default function App() {
   return (
@@ -143,6 +151,22 @@ export default function App() {
                 }
               />
               <Route path="/challenges/:slug" element={<ChallengeDetail />} />
+            </Route>
+
+            <Route path="/site/control-panel" element={<Suspense fallback={<EcoLoader />}><AdminLogin /></Suspense>} />
+
+            <Route
+              element={
+                <ProtectedAdminRoute>
+                  <AdminLayout />
+                </ProtectedAdminRoute>
+              }
+            >
+              <Route path="/site/control-panel/dashboard" element={<AdminDashboard />} />
+              <Route path="/site/control-panel/content" element={<AdminContent />} />
+              <Route path="/site/control-panel/moderation" element={<AdminModeration />} />
+              <Route path="/site/control-panel/users" element={<AdminUsers />} />
+              <Route path="/site/control-panel/activity" element={<AdminActivity />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

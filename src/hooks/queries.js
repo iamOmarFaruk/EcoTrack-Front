@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
-import { challengeApi, tipsApi, eventApi, userApi, authApi } from '../services/api'
+import { challengeApi, tipsApi, eventApi, userApi, authApi, siteContentApi } from '../services/api'
 import { showSuccess, showError } from '../utils/toast'
 
 /* -------------------------------------------------------------------------- */
@@ -37,6 +37,9 @@ export const queryKeys = {
         profile: ['user', 'profile'],
         stats: (id) => ['user', 'stats', id],
         activities: (id, params) => ['user', 'activities', id, { ...params }]
+    },
+    site: {
+        content: ['site', 'content']
     }
 }
 
@@ -148,6 +151,21 @@ export const useMyJoinedChallenges = (filters = {}) => {
             const data = response.challenges || response.data?.challenges || response.data || response || []
             const array = Array.isArray(data) ? data : (typeof data === 'object' && data !== null ? Object.values(data) : [])
             return array.map(normalizeChallenge).filter(Boolean)
+        }
+    })
+}
+
+/* -------------------------------------------------------------------------- */
+/*                              Site Content                                 */
+/* -------------------------------------------------------------------------- */
+
+export const useSiteContent = () => {
+    return useQuery({
+        ...defaultQueryOptions,
+        queryKey: queryKeys.site.content,
+        queryFn: async () => {
+            const response = await siteContentApi.getPublic()
+            return response.data || response
         }
     })
 }

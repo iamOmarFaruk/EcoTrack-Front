@@ -1,53 +1,54 @@
 import { motion } from 'framer-motion'
 import SectionHeading from './SectionHeading'
+import { useSiteContent } from '../hooks/queries'
 
-const testimonials = [
-    {
-        id: 1,
-        name: "Sarah Jenkins",
-        role: "Eco Enthusiast",
-        quote: "EcoTrack has completely transformed how I view my daily impact. The challenges are fun and the community is incredibly supportive!",
-        initials: "SJ",
-        color: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300"
-    },
-    {
-        id: 2,
-        name: "Michael Chen",
-        role: "Sustainability Lead",
-        quote: "As a professional in the field, I love how data-driven this platform is. It makes tracking carbon footprint reductions tangible and accurate.",
-        initials: "MC",
-        color: "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300"
-    },
-    {
-        id: 3,
-        name: "Emma Rodriguez",
-        role: "Student",
-        quote: "I started using this for a class project and couldn't stop. It's addictive in the best way possible. Five stars!",
-        initials: "ER",
-        color: "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300"
-    },
-    {
-        id: 4,
-        name: "David Kim",
-        role: "Urban Gardener",
-        quote: "The specific tips for urban living have helped me reduce waste significantly. Highly recommend for city dwellers.",
-        initials: "DK",
-        color: "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-300"
-    },
-    {
-        id: 5,
-        name: "Jessica Alba",
-        role: "Homeowner",
-        quote: "Finally, an app that doesn't just preach but gives practical steps. My energy bills are down 15% since following the tips.",
-        initials: "JA",
-        color: "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300"
-    }
+const defaultTestimonials = [
+  {
+    id: 1,
+    name: "Sarah Jenkins",
+    role: "Eco Enthusiast",
+    quote: "EcoTrack has completely transformed how I view my daily impact. The challenges are fun and the community is incredibly supportive!",
+    initials: "SJ",
+    colorClass: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300"
+  },
+  {
+    id: 2,
+    name: "Michael Chen",
+    role: "Sustainability Lead",
+    quote: "As a professional in the field, I love how data-driven this platform is. It makes tracking carbon footprint reductions tangible and accurate.",
+    initials: "MC",
+    colorClass: "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300"
+  },
+  {
+    id: 3,
+    name: "Emma Rodriguez",
+    role: "Student",
+    quote: "I started using this for a class project and couldn't stop. It's addictive in the best way possible. Five stars!",
+    initials: "ER",
+    colorClass: "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300"
+  },
+  {
+    id: 4,
+    name: "David Kim",
+    role: "Urban Gardener",
+    quote: "The specific tips for urban living have helped me reduce waste significantly. Highly recommend for city dwellers.",
+    initials: "DK",
+    colorClass: "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-300"
+  },
+  {
+    id: 5,
+    name: "Jessica Alba",
+    role: "Homeowner",
+    quote: "Finally, an app that doesn't just preach but gives practical steps. My energy bills are down 15% since following the tips.",
+    initials: "JA",
+    colorClass: "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300"
+  }
 ]
 
 const TestimonialCard = ({ testimonial }) => (
     <div className="w-[350px] md:w-[400px] flex-shrink-0 p-6 md:p-8 rounded-2xl bg-surface border border-border shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] mx-4">
         <div className="flex items-center mb-4">
-            <div className={`w-12 h-12 rounded-full ${testimonial.color} flex items-center justify-center font-bold text-lg mr-4`}>
+            <div className={`w-12 h-12 rounded-full ${testimonial.colorClass || testimonial.color} flex items-center justify-center font-bold text-lg mr-4`}>
                 {testimonial.initials}
             </div>
             <div>
@@ -70,6 +71,9 @@ const TestimonialCard = ({ testimonial }) => (
 )
 
 export default function Testimonials() {
+    const { data } = useSiteContent()
+    const testimonials = data?.testimonials?.length ? data.testimonials : defaultTestimonials
+
     return (
         <section className="bg-primary/5 relative overflow-hidden">
             <div className="container mx-auto px-4 mb-10">

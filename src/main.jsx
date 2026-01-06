@@ -5,11 +5,14 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { queryClient } from './config/react-query'
 import './index.css'
 import App from './App.jsx'
+import { AdminAuthProvider } from './context/AdminAuthContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <App />
+      <AdminAuthProvider>
+        <App />
+      </AdminAuthProvider>
       {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
   </StrictMode>,

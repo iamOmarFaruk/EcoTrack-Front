@@ -3,28 +3,39 @@ import { FiTarget, FiTrendingUp, FiMessageCircle } from 'react-icons/fi'
 import SectionHeading from './SectionHeading.jsx'
 import { motion } from 'framer-motion'
 import { containerVariants, itemVariants } from '../utils/animations'
+import { useSiteContent } from '../hooks/queries'
+
+const defaultSteps = [
+  {
+    id: 1,
+    icon: 'target',
+    title: 'Join a Challenge',
+    description: 'Browse through our diverse collection of eco-friendly challenges and pick ones that match your lifestyle and goals.'
+  },
+  {
+    id: 2,
+    icon: 'trending-up',
+    title: 'Track Progress',
+    description: 'Monitor your daily activities, log your achievements, and watch your environmental impact grow with detailed analytics.'
+  },
+  {
+    id: 3,
+    icon: 'chat',
+    title: 'Share Tips',
+    description: 'Connect with our community by sharing your experiences, tips, and inspiring others on their sustainability journey.'
+  }
+]
+
+const iconMap = {
+  target: FiTarget,
+  'trending-up': FiTrendingUp,
+  chat: FiMessageCircle,
+  message: FiMessageCircle
+}
 
 export default function HowItWorks() {
-  const steps = [
-    {
-      id: 1,
-      icon: FiTarget,
-      title: 'Join a Challenge',
-      description: 'Browse through our diverse collection of eco-friendly challenges and pick ones that match your lifestyle and goals.'
-    },
-    {
-      id: 2,
-      icon: FiTrendingUp,
-      title: 'Track Progress',
-      description: 'Monitor your daily activities, log your achievements, and watch your environmental impact grow with detailed analytics.'
-    },
-    {
-      id: 3,
-      icon: FiMessageCircle,
-      title: 'Share Tips',
-      description: 'Connect with our community by sharing your experiences, tips, and inspiring others on their sustainability journey.'
-    }
-  ]
+  const { data } = useSiteContent()
+  const steps = data?.howItWorks?.length ? data.howItWorks : defaultSteps
 
   return (
     <section>
@@ -45,10 +56,10 @@ export default function HowItWorks() {
             className="grid gap-6 md:grid-cols-3"
           >
             {steps.map((step) => {
-              const IconComponent = step.icon
+              const IconComponent = typeof step.icon === 'function' ? step.icon : (iconMap[step.icon] || FiTarget)
               return (
                 <motion.div
-                  key={step.id}
+                  key={step.id || step.title}
                   variants={itemVariants}
                   className="h-full"
                 >
