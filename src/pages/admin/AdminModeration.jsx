@@ -6,32 +6,32 @@ import EcoLoader from '../../components/EcoLoader.jsx'
 import { ToggleLeft, ToggleRight } from 'lucide-react'
 
 const statusBadges = {
-  active: 'bg-emerald-500/10 text-emerald-200',
-  draft: 'bg-white/10 text-white/70',
-  completed: 'bg-indigo-500/10 text-indigo-200',
-  cancelled: 'bg-red-500/10 text-red-200',
-  published: 'bg-emerald-500/10 text-emerald-200'
+  active: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-300',
+  draft: 'bg-slate-500/10 text-slate-600 dark:text-slate-300',
+  completed: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-300',
+  cancelled: 'bg-red-500/10 text-red-600 dark:text-red-300',
+  published: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-300'
 }
 
 function ResourceCard({ title, data, onUpdate, loading, publishStatus = 'active', draftStatus = 'draft' }) {
   if (loading) return <EcoLoader />
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+    <div className="rounded-2xl border border-border bg-surface p-5 shadow-sm">
       <div className="flex items-center justify-between pb-3">
         <div>
-          <p className="text-xs uppercase tracking-[0.25em] text-white/40">Publishing</p>
-          <h3 className="text-xl font-semibold text-white">{title}</h3>
+          <p className="text-xs uppercase tracking-[0.25em] text-text/40">Publishing</p>
+          <h3 className="text-xl font-semibold text-heading">{title}</h3>
         </div>
       </div>
       <div className="space-y-3">
         {data?.length ? data.map((item) => (
-          <div key={item._id || item.id} className="flex flex-col gap-2 rounded-xl border border-white/5 bg-black/20 p-3 md:flex-row md:items-center md:justify-between">
+          <div key={item._id || item.id} className="flex flex-col gap-2 rounded-xl border border-border bg-muted/30 p-3 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="font-semibold text-white">{item.title}</p>
-              <p className="text-xs text-white/50">{item.category || item.authorName}</p>
-              <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-white/60">
-                <span className={`rounded-full px-2 py-1 ${statusBadges[item.status] || 'bg-white/10 text-white/60'}`}>{item.status}</span>
+              <p className="font-semibold text-heading">{item.title}</p>
+              <p className="text-xs text-text/50">{item.category || item.authorName}</p>
+              <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-text/60">
+                <span className={`rounded-full px-2 py-1 ${statusBadges[item.status] || 'bg-slate-500/10 text-slate-600 dark:text-slate-300'}`}>{item.status}</span>
                 {item.registeredParticipants !== undefined && (
                   <span>{item.registeredParticipants} participants</span>
                 )}
@@ -41,16 +41,16 @@ function ResourceCard({ title, data, onUpdate, loading, publishStatus = 'active'
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button size="sm" variant="ghost" onClick={() => onUpdate(item, publishStatus)} className="flex items-center gap-1 text-white hover:bg-white/10">
+              <Button size="sm" variant="ghost" onClick={() => onUpdate(item, publishStatus)} className="flex items-center gap-1 text-text/70 hover:bg-muted hover:text-heading">
                 <ToggleRight size={16} /> Publish
               </Button>
-              <Button size="sm" variant="ghost" onClick={() => onUpdate(item, draftStatus)} className="flex items-center gap-1 text-white hover:bg-white/10">
+              <Button size="sm" variant="ghost" onClick={() => onUpdate(item, draftStatus)} className="flex items-center gap-1 text-text/70 hover:bg-muted hover:text-heading">
                 <ToggleLeft size={16} /> Unpublish
               </Button>
             </div>
           </div>
         )) : (
-          <p className="text-sm text-white/60">Nothing to moderate.</p>
+          <p className="text-sm text-text/60">Nothing to moderate.</p>
         )}
       </div>
     </div>
@@ -103,10 +103,10 @@ export default function AdminModeration() {
   })
 
   return (
-    <div className="space-y-6 text-white">
+    <div className="space-y-6">
       <div>
-        <p className="text-xs uppercase tracking-[0.25em] text-white/40">Moderation</p>
-        <h1 className="text-2xl font-bold">Publish or unpublish anything instantly</h1>
+        <p className="text-xs uppercase tracking-[0.25em] text-text/40">Moderation</p>
+        <h1 className="text-2xl font-bold text-heading">Publish or unpublish anything instantly</h1>
       </div>
 
       <ResourceCard
