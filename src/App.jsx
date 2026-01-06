@@ -41,8 +41,12 @@ const TermsOfService = lazy(() => import('./pages/TermsOfService.jsx'))
 const CookiePolicy = lazy(() => import('./pages/CookiePolicy.jsx'))
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin.jsx'))
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard.jsx'))
-const AdminContent = lazy(() => import('./pages/admin/AdminContent.jsx'))
-const AdminModeration = lazy(() => import('./pages/admin/AdminModeration.jsx'))
+const AdminChallenges = lazy(() => import('./pages/admin/AdminChallenges.jsx'))
+const AdminEvents = lazy(() => import('./pages/admin/AdminEvents.jsx'))
+const AdminTips = lazy(() => import('./pages/admin/AdminTips.jsx'))
+const AdminTestimonials = lazy(() => import('./pages/admin/AdminTestimonials.jsx'))
+const AdminHowItWorks = lazy(() => import('./pages/admin/AdminHowItWorks.jsx'))
+const AdminFooter = lazy(() => import('./pages/admin/AdminFooter.jsx'))
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers.jsx'))
 const AdminActivity = lazy(() => import('./pages/admin/AdminActivity.jsx'))
 
@@ -163,8 +167,12 @@ export default function App() {
               }
             >
               <Route path="/control-panel/dashboard" element={<AdminDashboard />} />
-              <Route path="/control-panel/content" element={<AdminContent />} />
-              <Route path="/control-panel/moderation" element={<AdminModeration />} />
+              <Route path="/control-panel/challenges" element={<AdminChallenges />} />
+              <Route path="/control-panel/events" element={<AdminEvents />} />
+              <Route path="/control-panel/tips" element={<AdminTips />} />
+              <Route path="/control-panel/testimonials" element={<AdminTestimonials />} />
+              <Route path="/control-panel/how-it-works" element={<AdminHowItWorks />} />
+              <Route path="/control-panel/footer" element={<AdminFooter />} />
               <Route path="/control-panel/users" element={<AdminUsers />} />
               <Route path="/control-panel/activity" element={<AdminActivity />} />
             </Route>

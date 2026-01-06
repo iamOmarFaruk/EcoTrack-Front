@@ -3,7 +3,9 @@ import { adminApi } from '../../services/adminApi.js'
 import { showError, showSuccess } from '../../utils/toast.jsx'
 import Button from '../../components/ui/Button.jsx'
 import EcoLoader from '../../components/EcoLoader.jsx'
-import { ShieldCheck } from 'lucide-react'
+import { ShieldCheck, User, Mail, Calendar, Settings, MoreVertical, Search, Filter } from 'lucide-react'
+import { motion } from 'framer-motion'
+import clsx from 'clsx'
 
 export default function AdminUsers() {
   const queryClient = useQueryClient()
@@ -16,7 +18,7 @@ export default function AdminUsers() {
   const updateUser = useMutation({
     mutationFn: ({ id, payload }) => adminApi.updateUser(id, payload),
     onSuccess: () => {
-      showSuccess('User updated')
+      showSuccess('User status updated')
       queryClient.invalidateQueries({ queryKey: ['admin', 'users'] })
     },
     onError: (err) => showError(err.message || 'Failed to update user')
@@ -27,51 +29,116 @@ export default function AdminUsers() {
   if (usersQuery.isLoading) return <EcoLoader />
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-          <p className="text-xs uppercase tracking-[0.25em] text-text/40">Users</p>
-          <h1 className="text-2xl font-bold text-heading">Manage access and activity</h1>
+          <div className="flex items-center gap-2 mb-2">
+            <div className="h-2 w-8 rounded-full bg-blue-400/40" />
+            <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-blue-500">Access Control</p>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-heading tracking-tight">
+            User <span className="text-blue-500">Directory</span>
+          </h1>
+          <p className="mt-2 text-text/60 font-medium">Manage user permissions, monitor activity and protect the community.</p>
         </div>
-        <div className="flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-xs text-emerald-600 dark:text-emerald-300">
-          <ShieldCheck size={14} /> Admin token enforced
+
+        <div className="flex items-center gap-3">
+          <div className="relative group">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text/30 group-focus-within:text-blue-500 transition-colors" size={18} />
+            <input
+              type="text"
+              placeholder="Search by name or email..."
+              className="pl-10 pr-4 py-2.5 rounded-xl border border-border bg-surface/50 backdrop-blur-sm text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all w-64 md:w-80"
+            />
+          </div>
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
-        <div className="grid grid-cols-6 bg-muted/40 px-4 py-3 text-xs uppercase tracking-wide text-text/50">
-          <span className="col-span-2">User</span>
-          <span>Role</span>
-          <span>Status</span>
-          <span>Joined</span>
-          <span className="text-right">Actions</span>
+      <div className="overflow-hidden rounded-[2rem] border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/40 backdrop-blur-sm shadow-xl shadow-slate-200/50 dark:shadow-none">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+                <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-text/40">UserInfo</th>
+                <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-text/40">Role</th>
+                <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-text/40">Status</th>
+                <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-text/40">Joined</th>
+                <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-text/40 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+              {users.map((user, idx) => (
+                <motion.tr
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.03 }}
+                  key={user._id}
+                  className="group hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors"
+                >
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 shrink-0 rounded-xl bg-gradient-to-tr from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center text-heading font-bold text-xs border border-slate-200 dark:border-slate-600 shadow-sm">
+                        {user.displayName?.charAt(0) || <User size={16} />}
+                      </div>
+                      <div>
+                        <p className="font-bold text-heading group-hover:text-blue-500 transition-colors">{user.displayName}</p>
+                        <p className="text-xs text-text/40 flex items-center gap-1">
+                          <Mail size={12} className="opacity-50" />
+                          {user.email}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={clsx(
+                      "px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border",
+                      user.role === 'admin'
+                        ? "bg-amber-100/50 text-amber-600 border-amber-200/50 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800"
+                        : "bg-slate-100/50 text-slate-500 border-slate-200/50 dark:bg-slate-800/40 dark:text-slate-400 dark:border-slate-700"
+                    )}>
+                      {user.role}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <div className={clsx(
+                        "h-1.5 w-1.5 rounded-full ring-4 shadow-sm",
+                        user.isActive ? "bg-emerald-500 ring-emerald-500/10" : "bg-rose-500 ring-rose-500/10"
+                      )} />
+                      <span className={clsx(
+                        "text-xs font-bold",
+                        user.isActive ? "text-emerald-500" : "text-rose-500"
+                      )}>
+                        {user.isActive ? 'Active' : 'Suspended'}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-xs text-text/40 flex items-center gap-1.5 font-medium">
+                      <Calendar size={14} className="opacity-50" />
+                      {new Date(user.joinedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <button
+                      onClick={() => updateUser.mutate({ id: user._id, payload: { isActive: !user.isActive } })}
+                      className={clsx(
+                        "px-4 py-2 rounded-xl text-xs font-bold transition-all border",
+                        user.isActive
+                          ? "text-rose-500 border-rose-100 hover:bg-rose-50 dark:border-rose-900/30 dark:hover:bg-rose-900/10"
+                          : "text-emerald-500 border-emerald-100 hover:bg-emerald-50 dark:border-emerald-900/30 dark:hover:bg-emerald-900/10"
+                      )}
+                    >
+                      {user.isActive ? 'Suspend' : 'Activate'}
+                    </button>
+                  </td>
+                </motion.tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        {users.map((user) => (
-          <div key={user._id} className="grid grid-cols-6 items-center border-t border-border px-4 py-3 text-sm">
-            <div className="col-span-2">
-              <p className="font-semibold text-heading">{user.displayName}</p>
-              <p className="text-xs text-text/50">{user.email}</p>
-            </div>
-            <div className="text-text/80">{user.role}</div>
-            <div>
-              <span className={`rounded-full px-2 py-1 text-xs ${user.isActive ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-300' : 'bg-red-500/10 text-red-600 dark:text-red-300'}`}>
-                {user.isActive ? 'Active' : 'Suspended'}
-              </span>
-            </div>
-            <div className="text-text/60 text-xs">{new Date(user.joinedAt).toLocaleDateString()}</div>
-            <div className="text-right">
-              <Button
-                size="sm"
-                variant="ghost"
-                className="text-text/70 hover:bg-muted hover:text-heading"
-                onClick={() => updateUser.mutate({ id: user._id, payload: { isActive: !user.isActive } })}
-              >
-                {user.isActive ? 'Suspend' : 'Activate'}
-              </Button>
-            </div>
-          </div>
-        ))}
       </div>
     </div>
   )
 }
+
