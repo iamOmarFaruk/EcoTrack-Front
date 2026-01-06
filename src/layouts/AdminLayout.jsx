@@ -18,11 +18,11 @@ import Button from '../components/ui/Button.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 
 const navItems = [
-  { to: '/site/control-panel/dashboard', label: 'Overview', icon: LayoutDashboard, description: 'Stats & charts' },
-  { to: '/site/control-panel/content', label: 'Content', icon: Wand2, description: 'Testimonials & footer' },
-  { to: '/site/control-panel/moderation', label: 'Publishing', icon: FileText, description: 'Publish / Unpublish' },
-  { to: '/site/control-panel/users', label: 'Users', icon: Users, description: 'Accounts & roles' },
-  { to: '/site/control-panel/activity', label: 'Activity', icon: ActivitySquare, description: 'Audit trail' }
+  { to: '/control-panel/dashboard', label: 'Overview', icon: LayoutDashboard, description: 'Stats & charts' },
+  { to: '/control-panel/content', label: 'Content', icon: Wand2, description: 'Testimonials & footer' },
+  { to: '/control-panel/moderation', label: 'Publishing', icon: FileText, description: 'Publish / Unpublish' },
+  { to: '/control-panel/users', label: 'Users', icon: Users, description: 'Accounts & roles' },
+  { to: '/control-panel/activity', label: 'Activity', icon: ActivitySquare, description: 'Audit trail' }
 ]
 
 export default function AdminLayout() {

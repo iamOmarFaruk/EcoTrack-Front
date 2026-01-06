@@ -17,7 +17,7 @@ export default function AdminLogin() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      const redirectTo = sessionStorage.getItem('adminRedirect') || '/site/control-panel/dashboard'
+      const redirectTo = sessionStorage.getItem('adminRedirect') || '/control-panel/dashboard'
       navigate(redirectTo, { replace: true })
     }
   }, [isAuthenticated, navigate])
@@ -27,7 +27,7 @@ export default function AdminLogin() {
     setLoading(true)
     try {
       await login({ email, password })
-      const redirectTo = sessionStorage.getItem('adminRedirect') || '/site/control-panel/dashboard'
+      const redirectTo = sessionStorage.getItem('adminRedirect') || '/control-panel/dashboard'
       navigate(redirectTo, { replace: true })
     } catch (error) {
       // handled by context

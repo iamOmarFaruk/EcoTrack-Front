@@ -153,7 +153,7 @@ export default function App() {
               <Route path="/challenges/:slug" element={<ChallengeDetail />} />
             </Route>
 
-            <Route path="/site/control-panel" element={<Suspense fallback={<EcoLoader />}><AdminLogin /></Suspense>} />
+            <Route path="/control-panel" element={<Suspense fallback={<EcoLoader />}><AdminLogin /></Suspense>} />
 
             <Route
               element={
@@ -162,11 +162,11 @@ export default function App() {
                 </ProtectedAdminRoute>
               }
             >
-              <Route path="/site/control-panel/dashboard" element={<AdminDashboard />} />
-              <Route path="/site/control-panel/content" element={<AdminContent />} />
-              <Route path="/site/control-panel/moderation" element={<AdminModeration />} />
-              <Route path="/site/control-panel/users" element={<AdminUsers />} />
-              <Route path="/site/control-panel/activity" element={<AdminActivity />} />
+              <Route path="/control-panel/dashboard" element={<AdminDashboard />} />
+              <Route path="/control-panel/content" element={<AdminContent />} />
+              <Route path="/control-panel/moderation" element={<AdminModeration />} />
+              <Route path="/control-panel/users" element={<AdminUsers />} />
+              <Route path="/control-panel/activity" element={<AdminActivity />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

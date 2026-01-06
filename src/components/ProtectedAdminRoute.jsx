@@ -12,7 +12,7 @@ export default function ProtectedAdminRoute({ children }) {
 
   if (!isAuthenticated) {
     sessionStorage.setItem('adminRedirect', location.pathname + location.search)
-    return <Navigate to="/site/control-panel" replace />
+    return <Navigate to="/control-panel" replace />
   }
 
   return children
