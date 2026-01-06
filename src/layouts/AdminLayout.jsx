@@ -84,30 +84,30 @@ export default function AdminLayout() {
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 space-y-1.5 overflow-y-auto pr-2 custom-scrollbar">
+            <nav className="flex-1 space-y-1.5 overflow-y-auto pr-2 scrollbar-hide">
               <div className="pb-4">
-                <p className="px-3 pb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-text/30">Main Menu</p>
+                <p className="px-3 pb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-text/30 dark:text-text/50">Main Menu</p>
                 {navItems.slice(0, 1).map((item) => (
                   <SidebarLink key={item.to} item={item} onClick={() => setSidebarOpen(false)} />
                 ))}
               </div>
 
               <div className="pb-4">
-                <p className="px-3 pb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-text/30">Management</p>
+                <p className="px-3 pb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-text/30 dark:text-text/50">Management</p>
                 {navItems.slice(1, 4).map((item) => (
                   <SidebarLink key={item.to} item={item} onClick={() => setSidebarOpen(false)} />
                 ))}
               </div>
 
               <div className="pb-4">
-                <p className="px-3 pb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-text/30">Configuration</p>
+                <p className="px-3 pb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-text/30 dark:text-text/50">Configuration</p>
                 {navItems.slice(4, 7).map((item) => (
                   <SidebarLink key={item.to} item={item} onClick={() => setSidebarOpen(false)} />
                 ))}
               </div>
 
               <div className="pb-4">
-                <p className="px-3 pb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-text/30">System</p>
+                <p className="px-3 pb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-text/30 dark:text-text/50">System</p>
                 {navItems.slice(7).map((item) => (
                   <SidebarLink key={item.to} item={item} onClick={() => setSidebarOpen(false)} />
                 ))}
@@ -116,18 +116,9 @@ export default function AdminLayout() {
 
             {/* Admin Profile */}
             <div className="mt-auto pt-6 border-t border-zinc-200/50 dark:border-zinc-800/50">
-              <div className="flex items-center gap-3 p-3 rounded-2xl bg-zinc-100/50 dark:bg-zinc-900/50 border border-zinc-200/50 dark:border-zinc-700/30">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                  <Users size={18} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-heading truncate">{admin?.role || 'Admin'}</p>
-                  <p className="text-[11px] text-text/50 truncate font-medium">Secured Session</p>
-                </div>
-              </div>
               <button
                 onClick={logout}
-                className="mt-4 w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold text-danger hover:bg-danger/10 transition-all duration-200 border border-transparent hover:border-danger/20"
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold text-danger hover:bg-danger/10 transition-all duration-200 border border-transparent hover:border-danger/20"
               >
                 <LogOut size={18} />
                 Logout Account
@@ -199,39 +190,48 @@ function SidebarLink({ item, onClick }) {
         'group flex items-center gap-4 rounded-xl px-3 py-3 text-sm transition-all duration-300 relative',
         isActive
           ? 'bg-primary text-white shadow-lg shadow-primary/25 translate-x-1'
-          : 'text-text/60 hover:bg-primary/5 hover:text-primary hover:translate-x-1'
+          : 'text-text/70 dark:text-text/90 hover:bg-primary/5 hover:text-primary hover:translate-x-1'
       )}
     >
-      <div className={clsx(
-        'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-300',
-        ({ isActive }) => isActive
-          ? 'bg-white/20'
-          : 'bg-zinc-100 dark:bg-zinc-800 group-hover:bg-primary/10'
-      )}>
-        <item.icon size={20} className={clsx(
-          'transition-transform duration-300 group-hover:scale-110',
-          ({ isActive }) => isActive ? 'text-white' : 'text-text/40 group-hover:text-primary'
-        )} />
-      </div>
-      <div className="flex flex-col min-w-0">
-        <span className="font-bold tracking-tight truncate">{item.label}</span>
-        <span className={clsx(
-          "text-[10px] font-medium tracking-wide truncate transition-colors duration-300 uppercase",
-          ({ isActive }) => isActive ? "text-white/70" : "text-text/30 group-hover:text-primary/50"
-        )}>{item.description}</span>
-      </div>
+      {({ isActive }) => (
+        <>
+          <div className={clsx(
+            'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-300',
+            isActive ? 'bg-white/20' : 'bg-zinc-100 dark:bg-zinc-800 group-hover:bg-primary/10'
+          )}>
+            <item.icon
+              size={20}
+              className={clsx(
+                'transition-transform duration-300 group-hover:scale-110',
+                isActive ? 'text-white' : 'text-text/40 group-hover:text-primary'
+              )}
+            />
+          </div>
+          <div className="flex flex-col min-w-0">
+            <span className="font-bold tracking-tight truncate group-hover:text-primary transition-colors">
+              {item.label}
+            </span>
+            <span className={clsx(
+              "text-[10px] font-bold tracking-widest truncate transition-colors duration-300 uppercase",
+              isActive ? "text-white/90" : "text-text/40 dark:text-text/60 group-hover:text-primary/70"
+            )}>
+              {item.description}
+            </span>
+          </div>
 
-      <AnimatePresence>
-        {({ isActive }) => isActive && (
-          <motion.div
-            layoutId="sidebar-active-indicator"
-            className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-full -ml-3"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          />
-        )}
-      </AnimatePresence>
+          <AnimatePresence>
+            {isActive && (
+              <motion.div
+                layoutId="sidebar-active-indicator"
+                className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-full -ml-3"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              />
+            )}
+          </AnimatePresence>
+        </>
+      )}
     </NavLink>
   )
 }
