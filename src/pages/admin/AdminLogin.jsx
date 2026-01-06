@@ -37,14 +37,14 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-zinc-900">
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -left-24 top-10 h-64 w-64 rounded-full blur-[110px]" style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.35), transparent)' }}></div>
         <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full blur-[120px]" style={{ background: 'radial-gradient(circle, rgba(52,211,153,0.35), transparent)' }}></div>
       </div>
 
       <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl items-center px-4 py-16">
-        <div className="hidden flex-1 rounded-3xl border border-white/10 bg-gradient-to-br from-slate-800 via-slate-900 to-black p-10 shadow-2xl shadow-emerald-500/10 md:block">
+        <div className="hidden flex-1 rounded-3xl border border-white/10 bg-gradient-to-br from-zinc-800 via-zinc-900 to-black p-10 shadow-2xl shadow-emerald-500/10 md:block">
           <div className="flex items-center gap-3 text-white/80">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-300">
               <ShieldCheck size={26} />
@@ -82,7 +82,7 @@ export default function AdminLogin() {
         </div>
 
         <div className="flex-1">
-          <form onSubmit={handleSubmit} className="mx-auto max-w-md rounded-3xl border border-white/10 bg-slate-950/80 p-8 shadow-2xl shadow-emerald-500/10 backdrop-blur">
+          <form onSubmit={handleSubmit} className="mx-auto max-w-md rounded-3xl border border-white/10 bg-zinc-950/80 p-8 shadow-2xl shadow-emerald-500/10 backdrop-blur">
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-300">
                 <ShieldCheck size={22} />

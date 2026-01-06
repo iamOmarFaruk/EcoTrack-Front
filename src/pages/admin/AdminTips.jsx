@@ -9,7 +9,7 @@ import clsx from 'clsx'
 
 const statusBadges = {
     published: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
-    draft: 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20'
+    draft: 'bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border-zinc-500/20'
 }
 
 export default function AdminTips() {
@@ -67,7 +67,7 @@ export default function AdminTips() {
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: index * 0.03 }}
                             key={tip.id || tip._id}
-                            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/60 dark:border-slate-800/60 bg-white dark:bg-slate-900/50 p-6 transition-all hover:shadow-xl hover:shadow-amber-500/5 hover:border-amber-500/20"
+                            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900/50 p-6 transition-all hover:shadow-xl hover:shadow-amber-500/5 hover:border-amber-500/20"
                         >
                             <div>
                                 <div className="flex items-start justify-between mb-4">
@@ -76,7 +76,7 @@ export default function AdminTips() {
                                     </div>
                                     <span className={clsx(
                                         "rounded-full border px-3 py-1 uppercase tracking-wider text-[10px] font-bold",
-                                        statusBadges[tip.status] || 'bg-slate-100 text-slate-600'
+                                        statusBadges[tip.status] || 'bg-zinc-100 text-zinc-600'
                                     )}>
                                         {tip.status}
                                     </span>
@@ -91,7 +91,7 @@ export default function AdminTips() {
                                 </p>
                             </div>
 
-                            <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/40 p-1.5 rounded-xl border border-slate-200/50 dark:border-slate-700/50">
+                            <div className="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-800/40 p-1.5 rounded-xl border border-zinc-200/50 dark:border-zinc-700/50">
                                 <button
                                     onClick={() => updateTip.mutate({ id: tip.id || tip._id, status: 'published' })}
                                     disabled={tip.status === 'published'}
@@ -99,7 +99,7 @@ export default function AdminTips() {
                                         "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold transition-all",
                                         tip.status === 'published'
                                             ? "bg-amber-500 text-white shadow-lg shadow-amber-500/20"
-                                            : "text-text/50 hover:bg-white dark:hover:bg-slate-700"
+                                            : "text-text/50 hover:bg-white dark:hover:bg-zinc-700"
                                     )}
                                 >
                                     <ToggleRight size={16} />
@@ -111,8 +111,8 @@ export default function AdminTips() {
                                     className={clsx(
                                         "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold transition-all",
                                         tip.status === 'draft'
-                                            ? "bg-slate-500 text-white shadow-lg shadow-slate-500/20"
-                                            : "text-text/50 hover:bg-white dark:hover:bg-slate-700"
+                                            ? "bg-zinc-500 text-white shadow-lg shadow-zinc-500/20"
+                                            : "text-text/50 hover:bg-white dark:hover:bg-zinc-700"
                                     )}
                                 >
                                     <ToggleLeft size={16} />

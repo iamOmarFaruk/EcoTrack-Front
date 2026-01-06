@@ -82,7 +82,7 @@ export default function AdminTestimonials() {
                     <Button
                         onClick={() => addItem('testimonials', emptyTestimonial)}
                         variant="ghost"
-                        className="flex items-center gap-2 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm"
+                        className="flex items-center gap-2 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm"
                     >
                         <Plus size={18} />
                         Add New
@@ -108,7 +108,7 @@ export default function AdminTestimonials() {
                             exit={{ opacity: 0, scale: 0.98 }}
                             transition={{ duration: 0.2 }}
                             key={`${item.name}-${idx}`}
-                            className="group relative rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6 md:p-8 transition-all hover:border-rose-500/30 hover:shadow-2xl hover:shadow-rose-500/5"
+                            className="group relative rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-6 md:p-8 transition-all hover:border-rose-500/30 hover:shadow-2xl hover:shadow-rose-500/5"
                         >
                             <div className="absolute top-6 right-6">
                                 <button
@@ -129,7 +129,7 @@ export default function AdminTestimonials() {
                                                 value={item.name}
                                                 onChange={(e) => updateArrayItem('testimonials', idx, 'name', e.target.value)}
                                                 placeholder="e.g. Sarah J. Wilson"
-                                                className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-sm font-bold text-heading focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all outline-none"
+                                                className="w-full pl-11 pr-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-bold text-heading focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all outline-none"
                                             />
                                         </div>
                                     </div>
@@ -142,7 +142,7 @@ export default function AdminTestimonials() {
                                                 value={item.role}
                                                 onChange={(e) => updateArrayItem('testimonials', idx, 'role', e.target.value)}
                                                 placeholder="e.g. Certified Eco-Specialist"
-                                                className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-sm font-medium text-text focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all outline-none"
+                                                className="w-full pl-11 pr-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-text focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all outline-none"
                                             />
                                         </div>
                                     </div>
@@ -155,7 +155,7 @@ export default function AdminTestimonials() {
                                                 onChange={(e) => updateArrayItem('testimonials', idx, 'initials', e.target.value)}
                                                 placeholder="SW"
                                                 maxLength={2}
-                                                className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-sm font-bold text-center text-heading focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all outline-none"
+                                                className="w-full px-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-bold text-center text-heading focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all outline-none"
                                             />
                                         </div>
                                         <div>
@@ -164,7 +164,7 @@ export default function AdminTestimonials() {
                                                 value={item.colorClass || ''}
                                                 onChange={(e) => updateArrayItem('testimonials', idx, 'colorClass', e.target.value)}
                                                 placeholder="bg-indigo-100"
-                                                className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-xs text-text focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all outline-none"
+                                                className="w-full px-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-xs text-text focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all outline-none"
                                             />
                                         </div>
                                     </div>
@@ -179,7 +179,7 @@ export default function AdminTestimonials() {
                                             onChange={(e) => updateArrayItem('testimonials', idx, 'quote', e.target.value)}
                                             placeholder="Share what this user had to say about their experience..."
                                             rows={5}
-                                            className="w-full min-h-[160px] pl-6 pr-6 py-5 rounded-3xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-base italic font-medium text-heading focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all outline-none resize-none leading-relaxed"
+                                            className="w-full min-h-[160px] pl-6 pr-6 py-5 rounded-3xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-base italic font-medium text-heading focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all outline-none resize-none leading-relaxed"
                                         />
                                     </div>
                                 </div>

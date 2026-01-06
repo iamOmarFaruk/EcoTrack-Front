@@ -112,7 +112,7 @@ export default function AdminFooter() {
             <div className="grid gap-8 lg:grid-cols-2">
                 {/* Brand & Contact */}
                 <div className="space-y-6">
-                    <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-8 shadow-sm">
+                    <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-8 shadow-sm">
                         <div className="flex items-center gap-3 mb-6">
                             <div className="h-10 w-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600">
                                 <Globe size={20} />
@@ -127,13 +127,13 @@ export default function AdminFooter() {
                                     value={contentForm.footer?.brand?.description || ''}
                                     onChange={(e) => updateField('footer.brand.description', e.target.value)}
                                     rows={4}
-                                    className="w-full px-5 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none resize-none"
+                                    className="w-full px-5 py-4 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none resize-none"
                                 />
                             </div>
                         </div>
                     </div>
 
-                    <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-8 shadow-sm">
+                    <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-8 shadow-sm">
                         <div className="flex items-center gap-3 mb-6">
                             <div className="h-10 w-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600">
                                 <MapPin size={20} />
@@ -148,7 +148,7 @@ export default function AdminFooter() {
                                 <input
                                     value={contentForm.footer?.contact?.address || ''}
                                     onChange={(e) => updateField('footer.contact.address', e.target.value)}
-                                    className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none"
+                                    className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none"
                                 />
                             </div>
 
@@ -159,7 +159,7 @@ export default function AdminFooter() {
                                     <input
                                         value={contentForm.footer?.contact?.phone || ''}
                                         onChange={(e) => updateField('footer.contact.phone', e.target.value)}
-                                        className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none"
+                                        className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none"
                                     />
                                 </div>
                                 <div className="relative group/input">
@@ -168,7 +168,7 @@ export default function AdminFooter() {
                                     <input
                                         value={contentForm.footer?.contact?.email || ''}
                                         onChange={(e) => updateField('footer.contact.email', e.target.value)}
-                                        className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none"
+                                        className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none"
                                     />
                                 </div>
                             </div>
@@ -178,7 +178,7 @@ export default function AdminFooter() {
 
                 {/* Newsletter & Socials */}
                 <div className="space-y-6">
-                    <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-8 shadow-sm">
+                    <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-8 shadow-sm">
                         <div className="flex items-center gap-3 mb-6">
                             <div className="h-10 w-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600">
                                 <Send size={20} />
@@ -192,7 +192,7 @@ export default function AdminFooter() {
                                 <input
                                     value={contentForm.footer?.newsletter?.title || ''}
                                     onChange={(e) => updateField('footer.newsletter.title', e.target.value)}
-                                    className="w-full px-5 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-sm font-bold text-heading focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none"
+                                    className="w-full px-5 py-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-bold text-heading focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none"
                                     placeholder="e.g. Stay in the Loop"
                                 />
                             </div>
@@ -202,14 +202,14 @@ export default function AdminFooter() {
                                     value={contentForm.footer?.newsletter?.subtitle || ''}
                                     onChange={(e) => updateField('footer.newsletter.subtitle', e.target.value)}
                                     rows={2}
-                                    className="w-full px-5 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none resize-none"
+                                    className="w-full px-5 py-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none resize-none"
                                     placeholder="e.g. Join our weekly eco-newsletter."
                                 />
                             </div>
                         </div>
                     </div>
 
-                    <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-8 shadow-sm">
+                    <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-8 shadow-sm">
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-3">
                                 <div className="h-10 w-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600">
@@ -236,7 +236,7 @@ export default function AdminFooter() {
                                         animate={{ opacity: 1, x: 0 }}
                                         exit={{ opacity: 0, scale: 0.95 }}
                                         key={`${link.label}-${idx}`}
-                                        className="grid grid-cols-[120px,1fr,auto] items-center gap-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-800/30 px-4 py-3"
+                                        className="grid grid-cols-[120px,1fr,auto] items-center gap-3 rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50/30 dark:bg-zinc-800/30 px-4 py-3"
                                     >
                                         <input
                                             value={link.label}
@@ -245,7 +245,7 @@ export default function AdminFooter() {
                                                 copy[idx] = { ...copy[idx], label: e.target.value }
                                                 setContentForm((prev) => ({ ...prev, footer: { ...prev.footer, socialLinks: copy } }))
                                             }}
-                                            className="bg-transparent text-sm font-bold text-heading outline-none border-r border-slate-200 dark:border-slate-700"
+                                            className="bg-transparent text-sm font-bold text-heading outline-none border-r border-zinc-200 dark:border-zinc-700"
                                             placeholder="Label"
                                         />
                                         <input

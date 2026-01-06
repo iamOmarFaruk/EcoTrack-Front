@@ -54,11 +54,11 @@ export default function AdminUsers() {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-[2rem] border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/40 backdrop-blur-sm shadow-xl shadow-slate-200/50 dark:shadow-none">
+      <div className="overflow-hidden rounded-[2rem] border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/40 backdrop-blur-sm shadow-xl shadow-zinc-200/50 dark:shadow-none">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+              <tr className="bg-zinc-50/50 dark:bg-zinc-800/50 border-b border-zinc-200 dark:border-zinc-800">
                 <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-text/40">UserInfo</th>
                 <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-text/40">Role</th>
                 <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-text/40">Status</th>
@@ -66,18 +66,18 @@ export default function AdminUsers() {
                 <th className="px-6 py-5 text-[10px] uppercase font-bold tracking-widest text-text/40 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+            <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/60">
               {users.map((user, idx) => (
                 <motion.tr
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.03 }}
                   key={user._id}
-                  className="group hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors"
+                  className="group hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition-colors"
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 shrink-0 rounded-xl bg-gradient-to-tr from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center text-heading font-bold text-xs border border-slate-200 dark:border-slate-600 shadow-sm">
+                      <div className="h-10 w-10 shrink-0 rounded-xl bg-gradient-to-tr from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-700 flex items-center justify-center text-heading font-bold text-xs border border-zinc-200 dark:border-zinc-600 shadow-sm">
                         {user.displayName?.charAt(0) || <User size={16} />}
                       </div>
                       <div>
@@ -94,7 +94,7 @@ export default function AdminUsers() {
                       "px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border",
                       user.role === 'admin'
                         ? "bg-amber-100/50 text-amber-600 border-amber-200/50 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800"
-                        : "bg-slate-100/50 text-slate-500 border-slate-200/50 dark:bg-slate-800/40 dark:text-slate-400 dark:border-slate-700"
+                        : "bg-zinc-100/50 text-zinc-500 border-zinc-200/50 dark:bg-zinc-800/40 dark:text-zinc-400 dark:border-zinc-700"
                     )}>
                       {user.role}
                     </span>

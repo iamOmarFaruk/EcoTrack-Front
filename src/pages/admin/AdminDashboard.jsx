@@ -232,7 +232,7 @@ export default function AdminDashboard() {
                     <p className="text-xs font-medium text-heading">{item.registeredParticipants} joined</p>
                     <span className={clsx(
                       "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] uppercase font-bold tracking-wide",
-                      item.status === 'active' ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-slate-500/10 text-slate-500"
+                      item.status === 'active' ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-zinc-500/10 text-zinc-500"
                     )}>
                       {item.status}
                     </span>
@@ -266,7 +266,7 @@ export default function AdminDashboard() {
                     <p className="text-xs font-medium text-heading">{item.registeredParticipants}/{item.capacity}</p>
                     <span className={clsx(
                       "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] uppercase font-bold tracking-wide",
-                      item.status === 'active' ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-slate-500/10 text-slate-500"
+                      item.status === 'active' ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-zinc-500/10 text-zinc-500"
                     )}>
                       {item.status}
                     </span>

@@ -9,7 +9,7 @@ import clsx from 'clsx'
 
 const statusBadges = {
     active: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
-    draft: 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20',
+    draft: 'bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border-zinc-500/20',
     completed: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20',
     cancelled: 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20'
 }
@@ -69,7 +69,7 @@ export default function AdminEvents() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.05 }}
                             key={event._id}
-                            className="group relative overflow-hidden rounded-2xl border border-slate-200/60 dark:border-slate-800/60 bg-white dark:bg-slate-900/50 p-5 transition-all hover:shadow-xl hover:shadow-indigo-500/5 hover:border-indigo-500/20"
+                            className="group relative overflow-hidden rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900/50 p-5 transition-all hover:shadow-xl hover:shadow-indigo-500/5 hover:border-indigo-500/20"
                         >
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                                 <div className="flex items-start gap-4 flex-1">
@@ -81,7 +81,7 @@ export default function AdminEvents() {
                                         <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] font-medium">
                                             <span className={clsx(
                                                 "rounded-full border px-3 py-0.5 uppercase tracking-wider text-[10px]",
-                                                statusBadges[event.status] || 'bg-slate-100 text-slate-600'
+                                                statusBadges[event.status] || 'bg-zinc-100 text-zinc-600'
                                             )}>
                                                 {event.status}
                                             </span>
@@ -97,7 +97,7 @@ export default function AdminEvents() {
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800/40 p-1.5 rounded-xl border border-slate-200/50 dark:border-slate-700/50">
+                                <div className="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-800/40 p-1.5 rounded-xl border border-zinc-200/50 dark:border-zinc-700/50">
                                     <button
                                         onClick={() => updateEvent.mutate({ id: event._id, status: 'active' })}
                                         disabled={event.status === 'active'}
@@ -105,7 +105,7 @@ export default function AdminEvents() {
                                             "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all",
                                             event.status === 'active'
                                                 ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/20"
-                                                : "text-text/50 hover:bg-white dark:hover:bg-slate-700"
+                                                : "text-text/50 hover:bg-white dark:hover:bg-zinc-700"
                                         )}
                                     >
                                         <ToggleRight size={16} />
@@ -117,8 +117,8 @@ export default function AdminEvents() {
                                         className={clsx(
                                             "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all",
                                             event.status === 'draft'
-                                                ? "bg-slate-500 text-white shadow-lg shadow-slate-500/20"
-                                                : "text-text/50 hover:bg-white dark:hover:bg-slate-700"
+                                                ? "bg-zinc-500 text-white shadow-lg shadow-zinc-500/20"
+                                                : "text-text/50 hover:bg-white dark:hover:bg-zinc-700"
                                         )}
                                     >
                                         <ToggleLeft size={16} />

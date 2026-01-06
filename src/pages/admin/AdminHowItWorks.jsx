@@ -82,7 +82,7 @@ export default function AdminHowItWorks() {
                     <Button
                         onClick={() => addItem('howItWorks', emptyStep)}
                         variant="ghost"
-                        className="flex items-center gap-2 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm"
+                        className="flex items-center gap-2 border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm"
                     >
                         <Plus size={18} />
                         Append Step
@@ -107,7 +107,7 @@ export default function AdminHowItWorks() {
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
                             key={`${step.title}-${idx}`}
-                            className="group relative rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-6 transition-all hover:border-violet-500/30 hover:shadow-xl hover:shadow-violet-500/5"
+                            className="group relative rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-6 transition-all hover:border-violet-500/30 hover:shadow-xl hover:shadow-violet-500/5"
                         >
                             <div className="flex items-start justify-between mb-6">
                                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-50 dark:bg-violet-900/40 text-violet-500 font-bold text-lg">
@@ -129,7 +129,7 @@ export default function AdminHowItWorks() {
                                         value={step.title}
                                         onChange={(e) => updateArrayItem('howItWorks', idx, 'title', e.target.value)}
                                         placeholder="e.g. Join a Challenge"
-                                        className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-sm font-bold text-heading focus:ring-4 focus:ring-violet-500/10 focus:border-violet-500 transition-all outline-none"
+                                        className="w-full pl-11 pr-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-bold text-heading focus:ring-4 focus:ring-violet-500/10 focus:border-violet-500 transition-all outline-none"
                                     />
                                 </div>
 
@@ -140,7 +140,7 @@ export default function AdminHowItWorks() {
                                         value={step.icon}
                                         onChange={(e) => updateArrayItem('howItWorks', idx, 'icon', e.target.value)}
                                         placeholder="e.g. target, trending-up, heart"
-                                        className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-sm font-medium text-text focus:ring-4 focus:ring-violet-500/10 focus:border-violet-500 transition-all outline-none"
+                                        className="w-full pl-11 pr-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-text focus:ring-4 focus:ring-violet-500/10 focus:border-violet-500 transition-all outline-none"
                                     />
                                 </div>
 
@@ -152,7 +152,7 @@ export default function AdminHowItWorks() {
                                         onChange={(e) => updateArrayItem('howItWorks', idx, 'description', e.target.value)}
                                         placeholder="Briefly explain what the user needs to do in this step..."
                                         rows={3}
-                                        className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-violet-500/10 focus:border-violet-500 transition-all outline-none resize-none"
+                                        className="w-full pl-11 pr-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-violet-500/10 focus:border-violet-500 transition-all outline-none resize-none"
                                     />
                                 </div>
                             </div>

@@ -19,16 +19,16 @@ export default function AdminActivity() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-500 border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-zinc-100 dark:bg-zinc-800 text-zinc-500 border border-zinc-200 dark:border-zinc-700 shadow-sm">
             <ActivitySquare size={28} />
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <div className="h-2 w-8 rounded-full bg-slate-400/40" />
-              <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-slate-500">Security & Logs</p>
+              <div className="h-2 w-8 rounded-full bg-zinc-400/40" />
+              <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-zinc-500">Security & Logs</p>
             </div>
             <h1 className="text-3xl md:text-4xl font-extrabold text-heading tracking-tight">
-              Audit <span className="text-slate-400">Trail</span>
+              Audit <span className="text-zinc-400">Trail</span>
             </h1>
             <p className="mt-1 text-text/60 font-medium">Monitoring every administrative operation in real-time.</p>
           </div>
@@ -36,7 +36,7 @@ export default function AdminActivity() {
       </div>
 
       <div className="relative">
-        <div className="absolute left-6 top-0 bottom-0 w-px bg-slate-200 dark:bg-slate-800 ml-[11px]" />
+        <div className="absolute left-6 top-0 bottom-0 w-px bg-zinc-200 dark:bg-zinc-800 ml-[11px]" />
 
         <div className="space-y-6 relative">
           {activity.length > 0 ? (
@@ -48,18 +48,18 @@ export default function AdminActivity() {
                 key={item._id}
                 className="relative pl-12 group"
               >
-                <div className="absolute left-0 top-3 h-6 w-6 rounded-full bg-white dark:bg-[#0F172A] border-2 border-slate-200 dark:border-slate-800 flex items-center justify-center z-10 group-hover:border-primary transition-colors">
-                  <div className="h-2 w-2 rounded-full bg-slate-300 dark:bg-slate-600 group-hover:bg-primary transition-colors" />
+                <div className="absolute left-0 top-3 h-6 w-6 rounded-full bg-white dark:bg-black border-2 border-zinc-200 dark:border-zinc-800 flex items-center justify-center z-10 group-hover:border-primary transition-colors">
+                  <div className="h-2 w-2 rounded-full bg-zinc-300 dark:bg-zinc-600 group-hover:bg-primary transition-colors" />
                 </div>
 
-                <div className="rounded-3xl border border-slate-200/60 dark:border-slate-800/60 bg-white/50 dark:bg-slate-900/40 p-5 transition-all hover:bg-white dark:hover:bg-slate-900 shadow-sm hover:shadow-xl hover:shadow-primary/5">
+                <div className="rounded-3xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white/50 dark:bg-zinc-900/40 p-5 transition-all hover:bg-white dark:hover:bg-zinc-900 shadow-sm hover:shadow-xl hover:shadow-primary/5">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-bold text-heading group-hover:text-primary transition-colors">
                           {item.detail || item.action}
                         </span>
-                        <span className="px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-[10px] font-bold text-text/50 uppercase">
+                        <span className="px-1.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-[10px] font-bold text-text/50 uppercase">
                           {item.entity}
                         </span>
                       </div>
@@ -75,7 +75,7 @@ export default function AdminActivity() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 text-xs font-bold text-text/30 bg-slate-100/50 dark:bg-slate-800/30 px-3 py-1.5 rounded-xl shrink-0">
+                    <div className="flex items-center gap-2 text-xs font-bold text-text/30 bg-zinc-100/50 dark:bg-zinc-800/30 px-3 py-1.5 rounded-xl shrink-0">
                       <Clock size={14} />
                       {new Date(item.createdAt).toLocaleString(undefined, {
                         month: 'short',

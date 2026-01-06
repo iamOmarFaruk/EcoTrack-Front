@@ -42,7 +42,7 @@ export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A] text-text transition-colors duration-300">
+    <div className="min-h-screen bg-light dark:bg-black text-text transition-colors duration-300 font-sans">
       <div className="flex">
         {/* Sidebar Overlay for Mobile */}
         <AnimatePresence>
@@ -52,7 +52,7 @@ export default function AdminLayout() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSidebarOpen(false)}
-              className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden"
             />
           )}
         </AnimatePresence>
@@ -62,7 +62,7 @@ export default function AdminLayout() {
           'fixed inset-y-0 left-0 z-50 w-72 transition-all duration-300 transform lg:translate-x-0',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         )}>
-          <div className="h-full bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-800/50 flex flex-col p-6 shadow-2xl lg:shadow-none">
+          <div className="h-full bg-white/80 dark:bg-zinc-950/80 backdrop-blur-2xl border-r border-zinc-200/50 dark:border-zinc-800/50 flex flex-col p-6 shadow-2xl lg:shadow-none">
             {/* Logo */}
             <div className="flex items-center justify-between pb-8">
               <div className="flex items-center gap-3">
@@ -115,8 +115,8 @@ export default function AdminLayout() {
             </nav>
 
             {/* Admin Profile */}
-            <div className="mt-auto pt-6 border-t border-slate-200/50 dark:border-slate-800/50">
-              <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200/50 dark:border-slate-700/30">
+            <div className="mt-auto pt-6 border-t border-zinc-200/50 dark:border-zinc-800/50">
+              <div className="flex items-center gap-3 p-3 rounded-2xl bg-zinc-100/50 dark:bg-zinc-900/50 border border-zinc-200/50 dark:border-zinc-700/30">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <Users size={18} />
                 </div>
@@ -139,16 +139,16 @@ export default function AdminLayout() {
         {/* Main Area */}
         <div className="flex-1 flex flex-col min-w-0 lg:ml-72">
           {/* Header */}
-          <header className="sticky top-0 z-40 bg-white/80 dark:bg-[#0F172A]/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50 px-6 py-4">
+          <header className="sticky top-0 z-40 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-zinc-200/50 dark:border-zinc-800/50 px-6 py-4">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <button
-                  className="lg:hidden p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-surface/50 text-text/80 shadow-sm"
+                  className="lg:hidden p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-surface/50 text-text/80 shadow-sm"
                   onClick={() => setSidebarOpen(true)}
                 >
                   <Menu size={20} />
                 </button>
-                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50">
+                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/50">
                   <Search size={14} className="text-text/40" />
                   <input
                     type="text"
@@ -161,14 +161,14 @@ export default function AdminLayout() {
               <div className="flex items-center gap-3 md:gap-6">
                 <ThemeToggle />
 
-                <div className="h-8 w-px bg-slate-200 dark:bg-slate-800"></div>
+                <div className="h-8 w-px bg-zinc-200 dark:bg-zinc-800"></div>
 
                 <div className="flex items-center gap-3">
                   <div className="hidden md:block text-right">
                     <p className="text-sm font-bold text-heading leading-tight">{admin?.name || 'Administrator'}</p>
                     <p className="text-[11px] text-text/50 font-medium">{admin?.email}</p>
                   </div>
-                  <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-slate-200 to-slate-100 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center text-heading font-bold border border-slate-300/50 dark:border-slate-600/50 shadow-sm">
+                  <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-zinc-200 to-zinc-100 dark:from-zinc-800 dark:to-zinc-700 flex items-center justify-center text-heading font-bold border border-zinc-300/50 dark:border-zinc-600/50 shadow-sm">
                     {admin?.name?.charAt(0) || 'A'}
                   </div>
                 </div>
@@ -206,7 +206,7 @@ function SidebarLink({ item, onClick }) {
         'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-300',
         ({ isActive }) => isActive
           ? 'bg-white/20'
-          : 'bg-slate-100 dark:bg-slate-800 group-hover:bg-primary/10'
+          : 'bg-zinc-100 dark:bg-zinc-800 group-hover:bg-primary/10'
       )}>
         <item.icon size={20} className={clsx(
           'transition-transform duration-300 group-hover:scale-110',
