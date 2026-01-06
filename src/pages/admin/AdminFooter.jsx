@@ -90,11 +90,11 @@ export default function AdminFooter() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <div className="flex items-center gap-2 mb-2">
-                        <div className="h-2 w-8 rounded-full bg-emerald-400/40" />
-                        <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-emerald-500">Global Presence</p>
+                        <div className="h-2 w-8 rounded-full bg-primary/40" />
+                        <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-primary">Global Presence</p>
                     </div>
                     <h1 className="text-3xl md:text-4xl font-extrabold text-heading tracking-tight">
-                        Footer <span className="text-emerald-500">Architecture</span>
+                        Footer <span className="text-primary">Architecture</span>
                     </h1>
                     <p className="mt-2 text-text/60 font-medium">Configure global contact info, social links and newsletter settings.</p>
                 </div>
@@ -102,7 +102,7 @@ export default function AdminFooter() {
                 <Button
                     onClick={handleSave}
                     loading={saveMutation.isPending}
-                    className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/20 px-8 py-3 rounded-2xl font-bold"
+                    className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 px-8 py-3 rounded-2xl font-bold"
                 >
                     <Save size={18} />
                     Deploy Footer
@@ -114,7 +114,7 @@ export default function AdminFooter() {
                 <div className="space-y-6">
                     <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-8 shadow-sm">
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="h-10 w-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600">
+                            <div className="h-10 w-10 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary">
                                 <Globe size={20} />
                             </div>
                             <h3 className="text-xl font-bold text-heading">Brand Identity</h3>
@@ -127,7 +127,7 @@ export default function AdminFooter() {
                                     value={contentForm.footer?.brand?.description || ''}
                                     onChange={(e) => updateField('footer.brand.description', e.target.value)}
                                     rows={4}
-                                    className="w-full px-5 py-4 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none resize-none"
+                                    className="w-full px-5 py-4 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none resize-none"
                                 />
                             </div>
                         </div>
@@ -135,7 +135,7 @@ export default function AdminFooter() {
 
                     <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-8 shadow-sm">
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="h-10 w-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600">
+                            <div className="h-10 w-10 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary">
                                 <MapPin size={20} />
                             </div>
                             <h3 className="text-xl font-bold text-heading">Contact Information</h3>
@@ -144,31 +144,31 @@ export default function AdminFooter() {
                         <div className="grid gap-4">
                             <div className="relative group/input">
                                 <label className="text-[10px] font-bold uppercase tracking-wider text-text/40 mb-1.5 block ml-1">Physical Address</label>
-                                <MapPin className="absolute left-4 top-[38px] text-text/30 group-focus-within/input:text-emerald-500 transition-colors" size={16} />
+                                <MapPin className="absolute left-4 top-[38px] text-text/30 group-focus-within/input:text-primary transition-colors" size={16} />
                                 <input
                                     value={contentForm.footer?.contact?.address || ''}
                                     onChange={(e) => updateField('footer.contact.address', e.target.value)}
-                                    className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none"
+                                    className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
                                 />
                             </div>
 
                             <div className="grid md:grid-cols-2 gap-4">
                                 <div className="relative group/input">
                                     <label className="text-[10px] font-bold uppercase tracking-wider text-text/40 mb-1.5 block ml-1">Phone Number</label>
-                                    <Phone className="absolute left-4 top-[38px] text-text/30 group-focus-within/input:text-emerald-500 transition-colors" size={16} />
+                                    <Phone className="absolute left-4 top-[38px] text-text/30 group-focus-within/input:text-primary transition-colors" size={16} />
                                     <input
                                         value={contentForm.footer?.contact?.phone || ''}
                                         onChange={(e) => updateField('footer.contact.phone', e.target.value)}
-                                        className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none"
+                                        className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
                                     />
                                 </div>
                                 <div className="relative group/input">
                                     <label className="text-[10px] font-bold uppercase tracking-wider text-text/40 mb-1.5 block ml-1">Email Address</label>
-                                    <Mail className="absolute left-4 top-[38px] text-text/30 group-focus-within/input:text-emerald-500 transition-colors" size={16} />
+                                    <Mail className="absolute left-4 top-[38px] text-text/30 group-focus-within/input:text-primary transition-colors" size={16} />
                                     <input
                                         value={contentForm.footer?.contact?.email || ''}
                                         onChange={(e) => updateField('footer.contact.email', e.target.value)}
-                                        className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none"
+                                        className="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
                                     />
                                 </div>
                             </div>
@@ -180,7 +180,7 @@ export default function AdminFooter() {
                 <div className="space-y-6">
                     <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-8 shadow-sm">
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="h-10 w-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600">
+                            <div className="h-10 w-10 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary">
                                 <Send size={20} />
                             </div>
                             <h3 className="text-xl font-bold text-heading">Newsletter Widget</h3>
@@ -192,7 +192,7 @@ export default function AdminFooter() {
                                 <input
                                     value={contentForm.footer?.newsletter?.title || ''}
                                     onChange={(e) => updateField('footer.newsletter.title', e.target.value)}
-                                    className="w-full px-5 py-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-bold text-heading focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none"
+                                    className="w-full px-5 py-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-bold text-heading focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
                                     placeholder="e.g. Stay in the Loop"
                                 />
                             </div>
@@ -202,7 +202,7 @@ export default function AdminFooter() {
                                     value={contentForm.footer?.newsletter?.subtitle || ''}
                                     onChange={(e) => updateField('footer.newsletter.subtitle', e.target.value)}
                                     rows={2}
-                                    className="w-full px-5 py-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none resize-none"
+                                    className="w-full px-5 py-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none resize-none"
                                     placeholder="e.g. Join our weekly eco-newsletter."
                                 />
                             </div>
@@ -212,7 +212,7 @@ export default function AdminFooter() {
                     <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-8 shadow-sm">
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center gap-3">
-                                <div className="h-10 w-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600">
+                                <div className="h-10 w-10 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary">
                                     <Share2 size={20} />
                                 </div>
                                 <h3 className="text-xl font-bold text-heading">Social Media</h3>
@@ -221,7 +221,7 @@ export default function AdminFooter() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => addItem('footer.socialLinks', emptySocial)}
-                                className="flex items-center gap-2 hover:bg-emerald-500/10 text-emerald-600 rounded-xl"
+                                className="flex items-center gap-2 hover:bg-primary/10 text-primary rounded-xl"
                             >
                                 <Plus size={16} /> Add Link
                             </Button>

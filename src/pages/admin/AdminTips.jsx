@@ -38,22 +38,22 @@ export default function AdminTips() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <div className="flex items-center gap-2 mb-2">
-                        <div className="h-2 w-8 rounded-full bg-amber-400/40" />
-                        <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-amber-500">Knowledge Base</p>
+                        <div className="h-2 w-8 rounded-full bg-primary/40" />
+                        <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-primary">Knowledge Base</p>
                     </div>
                     <h1 className="text-3xl md:text-4xl font-extrabold text-heading tracking-tight">
-                        Tips <span className="text-amber-500">Management</span>
+                        Tips <span className="text-primary">Management</span>
                     </h1>
                     <p className="mt-2 text-text/60 font-medium">Verify and publish eco-friendly tips from the community.</p>
                 </div>
 
                 <div className="flex items-center gap-3">
                     <div className="relative group">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text/30 group-focus-within:text-amber-500 transition-colors" size={18} />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text/30 group-focus-within:text-primary transition-colors" size={18} />
                         <input
                             type="text"
                             placeholder="Search tips..."
-                            className="pl-10 pr-4 py-2.5 rounded-xl border border-border bg-surface/50 backdrop-blur-sm text-sm focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all w-64"
+                            className="pl-10 pr-4 py-2.5 rounded-xl border border-border bg-surface/50 backdrop-blur-sm text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all w-64"
                         />
                     </div>
                 </div>
@@ -67,12 +67,12 @@ export default function AdminTips() {
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: index * 0.03 }}
                             key={tip.id || tip._id}
-                            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900/50 p-6 transition-all hover:shadow-xl hover:shadow-amber-500/5 hover:border-amber-500/20"
+                            className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900/50 p-6 transition-all hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20"
                         >
                             <div>
                                 <div className="flex items-start justify-between mb-4">
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-50 dark:bg-amber-900/20 group-hover:bg-amber-500/10 transition-colors">
-                                        <Lightbulb className="text-amber-500/40 group-hover:text-amber-500 transition-colors" size={20} />
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 dark:bg-primary/20 group-hover:bg-primary/15 transition-colors">
+                                        <Lightbulb className="text-primary/40 group-hover:text-primary transition-colors" size={20} />
                                     </div>
                                     <span className={clsx(
                                         "rounded-full border px-3 py-1 uppercase tracking-wider text-[10px] font-bold",
@@ -81,9 +81,9 @@ export default function AdminTips() {
                                         {tip.status}
                                     </span>
                                 </div>
-                                <h3 className="text-lg font-bold text-heading group-hover:text-amber-500 transition-colors mb-2 line-clamp-2">{tip.title}</h3>
+                                <h3 className="text-lg font-bold text-heading group-hover:text-primary transition-colors mb-2 line-clamp-2">{tip.title}</h3>
                                 <div className="flex items-center gap-2 text-xs font-medium text-text/40 mb-4">
-                                    <User size={14} className="text-amber-500/60" />
+                                    <User size={14} className="text-primary/60" />
                                     By {tip.authorName || 'Anonymous'}
                                 </div>
                                 <p className="text-sm text-text/60 line-clamp-3 mb-6 leading-relaxed">
@@ -98,7 +98,7 @@ export default function AdminTips() {
                                     className={clsx(
                                         "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold transition-all",
                                         tip.status === 'published'
-                                            ? "bg-amber-500 text-white shadow-lg shadow-amber-500/20"
+                                            ? "bg-primary text-white shadow-lg shadow-primary/20"
                                             : "text-text/50 hover:bg-white dark:hover:bg-zinc-700"
                                     )}
                                 >

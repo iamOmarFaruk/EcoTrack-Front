@@ -69,11 +69,11 @@ export default function AdminHowItWorks() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <div className="flex items-center gap-2 mb-2">
-                        <div className="h-2 w-8 rounded-full bg-violet-400/40" />
-                        <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-violet-500">Platform Onboarding</p>
+                        <div className="h-2 w-8 rounded-full bg-primary/40" />
+                        <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-primary">Platform Onboarding</p>
                     </div>
                     <h1 className="text-3xl md:text-4xl font-extrabold text-heading tracking-tight">
-                        How It <span className="text-violet-500">Works</span>
+                        How It <span className="text-primary">Works</span>
                     </h1>
                     <p className="mt-2 text-text/60 font-medium">Define the workflow steps displayed to new users on the platform.</p>
                 </div>
@@ -90,7 +90,7 @@ export default function AdminHowItWorks() {
                     <Button
                         onClick={handleSave}
                         loading={saveMutation.isPending}
-                        className="flex items-center gap-2 bg-violet-500 hover:bg-violet-600 text-white shadow-lg shadow-violet-500/20"
+                        className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20"
                     >
                         <Save size={18} />
                         Save Changes
@@ -107,10 +107,10 @@ export default function AdminHowItWorks() {
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
                             key={`${step.title}-${idx}`}
-                            className="group relative rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-6 transition-all hover:border-violet-500/30 hover:shadow-xl hover:shadow-violet-500/5"
+                            className="group relative rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-6 transition-all hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5"
                         >
                             <div className="flex items-start justify-between mb-6">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-50 dark:bg-violet-900/40 text-violet-500 font-bold text-lg">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 dark:bg-primary/20 text-primary font-bold text-lg">
                                     {idx + 1}
                                 </div>
                                 <button
@@ -124,35 +124,35 @@ export default function AdminHowItWorks() {
                             <div className="space-y-4">
                                 <div className="relative group/input">
                                     <label className="text-[10px] font-bold uppercase tracking-wider text-text/40 mb-1.5 block ml-1">Step Headline</label>
-                                    <Type className="absolute left-4 top-[38px] text-text/30 group-focus-within/input:text-violet-500 transition-colors" size={16} />
+                                    <Type className="absolute left-4 top-[38px] text-text/30 group-focus-within/input:text-primary transition-colors" size={16} />
                                     <input
                                         value={step.title}
                                         onChange={(e) => updateArrayItem('howItWorks', idx, 'title', e.target.value)}
                                         placeholder="e.g. Join a Challenge"
-                                        className="w-full pl-11 pr-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-bold text-heading focus:ring-4 focus:ring-violet-500/10 focus:border-violet-500 transition-all outline-none"
+                                        className="w-full pl-11 pr-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-bold text-heading focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
                                     />
                                 </div>
 
                                 <div className="relative group/input">
                                     <label className="text-[10px] font-bold uppercase tracking-wider text-text/40 mb-1.5 block ml-1">Process Icon Name</label>
-                                    <Wand2 className="absolute left-4 top-[38px] text-text/30 group-focus-within/input:text-violet-500 transition-colors" size={16} />
+                                    <Wand2 className="absolute left-4 top-[38px] text-text/30 group-focus-within/input:text-primary transition-colors" size={16} />
                                     <input
                                         value={step.icon}
                                         onChange={(e) => updateArrayItem('howItWorks', idx, 'icon', e.target.value)}
                                         placeholder="e.g. target, trending-up, heart"
-                                        className="w-full pl-11 pr-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-text focus:ring-4 focus:ring-violet-500/10 focus:border-violet-500 transition-all outline-none"
+                                        className="w-full pl-11 pr-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-text focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
                                     />
                                 </div>
 
                                 <div className="relative group/input">
                                     <label className="text-[10px] font-bold uppercase tracking-wider text-text/40 mb-1.5 block ml-1">Step Description</label>
-                                    <Info className="absolute left-4 top-[38px] text-text/30 group-focus-within/input:text-violet-500 transition-colors" size={16} />
+                                    <Info className="absolute left-4 top-[38px] text-text/30 group-focus-within/input:text-primary transition-colors" size={16} />
                                     <textarea
                                         value={step.description}
                                         onChange={(e) => updateArrayItem('howItWorks', idx, 'description', e.target.value)}
                                         placeholder="Briefly explain what the user needs to do in this step..."
                                         rows={3}
-                                        className="w-full pl-11 pr-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-violet-500/10 focus:border-violet-500 transition-all outline-none resize-none"
+                                        className="w-full pl-11 pr-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none resize-none"
                                     />
                                 </div>
                             </div>
