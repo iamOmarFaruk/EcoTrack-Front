@@ -293,14 +293,14 @@ export default function AdminLayout() {
                 >
                   <Menu size={18} className="transition-transform duration-300 group-hover:scale-110" />
                 </button>
-                <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-100/80 dark:bg-zinc-900/60 border border-zinc-200/50 dark:border-zinc-800/50 shadow-sm">
+                {/* <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-100/80 dark:bg-zinc-900/60 border border-zinc-200/50 dark:border-zinc-800/50 shadow-sm">
                   <Search size={14} className="text-text/40" />
                   <input
                     type="text"
                     placeholder="Quick search..."
                     className="bg-transparent border-none text-xs text-text focus:ring-0 w-32 md:w-48 placeholder:text-text/30"
                   />
-                </div>
+                </div> */}
               </div>
 
               <div className="flex items-center gap-3 md:gap-6">
