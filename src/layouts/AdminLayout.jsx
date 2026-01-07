@@ -105,6 +105,50 @@ const navItems = [
 export default function AdminLayout() {
   const { admin, logout } = useAdminAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [animateItems, setAnimateItems] = useState(false)
+  const [isDesktop, setIsDesktop] = useState(false)
+  
+  // Check if we're on desktop on mount and when window resizes
+  useEffect(() => {
+    const checkIfDesktop = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    
+    // Check on mount
+    checkIfDesktop();
+    
+    // Add resize listener
+    window.addEventListener('resize', checkIfDesktop);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', checkIfDesktop);
+  }, [])
+  
+  // Trigger initial menu items animation on component mount for desktop view
+  useEffect(() => {
+    if (isDesktop) {
+      // Delay animation slightly to let the page load properly
+      const timer = setTimeout(() => {
+        setAnimateItems(true);
+      }, 300);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isDesktop]);
+  
+  // Trigger menu items animation when sidebar opens
+  useEffect(() => {
+    if (sidebarOpen) {
+      // Small delay to ensure sidebar animation starts first
+      const timer = setTimeout(() => {
+        setAnimateItems(true);
+      }, 100);
+      return () => clearTimeout(timer);
+    } else if (!isDesktop) {
+      // Only reset animation state on mobile when sidebar closes
+      setAnimateItems(false);
+    }
+  }, [sidebarOpen, isDesktop])
 
   return (
     <div className="min-h-screen bg-light dark:bg-black text-text transition-colors duration-300 font-sans">
@@ -152,29 +196,73 @@ export default function AdminLayout() {
             <nav className="flex-1 space-y-1 overflow-y-auto pr-1 scrollbar-hide">
               <div className="pb-3">
                 <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-text/40 dark:text-text/50">Main Menu</p>
-                {navItems.slice(0, 1).map((item) => (
-                  <SidebarLink key={item.to} item={item} onClick={() => setSidebarOpen(false)} />
+                {navItems.slice(0, 1).map((item, index) => (
+                  <motion.div
+                    key={item.to}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={animateItems || window.innerWidth >= 1024 ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                    transition={{ 
+                      duration: 0.3,
+                      delay: index * 0.1,
+                      ease: [0.25, 0.1, 0.25, 1.0]
+                    }}
+                  >
+                    <SidebarLink item={item} onClick={() => setSidebarOpen(false)} />
+                  </motion.div>
                 ))}
               </div>
 
               <div className="pb-3">
                 <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-text/40 dark:text-text/50">Management</p>
-                {navItems.slice(1, 4).map((item) => (
-                  <SidebarLink key={item.to} item={item} onClick={() => setSidebarOpen(false)} />
+                {navItems.slice(1, 4).map((item, index) => (
+                  <motion.div
+                    key={item.to}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={animateItems || isDesktop ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                    transition={{ 
+                      duration: 0.3,
+                      delay: 0.1 + (index * 0.1),
+                      ease: [0.25, 0.1, 0.25, 1.0]
+                    }}
+                  >
+                    <SidebarLink item={item} onClick={() => setSidebarOpen(false)} />
+                  </motion.div>
                 ))}
               </div>
 
               <div className="pb-3">
                 <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-text/40 dark:text-text/50">Configuration</p>
-                {navItems.slice(4, 7).map((item) => (
-                  <SidebarLink key={item.to} item={item} onClick={() => setSidebarOpen(false)} />
+                {navItems.slice(4, 7).map((item, index) => (
+                  <motion.div
+                    key={item.to}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={animateItems || isDesktop ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                    transition={{ 
+                      duration: 0.3,
+                      delay: 0.4 + (index * 0.1),
+                      ease: [0.25, 0.1, 0.25, 1.0]
+                    }}
+                  >
+                    <SidebarLink item={item} onClick={() => setSidebarOpen(false)} />
+                  </motion.div>
                 ))}
               </div>
 
               <div className="pb-3">
                 <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-text/40 dark:text-text/50">System</p>
-                {navItems.slice(7).map((item) => (
-                  <SidebarLink key={item.to} item={item} onClick={() => setSidebarOpen(false)} />
+                {navItems.slice(7).map((item, index) => (
+                  <motion.div
+                    key={item.to}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={animateItems || isDesktop ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                    transition={{ 
+                      duration: 0.3,
+                      delay: 0.7 + (index * 0.1),
+                      ease: [0.25, 0.1, 0.25, 1.0]
+                    }}
+                  >
+                    <SidebarLink item={item} onClick={() => setSidebarOpen(false)} />
+                  </motion.div>
                 ))}
               </div>
             </nav>
