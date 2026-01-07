@@ -4,7 +4,7 @@ import { adminApi } from '../../services/adminApi.js'
 import { showError, showSuccess } from '../../utils/toast.jsx'
 import Button from '../../components/ui/Button.jsx'
 import EcoLoader from '../../components/EcoLoader.jsx'
-import { Wand2, Save, Plus, Trash2, Type, Info, ChevronDown } from 'lucide-react'
+import { Wand2, Save, Plus, Trash2, Edit3, Info, ChevronDown } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 import {
@@ -126,13 +126,13 @@ export default function AdminHowItWorks() {
             </div>
 
             <div className="grid gap-6 md:grid-cols-2">
-                <AnimatePresence mode="popLayout">
+                <AnimatePresence mode="sync" initial={false}>
                     {contentForm.howItWorks?.map((step, idx) => {
                         const iconMeta = getIconMeta(step.icon)
                         const IconComponent = iconMeta?.Icon || FiTarget
                         return (
                         <motion.div
-                            layout
+                            layout="position"
                             initial={{ opacity: 0, scale: 0.98 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
@@ -156,20 +156,22 @@ export default function AdminHowItWorks() {
                                 </button>
                             </div>
 
-                            <div className="space-y-4">
+                                <div className="space-y-8">
                                 <div className="relative group/input">
-                                    <label className="text-[10px] font-bold uppercase tracking-wider text-text/40 mb-1.5 block ml-1">Step Headline</label>
-                                    <Type className="absolute left-4 top-[38px] text-text/30 group-focus-within/input:text-primary transition-colors" size={16} />
-                                    <input
-                                        value={step.title}
-                                        onChange={(e) => updateArrayItem('howItWorks', idx, 'title', e.target.value)}
-                                        placeholder="e.g. Join a Challenge"
-                                        className="w-full pl-11 pr-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-bold text-heading focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
-                                    />
+                                    <label className="text-[12px] font-semibold uppercase tracking-wider text-text/50 mb-[15px] block ml-1">Step Headline</label>
+                                    <div className="relative">
+                                        <Edit3 className="absolute left-4 top-1/2 -translate-y-1/2 text-text/30 group-focus-within/input:text-primary transition-colors pointer-events-none" size={16} />
+                                        <input
+                                            value={step.title}
+                                            onChange={(e) => updateArrayItem('howItWorks', idx, 'title', e.target.value)}
+                                            placeholder="e.g. Join a Challenge"
+                                            className="w-full pl-11 pr-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-bold text-heading focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div className="relative">
-                                    <label className="text-[10px] font-bold uppercase tracking-wider text-text/40 mb-1.5 block ml-1">Process Icon</label>
+                                    <label className="text-[12px] font-semibold uppercase tracking-wider text-text/50 mb-[15px] block ml-1">Process Icon</label>
                                     <button
                                         type="button"
                                         onClick={() => setOpenPickerIndex(openPickerIndex === idx ? null : idx)}
@@ -225,14 +227,13 @@ export default function AdminHowItWorks() {
                                 </div>
 
                                 <div className="relative group/input">
-                                    <label className="text-[10px] font-bold uppercase tracking-wider text-text/40 mb-1.5 block ml-1">Step Description</label>
-                                    <Info className="absolute left-4 top-[38px] text-text/30 group-focus-within/input:text-primary transition-colors" size={16} />
+                                    <label className="text-[12px] font-semibold uppercase tracking-wider text-text/50 mb-[15px] block ml-1">Step Description</label>
                                     <textarea
                                         value={step.description}
                                         onChange={(e) => updateArrayItem('howItWorks', idx, 'description', e.target.value)}
                                         placeholder="Briefly explain what the user needs to do in this step..."
                                         rows={3}
-                                        className="w-full pl-11 pr-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none resize-none"
+                                        className="w-full px-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-heading focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none resize-none"
                                     />
                                 </div>
                             </div>
