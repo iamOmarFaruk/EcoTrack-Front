@@ -25,15 +25,10 @@ import ThemeToggle from '../components/ThemeToggle.jsx'
 
 // Import all lordicon animations
 //import legacyHomeIcon from '../assets/lordicon/legacy-home.json'
-import morphAccountIcon from '../assets/lordicon/morph-account.json'
-import calendarIcon from '../assets/lordicon/calendar.json'
-import lightbulbIcon from '../assets/lordicon/lightbulb.json'
-import layersIcon from '../assets/lordicon/layers.json'
-import activityIcon from '../assets/lordicon/activity.json'
-import messageIcon from '../assets/lordicon/message.json'
-import trophyIcon from '../assets/lordicon/trophy.json'
-import workflowIcon from '../assets/lordicon/workflow.json'
+
 import computer from '../assets/lordicon/computer.json'
+import puzzle from '../assets/lordicon/puzzle.json'
+import calendar from '../assets/lordicon/calendar.json'
 
 // Menu items with logical Lordicon assignments
 const navItems = [
@@ -49,56 +44,56 @@ const navItems = [
     label: "Challenges",
     icon: Trophy,
     description: "Manage challenges",
-    lordIcon: trophyIcon,
+    lordIcon: puzzle,
   },
   {
     to: "/control-panel/events",
     label: "Events",
     icon: Calendar,
     description: "Manage events",
-    lordIcon: calendarIcon,
+    lordIcon: calendar,
   },
   {
     to: "/control-panel/tips",
     label: "Tips",
     icon: Lightbulb,
     description: "Manage tips",
-    lordIcon: lightbulbIcon,
+    lordIcon: puzzle,
   },
   {
     to: "/control-panel/testimonials",
     label: "Testimonials",
     icon: MessageSquare,
     description: "User reviews",
-    lordIcon: messageIcon,
+    lordIcon:   puzzle,
   },
   {
     to: "/control-panel/how-it-works",
     label: "Platform Flow",
     icon: Wand2,
     description: "Process steps",
-    lordIcon: workflowIcon,
+    lordIcon: puzzle,
   },
   {
     to: "/control-panel/footer",
     label: "Footer Section",
     icon: Layers,
     description: "Links & Socials",
-    lordIcon: layersIcon,
+    lordIcon:   puzzle,
   },
   {
     to: "/control-panel/users",
     label: "Users",
     icon: Users,
     description: "Accounts & roles",
-    lordIcon: morphAccountIcon,
+    lordIcon: puzzle,
   },
   {
     to: "/control-panel/activity",
     label: "Activity",
     icon: ActivitySquare,
     description: "Audit trail",
-    lordIcon: activityIcon,
+    lordIcon:   puzzle,
   },
 ];
 
