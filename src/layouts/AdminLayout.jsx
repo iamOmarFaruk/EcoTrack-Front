@@ -174,14 +174,19 @@ export default function AdminLayout() {
         <aside className={clsx(
           'fixed inset-y-0 left-0 z-50 transition-all duration-300 transform lg:translate-x-0',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full',
-          sidebarCollapsed ? 'lg:w-20 w-72' : 'w-72'
+          sidebarCollapsed ? 'lg:w-24 w-72' : 'w-72'
         )}>
-          <div className="h-full bg-gradient-to-b from-white/95 via-white/90 to-white/95 dark:from-zinc-950/95 dark:via-zinc-950/90 dark:to-zinc-950/95 backdrop-blur-3xl border-r border-zinc-200/30 dark:border-zinc-800/30 flex flex-col p-5 shadow-2xl shadow-black/5 dark:shadow-black/20 lg:shadow-none">
+          <div
+            className={clsx(
+              "h-full bg-gradient-to-b from-white/95 via-white/90 to-white/95 dark:from-zinc-950/95 dark:via-zinc-950/90 dark:to-zinc-950/95 backdrop-blur-3xl border-r border-zinc-200/30 dark:border-zinc-800/30 flex flex-col shadow-2xl shadow-black/5 dark:shadow-black/20 lg:shadow-none",
+              sidebarCollapsed ? "lg:px-4 lg:py-5 p-5" : "p-5"
+            )}
+          >
             {/* Logo */}
             <div className="flex items-center justify-between pb-6">
               <div className={clsx(
                 "flex items-center gap-3 transition-all duration-300",
-                sidebarCollapsed && "lg:justify-center lg:w-full"
+                sidebarCollapsed && "lg:flex-1 lg:justify-center"
               )}>
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-primary via-emerald-500 to-teal-500 text-white shadow-xl shadow-primary/25 ring-1 ring-white/20">
                   <ShieldCheck size={22} className="drop-shadow-sm" />
@@ -332,7 +337,7 @@ export default function AdminLayout() {
         {/* Main Area */}
         <div className={clsx(
           "flex-1 flex flex-col min-w-0 transition-all duration-300",
-          sidebarCollapsed ? "lg:ml-20" : "lg:ml-72"
+          sidebarCollapsed ? "lg:ml-24" : "lg:ml-72"
         )}>
           {/* Header */}
           <header className="sticky top-0 z-40 bg-white/90 dark:bg-black/90 backdrop-blur-xl border-b border-zinc-200/30 dark:border-zinc-800/30 px-6 py-4">
@@ -387,6 +392,7 @@ export default function AdminLayout() {
 function SidebarLink({ item, onClick, isCollapsed }) {
   const playerRef = useRef(null)
   const linkRef = useRef(null)
+  const navLinkRef = useRef(null)
   const [showTooltip, setShowTooltip] = useState(false)
   const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 })
 
@@ -397,11 +403,16 @@ function SidebarLink({ item, onClick, isCollapsed }) {
 
   // Play animation on hover
   const updateTooltipPos = () => {
-    if (!linkRef.current) return
-    const rect = linkRef.current.getBoundingClientRect()
+    const anchorEl = navLinkRef.current || linkRef.current
+    if (!anchorEl) return
+    const rect = anchorEl.getBoundingClientRect()
+    const tooltipGap = 12
+    const tooltipYOffset = 0
+    const rawTop = rect.top + rect.height / 2
+    const clampedTop = Math.max(16, Math.min(window.innerHeight - 16, rawTop + tooltipYOffset))
     setTooltipPos({
-      top: rect.top + rect.height / 2,
-      left: rect.right + 8
+      top: clampedTop,
+      left: rect.right + tooltipGap
     })
   }
 
@@ -432,29 +443,48 @@ function SidebarLink({ item, onClick, isCollapsed }) {
     }
   }, [showTooltip])
 
+  useEffect(() => {
+    if (!showTooltip || !isCollapsed) return
+    let rafId = 0
+    const tick = () => {
+      updateTooltipPos()
+      rafId = window.requestAnimationFrame(tick)
+    }
+    rafId = window.requestAnimationFrame(tick)
+    return () => window.cancelAnimationFrame(rafId)
+  }, [showTooltip, isCollapsed])
+
   return (
-    <div className="relative" ref={linkRef}>
+    <div className={clsx('relative', isCollapsed && 'lg:w-fit lg:mx-auto')} ref={linkRef}>
       <NavLink
+        ref={navLinkRef}
         to={item.to}
         onClick={onClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         className={({ isActive }) => clsx(
           'flex items-center rounded-xl px-3 py-2.5 text-sm transition-all duration-300 relative group mb-1',
-          isCollapsed ? 'lg:justify-center gap-0' : 'gap-3',
+          isCollapsed
+            ? 'gap-0 lg:h-14 lg:w-14 lg:justify-center lg:rounded-full lg:px-0 lg:py-0'
+            : 'gap-3',
           isActive
             ? 'bg-gradient-to-r from-primary to-emerald-500 text-white shadow-lg shadow-primary/25'
             : 'text-text/70 dark:text-text/80 hover:bg-primary/10 hover:text-primary'
         )}
       >
         {({ isActive }) => (
-          <>
-            {/* Lordicon animated icon */}
-            <div className="relative flex h-7 w-7 shrink-0 items-center justify-center">
+	          <>
+	            {/* Lordicon animated icon */}
+	            <div
+	              className={clsx(
+	                'relative flex h-7 w-7 shrink-0 items-center justify-center',
+	                isCollapsed && 'lg:h-9 lg:w-9 lg:-translate-y-px'
+	              )}
+	            >
               <Player
                 ref={playerRef}
                 icon={item.lordIcon}
-                size={26}
+                size={isCollapsed ? 30 : 26}
                 colorize={isActive ? '#ffffff' : '#10b981'}
                 onReady={() => playerRef.current?.goToFirstFrame()}
               />
@@ -481,7 +511,7 @@ function SidebarLink({ item, onClick, isCollapsed }) {
 
             {/* Active Indicator */}
             <AnimatePresence>
-              {isActive && (
+              {isActive && !isCollapsed && (
                 <motion.div
                   layoutId="sidebar-active-indicator"
                   className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-full -ml-3"
@@ -497,23 +527,25 @@ function SidebarLink({ item, onClick, isCollapsed }) {
       </NavLink>
 
       {/* Tooltip - Only shown when collapsed on desktop */}
-      {showTooltip && isCollapsed && createPortal(
+      {createPortal(
         <AnimatePresence>
-          <motion.div
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -10 }}
-            transition={{ duration: 0.15 }}
-            style={{ top: tooltipPos.top, left: tooltipPos.left }}
-            className="hidden lg:block fixed -translate-y-1/2 z-[120] pointer-events-none drop-shadow-xl"
-          >
-            <div className="bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-3 py-2 rounded-lg shadow-xl border border-zinc-700 dark:border-zinc-300">
-              <p className="text-sm font-semibold whitespace-nowrap">{item.label}</p>
-              <p className="text-[10px] opacity-80 whitespace-nowrap">{item.description}</p>
-            </div>
-            {/* Arrow */}
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-2 h-2 rotate-45 bg-zinc-900 dark:bg-zinc-100 border-l border-b border-zinc-700 dark:border-zinc-300"></div>
-          </motion.div>
+          {showTooltip && isCollapsed && (
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              transition={{ duration: 0.15 }}
+              style={{ top: tooltipPos.top, left: tooltipPos.left }}
+              className="hidden lg:block fixed -translate-y-1/2 z-[9999] pointer-events-none drop-shadow-xl"
+            >
+              <div className="bg-white/95 dark:bg-zinc-950/95 text-zinc-900 dark:text-zinc-100 px-3 py-2 rounded-lg shadow-xl border border-zinc-200/70 dark:border-zinc-800/70 backdrop-blur-xl">
+                <p className="text-sm font-semibold whitespace-nowrap">{item.label}</p>
+                <p className="text-[10px] opacity-80 whitespace-nowrap">{item.description}</p>
+              </div>
+              {/* Arrow */}
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-2 h-2 rotate-45 bg-white/95 dark:bg-zinc-950/95 border-l border-b border-zinc-200/70 dark:border-zinc-800/70"></div>
+            </motion.div>
+          )}
         </AnimatePresence>,
         document.body
       )}
