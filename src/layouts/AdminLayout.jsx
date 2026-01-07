@@ -1,5 +1,5 @@
 import { Outlet, NavLink } from 'react-router-dom'
-import { Suspense, useRef, useState } from 'react'
+import { Suspense, useRef } from 'react'
 import {
   LayoutDashboard,
   Users,
@@ -25,25 +25,26 @@ import ThemeToggle from '../components/ThemeToggle.jsx'
 
 // Import all lordicon animations
 import legacyHomeIcon from '../assets/lordicon/legacy-home.json'
-import lockAltIcon from '../assets/lordicon/legacy-lock.json'
 import morphAccountIcon from '../assets/lordicon/morph-account.json'
-import morphExtensionIcon from '../assets/lordicon/morph-extension.json'
-import morphSearchIcon from '../assets/lordicon/morph-search.json'
-import morphSelectIcon from '../assets/lordicon/morph-select.json'
-import puzzleIcon from '../assets/lordicon/puzzle.json'
-import coinsIcon from '../assets/lordicon/coins.json'
-import backgroundIcon from '../assets/lordicon/background.json'
+import calendarIcon from '../assets/lordicon/calendar.json'
+import lightbulbIcon from '../assets/lordicon/lightbulb.json'
+import layersIcon from '../assets/lordicon/layers.json'
+import activityIcon from '../assets/lordicon/activity.json'
+import messageIcon from '../assets/lordicon/message.json'
+import trophyIcon from '../assets/lordicon/trophy.json'
+import workflowIcon from '../assets/lordicon/workflow.json'
 
+// Menu items with logical Lordicon assignments
 const navItems = [
   { to: '/control-panel/dashboard', label: 'Dashboard', icon: LayoutDashboard, description: 'Overview & Stats', lordIcon: legacyHomeIcon },
-  { to: '/control-panel/challenges', label: 'Challenges', icon: Trophy, description: 'Manage challenges', lordIcon: puzzleIcon },
-  { to: '/control-panel/events', label: 'Events', icon: Calendar, description: 'Manage events', lordIcon: morphSelectIcon },
-  { to: '/control-panel/tips', label: 'Tips', icon: Lightbulb, description: 'Manage tips', lordIcon: morphSearchIcon },
-  { to: '/control-panel/testimonials', label: 'Testimonials', icon: MessageSquare, description: 'User reviews', lordIcon: coinsIcon },
-  { to: '/control-panel/how-it-works', label: 'Platform Flow', icon: Wand2, description: 'Process steps', lordIcon: morphExtensionIcon },
-  { to: '/control-panel/footer', label: 'Footer Section', icon: Layers, description: 'Links & Socials', lordIcon: backgroundIcon },
+  { to: '/control-panel/challenges', label: 'Challenges', icon: Trophy, description: 'Manage challenges', lordIcon: trophyIcon },
+  { to: '/control-panel/events', label: 'Events', icon: Calendar, description: 'Manage events', lordIcon: calendarIcon },
+  { to: '/control-panel/tips', label: 'Tips', icon: Lightbulb, description: 'Manage tips', lordIcon: lightbulbIcon },
+  { to: '/control-panel/testimonials', label: 'Testimonials', icon: MessageSquare, description: 'User reviews', lordIcon: messageIcon },
+  { to: '/control-panel/how-it-works', label: 'Platform Flow', icon: Wand2, description: 'Process steps', lordIcon: workflowIcon },
+  { to: '/control-panel/footer', label: 'Footer Section', icon: Layers, description: 'Links & Socials', lordIcon: layersIcon },
   { to: '/control-panel/users', label: 'Users', icon: Users, description: 'Accounts & roles', lordIcon: morphAccountIcon },
-  { to: '/control-panel/activity', label: 'Activity', icon: ActivitySquare, description: 'Audit trail', lordIcon: lockAltIcon }
+  { to: '/control-panel/activity', label: 'Activity', icon: ActivitySquare, description: 'Audit trail', lordIcon: activityIcon }
 ]
 
 export default function AdminLayout() {
@@ -222,18 +223,12 @@ function SidebarLink({ item, onClick }) {
     >
       {({ isActive }) => (
         <>
-          {/* Icon Container */}
-          <div className={clsx(
-            'relative flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-all duration-300 overflow-hidden',
-            isActive
-              ? 'bg-white/20'
-              : 'bg-zinc-100 dark:bg-zinc-900/60 border border-zinc-200/50 dark:border-zinc-800/50 group-hover:border-primary/30 group-hover:bg-primary/10'
-          )}>
-            {/* Lordicon Player */}
+          {/* Lordicon animated icon */}
+          <div className="relative flex h-7 w-7 shrink-0 items-center justify-center">
             <Player
               ref={playerRef}
               icon={item.lordIcon}
-              size={24}
+              size={26}
               colors={isActive ? 'primary:#ffffff,secondary:#ffffff' : 'primary:#10b981,secondary:#10b981'}
               onReady={() => {
                 if (playerRef.current) {
