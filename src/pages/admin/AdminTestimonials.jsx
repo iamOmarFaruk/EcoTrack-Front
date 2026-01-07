@@ -69,11 +69,11 @@ export default function AdminTestimonials() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <div className="flex items-center gap-2 mb-2">
-                        <div className="h-2 w-8 rounded-full bg-rose-400/40" />
-                        <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-rose-500">Social Proof</p>
+                        <div className="h-2 w-8 rounded-full bg-primary/30" />
+                        <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-primary">Social Proof</p>
                     </div>
                     <h1 className="text-3xl md:text-4xl font-extrabold text-heading tracking-tight">
-                        Testimonials <span className="text-rose-500">Studio</span>
+                        Testimonials <span className="text-primary">Studio</span>
                     </h1>
                     <p className="mt-2 text-text/60 font-medium">Curate and manage user reviews displayed on the home page.</p>
                 </div>
@@ -90,7 +90,7 @@ export default function AdminTestimonials() {
                     <Button
                         onClick={handleSave}
                         loading={saveMutation.isPending}
-                        className="flex items-center gap-2 bg-rose-500 hover:bg-rose-600 text-white shadow-lg shadow-rose-500/20"
+                        className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20"
                     >
                         <Save size={18} />
                         Save Changes
@@ -108,12 +108,12 @@ export default function AdminTestimonials() {
                             exit={{ opacity: 0, scale: 0.98 }}
                             transition={{ duration: 0.2 }}
                             key={`${item.name}-${idx}`}
-                            className="group relative rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-6 md:p-8 transition-all hover:border-rose-500/30 hover:shadow-2xl hover:shadow-rose-500/5"
+                            className="group relative rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-6 md:p-8 transition-all hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5"
                         >
                             <div className="absolute top-6 right-6">
                                 <button
                                     onClick={() => removeItem('testimonials', idx)}
-                                    className="p-2 rounded-xl text-text/30 hover:bg-rose-500/10 hover:text-rose-500 transition-all"
+                                    className="p-2 rounded-xl text-text/30 hover:bg-primary/10 hover:text-primary transition-all"
                                 >
                                     <Trash2 size={20} />
                                 </button>
@@ -124,12 +124,12 @@ export default function AdminTestimonials() {
                                     <div className="relative">
                                         <label className="text-[10px] font-bold uppercase tracking-wider text-text/40 mb-1.5 block ml-1">Full Name</label>
                                         <div className="relative group/input">
-                                            <User className="absolute left-4 top-1/2 -translate-y-1/2 text-text/30 group-focus-within/input:text-rose-500 transition-colors" size={16} />
+                                            <User className="absolute left-4 top-1/2 -translate-y-1/2 text-text/30 group-focus-within/input:text-primary transition-colors" size={16} />
                                             <input
                                                 value={item.name}
                                                 onChange={(e) => updateArrayItem('testimonials', idx, 'name', e.target.value)}
                                                 placeholder="e.g. Sarah J. Wilson"
-                                                className="w-full pl-11 pr-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-bold text-heading focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all outline-none"
+                                                className="w-full pl-11 pr-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-bold text-heading focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
                                             />
                                         </div>
                                     </div>
@@ -137,12 +137,12 @@ export default function AdminTestimonials() {
                                     <div>
                                         <label className="text-[10px] font-bold uppercase tracking-wider text-text/40 mb-1.5 block ml-1">Subject / Role</label>
                                         <div className="relative group/input">
-                                            <Star className="absolute left-4 top-1/2 -translate-y-1/2 text-text/30 group-focus-within/input:text-rose-500 transition-colors" size={16} />
+                                            <Star className="absolute left-4 top-1/2 -translate-y-1/2 text-text/30 group-focus-within/input:text-primary transition-colors" size={16} />
                                             <input
                                                 value={item.role}
                                                 onChange={(e) => updateArrayItem('testimonials', idx, 'role', e.target.value)}
                                                 placeholder="e.g. Certified Eco-Specialist"
-                                                className="w-full pl-11 pr-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-text focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all outline-none"
+                                                className="w-full pl-11 pr-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-text focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
                                             />
                                         </div>
                                     </div>
@@ -155,7 +155,7 @@ export default function AdminTestimonials() {
                                                 onChange={(e) => updateArrayItem('testimonials', idx, 'initials', e.target.value)}
                                                 placeholder="SW"
                                                 maxLength={2}
-                                                className="w-full px-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-bold text-center text-heading focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all outline-none"
+                                                className="w-full px-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-bold text-center text-heading focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
                                             />
                                         </div>
                                         <div>
@@ -163,8 +163,8 @@ export default function AdminTestimonials() {
                                             <input
                                                 value={item.colorClass || ''}
                                                 onChange={(e) => updateArrayItem('testimonials', idx, 'colorClass', e.target.value)}
-                                                placeholder="bg-indigo-100"
-                                                className="w-full px-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-xs text-text focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all outline-none"
+                                                placeholder="bg-primary/10 text-primary"
+                                                className="w-full px-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-xs text-text focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
                                             />
                                         </div>
                                     </div>
@@ -173,13 +173,13 @@ export default function AdminTestimonials() {
                                 <div className="flex-1 flex flex-col">
                                     <label className="text-[10px] font-bold uppercase tracking-wider text-text/40 mb-1.5 block ml-1">The Testimonial Quote</label>
                                     <div className="relative flex-1 group/input">
-                                        <Quote className="absolute left-5 top-5 text-rose-500/20" size={32} />
+                                        <Quote className="absolute left-5 top-5 text-primary/20" size={32} />
                                         <textarea
                                             value={item.quote}
                                             onChange={(e) => updateArrayItem('testimonials', idx, 'quote', e.target.value)}
                                             placeholder="Share what this user had to say about their experience..."
                                             rows={5}
-                                            className="w-full min-h-[160px] pl-6 pr-6 py-5 rounded-3xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-base italic font-medium text-heading focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all outline-none resize-none leading-relaxed"
+                                            className="w-full min-h-[160px] pl-6 pr-6 py-5 rounded-3xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-base italic font-medium text-heading focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none resize-none leading-relaxed"
                                         />
                                     </div>
                                 </div>

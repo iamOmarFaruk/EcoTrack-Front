@@ -33,22 +33,22 @@ export default function AdminUsers() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <div className="h-2 w-8 rounded-full bg-blue-400/40" />
-            <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-blue-500">Access Control</p>
+            <div className="h-2 w-8 rounded-full bg-primary/30" />
+            <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-primary">Access Control</p>
           </div>
           <h1 className="text-3xl md:text-4xl font-extrabold text-heading tracking-tight">
-            User <span className="text-blue-500">Directory</span>
+            User <span className="text-primary">Directory</span>
           </h1>
           <p className="mt-2 text-text/60 font-medium">Manage user permissions, monitor activity and protect the community.</p>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="relative group">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text/30 group-focus-within:text-blue-500 transition-colors" size={18} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text/30 group-focus-within:text-primary transition-colors" size={18} />
             <input
               type="text"
               placeholder="Search by name or email..."
-              className="pl-10 pr-4 py-2.5 rounded-xl border border-border bg-surface/50 backdrop-blur-sm text-sm focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all w-64 md:w-80"
+              className="pl-10 pr-4 py-2.5 rounded-xl border border-border bg-surface/50 backdrop-blur-sm text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all w-64 md:w-80"
             />
           </div>
         </div>
@@ -81,7 +81,7 @@ export default function AdminUsers() {
                         {user.displayName?.charAt(0) || <User size={16} />}
                       </div>
                       <div>
-                        <p className="font-bold text-heading group-hover:text-blue-500 transition-colors">{user.displayName}</p>
+                        <p className="font-bold text-heading group-hover:text-primary transition-colors">{user.displayName}</p>
                         <p className="text-xs text-text/40 flex items-center gap-1">
                           <Mail size={12} className="opacity-50" />
                           {user.email}
@@ -141,4 +141,3 @@ export default function AdminUsers() {
     </div>
   )
 }
-

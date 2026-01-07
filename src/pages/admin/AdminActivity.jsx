@@ -19,16 +19,16 @@ export default function AdminActivity() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-zinc-100 dark:bg-zinc-800 text-zinc-500 border border-zinc-200 dark:border-zinc-700 shadow-sm">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 dark:bg-primary/15 text-primary border border-primary/20 shadow-sm">
             <ActivitySquare size={28} />
           </div>
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <div className="h-2 w-8 rounded-full bg-zinc-400/40" />
-              <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-zinc-500">Security & Logs</p>
+              <div className="h-2 w-8 rounded-full bg-primary/30" />
+              <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-primary">Security & Logs</p>
             </div>
             <h1 className="text-3xl md:text-4xl font-extrabold text-heading tracking-tight">
-              Audit <span className="text-zinc-400">Trail</span>
+              Audit <span className="text-primary">Trail</span>
             </h1>
             <p className="mt-1 text-text/60 font-medium">Monitoring every administrative operation in real-time.</p>
           </div>
@@ -36,7 +36,7 @@ export default function AdminActivity() {
       </div>
 
       <div className="relative">
-        <div className="absolute left-6 top-0 bottom-0 w-px bg-zinc-200 dark:bg-zinc-800 ml-[11px]" />
+        <div className="absolute left-6 top-0 bottom-0 w-px bg-primary/20 dark:bg-primary/20 ml-[11px]" />
 
         <div className="space-y-6 relative">
           {activity.length > 0 ? (
@@ -48,8 +48,8 @@ export default function AdminActivity() {
                 key={item._id}
                 className="relative pl-12 group"
               >
-                <div className="absolute left-0 top-3 h-6 w-6 rounded-full bg-white dark:bg-black border-2 border-zinc-200 dark:border-zinc-800 flex items-center justify-center z-10 group-hover:border-primary transition-colors">
-                  <div className="h-2 w-2 rounded-full bg-zinc-300 dark:bg-zinc-600 group-hover:bg-primary transition-colors" />
+                <div className="absolute left-0 top-3 h-6 w-6 rounded-full bg-white dark:bg-black border-2 border-primary/20 flex items-center justify-center z-10 group-hover:border-primary transition-colors">
+                  <div className="h-2 w-2 rounded-full bg-primary/30 dark:bg-primary/40 group-hover:bg-primary transition-colors" />
                 </div>
 
                 <div className="rounded-3xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white/50 dark:bg-zinc-900/40 p-5 transition-all hover:bg-white dark:hover:bg-zinc-900 shadow-sm hover:shadow-xl hover:shadow-primary/5">
@@ -102,4 +102,3 @@ export default function AdminActivity() {
     </div>
   )
 }
-
