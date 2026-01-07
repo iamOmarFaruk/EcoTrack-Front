@@ -4,16 +4,41 @@ import { adminApi } from '../../services/adminApi.js'
 import { showError, showSuccess } from '../../utils/toast.jsx'
 import Button from '../../components/ui/Button.jsx'
 import EcoLoader from '../../components/EcoLoader.jsx'
-import { Wand2, Save, Plus, Trash2, Edit3, Type, Info } from 'lucide-react'
+import { Wand2, Save, Plus, Trash2, Type, Info, ChevronDown } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
+import {
+    FiTarget,
+    FiTrendingUp,
+    FiMessageCircle,
+    FiUsers,
+    FiZap,
+    FiMapPin,
+    FiCalendar,
+    FiAward,
+    FiCompass,
+    FiSmile
+} from 'react-icons/fi'
 
 const emptyStep = { title: '', description: '', icon: 'target' }
 const clone = (val) => (typeof structuredClone === 'function' ? structuredClone(val) : JSON.parse(JSON.stringify(val)))
+const iconCatalog = [
+    { key: 'target', label: 'Target', Icon: FiTarget },
+    { key: 'trending-up', label: 'Trending Up', Icon: FiTrendingUp },
+    { key: 'chat', label: 'Chat', Icon: FiMessageCircle },
+    { key: 'users', label: 'Community', Icon: FiUsers },
+    { key: 'zap', label: 'Energy', Icon: FiZap },
+    { key: 'map', label: 'Location', Icon: FiMapPin },
+    { key: 'calendar', label: 'Calendar', Icon: FiCalendar },
+    { key: 'award', label: 'Achievement', Icon: FiAward },
+    { key: 'compass', label: 'Compass', Icon: FiCompass },
+    { key: 'smile', label: 'Smile', Icon: FiSmile }
+]
 
 export default function AdminHowItWorks() {
     const queryClient = useQueryClient()
     const [contentForm, setContentForm] = useState(null)
+    const [openPickerIndex, setOpenPickerIndex] = useState(null)
 
     const { data, isLoading } = useQuery({
         queryKey: ['admin', 'content'],
@@ -64,6 +89,8 @@ export default function AdminHowItWorks() {
         saveMutation.mutate({ howItWorks: contentForm.howItWorks })
     }
 
+    const getIconMeta = (key) => iconCatalog.find((item) => item.key === key) || iconCatalog[0]
+
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -100,7 +127,10 @@ export default function AdminHowItWorks() {
 
             <div className="grid gap-6 md:grid-cols-2">
                 <AnimatePresence mode="popLayout">
-                    {contentForm.howItWorks?.map((step, idx) => (
+                    {contentForm.howItWorks?.map((step, idx) => {
+                        const iconMeta = getIconMeta(step.icon)
+                        const IconComponent = iconMeta?.Icon || FiTarget
+                        return (
                         <motion.div
                             layout
                             initial={{ opacity: 0, scale: 0.98 }}
@@ -110,8 +140,13 @@ export default function AdminHowItWorks() {
                             className="group relative rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-6 transition-all hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5"
                         >
                             <div className="flex items-start justify-between mb-6">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 dark:bg-primary/20 text-primary font-bold text-lg">
-                                    {idx + 1}
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 dark:bg-primary/20 text-primary font-bold text-lg">
+                                        {idx + 1}
+                                    </div>
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-primary/20 bg-white dark:bg-zinc-900 text-primary">
+                                        <IconComponent size={22} />
+                                    </div>
                                 </div>
                                 <button
                                     onClick={() => removeItem('howItWorks', idx)}
@@ -133,15 +168,60 @@ export default function AdminHowItWorks() {
                                     />
                                 </div>
 
-                                <div className="relative group/input">
-                                    <label className="text-[10px] font-bold uppercase tracking-wider text-text/40 mb-1.5 block ml-1">Process Icon Name</label>
-                                    <Wand2 className="absolute left-4 top-[38px] text-text/30 group-focus-within/input:text-primary transition-colors" size={16} />
-                                    <input
-                                        value={step.icon}
-                                        onChange={(e) => updateArrayItem('howItWorks', idx, 'icon', e.target.value)}
-                                        placeholder="e.g. target, trending-up, heart"
-                                        className="w-full pl-11 pr-4 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-text focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all outline-none"
-                                    />
+                                <div className="relative">
+                                    <label className="text-[10px] font-bold uppercase tracking-wider text-text/40 mb-1.5 block ml-1">Process Icon</label>
+                                    <button
+                                        type="button"
+                                        onClick={() => setOpenPickerIndex(openPickerIndex === idx ? null : idx)}
+                                        className="w-full flex items-center justify-between gap-3 pl-4 pr-3 py-3 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-800/50 text-sm font-medium text-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/10 focus-visible:border-primary transition-all"
+                                    >
+                                        <span className="flex items-center gap-3">
+                                            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                                                <IconComponent size={18} />
+                                            </span>
+                                            <span className="text-heading font-semibold">{iconMeta?.label || 'Select Icon'}</span>
+                                        </span>
+                                        <span className="flex items-center gap-2 text-text/40">
+                                            <Wand2 size={16} />
+                                            <ChevronDown size={16} className={clsx('transition-transform', openPickerIndex === idx && 'rotate-180')} />
+                                        </span>
+                                    </button>
+
+                                    <AnimatePresence>
+                                        {openPickerIndex === idx && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 6 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: 6 }}
+                                                className="mt-3 grid grid-cols-5 gap-2 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900/80 p-3 shadow-xl"
+                                            >
+                                                {iconCatalog.map((item) => {
+                                                    const ActiveIcon = item.Icon
+                                                    const isActive = item.key === step.icon
+                                                    return (
+                                                        <button
+                                                            key={item.key}
+                                                            type="button"
+                                                            onClick={() => {
+                                                                updateArrayItem('howItWorks', idx, 'icon', item.key)
+                                                                setOpenPickerIndex(null)
+                                                            }}
+                                                            className={clsx(
+                                                                'flex h-11 w-11 items-center justify-center rounded-xl border transition-all',
+                                                                isActive
+                                                                    ? 'border-primary/50 bg-primary/10 text-primary shadow-sm'
+                                                                    : 'border-transparent bg-zinc-100/70 dark:bg-zinc-800/70 text-text/60 hover:border-primary/30 hover:text-primary'
+                                                            )}
+                                                            title={item.label}
+                                                            aria-label={item.label}
+                                                        >
+                                                            <ActiveIcon size={18} />
+                                                        </button>
+                                                    )
+                                                })}
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
                                 </div>
 
                                 <div className="relative group/input">
@@ -157,7 +237,8 @@ export default function AdminHowItWorks() {
                                 </div>
                             </div>
                         </motion.div>
-                    ))}
+                        )
+                    })}
                 </AnimatePresence>
             </div>
         </div>

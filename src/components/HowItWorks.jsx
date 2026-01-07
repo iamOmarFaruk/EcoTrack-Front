@@ -1,5 +1,16 @@
 import { Card, CardContent } from './ui/Card.jsx'
-import { FiTarget, FiTrendingUp, FiMessageCircle } from 'react-icons/fi'
+import {
+  FiTarget,
+  FiTrendingUp,
+  FiMessageCircle,
+  FiUsers,
+  FiZap,
+  FiMapPin,
+  FiCalendar,
+  FiAward,
+  FiCompass,
+  FiSmile
+} from 'react-icons/fi'
 import SectionHeading from './SectionHeading.jsx'
 import { motion } from 'framer-motion'
 import { containerVariants, itemVariants } from '../utils/animations'
@@ -30,7 +41,14 @@ const iconMap = {
   target: FiTarget,
   'trending-up': FiTrendingUp,
   chat: FiMessageCircle,
-  message: FiMessageCircle
+  message: FiMessageCircle,
+  users: FiUsers,
+  zap: FiZap,
+  map: FiMapPin,
+  calendar: FiCalendar,
+  award: FiAward,
+  compass: FiCompass,
+  smile: FiSmile
 }
 
 export default function HowItWorks() {
@@ -53,7 +71,7 @@ export default function HowItWorks() {
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.2 }}
-            className="grid gap-6 md:grid-cols-3"
+            className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
           >
             {steps.map((step) => {
               const IconComponent = typeof step.icon === 'function' ? step.icon : (iconMap[step.icon] || FiTarget)
