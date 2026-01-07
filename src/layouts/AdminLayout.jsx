@@ -1,5 +1,5 @@
 import { Outlet, NavLink } from 'react-router-dom'
-import { Suspense, useRef } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import {
   LayoutDashboard,
   Users,
@@ -24,7 +24,7 @@ import EcoLoader from '../components/EcoLoader.jsx'
 import ThemeToggle from '../components/ThemeToggle.jsx'
 
 // Import all lordicon animations
-import legacyHomeIcon from '../assets/lordicon/legacy-home.json'
+//import legacyHomeIcon from '../assets/lordicon/legacy-home.json'
 import morphAccountIcon from '../assets/lordicon/morph-account.json'
 import calendarIcon from '../assets/lordicon/calendar.json'
 import lightbulbIcon from '../assets/lordicon/lightbulb.json'
@@ -33,19 +33,74 @@ import activityIcon from '../assets/lordicon/activity.json'
 import messageIcon from '../assets/lordicon/message.json'
 import trophyIcon from '../assets/lordicon/trophy.json'
 import workflowIcon from '../assets/lordicon/workflow.json'
+import computer from '../assets/lordicon/computer.json'
 
 // Menu items with logical Lordicon assignments
 const navItems = [
-  { to: '/control-panel/dashboard', label: 'Dashboard', icon: LayoutDashboard, description: 'Overview & Stats', lordIcon: legacyHomeIcon },
-  { to: '/control-panel/challenges', label: 'Challenges', icon: Trophy, description: 'Manage challenges', lordIcon: trophyIcon },
-  { to: '/control-panel/events', label: 'Events', icon: Calendar, description: 'Manage events', lordIcon: calendarIcon },
-  { to: '/control-panel/tips', label: 'Tips', icon: Lightbulb, description: 'Manage tips', lordIcon: lightbulbIcon },
-  { to: '/control-panel/testimonials', label: 'Testimonials', icon: MessageSquare, description: 'User reviews', lordIcon: messageIcon },
-  { to: '/control-panel/how-it-works', label: 'Platform Flow', icon: Wand2, description: 'Process steps', lordIcon: workflowIcon },
-  { to: '/control-panel/footer', label: 'Footer Section', icon: Layers, description: 'Links & Socials', lordIcon: layersIcon },
-  { to: '/control-panel/users', label: 'Users', icon: Users, description: 'Accounts & roles', lordIcon: morphAccountIcon },
-  { to: '/control-panel/activity', label: 'Activity', icon: ActivitySquare, description: 'Audit trail', lordIcon: activityIcon }
-]
+  {
+    to: "/control-panel/dashboard",
+    label: "Dashboard",
+    icon: LayoutDashboard,
+    description: "Overview & Stats",
+    lordIcon: computer,
+  },
+  {
+    to: "/control-panel/challenges",
+    label: "Challenges",
+    icon: Trophy,
+    description: "Manage challenges",
+    lordIcon: trophyIcon,
+  },
+  {
+    to: "/control-panel/events",
+    label: "Events",
+    icon: Calendar,
+    description: "Manage events",
+    lordIcon: calendarIcon,
+  },
+  {
+    to: "/control-panel/tips",
+    label: "Tips",
+    icon: Lightbulb,
+    description: "Manage tips",
+    lordIcon: lightbulbIcon,
+  },
+  {
+    to: "/control-panel/testimonials",
+    label: "Testimonials",
+    icon: MessageSquare,
+    description: "User reviews",
+    lordIcon: messageIcon,
+  },
+  {
+    to: "/control-panel/how-it-works",
+    label: "Platform Flow",
+    icon: Wand2,
+    description: "Process steps",
+    lordIcon: workflowIcon,
+  },
+  {
+    to: "/control-panel/footer",
+    label: "Footer Section",
+    icon: Layers,
+    description: "Links & Socials",
+    lordIcon: layersIcon,
+  },
+  {
+    to: "/control-panel/users",
+    label: "Users",
+    icon: Users,
+    description: "Accounts & roles",
+    lordIcon: morphAccountIcon,
+  },
+  {
+    to: "/control-panel/activity",
+    label: "Activity",
+    icon: ActivitySquare,
+    description: "Audit trail",
+    lordIcon: activityIcon,
+  },
+];
 
 export default function AdminLayout() {
   const { admin, logout } = useAdminAuth()
@@ -192,20 +247,20 @@ export default function AdminLayout() {
 function SidebarLink({ item, onClick }) {
   const playerRef = useRef(null)
 
-  // Play animation once on hover
+  // Ensure the icon renders its first frame once loaded
+  useEffect(() => {
+    playerRef.current?.goToFirstFrame()
+  }, [item.lordIcon])
+
+  // Play animation on hover
   const handleMouseEnter = () => {
     if (playerRef.current) {
-      playerRef.current.goToFirstFrame()
-      playerRef.current.play()
+      playerRef.current.playFromBeginning()
     }
   }
 
-  // Reset animation on mouse leave
   const handleMouseLeave = () => {
-    if (playerRef.current) {
-      playerRef.current.goToFirstFrame()
-      playerRef.current.pause()
-    }
+    playerRef.current?.goToFirstFrame()
   }
 
   return (
@@ -229,13 +284,8 @@ function SidebarLink({ item, onClick }) {
               ref={playerRef}
               icon={item.lordIcon}
               size={26}
-              colors={isActive ? 'primary:#ffffff,secondary:#ffffff' : 'primary:#10b981,secondary:#10b981'}
-              onReady={() => {
-                if (playerRef.current) {
-                  playerRef.current.goToFirstFrame()
-                  playerRef.current.pause()
-                }
-              }}
+              colorize={isActive ? '#ffffff' : '#10b981'}
+              onReady={() => playerRef.current?.goToFirstFrame()}
             />
           </div>
 
@@ -272,4 +322,4 @@ function SidebarLink({ item, onClick }) {
       )}
     </NavLink>
   )
-}
+} 
