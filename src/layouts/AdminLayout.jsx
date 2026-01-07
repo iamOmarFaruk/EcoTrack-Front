@@ -29,6 +29,12 @@ import ThemeToggle from '../components/ThemeToggle.jsx'
 import computer from '../assets/lordicon/computer.json'
 import puzzle from '../assets/lordicon/puzzle.json'
 import calendar from '../assets/lordicon/calendar.json'
+import tips from '../assets/lordicon/tips.json'
+import testimonials from '../assets/lordicon/testimonials.json'
+import howworks from "../assets/lordicon/how-works.json";
+import footer from '../assets/lordicon/footer.json'
+import user from '../assets/lordicon/user.json'
+import activity from '../assets/lordicon/activity.json'
 
 // Menu items with logical Lordicon assignments
 const navItems = [
@@ -58,42 +64,42 @@ const navItems = [
     label: "Tips",
     icon: Lightbulb,
     description: "Manage tips",
-    lordIcon: puzzle,
+    lordIcon: tips,
   },
   {
     to: "/control-panel/testimonials",
     label: "Testimonials",
     icon: MessageSquare,
     description: "User reviews",
-    lordIcon:   puzzle,
+    lordIcon: testimonials,
   },
   {
     to: "/control-panel/how-it-works",
-    label: "Platform Flow",
+    label: "How It Works",
     icon: Wand2,
     description: "Process steps",
-    lordIcon: puzzle,
+    lordIcon: howworks,
   },
   {
     to: "/control-panel/footer",
     label: "Footer Section",
     icon: Layers,
     description: "Links & Socials",
-    lordIcon:   puzzle,
+    lordIcon: footer,
   },
   {
     to: "/control-panel/users",
     label: "Users",
     icon: Users,
     description: "Accounts & roles",
-    lordIcon: puzzle,
+    lordIcon: user,
   },
   {
     to: "/control-panel/activity",
     label: "Activity",
     icon: ActivitySquare,
     description: "Audit trail",
-    lordIcon:   puzzle,
+    lordIcon: activity,
   },
 ];
 
