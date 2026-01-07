@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminApi } from '../../services/adminApi.js'
-import { showError, showSuccess } from '../../utils/toast.jsx'
+import { showConfirmation, showError, showSuccess } from '../../utils/toast.jsx'
 import Button from '../../components/ui/Button.jsx'
 import EcoLoader from '../../components/EcoLoader.jsx'
 import { ShieldCheck, User, Mail, Calendar, Settings, MoreVertical, Search, Filter } from 'lucide-react'
@@ -121,7 +121,16 @@ export default function AdminUsers() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <button
-                      onClick={() => updateUser.mutate({ id: user._id, payload: { isActive: !user.isActive } })}
+                      onClick={() => showConfirmation({
+                        title: user.isActive ? 'Suspend User' : 'Activate User',
+                        message: user.isActive
+                          ? `Are you sure you want to suspend ${user.displayName || 'this user'}? They will lose access immediately.`
+                          : `Are you sure you want to activate ${user.displayName || 'this user'}?`,
+                        confirmText: user.isActive ? 'Suspend' : 'Activate',
+                        cancelText: 'Cancel',
+                        type: 'danger',
+                        onConfirm: () => updateUser.mutate({ id: user._id, payload: { isActive: !user.isActive } })
+                      })}
                       className={clsx(
                         "px-4 py-2 rounded-xl text-xs font-bold transition-all border",
                         user.isActive
