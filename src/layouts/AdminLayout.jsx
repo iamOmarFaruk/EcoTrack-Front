@@ -319,12 +319,12 @@ export default function AdminLayout() {
               <button
                 onClick={logout}
                 className={clsx(
-                  "w-full flex items-center justify-center py-2.5 rounded-xl text-sm font-bold text-danger hover:bg-danger/10 transition-all duration-300 border border-transparent hover:border-danger/20 group",
+                  "w-full flex items-center justify-center py-2.5 rounded-xl text-sm font-semibold text-white bg-danger shadow-sm transition-all duration-300 group hover:bg-danger/90 hover:shadow-danger/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-black",
                   sidebarCollapsed ? "lg:px-2 gap-0" : "gap-2 px-4"
                 )}
                 title={sidebarCollapsed ? "Logout Account" : ""}
               >
-                <LogOut size={16} className="transition-transform duration-300 group-hover:scale-110" />
+                <LogOut size={16} className="transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-px" />
                 <span className={clsx(
                   "transition-all duration-300",
                   sidebarCollapsed && "lg:hidden"
@@ -393,6 +393,7 @@ function SidebarLink({ item, onClick, isCollapsed }) {
   const playerRef = useRef(null)
   const linkRef = useRef(null)
   const navLinkRef = useRef(null)
+  const iconRef = useRef(null)
   const [showTooltip, setShowTooltip] = useState(false)
   const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 })
 
@@ -403,16 +404,19 @@ function SidebarLink({ item, onClick, isCollapsed }) {
 
   // Play animation on hover
   const updateTooltipPos = () => {
-    const anchorEl = navLinkRef.current || linkRef.current
+    const anchorEl = (isCollapsed && iconRef.current)
+      ? iconRef.current
+      : (navLinkRef.current || linkRef.current)
     if (!anchorEl) return
     const rect = anchorEl.getBoundingClientRect()
     const tooltipGap = 12
-    const tooltipYOffset = 0
+    const tooltipXOffset = 10
+    const tooltipYOffset = -20
     const rawTop = rect.top + rect.height / 2
     const clampedTop = Math.max(16, Math.min(window.innerHeight - 16, rawTop + tooltipYOffset))
     setTooltipPos({
       top: clampedTop,
-      left: rect.right + tooltipGap
+      left: rect.right + tooltipGap + tooltipXOffset
     })
   }
 
@@ -476,6 +480,7 @@ function SidebarLink({ item, onClick, isCollapsed }) {
 	          <>
 	            {/* Lordicon animated icon */}
 	            <div
+                ref={iconRef}
 	              className={clsx(
 	                'relative flex h-7 w-7 shrink-0 items-center justify-center',
 	                isCollapsed && 'lg:h-9 lg:w-9 lg:-translate-y-px'
