@@ -1,3 +1,4 @@
+import { useDeferredValue, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminApi } from '../../services/adminApi.js'
 import { showConfirmation, showError, showSuccess } from '../../utils/toast.jsx'
@@ -9,10 +10,15 @@ import clsx from 'clsx'
 
 export default function AdminUsers() {
   const queryClient = useQueryClient()
+  const [search, setSearch] = useState('')
+  const deferredSearch = useDeferredValue(search.trim())
 
   const usersQuery = useQuery({
-    queryKey: ['admin', 'users'],
-    queryFn: () => adminApi.getUsers({ limit: 50 })
+    queryKey: ['admin', 'users', deferredSearch],
+    queryFn: () => adminApi.getUsers({ limit: 50, ...(deferredSearch ? { search: deferredSearch } : {}) }),
+    keepPreviousData: true,
+    staleTime: 30_000,
+    refetchOnWindowFocus: false
   })
 
   const updateUser = useMutation({
@@ -26,7 +32,8 @@ export default function AdminUsers() {
 
   const users = usersQuery.data?.data?.users || usersQuery.data?.users || []
 
-  if (usersQuery.isLoading) return <EcoLoader />
+  const isLoading = usersQuery.isLoading
+  const isFetching = usersQuery.isFetching
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -44,17 +51,24 @@ export default function AdminUsers() {
 
         <div className="flex items-center gap-3">
           <div className="relative group">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text/30 group-focus-within:text-primary transition-colors" size={18} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/70 group-focus-within:text-primary transition-colors pointer-events-none z-10" size={18} />
             <input
               type="text"
               placeholder="Search by name or email..."
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
               className="pl-10 pr-4 py-2.5 rounded-xl border border-border bg-surface/50 backdrop-blur-sm text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all w-64 md:w-80"
             />
           </div>
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-[2rem] border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/40 backdrop-blur-sm shadow-xl shadow-zinc-200/50 dark:shadow-none">
+      <div className="relative overflow-hidden rounded-[2rem] border border-zinc-200 dark:border-zinc-800 bg-white/50 dark:bg-zinc-900/40 backdrop-blur-sm shadow-xl shadow-zinc-200/50 dark:shadow-none">
+        {isFetching && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/70 dark:bg-zinc-950/60">
+            <EcoLoader />
+          </div>
+        )}
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -67,7 +81,27 @@ export default function AdminUsers() {
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/60">
-              {users.map((user, idx) => (
+              {isLoading && !isFetching && users.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="py-12">
+                    <div className="flex items-center justify-center">
+                      <EcoLoader />
+                    </div>
+                  </td>
+                </tr>
+              ) : users.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="py-14">
+                    <div className="flex flex-col items-center justify-center text-center">
+                      <div className="h-14 w-14 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3">
+                        <User size={26} />
+                      </div>
+                      <p className="text-sm font-semibold text-heading">No users found</p>
+                      <p className="text-xs text-text/50 mt-1">Try a different search or clear the filter.</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : users.map((user, idx) => (
                 <motion.tr
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
