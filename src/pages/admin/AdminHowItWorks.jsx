@@ -136,7 +136,7 @@ export default function AdminHowItWorks() {
                             initial={{ opacity: 0, scale: 0.98 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            key={`${step.title}-${idx}`}
+                            key={`how-it-works-${idx}`}
                             className="group relative rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-6 transition-all hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5"
                         >
                             <div className="flex items-start justify-between mb-6">
