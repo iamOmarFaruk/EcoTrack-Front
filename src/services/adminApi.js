@@ -60,5 +60,6 @@ export const adminApi = {
   updateEventStatus: (id, payload) => adminClient.patch(`/admin/events/${id}/status`, payload),
   getTips: (params = {}) => adminClient.get('/admin/tips', { params }),
   updateTipStatus: (id, payload) => adminClient.patch(`/admin/tips/${id}/status`, payload),
-  getActivity: (params = {}) => adminClient.get('/admin/activity', { params })
+  getActivity: (params = {}) => adminClient.get('/admin/activity', { params }),
+  clearActivity: () => adminClient.delete('/admin/activity')
 }

@@ -1,19 +1,40 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminApi } from '../../services/adminApi.js'
 import EcoLoader from '../../components/EcoLoader.jsx'
-import { ActivitySquare, Clock, Shield, Database, User } from 'lucide-react'
+import Button from '../../components/ui/Button.jsx'
+import { showDeleteConfirmation, showError, showSuccess } from '../../utils/toast.jsx'
+import { ActivitySquare, Clock, Shield, Database, User, Trash2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
 
 export default function AdminActivity() {
+  const queryClient = useQueryClient()
+
   const { data, isLoading } = useQuery({
     queryKey: ['admin', 'activity'],
     queryFn: () => adminApi.getActivity({ limit: 40 })
   })
 
+  const clearLog = useMutation({
+    mutationFn: () => adminApi.clearActivity(),
+    onSuccess: (response) => {
+      const deletedCount = response?.data?.deletedCount || 0
+      showSuccess(deletedCount ? `Cleared ${deletedCount} activity records.` : 'Activity log cleared.')
+      queryClient.invalidateQueries({ queryKey: ['admin', 'activity'] })
+    },
+    onError: (err) => showError(err.message || 'Failed to clear activity log')
+  })
+
   const activity = data?.data || data || []
 
   if (isLoading) return <EcoLoader />
+
+  const handleClearLog = () => {
+    showDeleteConfirmation({
+      itemName: 'Activity Log',
+      onConfirm: () => clearLog.mutate()
+    })
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -32,6 +53,16 @@ export default function AdminActivity() {
             </h1>
             <p className="mt-1 text-text/60 font-medium">Monitoring every administrative operation in real-time.</p>
           </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <Button
+            onClick={handleClearLog}
+            disabled={clearLog.isPending || activity.length === 0}
+            className="flex items-center gap-2 bg-danger text-white hover:bg-danger/90 hover:shadow-danger/30 disabled:opacity-60"
+          >
+            <Trash2 size={18} />
+            Clear Log
+          </Button>
         </div>
       </div>
 
