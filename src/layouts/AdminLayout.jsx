@@ -1,8 +1,7 @@
 import { Outlet, NavLink } from 'react-router-dom'
-import { Suspense, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import {
   LayoutDashboard,
-  FileText,
   Users,
   Wand2,
   ActivitySquare,
@@ -10,7 +9,6 @@ import {
   Menu,
   X,
   ShieldCheck,
-  Settings,
   Trophy,
   Calendar,
   Lightbulb,
@@ -20,21 +18,29 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Player } from '@lordicon/react'
 import { useAdminAuth } from '../context/AdminAuthContext.jsx'
-import Button from '../components/ui/Button.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import ThemeToggle from '../components/ThemeToggle.jsx'
+import backgroundIcon from '../assets/lordicon/background.json'
+import legacyHomeIcon from '../assets/lordicon/legacy-home.json'
+import lockAltIcon from '../assets/lordicon/legacy-lock.json'
+import morphAccountIcon from '../assets/lordicon/morph-account.json'
+import morphExtensionIcon from '../assets/lordicon/morph-extension.json'
+import morphSearchIcon from '../assets/lordicon/morph-search.json'
+import morphSelectIcon from '../assets/lordicon/morph-select.json'
+import puzzleIcon from '../assets/lordicon/puzzle.json'
 
 const navItems = [
-  { to: '/control-panel/dashboard', label: 'Dashboard', icon: LayoutDashboard, description: 'Overview & Stats' },
-  { to: '/control-panel/challenges', label: 'Challenges', icon: Trophy, description: 'Manage challenges' },
-  { to: '/control-panel/events', label: 'Events', icon: Calendar, description: 'Manage events' },
-  { to: '/control-panel/tips', label: 'Tips', icon: Lightbulb, description: 'Manage tips' },
-  { to: '/control-panel/testimonials', label: 'Testimonials', icon: MessageSquare, description: 'User reviews' },
-  { to: '/control-panel/how-it-works', label: 'Platform Flow', icon: Wand2, description: 'Process steps' },
-  { to: '/control-panel/footer', label: 'Footer Section', icon: Layers, description: 'Links & Socials' },
-  { to: '/control-panel/users', label: 'Users', icon: Users, description: 'Accounts & roles' },
-  { to: '/control-panel/activity', label: 'Activity', icon: ActivitySquare, description: 'Audit trail' }
+  { to: '/control-panel/dashboard', label: 'Dashboard', icon: LayoutDashboard, description: 'Overview & Stats', lordIcon: legacyHomeIcon },
+  { to: '/control-panel/challenges', label: 'Challenges', icon: Trophy, description: 'Manage challenges', lordIcon: puzzleIcon },
+  { to: '/control-panel/events', label: 'Events', icon: Calendar, description: 'Manage events', lordIcon: null },
+  { to: '/control-panel/tips', label: 'Tips', icon: Lightbulb, description: 'Manage tips', lordIcon: morphSearchIcon },
+  { to: '/control-panel/testimonials', label: 'Testimonials', icon: MessageSquare, description: 'User reviews', lordIcon: null },
+  { to: '/control-panel/how-it-works', label: 'Platform Flow', icon: Wand2, description: 'Process steps', lordIcon: morphExtensionIcon },
+  { to: '/control-panel/footer', label: 'Footer Section', icon: Layers, description: 'Links & Socials', lordIcon: null },
+  { to: '/control-panel/users', label: 'Users', icon: Users, description: 'Accounts & roles', lordIcon: morphAccountIcon },
+  { to: '/control-panel/activity', label: 'Activity', icon: ActivitySquare, description: 'Audit trail', lordIcon: lockAltIcon }
 ]
 
 export default function AdminLayout() {
@@ -187,26 +193,19 @@ function SidebarLink({ item, onClick }) {
       to={item.to}
       onClick={onClick}
       className={({ isActive }) => clsx(
-        'flex items-center gap-4 rounded-xl px-3 py-3 text-sm transition-all duration-300 relative',
+        'flex items-center gap-4 rounded-2xl px-3 py-3 text-sm transition-all duration-300 relative',
         isActive
-          ? 'bg-primary text-white shadow-lg shadow-primary/25 translate-x-1'
-          : 'group text-text/70 dark:text-text/90 hover:bg-primary/5 hover:text-primary hover:translate-x-1'
+          ? 'bg-primary text-white shadow-xl shadow-primary/30 translate-x-1'
+          : 'group text-text/70 dark:text-text/80 hover:bg-primary/[0.08] hover:text-primary hover:translate-x-1'
       )}
     >
       {({ isActive }) => (
         <>
-          <div className={clsx(
-            'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-300',
-            isActive ? 'bg-white/20' : 'bg-zinc-100 dark:bg-zinc-800 group-hover:bg-primary/10'
-          )}>
-            <item.icon
-              size={20}
-              className={clsx(
-                'transition-transform duration-300',
-                isActive ? 'text-white' : 'text-text/40 group-hover:scale-110 group-hover:text-primary'
-              )}
-            />
-          </div>
+          <LordiconNavIcon
+            isActive={isActive}
+            lordIcon={item.lordIcon}
+            LucideIcon={item.icon}
+          />
           <div className="flex flex-col min-w-0">
             <span className={clsx(
               'font-bold tracking-tight truncate transition-colors',
@@ -236,5 +235,61 @@ function SidebarLink({ item, onClick }) {
         </>
       )}
     </NavLink>
+  )
+}
+
+function LordiconNavIcon({ isActive, lordIcon, LucideIcon }) {
+  const playerRef = useRef(null)
+
+  const reset = () => {
+    if (!lordIcon || !playerRef.current) return
+    playerRef.current.goToFirstFrame()
+    playerRef.current.pause()
+  }
+
+  const playHover = () => {
+    if (!lordIcon || !playerRef.current || isActive) return
+    playerRef.current.goToFirstFrame()
+    playerRef.current.play()
+  }
+
+  useEffect(() => {
+    reset()
+  }, [isActive, lordIcon])
+
+  return (
+    <div
+      onMouseEnter={playHover}
+      onMouseLeave={reset}
+      className={clsx(
+        'relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-500 overflow-hidden',
+        isActive
+          ? 'bg-white/20 shadow-inner'
+          : 'bg-zinc-100 dark:bg-zinc-900/50 border border-zinc-200/50 dark:border-zinc-800/50 group-hover:border-primary/30 group-hover:bg-primary/10 group-hover:shadow-lg group-hover:shadow-primary/10'
+      )}
+    >
+      {lordIcon && (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center translate-y-[1px]">
+          <Player
+            ref={playerRef}
+            icon={lordIcon}
+            size={36}
+            colors={isActive ? 'primary:#ffffff,secondary:#ffffff' : 'primary:#10b981,secondary:#10b981'}
+            onReady={reset}
+            style={{ width: 36, height: 36 }}
+            className="transition-all duration-300 group-hover:scale-110"
+          />
+        </div>
+      )}
+      {!lordIcon && (
+        <LucideIcon
+          size={20}
+          className={clsx(
+            'relative transition-transform duration-300',
+            isActive ? 'text-white' : 'text-text/40 group-hover:scale-110 group-hover:text-primary'
+          )}
+        />
+      )}
+    </div>
   )
 }
