@@ -85,6 +85,11 @@ export default function AdminEvents() {
                                             )}>
                                                 {event.status}
                                             </span>
+                                            {event.creatorIsActive === false && (
+                                                <span className="rounded-full border border-danger/20 bg-danger/10 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-danger">
+                                                    {event.creatorName ? `Hidden: ${event.creatorName} suspended` : 'Hidden: creator suspended'}
+                                                </span>
+                                            )}
                                             <span className="flex items-center gap-1.5 text-text/50">
                                                 <MapPin size={14} className="text-primary/60" />
                                                 {event.location || 'Online'}

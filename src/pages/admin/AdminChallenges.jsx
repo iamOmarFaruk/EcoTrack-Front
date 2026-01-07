@@ -89,6 +89,11 @@ export default function AdminChallenges() {
                                             )}>
                                                 {challenge.status}
                                             </span>
+                                            {challenge.creatorIsActive === false && (
+                                                <span className="rounded-full border border-danger/20 bg-danger/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-danger">
+                                                    {challenge.creatorName ? `Hidden: ${challenge.creatorName} suspended` : 'Hidden: creator suspended'}
+                                                </span>
+                                            )}
                                             <span className="flex items-center gap-1.5 text-text/40">
                                                 <span className="h-1 w-1 rounded-full bg-zinc-300 dark:bg-zinc-700" />
                                                 {challenge.category || 'Environmental'}

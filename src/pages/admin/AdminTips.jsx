@@ -74,12 +74,21 @@ export default function AdminTips() {
                                     <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 dark:bg-primary/20 group-hover:bg-primary/15 transition-colors">
                                         <Lightbulb className="text-primary/40 group-hover:text-primary transition-colors" size={20} />
                                     </div>
-                                    <span className={clsx(
-                                        "rounded-full border px-3 py-1 uppercase tracking-wider text-[10px] font-bold",
-                                        statusBadges[tip.status] || 'bg-zinc-100 text-zinc-600'
-                                    )}>
-                                        {tip.status}
-                                    </span>
+                                    <div className="flex flex-col items-end gap-1">
+                                        <span className={clsx(
+                                            "rounded-full border px-3 py-1 uppercase tracking-wider text-[10px] font-bold",
+                                            statusBadges[tip.status] || 'bg-zinc-100 text-zinc-600'
+                                        )}>
+                                            {tip.status}
+                                        </span>
+                                        {tip.authorIsActive === false && (
+                                            <span className="rounded-full border border-danger/20 bg-danger/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-danger">
+                                                {tip.authorDisplayName
+                                                    ? `Hidden: ${tip.authorDisplayName} suspended`
+                                                    : (tip.authorName ? `Hidden: ${tip.authorName} suspended` : 'Hidden: creator suspended')}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                                 <h3 className="text-lg font-bold text-heading group-hover:text-primary transition-colors mb-2 line-clamp-2">{tip.title}</h3>
                                 <div className="flex items-center gap-2 text-xs font-medium text-text/40 mb-4">
