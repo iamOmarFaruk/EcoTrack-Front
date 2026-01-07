@@ -187,10 +187,10 @@ function SidebarLink({ item, onClick }) {
       to={item.to}
       onClick={onClick}
       className={({ isActive }) => clsx(
-        'group flex items-center gap-4 rounded-xl px-3 py-3 text-sm transition-all duration-300 relative',
+        'flex items-center gap-4 rounded-xl px-3 py-3 text-sm transition-all duration-300 relative',
         isActive
           ? 'bg-primary text-white shadow-lg shadow-primary/25 translate-x-1'
-          : 'text-text/70 dark:text-text/90 hover:bg-primary/5 hover:text-primary hover:translate-x-1'
+          : 'group text-text/70 dark:text-text/90 hover:bg-primary/5 hover:text-primary hover:translate-x-1'
       )}
     >
       {({ isActive }) => (
@@ -202,13 +202,16 @@ function SidebarLink({ item, onClick }) {
             <item.icon
               size={20}
               className={clsx(
-                'transition-transform duration-300 group-hover:scale-110',
-                isActive ? 'text-white' : 'text-text/40 group-hover:text-primary'
+                'transition-transform duration-300',
+                isActive ? 'text-white' : 'text-text/40 group-hover:scale-110 group-hover:text-primary'
               )}
             />
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="font-bold tracking-tight truncate group-hover:text-primary transition-colors">
+            <span className={clsx(
+              'font-bold tracking-tight truncate transition-colors',
+              isActive ? '' : 'group-hover:text-primary'
+            )}>
               {item.label}
             </span>
             <span className={clsx(
@@ -235,4 +238,3 @@ function SidebarLink({ item, onClick }) {
     </NavLink>
   )
 }
-
