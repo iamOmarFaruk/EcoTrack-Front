@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { SiGithub, SiX, SiInstagram, SiLinkedin } from 'react-icons/si'
-import { RiMailLine, RiSendPlaneFill, RiMapPinLine, RiPhoneLine, RiPlantLine, RiLightbulbLine, RiCalendarEventLine } from 'react-icons/ri'
+import { SiGithub, SiX, SiInstagram, SiLinkedin, SiYoutube, SiFacebook, SiTiktok, SiDiscord } from 'react-icons/si'
+import { RiMailLine, RiSendPlaneFill, RiMapPinLine, RiPhoneLine, RiPlantLine, RiLightbulbLine, RiCalendarEventLine, RiCompassLine, RiGlobalLine, RiLink } from 'react-icons/ri'
 import Logo from './Logo.jsx'
 import { useSiteContent } from '../hooks/queries'
 
@@ -50,14 +50,22 @@ const defaultFooter = {
 const exploreIcons = {
   plant: RiPlantLine,
   bulb: RiLightbulbLine,
-  calendar: RiCalendarEventLine
+  calendar: RiCalendarEventLine,
+  compass: RiCompassLine,
+  globe: RiGlobalLine,
+  link: RiLink
 }
 
 const socialIcons = {
   github: SiGithub,
   x: SiX,
+  twitter: SiX,
   instagram: SiInstagram,
-  linkedin: SiLinkedin
+  linkedin: SiLinkedin,
+  youtube: SiYoutube,
+  facebook: SiFacebook,
+  tiktok: SiTiktok,
+  discord: SiDiscord
 }
 
 export default function Footer() {
