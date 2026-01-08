@@ -16,7 +16,8 @@ import {
   MessageSquare,
   Layers,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  ExternalLink
 } from 'lucide-react'
 import clsx from 'clsx'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -111,6 +112,9 @@ export default function AdminLayout() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [animateItems, setAnimateItems] = useState(false)
   const [isDesktop, setIsDesktop] = useState(false)
+  const [showViewSiteTooltip, setShowViewSiteTooltip] = useState(false)
+  const [tooltipPosition, setTooltipPosition] = useState('top')
+  const viewSiteButtonRef = useRef(null)
   
   // Check if we're on desktop on mount and when window resizes
   useEffect(() => {
@@ -153,6 +157,27 @@ export default function AdminLayout() {
       setAnimateItems(false);
     }
   }, [sidebarOpen, isDesktop])
+
+  // Calculate tooltip position (top or bottom)
+  const calculateTooltipPosition = () => {
+    if (!viewSiteButtonRef.current) return
+    const rect = viewSiteButtonRef.current.getBoundingClientRect()
+    const tooltipHeight = 50 // approximate height of tooltip
+    const spaceAbove = rect.top
+    const spaceBelow = window.innerHeight - rect.bottom
+
+    // If less than 80px space above, position below
+    if (spaceAbove < 80) {
+      setTooltipPosition('bottom')
+    } else {
+      setTooltipPosition('top')
+    }
+  }
+
+  const handleTooltipMouseEnter = () => {
+    calculateTooltipPosition()
+    setShowViewSiteTooltip(true)
+  }
 
   return (
     <div className="min-h-screen bg-light dark:bg-black text-text transition-colors duration-300 font-sans">
@@ -361,6 +386,35 @@ export default function AdminLayout() {
 
               <div className="flex items-center gap-3 md:gap-6">
                 <ThemeToggle />
+                <div className="relative">
+                  <button
+                    ref={viewSiteButtonRef}
+                    onClick={() => window.open('/', '_blank')}
+                    onMouseEnter={handleTooltipMouseEnter}
+                    onMouseLeave={() => setShowViewSiteTooltip(false)}
+                    className="p-2.5 rounded-xl border border-zinc-200/60 dark:border-zinc-800/60 bg-surface/60 text-text/80 hover:text-primary shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 group"
+                  >
+                    <ExternalLink size={18} className="transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-px" />
+                  </button>
+                  <AnimatePresence>
+                    {showViewSiteTooltip && (
+                      <motion.div
+                        initial={{ opacity: 0, y: tooltipPosition === 'top' ? 4 : -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: tooltipPosition === 'top' ? 4 : -4 }}
+                        transition={{ duration: 0.15 }}
+                        className={clsx(
+                          'absolute left-1/2 -translate-x-1/2 z-50 pointer-events-none',
+                          tooltipPosition === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'
+                        )}
+                      >
+                        <div className="bg-white/95 dark:bg-zinc-950/95 text-zinc-900 dark:text-zinc-100 px-3 py-2 rounded-lg shadow-xl border border-zinc-200/70 dark:border-zinc-800/70 backdrop-blur-xl whitespace-nowrap">
+                          <p className="text-sm font-semibold">View Site</p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
                 <div className="h-8 w-px bg-zinc-200 dark:bg-zinc-800"></div>
                 <div className="flex items-center gap-3">
                   <div className="hidden md:block text-right">
