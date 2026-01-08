@@ -102,7 +102,7 @@ export default function AdminFooter() {
                 <Button
                     onClick={handleSave}
                     loading={saveMutation.isPending}
-                    className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 px-8 py-3 rounded-2xl font-bold"
+                    className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 px-8 py-3 rounded-2xl font-bold hover:translate-y-0 hover:shadow-lg"
                 >
                     <Save size={18} />
                     Deploy Footer

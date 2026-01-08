@@ -43,8 +43,8 @@ export default function AdminLogin() {
         <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full blur-[120px]" style={{ background: 'radial-gradient(circle, rgba(52,211,153,0.35), transparent)' }}></div>
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl items-center px-4 py-16">
-        <div className="hidden flex-1 rounded-3xl border border-white/10 bg-gradient-to-br from-zinc-800 via-zinc-900 to-black p-10 shadow-2xl shadow-emerald-500/10 md:block">
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center gap-4 px-3 py-6 sm:gap-6 sm:px-4 sm:py-8 md:flex-row md:gap-8 md:px-6 md:py-12">
+        <div className="hidden w-full max-w-md rounded-2xl border border-white/10 bg-gradient-to-br from-zinc-800 via-zinc-900 to-black p-6 shadow-2xl shadow-emerald-500/10 sm:rounded-3xl md:block md:p-8">
           <div className="flex items-center gap-3 text-white/80">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-300">
               <ShieldCheck size={26} />
@@ -55,11 +55,11 @@ export default function AdminLogin() {
             </div>
           </div>
 
-          <p className="mt-6 text-lg text-white/70">
+          <p className="mt-4 text-lg text-white/70">
             Full oversight for content, publishing, and user safety. Use the demo credentials below to explore the entire control panel.
           </p>
 
-          <div className="mt-8 grid grid-cols-1 gap-4 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4">
+          <div className="mt-6 grid grid-cols-1 gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-emerald-200">
                 <Mail size={18} />
@@ -81,59 +81,59 @@ export default function AdminLogin() {
           </div>
         </div>
 
-        <div className="flex-1">
-          <form onSubmit={handleSubmit} className="mx-auto max-w-md rounded-3xl border border-white/10 bg-zinc-950/80 p-8 shadow-2xl shadow-emerald-500/10 backdrop-blur">
-            <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-300">
-                <ShieldCheck size={22} />
+        <div className="flex w-full max-w-md items-center justify-center">
+          <form onSubmit={handleSubmit} className="w-full rounded-2xl border border-white/10 bg-zinc-950/80 p-4 shadow-2xl shadow-emerald-500/10 backdrop-blur sm:rounded-3xl sm:p-6 md:p-8">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-300 sm:h-11 sm:w-11 sm:rounded-xl">
+                <ShieldCheck className="h-5 w-5 sm:h-[22px] sm:w-[22px]" />
               </div>
               <div>
-                <p className="text-xs uppercase tracking-[0.25em] text-white/50">Secure</p>
-                <h2 className="text-2xl font-bold text-white">Sign in as Admin</h2>
+                <p className="text-[10px] uppercase tracking-[0.25em] text-white/50 sm:text-xs">Secure</p>
+                <h2 className="text-lg font-bold text-white sm:text-2xl">Sign in as Admin</h2>
               </div>
             </div>
 
-            <div className="mt-8 space-y-4">
+            <div className="mt-4 space-y-3 sm:mt-6 sm:space-y-4">
               <div>
-                <label className="text-xs uppercase tracking-wide text-white/50">Email</label>
-                <div className="mt-2 flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-                  <Mail size={16} className="text-emerald-300" />
+                <label className="text-[10px] uppercase tracking-wide text-white/50 sm:text-xs">Email</label>
+                <div className="mt-1.5 flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-2.5 py-2 sm:mt-2 sm:rounded-xl sm:px-3">
+                  <Mail className="h-4 w-4 text-emerald-300" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-transparent text-white outline-none placeholder:text-white/40"
+                    className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/40 sm:text-base"
                     placeholder="admin@ecotrack.com"
                   />
                 </div>
               </div>
               <div>
-                <label className="text-xs uppercase tracking-wide text-white/50">Password</label>
-                <div className="mt-2 flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-                  <Lock size={16} className="text-emerald-300" />
+                <label className="text-[10px] uppercase tracking-wide text-white/50 sm:text-xs">Password</label>
+                <div className="mt-1.5 flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-2.5 py-2 sm:mt-2 sm:rounded-xl sm:px-3">
+                  <Lock className="h-4 w-4 text-emerald-300" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-transparent text-white outline-none placeholder:text-white/40"
+                    className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/40 sm:text-base"
                     placeholder="••••••••"
                   />
                   <button type="button" onClick={() => setShowPassword((prev) => !prev)} className="text-white/50 hover:text-white">
-                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
               <Button
                 type="submit"
                 variant="primary"
-                className="w-full justify-center bg-emerald-500 text-white hover:bg-emerald-400"
+                className="w-full justify-center bg-emerald-500 text-sm text-white hover:bg-emerald-400 sm:text-base"
                 disabled={loading}
               >
                 {loading ? 'Signing in...' : 'Access Control Panel'}
               </Button>
-              <p className="text-center text-xs text-white/50">
+              <p className="text-center text-[10px] text-white/50 sm:text-xs">
                 Routes and mutations are protected behind the admin token and mirrored in the backend.
               </p>
             </div>
