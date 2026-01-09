@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminApi } from '../../services/adminApi.js'
-import { showError, showSuccess } from '../../utils/toast.jsx'
+import { showError, showSuccess, showDeleteConfirmation } from '../../utils/toast.jsx'
 import Button from '../../components/ui/Button.jsx'
 import EcoLoader from '../../components/EcoLoader.jsx'
 import { Wand2, Save, Plus, Trash2, Edit3, Info, ChevronDown } from 'lucide-react'
@@ -116,11 +116,11 @@ export default function AdminHowItWorks() {
                     </Button>
                     <Button
                         onClick={handleSave}
-                        loading={saveMutation.isPending}
-                        className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 hover:translate-y-0 hover:shadow-lg"
+                        disabled={saveMutation.isPending}
+                        className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 hover:translate-y-0 hover:shadow-lg disabled:opacity-50"
                     >
                         <Save size={18} />
-                        Save Changes
+                        {saveMutation.isPending ? 'Saving...' : 'Save Changes'}
                     </Button>
                 </div>
             </div>
@@ -137,7 +137,7 @@ export default function AdminHowItWorks() {
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
                             key={`how-it-works-${idx}`}
-                            className="group relative rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-6 transition-all hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5"
+                            className="group relative rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-6 transition-all hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5"
                         >
                             <div className="flex items-start justify-between mb-6">
                                 <div className="flex items-center gap-3">
@@ -149,8 +149,14 @@ export default function AdminHowItWorks() {
                                     </div>
                                 </div>
                                 <button
-                                    onClick={() => removeItem('howItWorks', idx)}
-                                    className="p-2 rounded-lg text-text/30 hover:bg-rose-500/10 hover:text-rose-500 transition-all"
+                                    onClick={() => {
+                                        showDeleteConfirmation({
+                                            itemName: 'How It Works Step',
+                                            onConfirm: () => removeItem('howItWorks', idx)
+                                        })
+                                    }}
+                                    disabled={saveMutation.isPending}
+                                    className="p-2 rounded-lg text-text/30 hover:bg-rose-500/10 hover:text-rose-500 transition-all disabled:opacity-50"
                                 >
                                     <Trash2 size={18} />
                                 </button>
@@ -192,9 +198,10 @@ export default function AdminHowItWorks() {
                                     <AnimatePresence>
                                         {openPickerIndex === idx && (
                                             <motion.div
-                                                initial={{ opacity: 0, y: 6 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0, y: 6 }}
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                exit={{ opacity: 0 }}
+                                                transition={{ duration: 0.15 }}
                                                 className="mt-3 grid grid-cols-5 gap-2 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900/80 p-3 shadow-xl"
                                             >
                                                 {iconCatalog.map((item) => {

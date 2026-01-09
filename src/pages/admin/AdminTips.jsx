@@ -75,9 +75,10 @@ function EditTipModal({ tip, onClose, onSave, isLoading }) {
             onClick={onClose}
         >
             <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
                 onClick={(e) => e.stopPropagation()}
                 className="w-full max-w-2xl bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200/60 dark:border-zinc-800/60 overflow-hidden"
             >
@@ -213,6 +214,8 @@ export default function AdminTips() {
     })
 
     const handleStatusChange = (tip, newStatus) => {
+        if (updateTip.isPending) return // Prevent duplicate calls
+
         const action = newStatus === 'published' ? 'publish' : 'unpublish'
         showConfirmation({
             title: `${action.charAt(0).toUpperCase() + action.slice(1)} Tip`,
@@ -490,7 +493,8 @@ export default function AdminTips() {
                                     {isPublished(tip) ? (
                                         <Button
                                             onClick={() => handleStatusChange(tip, 'draft')}
-                                            className="flex items-center gap-2 px-4 py-2 text-sm bg-red-600 text-white hover:bg-red-700 shadow-[0_2px_0_0_rgba(220,38,38,1)] hover:shadow-[0_1px_0_0_rgba(220,38,38,1)]"
+                                            disabled={updateTip.isPending}
+                                            className="flex items-center gap-2 px-4 py-2 text-sm bg-red-600 text-white hover:bg-red-700 shadow-[0_2px_0_0_rgba(220,38,38,1)] hover:shadow-[0_1px_0_0_rgba(220,38,38,1)] disabled:opacity-50"
                                         >
                                             <ToggleLeft size={14} />
                                             Draft
@@ -498,7 +502,8 @@ export default function AdminTips() {
                                     ) : (
                                         <Button
                                             onClick={() => handleStatusChange(tip, 'published')}
-                                            className="flex items-center gap-2 px-4 py-2 text-sm bg-primary text-white hover:bg-primary/90"
+                                            disabled={updateTip.isPending}
+                                            className="flex items-center gap-2 px-4 py-2 text-sm bg-primary text-white hover:bg-primary/90 disabled:opacity-50"
                                         >
                                             <ToggleRight size={14} />
                                             Publish

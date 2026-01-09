@@ -155,21 +155,27 @@ export default function AdminUsers() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <button
-                      onClick={() => showConfirmation({
-                        title: user.isActive ? 'Suspend User' : 'Activate User',
-                        message: user.isActive
-                          ? `Are you sure you want to suspend ${user.displayName || 'this user'}? They will lose access immediately.`
-                          : `Are you sure you want to activate ${user.displayName || 'this user'}?`,
-                        confirmText: user.isActive ? 'Suspend' : 'Activate',
-                        cancelText: 'Cancel',
-                        type: 'danger',
-                        onConfirm: () => updateUser.mutate({ id: user._id, payload: { isActive: !user.isActive } })
-                      })}
+                      onClick={() => {
+                        if (updateUser.isPending) return // Prevent duplicate calls
+
+                        showConfirmation({
+                          title: user.isActive ? 'Suspend User' : 'Activate User',
+                          message: user.isActive
+                            ? `Suspend ${user.displayName || user.email}? They won't be able to log in.`
+                            : `Activate ${user.displayName || user.email}? They will regain access.`,
+                          confirmText: user.isActive ? 'Suspend' : 'Activate',
+                          onConfirm: () => updateUser.mutate({
+                            id: user._id,
+                            payload: { isActive: !user.isActive }
+                          })
+                        })
+                      }}
+                      disabled={updateUser.isPending}
                       className={clsx(
-                        "px-4 py-2 rounded-xl text-xs font-bold transition-all border",
+                        "px-4 py-2 rounded-xl text-xs font-bold transition-all border disabled:opacity-50 disabled:cursor-not-allowed",
                         user.isActive
-                          ? "text-rose-500 border-rose-100 hover:bg-rose-50 dark:border-rose-900/30 dark:hover:bg-rose-900/10"
-                          : "text-emerald-500 border-emerald-100 hover:bg-emerald-50 dark:border-emerald-900/30 dark:hover:bg-emerald-900/10"
+                          ? "bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-950/50"
+                          : "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-950/50"
                       )}
                     >
                       {user.isActive ? 'Suspend' : 'Activate'}

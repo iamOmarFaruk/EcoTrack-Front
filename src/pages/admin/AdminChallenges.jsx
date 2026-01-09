@@ -351,6 +351,10 @@ export default function AdminChallenges() {
 
     const deleteChallenge = useMutation({
         mutationFn: (id) => adminApi.deleteChallenge(id),
+        onMutate: () => {
+            // Prevent multiple simultaneous deletes
+            return { timestamp: Date.now() }
+        },
         onSuccess: (response) => {
             if (response.cancelled) {
                 showSuccess('Challenge cancelled (had active participants)')
@@ -382,12 +386,14 @@ export default function AdminChallenges() {
         })
     }
 
-    const handleDeleteChallenge = (challenge) => {
+    const handleDeleteChallenge = useCallback((challenge) => {
+        if (deleteChallenge.isPending) return
+
         showDeleteConfirmation({
             itemName: `Challenge "${challenge.title}"`,
             onConfirm: () => deleteChallenge.mutate(challenge._id)
         })
-    }
+    }, [deleteChallenge])
 
     const handleSearchChange = useCallback((e) => {
         const value = e.target.value
@@ -511,7 +517,7 @@ export default function AdminChallenges() {
             </AnimatePresence>
 
             {/* Challenges Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {challenges.length > 0 ? (
                     challenges.map((challenge, index) => {
                         const daysRemaining = challenge.endDate
@@ -654,7 +660,8 @@ export default function AdminChallenges() {
                                             </button>
                                             <button
                                                 onClick={() => handleDeleteChallenge(challenge)}
-                                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-red-500/20 text-sm font-medium text-red-500 bg-red-500/5 hover:bg-red-500/10 transition-colors"
+                                                disabled={deleteChallenge.isPending}
+                                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-red-500/20 text-sm font-medium text-red-500 bg-red-500/5 hover:bg-red-500/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
                                                 <Trash2 size={16} />
                                                 <span>Delete</span>

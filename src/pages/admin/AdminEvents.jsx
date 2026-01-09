@@ -372,10 +372,13 @@ export default function AdminEvents() {
 
     const deleteEvent = useMutation({
         mutationFn: (id) => adminApi.deleteEvent(id),
+        onMutate: () => {
+            // Prevent multiple simultaneous deletes
+            return { timestamp: Date.now() }
+        },
         onSuccess: () => {
             showSuccess('Event deleted successfully')
             queryClient.invalidateQueries({ queryKey: ['admin', 'events'] })
-            setDeletingEvent(null)
         },
         onError: (err) => showError(err.message || 'Failed to delete event')
     })
@@ -401,12 +404,14 @@ export default function AdminEvents() {
         })
     }
 
-    const handleDeleteEvent = (event) => {
+    const handleDeleteEvent = useCallback((event) => {
+        if (deleteEvent.isPending) return
+
         showDeleteConfirmation({
             itemName: `Event "${event.title}"`,
             onConfirm: () => deleteEvent.mutate(event._id)
         })
-    }
+    }, [deleteEvent])
 
     const handleSearchChange = useCallback((e) => {
         const value = e.target.value
@@ -530,7 +535,7 @@ export default function AdminEvents() {
             </AnimatePresence>
 
             {/* Events Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {events.length > 0 ? (
                     events.map((event, index) => {
                         const capacityPercentage = event.capacity > 0
@@ -656,7 +661,8 @@ export default function AdminEvents() {
                                             </button>
                                             <button
                                                 onClick={() => handleDeleteEvent(event)}
-                                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-red-500/20 text-sm font-medium text-red-500 bg-red-500/5 hover:bg-red-500/10 transition-colors"
+                                                disabled={deleteEvent.isPending}
+                                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-red-500/20 text-sm font-medium text-red-500 bg-red-500/5 hover:bg-red-500/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
                                                 <Trash2 size={16} />
                                                 <span>Delete</span>

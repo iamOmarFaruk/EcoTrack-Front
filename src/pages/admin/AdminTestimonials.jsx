@@ -87,6 +87,8 @@ export default function AdminTestimonials() {
     }
 
     const handleSaveItem = (index) => {
+        if (saveMutation.isPending) return // Prevent duplicate saves
+
         setSavingIndex(index)
         // Auto-assign colorClass based on position before saving
         const testimonialsWithColors = contentForm.testimonials.map((t, i) => ({

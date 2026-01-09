@@ -21,7 +21,7 @@ export function AdminAuthProvider({ children }) {
         const response = await adminApi.me()
         setAdmin(response?.data?.admin || response.admin)
       } catch (error) {
-        console.error('Admin session invalid', error)
+        // Session invalid - clear auth state
         setAdmin(null)
         setToken(null)
         setAdminToken(null)

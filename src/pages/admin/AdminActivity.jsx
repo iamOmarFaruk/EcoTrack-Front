@@ -39,8 +39,11 @@ export default function AdminActivity() {
   if (isLoading) return <EcoLoader />
 
   const handleClearLog = () => {
+    if (clearLog.isPending) return // Prevent duplicate clears
+
     showDeleteConfirmation({
-      itemName: 'Activity Log',
+      itemName: 'all activity logs',
+      message: 'This will permanently delete all activity history.',
       onConfirm: () => clearLog.mutate()
     })
   }
@@ -140,7 +143,8 @@ export default function AdminActivity() {
                           </div>
                           <button
                             onClick={() => handleDeleteEntry(item._id)}
-                            className="inline-flex items-center justify-center h-8 w-8 rounded-full border border-danger/20 text-danger hover:bg-danger/10 hover:border-danger/40 transition-all"
+                            disabled={deleteEntry.isPending}
+                            className="inline-flex items-center justify-center h-8 w-8 rounded-full border border-danger/20 text-danger hover:bg-danger/10 hover:border-danger/40 transition-all disabled:opacity-50"
                             aria-label="Delete activity"
                           >
                             <Trash2 size={14} />

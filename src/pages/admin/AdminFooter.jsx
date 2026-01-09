@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminApi } from '../../services/adminApi.js'
-import { showError, showSuccess } from '../../utils/toast.jsx'
+import { showError, showSuccess, showDeleteConfirmation } from '../../utils/toast.jsx'
 import Button from '../../components/ui/Button.jsx'
 import EcoLoader from '../../components/EcoLoader.jsx'
 import {
@@ -55,9 +55,10 @@ function IconPicker({ value, onChange, options, label }) {
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
                         className="absolute z-50 mt-2 w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 shadow-xl overflow-hidden"
                     >
                         {options.map((option) => {
@@ -91,7 +92,7 @@ function CollapsibleSection({ title, icon: Icon, children, defaultOpen = true, b
     const [isOpen, setIsOpen] = useState(defaultOpen)
 
     return (
-        <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 shadow-sm">
+        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 shadow-sm">
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
@@ -258,11 +259,11 @@ export default function AdminFooter() {
 
                 <Button
                     onClick={handleSave}
-                    loading={saveMutation.isPending}
-                    className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20 px-8 py-3 rounded-2xl font-bold"
+                    disabled={saveMutation.isPending}
+                    className="flex items-center gap-2 bg-primary text-white hover:bg-primary/90 shadow-xl shadow-primary/20 text-base disabled:opacity-50"
                 >
                     <Save size={18} />
-                    Deploy Footer
+                    {saveMutation.isPending ? 'Deploying...' : 'Deploy Changes'}
                 </Button>
             </div>
 
@@ -329,8 +330,14 @@ export default function AdminFooter() {
                                 </div>
                                 <div className="flex items-end">
                                     <button
-                                        onClick={() => removeItem('footer.resourceLinks', idx)}
-                                        className="p-3 rounded-xl text-text/30 hover:bg-rose-500/10 hover:text-rose-500 transition-all"
+                                        onClick={() => {
+                                            showDeleteConfirmation({
+                                                itemName: 'Resource Link',
+                                                onConfirm: () => removeItem('footer.resourceLinks', idx)
+                                            })
+                                        }}
+                                        disabled={saveMutation.isPending}
+                                        className="p-3 rounded-xl text-text/30 hover:bg-rose-500/10 hover:text-rose-500 transition-all disabled:opacity-50"
                                     >
                                         <Trash2 size={18} />
                                     </button>
@@ -387,8 +394,14 @@ export default function AdminFooter() {
                                 </div>
                                 <div className="flex items-end">
                                     <button
-                                        onClick={() => removeItem('footer.legalLinks', idx)}
-                                        className="p-3 rounded-xl text-text/30 hover:bg-rose-500/10 hover:text-rose-500 transition-all"
+                                        onClick={() => {
+                                            showDeleteConfirmation({
+                                                itemName: 'Legal Link',
+                                                onConfirm: () => removeItem('footer.legalLinks', idx)
+                                            })
+                                        }}
+                                        disabled={saveMutation.isPending}
+                                        className="p-3 rounded-xl text-text/30 hover:bg-rose-500/10 hover:text-rose-500 transition-all disabled:opacity-50"
                                     >
                                         <Trash2 size={18} />
                                     </button>
@@ -489,8 +502,14 @@ export default function AdminFooter() {
                                 </div>
                                 <div className="flex items-end">
                                     <button
-                                        onClick={() => removeItem('footer.socialLinks', idx)}
-                                        className="p-3 rounded-xl text-text/30 hover:bg-rose-500/10 hover:text-rose-500 transition-all"
+                                        onClick={() => {
+                                            showDeleteConfirmation({
+                                                itemName: 'Social Link',
+                                                onConfirm: () => removeItem('footer.socialLinks', idx)
+                                            })
+                                        }}
+                                        disabled={saveMutation.isPending}
+                                        className="p-3 rounded-xl text-text/30 hover:bg-rose-500/10 hover:text-rose-500 transition-all disabled:opacity-50"
                                     >
                                         <Trash2 size={18} />
                                     </button>
