@@ -480,7 +480,7 @@ export default function AdminTips() {
                                     <Button
                                         variant="outline"
                                         onClick={() => setEditingTip(tip)}
-                                        className="flex items-center gap-2 px-4 py-2 text-sm border-primary text-primary hover:bg-white hover:text-primary dark:hover:bg-zinc-900 dark:hover:text-primary"
+                                        className="flex items-center gap-2 px-4 py-2 text-sm"
                                     >
                                         <Edit3 size={14} />
                                         Edit
