@@ -1,9 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState, useMemo, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { adminApi } from '../../services/adminApi.js'
-import { showError, showSuccess } from '../../utils/toast.jsx'
-import Button from '../../components/ui/Button.jsx'
+import { challengeApi } from '../../services/api.js'
+import { showError, showSuccess, showConfirmation, showDeleteConfirmation } from '../../utils/toast.jsx'
 import EcoLoader from '../../components/EcoLoader.jsx'
-import { Trophy, ToggleLeft, ToggleRight, Filter, Search } from 'lucide-react'
+import { Trophy, ToggleRight, Filter, Search, CheckCircle, XCircle, FileText, ExternalLink, Pencil, Trash2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
 
@@ -16,10 +18,29 @@ const statusBadges = {
 
 export default function AdminChallenges() {
     const queryClient = useQueryClient()
+    const navigate = useNavigate()
+    const [searchQuery, setSearchQuery] = useState('')
+    const [statusFilter, setStatusFilter] = useState('all')
+    const [showFilters, setShowFilters] = useState(false)
 
-    const { data, isLoading } = useQuery({
-        queryKey: ['admin', 'challenges'],
-        queryFn: () => adminApi.getChallenges({ limit: 40 })
+    const debouncedSearch = useMemo(() => {
+        let timeout
+        return (value, callback) => {
+            clearTimeout(timeout)
+            timeout = setTimeout(() => callback(value), 300)
+        }
+    }, [])
+
+    const { data, isLoading, isInitialLoading, isFetching } = useQuery({
+        queryKey: ['admin', 'challenges', searchQuery, statusFilter],
+        queryFn: () => adminApi.getChallenges({
+            limit: 40,
+            search: searchQuery,
+            status: statusFilter !== 'all' ? statusFilter : undefined
+        }),
+        keepPreviousData: true,
+        placeholderData: (prev) => prev,
+        staleTime: 1000
     })
 
     const updateChallenge = useMutation({
@@ -31,7 +52,49 @@ export default function AdminChallenges() {
         onError: (err) => showError(err.message || 'Failed to update challenge')
     })
 
-    if (isLoading) return <EcoLoader />
+    const deleteChallenge = useMutation({
+        mutationFn: (id) => challengeApi.delete(id),
+        onSuccess: () => {
+            showSuccess('Challenge deleted successfully')
+            queryClient.invalidateQueries({ queryKey: ['admin', 'challenges'] })
+        },
+        onError: (err) => showError(err.message || 'Failed to delete challenge')
+    })
+
+    const handleStatusChange = (challenge, status) => {
+        if (challenge.status === status) return
+        showConfirmation({
+            title: 'Change Challenge Status',
+            message: `Set "${challenge.title}" to ${status}? Participants will see this change immediately.`,
+            confirmText: 'Update Status',
+            type: 'warning',
+            onConfirm: () => updateChallenge.mutate({ id: challenge._id, status })
+        })
+    }
+
+    const handleDelete = (challenge) => {
+        showDeleteConfirmation({
+            itemName: `Challenge "${challenge.title}"`,
+            onConfirm: () => deleteChallenge.mutate(challenge._id)
+        })
+    }
+
+    const handleEdit = (challenge) => {
+        showConfirmation({
+            title: 'Edit Challenge',
+            message: 'Proceed to the edit page? Remember to save your changes.',
+            confirmText: 'Go to Edit',
+            type: 'warning',
+            onConfirm: () => navigate(`/edit-challenge/${challenge._id}`)
+        })
+    }
+
+    const handleSearchChange = useCallback((e) => {
+        const value = e.target.value
+        debouncedSearch(value, setSearchQuery)
+    }, [debouncedSearch])
+
+    if (isInitialLoading) return <EcoLoader />
 
     const challenges = data?.data || data || []
 
@@ -49,23 +112,64 @@ export default function AdminChallenges() {
                     <p className="mt-2 text-text/60 font-medium">Approve, archive and monitor environmental challenges.</p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                     <div className="relative group">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text/30 group-focus-within:text-primary transition-colors" size={18} />
+                        <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-primary/60 group-focus-within:text-primary transition-colors" size={18} />
                         <input
                             type="text"
                             placeholder="Search challenges..."
-                            className="pl-10 pr-4 py-2.5 rounded-xl border border-border bg-surface/50 backdrop-blur-sm text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all w-64"
+                            onChange={handleSearchChange}
+                            className="pl-10 pr-4 py-2.5 rounded-xl border border-border bg-white dark:bg-zinc-900/60 backdrop-blur-sm text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all w-64"
                         />
+                        {isFetching && (
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                        )}
                     </div>
-                    <Button variant="ghost" className="flex items-center gap-2 border border-border bg-surface/50">
+                    <button
+                        onClick={() => setShowFilters(!showFilters)}
+                        className={clsx(
+                            "flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all",
+                            showFilters
+                                ? "border-primary bg-primary/5 text-primary"
+                                : "border-border bg-surface/50 text-text/70 hover:border-primary/50"
+                        )}
+                    >
                         <Filter size={18} />
                         Filters
-                    </Button>
+                    </button>
                 </div>
             </div>
 
-            <div className="grid gap-6">
+            {/* Filters Panel */}
+            <motion.div
+                initial={false}
+                animate={{ height: showFilters ? 'auto' : 0, opacity: showFilters ? 1 : 0, marginTop: showFilters ? 0 : -12 }}
+                className="overflow-hidden"
+            >
+                {showFilters && (
+                    <div className="p-4 rounded-xl bg-white dark:bg-zinc-900/50 border border-zinc-200/60 dark:border-zinc-800/60">
+                        <div className="flex flex-wrap items-center gap-3">
+                            <span className="text-sm font-medium text-text/60">Status:</span>
+                            {['all', 'active', 'draft', 'completed', 'cancelled'].map((status) => (
+                                <button
+                                    key={status}
+                                    onClick={() => setStatusFilter(status)}
+                                    className={clsx(
+                                        "px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all",
+                                        statusFilter === status
+                                            ? "bg-primary text-white"
+                                            : "bg-zinc-100 dark:bg-zinc-800 text-text/60 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                                    )}
+                                >
+                                    {status}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
                 {challenges.length > 0 ? (
                     challenges.map((challenge, index) => (
                         <motion.div
@@ -75,30 +179,34 @@ export default function AdminChallenges() {
                             key={challenge._id}
                             className="group relative overflow-hidden rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900/50 p-5 transition-all hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20"
                         >
-                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                                <div className="flex items-start gap-4 flex-1">
+                            <div className="grid md:grid-cols-[1fr,auto] gap-6 items-start">
+                                <div className="flex items-start gap-4">
                                     <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-zinc-100 dark:bg-zinc-800 group-hover:bg-primary/10 transition-colors">
                                         <Trophy className="text-text/40 group-hover:text-primary transition-colors" size={24} />
                                     </div>
-                                    <div>
-                                        <h3 className="text-lg font-bold text-heading group-hover:text-primary transition-colors">{challenge.title}</h3>
-                                        <div className="mt-2 flex flex-wrap items-center gap-4 text-xs font-medium">
-                                            <span className={clsx(
-                                                "rounded-full border px-3 py-1 uppercase tracking-wider",
-                                                statusBadges[challenge.status] || 'bg-zinc-100 text-zinc-600'
-                                            )}>
-                                                {challenge.status}
-                                            </span>
-                                            {challenge.creatorIsActive === false && (
-                                                <span className="rounded-full border border-danger/20 bg-danger/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-danger">
-                                                    {challenge.creatorName ? `Hidden: ${challenge.creatorName} suspended` : 'Hidden: creator suspended'}
+                                    <div className="space-y-3">
+                                        <div className="space-y-1">
+                                            <h3 className="text-lg font-bold text-heading leading-tight group-hover:text-primary transition-colors">{challenge.title}</h3>
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <span className={clsx(
+                                                    "rounded-full border px-3 py-1 uppercase tracking-wider text-[11px] font-bold",
+                                                    statusBadges[challenge.status] || 'bg-zinc-100 text-zinc-600'
+                                                )}>
+                                                    {challenge.status}
                                                 </span>
-                                            )}
-                                            <span className="flex items-center gap-1.5 text-text/40">
+                                                {challenge.creatorIsActive === false && (
+                                                    <span className="rounded-full border border-danger/20 bg-danger/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-danger">
+                                                        {challenge.creatorName ? `Hidden: ${challenge.creatorName} suspended` : 'Hidden: creator suspended'}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 text-sm text-text/60">
+                                            <span className="flex items-center gap-2">
                                                 <span className="h-1 w-1 rounded-full bg-zinc-300 dark:bg-zinc-700" />
                                                 {challenge.category || 'Environmental'}
                                             </span>
-                                            <span className="flex items-center gap-1.5 text-text/40">
+                                            <span className="flex items-center gap-2 mt-1 sm:mt-0">
                                                 <span className="h-1 w-1 rounded-full bg-zinc-300 dark:bg-zinc-700" />
                                                 {challenge.registeredParticipants || 0} Participants
                                             </span>
@@ -106,33 +214,61 @@ export default function AdminChallenges() {
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-800/40 p-1.5 rounded-xl border border-zinc-200/50 dark:border-zinc-700/50">
-                                    <button
-                                        onClick={() => updateChallenge.mutate({ id: challenge._id, status: 'active' })}
-                                        disabled={challenge.status === 'active'}
-                                        className={clsx(
-                                            "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all",
-                                            challenge.status === 'active'
-                                                ? "bg-primary text-white shadow-lg shadow-primary/20"
-                                                : "text-text/50 hover:bg-white dark:hover:bg-zinc-700"
-                                        )}
-                                    >
-                                        <ToggleRight size={16} />
-                                        Active
-                                    </button>
-                                    <button
-                                        onClick={() => updateChallenge.mutate({ id: challenge._id, status: 'draft' })}
-                                        disabled={challenge.status === 'draft'}
-                                        className={clsx(
-                                            "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all",
-                                            challenge.status === 'draft'
-                                                ? "bg-zinc-500 text-white shadow-lg shadow-zinc-500/20"
-                                                : "text-text/50 hover:bg-white dark:hover:bg-zinc-700"
-                                        )}
-                                    >
-                                        <ToggleLeft size={16} />
-                                        Draft
-                                    </button>
+                                <div className="flex flex-col gap-3 md:items-end">
+                                    <div className="flex flex-wrap items-center gap-2 justify-end">
+                                        {[
+                                            { key: 'active', label: 'Active', icon: ToggleRight, classes: "bg-emerald-500 text-white" },
+                                            { key: 'draft', label: 'Draft', icon: FileText, classes: "bg-zinc-500 text-white" },
+                                            { key: 'completed', label: 'Completed', icon: CheckCircle, classes: "bg-indigo-500 text-white" },
+                                            { key: 'cancelled', label: 'Cancelled', icon: XCircle, classes: "bg-red-500 text-white" },
+                                        ].map(option => {
+                                            const Icon = option.icon
+                                            const isActive = challenge.status === option.key
+                                            return (
+                                                <button
+                                                    key={option.key}
+                                                    onClick={() => handleStatusChange(challenge, option.key)}
+                                                    disabled={isActive || updateChallenge.isPending}
+                                                    className={clsx(
+                                                        "flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wide transition-all border border-transparent",
+                                                        isActive
+                                                            ? `${option.classes} shadow-sm`
+                                                            : "text-text/60 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+                                                    )}
+                                                >
+                                                    <Icon size={14} />
+                                                    <span>{option.label}</span>
+                                                </button>
+                                            )
+                                        })}
+                                    </div>
+
+                                    <div className="flex flex-wrap items-center gap-2 justify-end">
+                                        <a
+                                            href={`/challenges/${challenge.slug || challenge._id}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/20 text-sm font-medium text-primary bg-primary/5 hover:bg-primary/10 transition-colors"
+                                        >
+                                            <ExternalLink size={16} />
+                                            <span>View</span>
+                                        </a>
+                                        <button
+                                            onClick={() => handleEdit(challenge)}
+                                            className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-blue-500/20 text-sm font-medium text-blue-500 bg-blue-500/5 hover:bg-blue-500/10 transition-colors"
+                                        >
+                                            <Pencil size={16} />
+                                            <span>Edit</span>
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(challenge)}
+                                            disabled={deleteChallenge.isPending}
+                                            className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-red-500/20 text-sm font-medium text-red-500 bg-red-500/5 hover:bg-red-500/10 transition-colors disabled:opacity-60"
+                                        >
+                                            <Trash2 size={16} />
+                                            <span>Delete</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </motion.div>
