@@ -46,7 +46,6 @@ export default function MyEvents() {
     }
     return badges[status] || 'bg-light text-text/60'
   }
-
   return (
     <motion.div
       key={`my-events-page-${activeTab}-${events.length}`}

@@ -13,7 +13,6 @@ import { useTips, useTipMutations } from '../hooks/queries'
 import { motion, AnimatePresence } from 'framer-motion'
 import { containerVariants, itemVariants } from '../utils/animations'
 
-
 export default function Tips() {
   useDocumentTitle('Recent Tips')
   const { user } = useAuth()
@@ -123,8 +122,6 @@ export default function Tips() {
       tip.firebaseId === user.uid
     )
   }
-
-
 
   if (error) {
     return (
@@ -442,4 +439,3 @@ export default function Tips() {
     </div>
   )
 }
-

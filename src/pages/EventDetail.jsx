@@ -521,4 +521,5 @@ export default function EventDetail() {
       </section>
     </div>
   )
+
 }

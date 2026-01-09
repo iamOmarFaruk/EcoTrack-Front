@@ -526,4 +526,5 @@ export default function EditChallenge() {
       </div>
     </div>
   )
+
 }

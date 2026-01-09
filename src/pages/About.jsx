@@ -38,7 +38,6 @@ export default function About() {
           </div>
 
           {/* Content */}
-          {/* Content */}
           <StaggerContainer className="order-2 space-y-4">
             <StaggerItem>
               <SectionHeading
@@ -125,7 +124,3 @@ export default function About() {
     </div>
   )
 }
-
-
-
-

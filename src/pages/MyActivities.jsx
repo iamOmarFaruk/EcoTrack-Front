@@ -275,4 +275,5 @@ export default function MyActivities() {
       </AnimatePresence>
     </motion.div>
   )
+
 }

@@ -796,6 +796,3 @@ export default function AddChallenge() {
     </div>
   )
 }
-
-
-

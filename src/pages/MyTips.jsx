@@ -298,4 +298,5 @@ export default function MyTips() {
             />
         </motion.div>
     )
+
 }

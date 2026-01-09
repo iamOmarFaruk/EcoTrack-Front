@@ -56,10 +56,6 @@ export default function Challenges() {
   // Show skeletons only during initial load (no data yet)
   const loading = isLoading || (isFetching && challenges.length === 0)
 
-  // Debug logs
-  // console.log('[Challenges Page] Filters:', filters)
-  // console.log('[Challenges Page] Loading:', loading)
-  // console.log('[Challenges Page] Challenges:', challenges)
   if (error) console.error('[Challenges Page] Error:', error)
 
   // Determine pagination (Placeholder logic as useChallenges returns array currently)
