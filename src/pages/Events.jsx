@@ -48,7 +48,15 @@ export default function Events() {
     return params
   }, [currentPage, filterState])
 
-  const { data: events = [], isLoading: loading, error } = useEvents(filters)
+  const {
+    data: events = [],
+    isLoading,
+    isFetching,
+    error
+  } = useEvents(filters)
+
+  // Show skeletons only during initial load (no data yet)
+  const loading = isLoading || (isFetching && events.length === 0)
 
   const categories = useMemo(
     () => ['All', 'Tree Planting', 'Waste Management', 'Ocean Cleanup', 'Solar & Energy', 'Community Workshop', 'Sustainable Gardening', 'Other'],

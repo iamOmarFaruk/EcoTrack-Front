@@ -48,9 +48,13 @@ export default function Challenges() {
   // Fetch challenges
   const {
     data: challenges = [],
-    isLoading: loading,
+    isLoading,
+    isFetching,
     error
   } = useChallenges(filters)
+
+  // Show skeletons only during initial load (no data yet)
+  const loading = isLoading || (isFetching && challenges.length === 0)
 
   // Debug logs
   // console.log('[Challenges Page] Filters:', filters)
