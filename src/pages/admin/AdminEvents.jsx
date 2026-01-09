@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminApi } from '../../services/adminApi.js'
-import { showError, showSuccess } from '../../utils/toast.jsx'
+import { showError, showSuccess, showConfirmation, showDeleteConfirmation } from '../../utils/toast.jsx'
 import Button from '../../components/ui/Button.jsx'
 import EcoLoader from '../../components/EcoLoader.jsx'
 import {
@@ -84,7 +84,13 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        onSave(formData)
+        showConfirmation({
+            title: 'Save Event Changes',
+            message: 'Are you sure you want to save these changes? This will update the event immediately.',
+            confirmText: 'Save Changes',
+            onConfirm: () => onSave(formData),
+            type: 'warning'
+        })
     }
 
     return (
@@ -278,57 +284,7 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
     )
 }
 
-function DeleteConfirmModal({ event, onClose, onConfirm, isLoading }) {
-    return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-            onClick={onClose}
-        >
-            <motion.div
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.95, opacity: 0 }}
-                className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200/60 dark:border-zinc-800/60 p-6"
-                onClick={e => e.stopPropagation()}
-            >
-                <div className="flex items-center gap-4 mb-4">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-500/10">
-                        <Trash2 className="text-red-500" size={24} />
-                    </div>
-                    <div>
-                        <h3 className="text-lg font-bold text-heading">Delete Event</h3>
-                        <p className="text-sm text-text/60">This action cannot be undone</p>
-                    </div>
-                </div>
 
-                <p className="text-text/80 mb-6">
-                    Are you sure you want to delete <span className="font-semibold text-heading">"{event?.title}"</span>?
-                    {event?.registeredParticipants > 0 && (
-                        <span className="block mt-2 text-amber-600 dark:text-amber-400 text-sm">
-                            This event has {event.registeredParticipants} registered participant(s).
-                        </span>
-                    )}
-                </p>
-
-                <div className="flex items-center justify-end gap-3">
-                    <Button variant="ghost" onClick={onClose}>
-                        Cancel
-                    </Button>
-                    <button
-                        onClick={onConfirm}
-                        disabled={isLoading}
-                        className="px-4 py-2 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
-                    >
-                        {isLoading ? 'Deleting...' : 'Delete Event'}
-                    </button>
-                </div>
-            </motion.div>
-        </motion.div>
-    )
-}
 
 export default function AdminEvents() {
     const queryClient = useQueryClient()
@@ -336,7 +292,6 @@ export default function AdminEvents() {
     const [statusFilter, setStatusFilter] = useState('all')
     const [showFilters, setShowFilters] = useState(false)
     const [editingEvent, setEditingEvent] = useState(null)
-    const [deletingEvent, setDeletingEvent] = useState(null)
 
     const debouncedSearch = useMemo(() => {
         let timeout
@@ -383,6 +338,34 @@ export default function AdminEvents() {
         },
         onError: (err) => showError(err.message || 'Failed to delete event')
     })
+
+    // Confirmation handlers
+    const handleStatusUpdate = (eventId, newStatus) => {
+        showConfirmation({
+            title: `Change Event Status`,
+            message: `Are you sure you want to change this event status to "${newStatus}"? This will affect how users can interact with the event.`,
+            confirmText: 'Change Status',
+            onConfirm: () => updateStatus.mutate({ id: eventId, status: newStatus }),
+            type: 'warning'
+        })
+    }
+
+    const handleEditEvent = (event) => {
+        showConfirmation({
+            title: 'Edit Event',
+            message: 'You are about to edit this event. Make sure to save your changes when done.',
+            confirmText: 'Continue Editing',
+            onConfirm: () => setEditingEvent(event),
+            type: 'warning'
+        })
+    }
+
+    const handleDeleteEvent = (event) => {
+        showDeleteConfirmation({
+            itemName: `Event "${event.title}"`,
+            onConfirm: () => deleteEvent.mutate(event._id)
+        })
+    }
 
     const handleSearchChange = useCallback((e) => {
         const value = e.target.value
@@ -499,8 +482,8 @@ export default function AdminEvents() {
                 )}
             </AnimatePresence>
 
-            {/* Events List */}
-            <div className="grid gap-4">
+            {/* Events Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {events.length > 0 ? (
                     events.map((event, index) => {
                         const capacityPercentage = event.capacity > 0
@@ -515,138 +498,144 @@ export default function AdminEvents() {
                                 key={event._id}
                                 className="group relative overflow-hidden rounded-2xl border border-zinc-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900/50 transition-all hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20"
                             >
-                                <div className="p-5">
-                                    <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-5">
-                                        {/* Event Info */}
-                                        <div className="flex items-start gap-4 flex-1 min-w-0">
-                                            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 dark:bg-primary/15 group-hover:bg-primary/15 transition-colors">
-                                                <Calendar className="text-primary/60 group-hover:text-primary transition-colors" size={24} />
-                                            </div>
-                                            <div className="min-w-0 flex-1">
-                                                <div className="flex items-center gap-3 mb-2">
-                                                    <h3 className="text-lg font-bold text-heading group-hover:text-primary transition-colors truncate">
-                                                        {event.title}
-                                                    </h3>
-                                                    <span className={clsx(
-                                                        "shrink-0 rounded-full border px-3 py-0.5 uppercase tracking-wider text-[10px] font-bold",
-                                                        statusConfig[event.status]?.badge || 'bg-zinc-100 text-zinc-600'
-                                                    )}>
-                                                        {event.status}
-                                                    </span>
-                                                </div>
-                                                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] font-medium">
-                                                    {event.creatorIsActive === false && (
-                                                        <span className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-red-500">
-                                                            {event.creatorName ? `Hidden: ${event.creatorName} suspended` : 'Hidden: creator suspended'}
-                                                        </span>
-                                                    )}
-                                                    <span className="flex items-center gap-1.5 text-text/50">
-                                                        <MapPin size={14} className="text-primary/60" />
-                                                        {event.location || 'Online'}
-                                                    </span>
-                                                    <span className="flex items-center gap-1.5 text-text/50">
-                                                        <Clock size={14} className="text-primary/60" />
-                                                        {event.date ? new Date(event.date).toLocaleDateString('en-US', {
-                                                            month: 'short',
-                                                            day: 'numeric',
-                                                            year: 'numeric',
-                                                            hour: '2-digit',
-                                                            minute: '2-digit'
-                                                        }) : 'TBD'}
-                                                    </span>
-                                                    <span className="flex items-center gap-1.5 text-text/50">
-                                                        <Users size={14} className="text-primary/60" />
-                                                        {event.registeredParticipants || 0} / {event.capacity || 0}
-                                                        <span className="text-[11px] text-text/40">({capacityPercentage}%)</span>
-                                                    </span>
-                                                </div>
-                                                {/* Capacity Progress Bar */}
-                                                <div className="mt-3 w-full max-w-xs h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
-                                                    <div
+                                {/* Card Header */}
+                                <div className="p-5 pb-3">
+                                    <div className="flex items-start justify-between gap-3 mb-3">
+                                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 dark:bg-primary/15 group-hover:bg-primary/15 transition-colors">
+                                            <Calendar className="text-primary/60 group-hover:text-primary transition-colors" size={20} />
+                                        </div>
+                                        <span className={clsx(
+                                            "shrink-0 rounded-full border px-2.5 py-0.5 uppercase tracking-wider text-[10px] font-bold",
+                                            statusConfig[event.status]?.badge || 'bg-zinc-100 text-zinc-600'
+                                        )}>
+                                            {event.status}
+                                        </span>
+                                    </div>
+
+                                    <h3 className="text-lg font-bold text-heading group-hover:text-primary transition-colors line-clamp-2 mb-2">
+                                        {event.title}
+                                    </h3>
+
+                                    {event.creatorIsActive === false && (
+                                        <span className="inline-block rounded-full border border-red-500/20 bg-red-500/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-red-500 mb-2">
+                                            {event.creatorName ? `Hidden: ${event.creatorName} suspended` : 'Hidden: creator suspended'}
+                                        </span>
+                                    )}
+                                </div>
+
+                                {/* Card Body */}
+                                <div className="px-5 pb-3 space-y-3">
+                                    {/* Location */}
+                                    <div className="flex items-center gap-2 text-[13px] text-text/70">
+                                        <MapPin size={14} className="text-primary/60 shrink-0" />
+                                        <span className="truncate">{event.location || 'Online'}</span>
+                                    </div>
+
+                                    {/* Date & Time */}
+                                    <div className="flex items-center gap-2 text-[13px] text-text/70">
+                                        <Clock size={14} className="text-primary/60 shrink-0" />
+                                        {event.date ? new Date(event.date).toLocaleDateString('en-US', {
+                                            month: 'short',
+                                            day: 'numeric',
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        }) : 'TBD'}
+                                    </div>
+
+                                    {/* Capacity */}
+                                    <div className="flex items-center gap-2 text-[13px] text-text/70">
+                                        <Users size={14} className="text-primary/60 shrink-0" />
+                                        <span>{event.registeredParticipants || 0} / {event.capacity || 0}</span>
+                                        <span className="text-[11px] text-text/40">({capacityPercentage}%)</span>
+                                    </div>
+
+                                    {/* Capacity Progress Bar */}
+                                    <div className="w-full h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                                        <div
+                                            className={clsx(
+                                                "h-full rounded-full transition-all",
+                                                capacityPercentage >= 90 ? "bg-red-500" :
+                                                capacityPercentage >= 70 ? "bg-amber-500" : "bg-primary"
+                                            )}
+                                            style={{ width: `${Math.min(capacityPercentage, 100)}%` }}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Card Footer - Actions */}
+                                <div className="px-5 py-3 border-t border-zinc-200/60 dark:border-zinc-800/60">
+                                    <div className="flex items-center justify-between gap-2">
+                                        {/* Status Toggle Buttons */}
+                                        <div className="flex items-center gap-1">
+                                            {Object.entries(statusConfig).slice(0, 2).map(([status, config]) => {
+                                                const Icon = config.icon
+                                                return (
+                                                    <button
+                                                        key={status}
+                                                        onClick={() => handleStatusUpdate(event._id, status)}
+                                                        disabled={event.status === status || updateStatus.isPending}
                                                         className={clsx(
-                                                            "h-full rounded-full transition-all",
-                                                            capacityPercentage >= 90 ? "bg-red-500" :
-                                                            capacityPercentage >= 70 ? "bg-amber-500" : "bg-primary"
+                                                            "flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all",
+                                                            event.status === status
+                                                                ? config.button
+                                                                : "text-text/40 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-text/70"
                                                         )}
-                                                        style={{ width: `${Math.min(capacityPercentage, 100)}%` }}
-                                                    />
-                                                </div>
-                                            </div>
+                                                        title={config.label}
+                                                    >
+                                                        <Icon size={12} />
+                                                        <span className="hidden sm:inline">{config.label}</span>
+                                                    </button>
+                                                )
+                                            })}
                                         </div>
 
-                                        {/* Actions */}
-                                        <div className="flex items-center gap-3">
-                                            {/* Status Toggle Buttons */}
-                                            <div className="hidden md:flex items-center gap-1 p-1 bg-zinc-50 dark:bg-zinc-800/40 rounded-xl border border-zinc-200/50 dark:border-zinc-700/50">
-                                                {Object.entries(statusConfig).map(([status, config]) => {
-                                                    const Icon = config.icon
-                                                    return (
-                                                        <button
-                                                            key={status}
-                                                            onClick={() => updateStatus.mutate({ id: event._id, status })}
-                                                            disabled={event.status === status || updateStatus.isPending}
-                                                            className={clsx(
-                                                                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all",
-                                                                event.status === status
-                                                                    ? config.button
-                                                                    : "text-text/40 hover:bg-white dark:hover:bg-zinc-700 hover:text-text/70"
-                                                            )}
-                                                            title={config.label}
-                                                        >
-                                                            <Icon size={14} />
-                                                            <span className="hidden lg:inline">{config.label}</span>
-                                                        </button>
-                                                    )
-                                                })}
-                                            </div>
-
-                                            {/* Action Buttons */}
-                                            <div className="flex items-center gap-1">
-                                                <a
-                                                    href={`/events/${event.slug || event._id}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="p-2.5 rounded-lg text-text/40 hover:text-primary hover:bg-primary/5 transition-colors"
-                                                    title="View Event"
-                                                >
-                                                    <ExternalLink size={18} />
-                                                </a>
-                                                <button
-                                                    onClick={() => setEditingEvent(event)}
-                                                    className="p-2.5 rounded-lg text-text/40 hover:text-blue-500 hover:bg-blue-500/5 transition-colors"
-                                                    title="Edit Event"
-                                                >
-                                                    <Edit3 size={18} />
-                                                </button>
-                                                <button
-                                                    onClick={() => setDeletingEvent(event)}
-                                                    className="p-2.5 rounded-lg text-text/40 hover:text-red-500 hover:bg-red-500/5 transition-colors"
-                                                    title="Delete Event"
-                                                >
-                                                    <Trash2 size={18} />
-                                                </button>
-                                            </div>
+                                        {/* Action Buttons */}
+                                        <div className="flex items-center gap-1">
+                                            <a
+                                                href={`/events/${event.slug || event._id}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="p-1.5 rounded-lg text-text/40 hover:text-primary hover:bg-primary/5 transition-colors"
+                                                title="View Event"
+                                            >
+                                                <ExternalLink size={16} />
+                                            </a>
+                                            <button
+                                                onClick={() => handleEditEvent(event)}
+                                                className="p-1.5 rounded-lg text-text/40 hover:text-blue-500 hover:bg-blue-500/5 transition-colors"
+                                                title="Edit Event"
+                                            >
+                                                <Edit3 size={16} />
+                                            </button>
+                                            <button
+                                                onClick={() => handleDeleteEvent(event)}
+                                                className="p-1.5 rounded-lg text-text/40 hover:text-red-500 hover:bg-red-500/5 transition-colors"
+                                                title="Delete Event"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
                                         </div>
                                     </div>
 
-                                    {/* Mobile Status Buttons */}
-                                    <div className="md:hidden mt-4 flex flex-wrap items-center gap-2">
-                                        {Object.entries(statusConfig).map(([status, config]) => {
+                                    {/* Additional Status Buttons (Mobile) */}
+                                    <div className="mt-2 flex flex-wrap items-center gap-1">
+                                        {Object.entries(statusConfig).slice(2).map(([status, config]) => {
                                             const Icon = config.icon
                                             return (
                                                 <button
                                                     key={status}
-                                                    onClick={() => updateStatus.mutate({ id: event._id, status })}
+                                                        onClick={() => handleStatusUpdate(event._id, status)}
                                                     disabled={event.status === status || updateStatus.isPending}
                                                     className={clsx(
-                                                        "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all",
+                                                        "flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all",
                                                         event.status === status
                                                             ? config.button
                                                             : "bg-zinc-100 dark:bg-zinc-800 text-text/40"
                                                     )}
                                                 >
-                                                    <Icon size={14} />
-                                                    {config.label}
+                                                    <Icon size={12} />
+                                                    <span className="hidden xs:inline">{config.label}</span>
                                                 </button>
                                             )
                                         })}
@@ -656,7 +645,7 @@ export default function AdminEvents() {
                         )
                     })
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-20 rounded-3xl border-2 border-dashed border-border bg-surface/50">
+                    <div className="col-span-full flex flex-col items-center justify-center py-20 rounded-3xl border-2 border-dashed border-border bg-surface/50">
                         <div className="h-20 w-20 rounded-full bg-muted/50 flex items-center justify-center text-text/20 mb-4">
                             <Calendar size={40} />
                         </div>
@@ -682,17 +671,7 @@ export default function AdminEvents() {
                 )}
             </AnimatePresence>
 
-            {/* Delete Confirmation Modal */}
-            <AnimatePresence>
-                {deletingEvent && (
-                    <DeleteConfirmModal
-                        event={deletingEvent}
-                        onClose={() => setDeletingEvent(null)}
-                        onConfirm={() => deleteEvent.mutate(deletingEvent._id)}
-                        isLoading={deleteEvent.isPending}
-                    />
-                )}
-            </AnimatePresence>
+
         </div>
     )
 }
