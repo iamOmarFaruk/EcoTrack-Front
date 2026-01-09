@@ -329,6 +329,14 @@ export default function AdminEvents() {
         onError: (err) => showError(err.message || 'Failed to update event')
     })
 
+    const fetchEventForEdit = useMutation({
+        mutationFn: (id) => adminApi.getEvent(id),
+        onSuccess: (data) => {
+            setEditingEvent(data)
+        },
+        onError: (err) => showError(err.message || 'Failed to load event details')
+    })
+
     const deleteEvent = useMutation({
         mutationFn: (id) => adminApi.deleteEvent(id),
         onSuccess: () => {
@@ -355,7 +363,7 @@ export default function AdminEvents() {
             title: 'Edit Event',
             message: 'You are about to edit this event. Make sure to save your changes when done.',
             confirmText: 'Continue Editing',
-            onConfirm: () => setEditingEvent(event),
+            onConfirm: () => fetchEventForEdit.mutate(event._id),
             type: 'warning'
         })
     }
