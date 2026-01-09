@@ -5,9 +5,7 @@ import LazyChallengeCard from '../components/LazyChallengeCard.jsx'
 import LazyTipCard from '../components/LazyTipCard.jsx'
 import LazyEventCard from '../components/LazyEventCard.jsx'
 import { ChallengeCardSkeleton, TipCardSkeleton, EventCardSkeleton, HeroSkeleton } from '../components/Skeleton.jsx'
-import EcoLoader from '../components/EcoLoader.jsx'
 import CommunityStats from '../components/CommunityStats.jsx'
-import LazySection from '../components/LazySection.jsx'
 import HowItWorks from '../components/HowItWorks.jsx'
 import Testimonials from '../components/Testimonials.jsx'
 import FAQ from '../components/FAQ.jsx'
@@ -20,7 +18,7 @@ import { useState } from 'react'
 import { useAuth } from '../context/AuthContext.jsx'
 import TipModal from '../components/TipModal.jsx'
 import LoginModal from '../components/LoginModal.jsx'
-import { showSuccess, showDeleteConfirmation } from '../utils/toast.jsx'
+import { showDeleteConfirmation, showError } from '../utils/toast.jsx'
 import {
   useFeaturedChallenges,
   useChallenges,
@@ -133,8 +131,7 @@ export default function Home() {
       setIsModalOpen(false)
       setEditingTip(null)
     } catch (error) {
-      // Error is handled by mutation hook global error or local override
-      console.error(error)
+      showError(error.message || 'Unable to save tip')
     }
   }
 
@@ -143,9 +140,8 @@ export default function Home() {
     setIsLoginModalOpen(true)
   }
 
-
   return (
-    <div className="">
+    <div className="space-y-8">
       <div className="full-bleed">
         {loadingFeatured ? (
           <HeroSkeleton />
@@ -408,7 +404,6 @@ export default function Home() {
       <div className="full-bleed">
         <CTA />
       </div>
-
 
       {/* Tip Modal */}
       <TipModal

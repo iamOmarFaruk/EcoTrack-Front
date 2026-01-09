@@ -1,16 +1,17 @@
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import Button from '../components/ui/Button.jsx'
 import { Link, useNavigate } from 'react-router-dom'
+import Button from '../components/ui/Button.jsx'
 import { StaggerContainer, StaggerItem } from '../components/ui/Stagger.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
-import { useEffect, useState } from 'react'
 import { defaultImages } from '../config/env.js'
 import Logo from '../components/Logo.jsx'
 import { Typewriter } from '../components/ui/Typewriter.jsx'
+import { showError } from '../utils/toast.jsx'
 
 const passwordRules = z.string()
   .min(6, 'Min 6 characters')
@@ -49,6 +50,7 @@ export default function Register() {
       await registerUser(values)
       window.location.href = '/profile'
     } catch (e) {
+      showError(e.message || 'Failed to create account')
     }
   }
 
@@ -58,6 +60,7 @@ export default function Register() {
       await loginWithGoogle()
       window.location.href = '/profile'
     } catch (e) {
+      showError(e.message || 'Google sign-up failed')
     }
   }
 

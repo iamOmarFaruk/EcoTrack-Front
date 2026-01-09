@@ -31,25 +31,7 @@ import NotFound from './NotFound.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { showConfirmation, showSuccess } from '../utils/toast.jsx'
 import { useEvent, useEvents, useEventMutations } from '../hooks/queries'
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5 }
-  }
-}
+import { containerVariants, itemVariants } from '../utils/animations'
 
 export default function EventDetail() {
   const { id } = useParams()
@@ -164,7 +146,7 @@ export default function EventDetail() {
         <div className="container relative mx-auto px-4 h-full flex flex-col justify-end pb-24 md:pb-32">
           <motion.div
             initial="hidden"
-            animate="visible"
+            animate="show"
             variants={containerVariants}
             className="max-w-4xl"
           >
@@ -228,9 +210,9 @@ export default function EventDetail() {
       <section className="relative z-10 -mt-16 md:-mt-24">
         <div className="container mx-auto px-4">
           <motion.div
-            className="grid grid-cols-1 lg:grid-cols-12 gap-8"
+            className="grid grid-cols-1 lg:grid-cols-12 gap-6"
             initial="hidden"
-            animate="visible"
+            animate="show"
             variants={containerVariants}
           >
             {/* Main Content Area */}
@@ -329,8 +311,8 @@ export default function EventDetail() {
                           </Button>
                           <Button
                             onClick={handleDeleteEvent}
-                            variant="danger"
-                            className="w-full bg-danger text-white hover:bg-red-700 border-none"
+                            variant="ghost"
+                            className="w-full text-danger hover:text-danger hover:bg-danger/10"
                             disabled={isDeleting}
                           >
                             {isDeleting ? 'Deleting...' : 'Delete'}
@@ -481,8 +463,8 @@ export default function EventDetail() {
                 key="loading"
                 variants={containerVariants}
                 initial="hidden"
-                animate="visible"
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+                animate="show"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
               >
                 {Array.from({ length: 3 }).map((_, i) => (
                   <motion.div key={i} variants={itemVariants}>
@@ -495,9 +477,9 @@ export default function EventDetail() {
                 key="content"
                 variants={containerVariants}
                 initial="hidden"
-                whileInView="visible"
+                whileInView="show"
                 viewport={{ once: true }}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
               >
                 {relatedEvents.map((e) => (
                   <motion.div key={e._id || e.id} variants={itemVariants}>
@@ -521,5 +503,4 @@ export default function EventDetail() {
       </section>
     </div>
   )
-
 }

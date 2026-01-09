@@ -56,8 +56,6 @@ export default function Challenges() {
   // Show skeletons only during initial load (no data yet)
   const loading = isLoading || (isFetching && challenges.length === 0)
 
-  if (error) console.error('[Challenges Page] Error:', error)
-
   // Determine pagination (Placeholder logic as useChallenges returns array currently)
   const pagination = {
     page: currentPage,
@@ -144,7 +142,7 @@ export default function Challenges() {
       </div>
 
       {/* Main Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
         {/* Left Side: Filter Sidebar (Desktop) */}
         <aside className="hidden lg:block lg:col-span-3 sticky top-24">
@@ -229,7 +227,7 @@ export default function Challenges() {
                 initial="hidden"
                 animate="show"
                 exit="hidden"
-                className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3"
+                className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
               >
                 {Array.from({ length: 12 }).map((_, i) => (
                   <motion.div key={`skeleton-${i}`} variants={itemVariants}>
@@ -243,7 +241,7 @@ export default function Challenges() {
                 variants={containerVariants}
                 initial="hidden"
                 animate="show"
-                className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3"
+                className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
               >
                 {challenges.map((c) => (
                   <motion.div key={c._id || c.id} variants={itemVariants}>

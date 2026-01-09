@@ -27,23 +27,7 @@ import Button from '../components/ui/Button.jsx'
 import { Card, CardContent } from '../components/ui/Card.jsx'
 import { showSuccess, showError } from '../utils/toast.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
-
-const containerVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      staggerChildren: 0.1
-    }
-  }
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0 }
-}
+import { containerVariants, itemVariants } from '../utils/animations'
 
 const CATEGORIES = [
   { id: 'Waste Reduction', label: 'Waste Reduction', icon: Recycle },
@@ -296,7 +280,6 @@ export default function AddChallenge() {
         navigate('/challenges')
       }
     } catch (error) {
-      console.error('Error creating challenge:', error)
       showError(error.message || 'Failed to create challenge')
     } finally {
       setIsSubmitting(false)
@@ -306,7 +289,7 @@ export default function AddChallenge() {
   const getMinDate = () => new Date().toISOString().split('T')[0]
 
   return (
-    <div className="min-h-screen bg-light pb-20">
+    <div className="min-h-screen bg-light pb-20 space-y-8">
       {/* Decorative Background */}
       <div className="absolute top-0 left-0 w-full h-[300px] bg-gradient-to-b from-primary/10 via-primary/5 to-transparent pointer-events-none" />
 
@@ -332,7 +315,7 @@ export default function AddChallenge() {
         <motion.div
           variants={containerVariants}
           initial="hidden"
-          animate="visible"
+          animate="show"
           className="mb-12"
         >
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -359,12 +342,10 @@ export default function AddChallenge() {
                 Fill out the details below to get started.
               </motion.p>
             </div>
-
-
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Main Form Area */}
           <div className="lg:col-span-8 space-y-6">
             {/* Tab Navigation */}
@@ -374,17 +355,19 @@ export default function AddChallenge() {
                 { id: 'impact', label: 'Impact Metrics', icon: Globe },
                 { id: 'details', label: 'Media & Details', icon: ImageIcon }
               ].map((tab) => (
-                <button
+                <Button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all ${activeTab === tab.id
-                    ? 'bg-primary text-white shadow-md'
+                  variant={activeTab === tab.id ? 'primary' : 'ghost'}
+                  size="sm"
+                  className={`flex-1 gap-2 rounded-lg ${activeTab === tab.id
+                    ? 'shadow-md'
                     : 'text-text/60 hover:text-text hover:bg-muted/50'
                     }`}
                 >
                   <tab.icon className={`w-4 h-4 ${activeTab === tab.id ? 'text-white' : ''}`} />
                   <span className="hidden sm:inline">{tab.label}</span>
-                </button>
+                </Button>
               ))}
             </div>
 
@@ -601,7 +584,7 @@ export default function AddChallenge() {
                               </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                               <div className="space-y-2">
                                 <label className="text-sm font-bold text-heading ml-1">Image URL <span className="text-danger">*</span></label>
                                 <input

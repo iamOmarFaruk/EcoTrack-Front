@@ -1,3 +1,6 @@
+import { useState, useMemo } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { containerVariants, itemVariants } from '../utils/animations'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import LazyTipCard from '../components/LazyTipCard.jsx'
@@ -6,12 +9,10 @@ import LoginModal from '../components/LoginModal.jsx'
 import { TipCardSkeleton } from '../components/Skeleton.jsx'
 import SubpageHero from '../components/SubpageHero.jsx'
 import Button from '../components/ui/Button.jsx'
-import { useState, useMemo } from 'react'
+import { Card, CardContent } from '../components/ui/Card.jsx'
 import { defaultImages } from '../config/env.js'
 import { showDeleteConfirmation, showError } from '../utils/toast.jsx'
 import { useTips, useTipMutations } from '../hooks/queries'
-import { motion, AnimatePresence } from 'framer-motion'
-import { containerVariants, itemVariants } from '../utils/animations'
 
 export default function Tips() {
   useDocumentTitle('Recent Tips')
@@ -88,8 +89,7 @@ export default function Tips() {
       setIsModalOpen(false)
       setEditingTip(null)
     } catch (error) {
-      console.error(error)
-      // Error handled by mutation hook or toast
+      showError(error.message || 'Unable to save tip')
     }
   }
 
@@ -108,6 +108,30 @@ export default function Tips() {
       setSortBy(newSortBy)
       setOrder('desc')
     }
+    setCurrentPage(1)
+  }
+
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId)
+    setCurrentPage(1)
+  }
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value)
+    setCurrentPage(1)
+  }
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category)
+    setCurrentPage(1)
+  }
+
+  const handleResetFilters = () => {
+    setSearchQuery('')
+    setSelectedCategory('All')
+    setActiveTab('all')
+    setSortBy('createdAt')
+    setOrder('desc')
     setCurrentPage(1)
   }
 
@@ -211,7 +235,8 @@ export default function Tips() {
         )}
 
         {/* Filter Toolbar */}
-        <div className="bg-surface rounded-2xl border border-border p-4 sm:p-6 shadow-sm space-y-6">
+        <Card className="shadow-sm">
+          <CardContent className="p-4 sm:p-6 space-y-6">
           {/* Top Row: Tabs and Search */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             {/* View Tabs */}
@@ -220,19 +245,18 @@ export default function Tips() {
                 { id: 'all', label: 'All Tips' },
                 { id: 'trending', label: 'Trending' }
               ].map((tab) => (
-                <button
+                <Button
                   key={tab.id}
-                  onClick={() => {
-                    setActiveTab(tab.id)
-                    setCurrentPage(1)
-                  }}
-                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${activeTab === tab.id
+                  onClick={() => handleTabChange(tab.id)}
+                  variant="ghost"
+                  size="sm"
+                  className={`px-4 py-2 text-sm font-medium rounded-lg ${activeTab === tab.id
                     ? 'bg-surface text-primary shadow-sm ring-1 ring-border'
                     : 'text-text/60 hover:text-text hover:bg-surface/50'
                     }`}
                 >
                   {tab.label}
-                </button>
+                </Button>
               ))}
             </div>
 
@@ -243,10 +267,7 @@ export default function Tips() {
                   type="text"
                   placeholder="Search tips..."
                   value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                    setCurrentPage(1);
-                  }}
+                  onChange={handleSearchChange}
                   className="w-full px-4 py-2.5 pl-10 bg-muted/50 text-text border border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-surface transition-all placeholder:text-text/40"
                 />
                 <svg
@@ -261,24 +282,28 @@ export default function Tips() {
 
               {activeTab !== 'trending' && (
                 <div className="flex items-center gap-2 p-1 bg-muted/50 rounded-xl border border-border/50">
-                  <button
+                  <Button
                     onClick={() => handleSortChange('createdAt')}
-                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${sortBy === 'createdAt'
+                    variant="ghost"
+                    size="sm"
+                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg ${sortBy === 'createdAt'
                       ? 'bg-surface text-primary shadow-sm'
                       : 'text-text/60 hover:text-text'
                       }`}
                   >
                     Newest {sortBy === 'createdAt' && (order === 'desc' ? '↓' : '↑')}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => handleSortChange('upvoteCount')}
-                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${sortBy === 'upvoteCount'
+                    variant="ghost"
+                    size="sm"
+                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg ${sortBy === 'upvoteCount'
                       ? 'bg-surface text-primary shadow-sm'
                       : 'text-text/60 hover:text-text'
                       }`}
                   >
                     Popular {sortBy === 'upvoteCount' && (order === 'desc' ? '↓' : '↑')}
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
@@ -291,23 +316,23 @@ export default function Tips() {
             </span>
             <div className="flex flex-wrap gap-2">
               {categories.map((cat) => (
-                <button
+                <Button
                   key={cat}
-                  onClick={() => {
-                    setSelectedCategory(cat);
-                    setCurrentPage(1);
-                  }}
-                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all border ${selectedCategory === cat
+                  onClick={() => handleCategoryChange(cat)}
+                  variant="ghost"
+                  size="sm"
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium border ${selectedCategory === cat
                     ? 'bg-primary/10 border-primary text-primary shadow-sm shadow-primary/5'
                     : 'bg-surface border-border text-text/70 hover:border-text/30 hover:text-text'
                     }`}
                 >
                   {cat}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Results Info */}
         <div className="flex items-center justify-between px-1">
@@ -316,21 +341,17 @@ export default function Tips() {
             {selectedCategory !== 'All' && <span className="ml-1 text-primary">in {selectedCategory}</span>}
           </p>
           {(searchQuery || selectedCategory !== 'All' || activeTab !== 'all') && (
-            <button
-              onClick={() => {
-                setSearchQuery('');
-                setSelectedCategory('All');
-                setActiveTab('all');
-                setSortBy('createdAt');
-                setOrder('desc');
-              }}
-              className="text-xs font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
+            <Button
+              onClick={handleResetFilters}
+              variant="ghost"
+              size="sm"
+              className="text-xs font-semibold text-primary hover:text-primary/80 flex items-center gap-1"
             >
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
               Reset Filters
-            </button>
+            </Button>
           )}
         </div>
 

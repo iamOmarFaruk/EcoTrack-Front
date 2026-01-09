@@ -1,13 +1,13 @@
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Link, useNavigate } from 'react-router-dom'
 import Button from '../components/ui/Button.jsx'
 import { showSuccess, showError } from '../utils/toast.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import EcoLoader from '../components/EcoLoader.jsx'
-import { Link, useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
 import { defaultImages } from '../config/env.js'
 import { StaggerContainer, StaggerItem } from '../components/ui/Stagger.jsx'
 import Logo from '../components/Logo.jsx'
@@ -38,7 +38,7 @@ export default function ForgotPassword() {
       showSuccess('Password reset email sent! Check your inbox.')
       reset()
     } catch (e) {
-      showError(e.message)
+      showError(e.message || 'Failed to send reset email')
     }
   }
 

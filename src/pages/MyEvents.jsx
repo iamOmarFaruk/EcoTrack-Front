@@ -6,7 +6,6 @@ import {
   MapPin,
   Users,
   Plus,
-  ArrowUpRight,
   History,
   Timer,
   CheckCircle2,
@@ -14,6 +13,7 @@ import {
 } from 'lucide-react'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import Button from '../components/ui/Button.jsx'
+import { Card, CardContent } from '../components/ui/Card.jsx'
 import { EventCardSkeleton } from '../components/Skeleton.jsx'
 import { formatDate } from '../utils/formatDate.js'
 import { useMyEvents, useMyJoinedEvents } from '../hooks/queries'
@@ -46,6 +46,7 @@ export default function MyEvents() {
     }
     return badges[status] || 'bg-light text-text/60'
   }
+
   return (
     <motion.div
       key={`my-events-page-${activeTab}-${events.length}`}
@@ -62,13 +63,15 @@ export default function MyEvents() {
           <h1 className="text-3xl font-bold text-heading">My Events</h1>
           <p className="text-text/60">Manage events you've created or joined</p>
         </div>
-        <button
+        <Button
           onClick={() => navigate('/events/add')}
-          className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-surface shadow-lg shadow-primary/20 transition-transform active:scale-95"
+          variant="primary"
+          size="sm"
+          className="rounded-xl shadow-lg shadow-primary/20 active:scale-95"
         >
           <Plus size={18} />
           Create Event
-        </button>
+        </Button>
       </motion.header>
 
       {/* Tabs */}
@@ -80,22 +83,23 @@ export default function MyEvents() {
           { id: 'created', label: 'Organized', icon: Users },
           { id: 'joined', label: 'Participating', icon: Calendar }
         ].map((tab) => (
-          <button
+          <Button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all ${activeTab === tab.id ? 'bg-primary text-surface shadow-md' : 'text-text/60 hover:text-text'
-              }`}
+            variant={activeTab === tab.id ? 'primary' : 'ghost'}
+            size="sm"
+            className={`rounded-xl px-4 ${activeTab === tab.id ? 'shadow-md' : 'text-text/60 hover:text-text'}`}
           >
             <tab.icon size={16} />
             {tab.label}
-          </button>
+          </Button>
         ))}
       </motion.div>
 
       {/* Stats Section */}
       <motion.div
         variants={containerVariants}
-        className="grid grid-cols-2 gap-4 lg:grid-cols-4"
+        className="grid grid-cols-2 gap-6 lg:grid-cols-4"
       >
         {activeTab === 'created' ? (
           <>
@@ -108,11 +112,14 @@ export default function MyEvents() {
               <motion.div
                 key={stat.label}
                 variants={itemVariants}
-                className="rounded-2xl border border-border bg-surface p-5 shadow-sm"
               >
-                <stat.icon className={stat.color} size={20} />
-                <p className="mt-4 text-2xl font-bold text-heading">{stat.value}</p>
-                <p className="text-xs font-medium text-text/40">{stat.label}</p>
+                <Card className="rounded-2xl shadow-sm">
+                  <CardContent className="p-6">
+                    <stat.icon className={stat.color} size={20} />
+                    <p className="mt-4 text-2xl font-bold text-heading">{stat.value}</p>
+                    <p className="text-xs font-medium text-text/40">{stat.label}</p>
+                  </CardContent>
+                </Card>
               </motion.div>
             ))}
           </>
@@ -126,11 +133,14 @@ export default function MyEvents() {
               <motion.div
                 key={stat.label}
                 variants={itemVariants}
-                className="rounded-2xl border border-border bg-surface p-5 shadow-sm"
               >
-                <stat.icon className={stat.color} size={20} />
-                <p className="mt-4 text-2xl font-bold text-heading">{stat.value}</p>
-                <p className="text-xs font-medium text-text/40">{stat.label}</p>
+                <Card className="rounded-2xl shadow-sm">
+                  <CardContent className="p-6">
+                    <stat.icon className={stat.color} size={20} />
+                    <p className="mt-4 text-2xl font-bold text-heading">{stat.value}</p>
+                    <p className="text-xs font-medium text-text/40">{stat.label}</p>
+                  </CardContent>
+                </Card>
               </motion.div>
             ))}
           </>
@@ -161,12 +171,14 @@ export default function MyEvents() {
             <p className="mt-2 text-text/60">
               {activeTab === 'created' ? 'You haven\'t organized any events yet.' : 'You haven\'t joined any events yet.'}
             </p>
-            <button
+            <Button
               onClick={() => navigate(activeTab === 'created' ? '/events/add' : '/events')}
-              className="mt-6 text-sm font-bold text-primary hover:underline"
+              variant="ghost"
+              size="sm"
+              className="mt-6 text-primary hover:underline"
             >
               {activeTab === 'created' ? 'Create Your First Event' : 'Explore Events'}
-            </button>
+            </Button>
           </motion.div>
         ) : (
           <motion.div
@@ -182,71 +194,78 @@ export default function MyEvents() {
                 <motion.div
                   key={event._id}
                   variants={itemVariants}
-                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-all hover:shadow-xl hover:shadow-primary/5"
                 >
-                  <div className="relative h-40 overflow-hidden">
-                    {event.image ? (
-                      <img
-                        src={event.image}
-                        alt={event.title}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-light text-text/20">
-                        <Calendar size={48} />
-                      </div>
-                    )}
-                    <span className={`absolute left-4 top-4 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md shadow-sm ${getStatusBadge(event.status)}`}>
-                      {event.status}
-                    </span>
-                  </div>
-
-                  <div className="flex flex-1 flex-col p-5">
-                    <h3 className="line-clamp-1 font-bold text-heading">{event.title}</h3>
-
-                    <div className="mt-4 space-y-2">
-                      <div className="flex items-center gap-2 text-xs text-text/60">
-                        <Calendar size={14} className="text-primary" />
-                        {formatDate(event.date)}
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-text/60">
-                        <MapPin size={14} className="text-primary" />
-                        <span className="line-clamp-1">{event.location}</span>
-                      </div>
-                    </div>
-
-                    <div className="mt-6">
-                      <div className="mb-1.5 flex items-center justify-between text-[11px] font-bold">
-                        <span className="text-text/40">Registered</span>
-                        <span className="text-heading">{event.registeredParticipants} / {event.capacity}</span>
-                      </div>
-                      <div className="h-1.5 w-full rounded-full bg-light overflow-hidden">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${Math.round((event.registeredParticipants / event.capacity) * 100)}%` }}
-                          transition={{ duration: 1, ease: "easeOut" }}
-                          className="h-full bg-primary"
+                  <Card className="group relative flex flex-col overflow-hidden rounded-2xl transition-all hover:shadow-xl hover:shadow-primary/5">
+                    <div className="relative h-40 overflow-hidden">
+                      {event.image ? (
+                        <img
+                          src={event.image}
+                          alt={event.title}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />
-                      </div>
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-light text-text/20">
+                          <Calendar size={48} />
+                        </div>
+                      )}
+                      <span className={`absolute left-4 top-4 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md shadow-sm ${getStatusBadge(event.status)}`}>
+                        {event.status}
+                      </span>
                     </div>
 
-                    <div className="mt-6 flex items-center gap-2">
-                      <Link
-                        to={`/events/${identifier}`}
-                        className="flex-1 rounded-xl border border-border bg-light/50 py-2.5 text-center text-xs font-bold text-heading transition-colors hover:bg-light"
-                      >
-                        View Details
-                      </Link>
-                      {activeTab === 'created' && (
-                        <Link
-                          to={`/events/${identifier}/edit`}
-                          className="flex-1 rounded-xl bg-primary/10 py-2.5 text-center text-xs font-bold text-primary transition-colors hover:bg-primary/20"
+                    <CardContent className="flex flex-1 flex-col p-6">
+                      <h3 className="line-clamp-1 font-bold text-heading">{event.title}</h3>
+
+                      <div className="mt-4 space-y-2">
+                        <div className="flex items-center gap-2 text-xs text-text/60">
+                          <Calendar size={14} className="text-primary" />
+                          {formatDate(event.date)}
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-text/60">
+                          <MapPin size={14} className="text-primary" />
+                          <span className="line-clamp-1">{event.location}</span>
+                        </div>
+                      </div>
+
+                      <div className="mt-6">
+                        <div className="mb-1.5 flex items-center justify-between text-[11px] font-bold">
+                          <span className="text-text/40">Registered</span>
+                          <span className="text-heading">{event.registeredParticipants} / {event.capacity}</span>
+                        </div>
+                        <div className="h-1.5 w-full rounded-full bg-light overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${Math.round((event.registeredParticipants / event.capacity) * 100)}%` }}
+                            transition={{ duration: 1, ease: 'easeOut' }}
+                            className="h-full bg-primary"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="mt-6 flex items-center gap-2">
+                        <Button
+                          as={Link}
+                          to={`/events/${identifier}`}
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 rounded-xl text-xs"
                         >
-                          Edit
-                        </Link>
-                      )}
-                    </div>
-                  </div>
+                          View Details
+                        </Button>
+                        {activeTab === 'created' && (
+                          <Button
+                            as={Link}
+                            to={`/events/${identifier}/edit`}
+                            variant="ghost"
+                            size="sm"
+                            className="flex-1 rounded-xl text-xs text-primary hover:bg-primary/10"
+                          >
+                            Edit
+                          </Button>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
                 </motion.div>
               )
             })}

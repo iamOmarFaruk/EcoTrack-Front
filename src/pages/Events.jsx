@@ -143,7 +143,7 @@ export default function Events() {
       </div>
 
       {/* Main Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
         {/* Left Side: Filter Sidebar (Desktop) */}
         <aside className="hidden lg:block lg:col-span-3 sticky top-24">
@@ -181,7 +181,8 @@ export default function Events() {
 
               <Button
                 onClick={handleCreateEvent}
-                className="bg-primary hover:bg-primary whitespace-nowrap flex items-center gap-2"
+                variant="primary"
+                className="whitespace-nowrap flex items-center gap-2"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -225,7 +226,7 @@ export default function Events() {
                 initial="hidden"
                 animate="show"
                 exit="hidden"
-                className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3"
+                className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
               >
                 {Array.from({ length: 6 }).map((_, i) => (
                   <motion.div key={`skeleton-${i}`} variants={itemVariants}>
@@ -239,7 +240,7 @@ export default function Events() {
                 variants={containerVariants}
                 initial="hidden"
                 animate="show"
-                className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3"
+                className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
               >
                 {events.map((event) => (
                   <motion.div key={event._id || event.id} variants={itemVariants}>
@@ -274,7 +275,7 @@ export default function Events() {
                       Clear All Filters
                     </Button>
                     {user && (
-                      <Button onClick={handleCreateEvent} className="flex items-center gap-2">
+                      <Button onClick={handleCreateEvent} variant="primary" className="flex items-center gap-2">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>

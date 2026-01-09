@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { eventApi } from '../services/api.js'
 import Button from '../components/ui/Button.jsx'
 import { Card, CardContent } from '../components/ui/Card.jsx'
-import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
+import { showSuccess, showError } from '../utils/toast.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 
 export default function AddEvent() {
@@ -176,8 +176,6 @@ export default function AddEvent() {
         navigate('/events')
       }
     } catch (error) {
-      console.error('Error creating event:', error)
-
       // Handle validation errors from backend
       if (error.data?.error?.details) {
         const backendErrors = {}
@@ -199,7 +197,7 @@ export default function AddEvent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary/10 to-surface py-12">
+    <div className="min-h-screen bg-gradient-to-b from-primary/10 to-surface py-12 space-y-8">
       {/* Page Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
         <div className="text-center">
@@ -215,7 +213,7 @@ export default function AddEvent() {
       {/* Form Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Card>
-          <CardContent>
+          <CardContent className="p-6">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Title */}
               <div>
@@ -460,8 +458,8 @@ export default function AddEvent() {
                 </Button>
                 <Button
                   type="submit"
+                  variant="primary"
                   disabled={isSubmitting}
-                  className="bg-primary hover:bg-primary"
                 >
                   {isSubmitting ? 'Creating Event...' : 'Create Event'}
                 </Button>

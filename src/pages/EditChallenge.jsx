@@ -30,23 +30,7 @@ import EcoLoader from '../components/EcoLoader.jsx'
 import NotFound from './NotFound.jsx'
 import { showSuccess, showError } from '../utils/toast.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
-
-const containerVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      staggerChildren: 0.1
-    }
-  }
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: { opacity: 1, y: 0 }
-}
+import { containerVariants, itemVariants } from '../utils/animations'
 
 const CATEGORIES = [
   { id: 'Waste Reduction', label: 'Waste Reduction', icon: Recycle },
@@ -145,7 +129,6 @@ export default function EditChallenge() {
         }
       })
     } catch (error) {
-      console.error('Error fetching challenge:', error)
       if (error.status === 404) setNotFound(true)
       else if (error.status === 403) setNotAuthorized(true)
       else showError('Failed to load challenge')
@@ -250,7 +233,7 @@ export default function EditChallenge() {
   )
 
   return (
-    <div className="min-h-screen bg-light pb-20">
+    <div className="min-h-screen bg-light pb-20 space-y-8">
       <div className="absolute top-0 left-0 w-full h-[300px] bg-gradient-to-b from-primary/10 via-primary/5 to-transparent pointer-events-none" />
 
       <div className="container max-w-7xl mx-auto pt-8 relative z-10">
@@ -263,7 +246,7 @@ export default function EditChallenge() {
           </Link>
         </motion.div>
 
-        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="mb-12">
+        <motion.div variants={containerVariants} initial="hidden" animate="show" className="mb-12">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
               <motion.div variants={itemVariants} className="flex items-center gap-3 mb-4">
@@ -284,12 +267,10 @@ export default function EditChallenge() {
                 Keep the momentum going by updating visuals, metrics, or details to better serve the community.
               </motion.p>
             </div>
-
-
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-8 space-y-6">
             <div className="flex p-1 bg-surface border border-border/50 rounded-xl shadow-sm mb-6 backdrop-blur-sm">
               {[
@@ -297,15 +278,17 @@ export default function EditChallenge() {
                 { id: 'impact', label: 'Impact', icon: Globe },
                 { id: 'details', label: 'Visuals', icon: ImageIcon }
               ].map((tab) => (
-                <button
+                <Button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg text-sm font-semibold transition-all ${activeTab === tab.id ? 'bg-primary text-white shadow-md' : 'text-text/60 hover:text-text hover:bg-muted/50'
+                  variant={activeTab === tab.id ? 'primary' : 'ghost'}
+                  size="sm"
+                  className={`flex-1 gap-2 rounded-lg ${activeTab === tab.id ? 'shadow-md' : 'text-text/60 hover:text-text hover:bg-muted/50'
                     }`}
                 >
                   <tab.icon className={`w-4 h-4 ${activeTab === tab.id ? 'text-white' : ''}`} />
                   <span className="hidden sm:inline">{tab.label}</span>
-                </button>
+                </Button>
               ))}
             </div>
 
@@ -428,7 +411,7 @@ export default function EditChallenge() {
                     <Card className="border-none shadow-xl shadow-primary/5">
                       <CardContent className="p-8">
                         <div className="space-y-8">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
                               <label className="text-sm font-bold text-heading ml-1">Image URL</label>
                               <input
@@ -526,5 +509,4 @@ export default function EditChallenge() {
       </div>
     </div>
   )
-
 }

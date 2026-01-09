@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Award,
@@ -10,7 +10,6 @@ import {
   Calendar,
   ChevronRight,
   ChevronDown,
-  TrendingDown,
   TrendingUp,
   Target,
   Leaf,
@@ -25,7 +24,8 @@ import {
   Tooltip,
   ResponsiveContainer
 } from 'recharts'
-import SectionHeading from '../components/SectionHeading.jsx'
+import Button from '../components/ui/Button.jsx'
+import { Card, CardContent } from '../components/ui/Card.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import { useUserProfile } from '../hooks/queries'
@@ -150,7 +150,7 @@ export default function Profile() {
       {/* Stats Grid */}
       <motion.div
         variants={containerVariants}
-        className="grid grid-cols-2 gap-4 lg:grid-cols-4"
+        className="grid grid-cols-2 gap-6 lg:grid-cols-4"
       >
         {stats.map((stat, index) => (
           <motion.div
@@ -158,13 +158,16 @@ export default function Profile() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="rounded-2xl border border-border bg-surface p-5 shadow-sm transition-all hover:shadow-md"
           >
-            <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl ${stat.bg} ${stat.color}`}>
-              <stat.icon size={20} />
-            </div>
-            <p className="text-sm font-medium text-text/60">{stat.label}</p>
-            <p className="text-2xl font-bold text-heading">{stat.value}</p>
+            <Card className="rounded-2xl shadow-sm transition-all hover:shadow-md">
+              <CardContent className="p-6">
+                <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl ${stat.bg} ${stat.color}`}>
+                  <stat.icon size={20} />
+                </div>
+                <p className="text-sm font-medium text-text/60">{stat.label}</p>
+                <p className="text-2xl font-bold text-heading">{stat.value}</p>
+              </CardContent>
+            </Card>
           </motion.div>
         ))}
       </motion.div>
@@ -186,17 +189,19 @@ export default function Profile() {
               <div className="flex items-center gap-1.5 rounded-xl bg-light p-1 shadow-inner">
                 {Object.entries(metricConfigs).map(([key, config]) => (
                   <div key={key} className="relative">
-                    <button
+                    <Button
                       onClick={() => setActiveMetric(key)}
                       onMouseEnter={() => setHoveredMetric(key)}
                       onMouseLeave={() => setHoveredMetric(null)}
-                      className={`flex h-8 w-8 items-center justify-center rounded-lg transition-all ${activeMetric === key
+                      variant="ghost"
+                      size="sm"
+                      className={`h-8 w-8 rounded-lg p-0 transition-all ${activeMetric === key
                         ? `bg-surface ${config.color} shadow-sm scale-110`
                         : 'text-text/40 hover:text-text/60 hover:bg-surface/50'
                         }`}
                     >
                       <config.icon size={16} />
-                    </button>
+                    </Button>
 
                     <AnimatePresence>
                       {hoveredMetric === key && (
@@ -290,12 +295,14 @@ export default function Profile() {
         >
           <div className="mb-6 flex items-center justify-between">
             <h3 className="text-lg font-bold text-heading">Featured Badges</h3>
-            <button
+            <Button
               onClick={() => showSuccess("I didn't develop this feature yet because this is a demo project.")}
-              className="text-sm font-medium text-primary hover:underline"
+              variant="ghost"
+              size="sm"
+              className="text-primary hover:underline"
             >
               View All
-            </button>
+            </Button>
           </div>
 
           <div className="space-y-4">
@@ -340,5 +347,4 @@ export default function Profile() {
       </motion.div>
     </motion.div>
   )
-
 }

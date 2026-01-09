@@ -7,11 +7,9 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import SubpageHero from '../components/SubpageHero.jsx'
 import { defaultImages } from '../config/env.js'
 import SectionHeading from '../components/SectionHeading.jsx'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { containerVariants, itemVariants } from '../utils/animations'
-
 import { RiMailLine, RiMapPinLine, RiPhoneLine } from 'react-icons/ri'
-import { SiX, SiLinkedin, SiInstagram, SiGithub } from 'react-icons/si'
 
 const schema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -51,16 +49,15 @@ export default function Contact() {
 
   const onSubmit = async (data) => {
     try {
-      await new Promise((r) => setTimeout(r, 1200)) // Artificial delay
       showSuccess('Message sent! We will get back to you soon.')
       reset()
     } catch (error) {
-      showError('Failed to send message. Please try again.')
+      showError(error.message || 'Failed to send message. Please try again.')
     }
   }
 
   return (
-    <div className="space-y-0">
+    <div className="space-y-8">
       {/* Hero Section */}
       <div className="full-bleed -mt-8">
         <SubpageHero
@@ -86,7 +83,7 @@ export default function Contact() {
             variants={containerVariants}
             initial="hidden"
             animate="show"
-            className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-12 mt-16 items-start"
+            className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-6 mt-16 items-start"
           >
             {/* Contact Info */}
             <div className="space-y-6">

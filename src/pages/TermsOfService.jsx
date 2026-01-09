@@ -8,7 +8,7 @@ export default function TermsOfService() {
     useDocumentTitle('Terms of Service')
 
     return (
-        <div className="space-y-12">
+        <div className="space-y-8">
             {/* Hero Section */}
             <div className="full-bleed -mt-8">
                 <SubpageHero
@@ -36,7 +36,7 @@ export default function TermsOfService() {
                         </p>
                     </StaggerItem>
 
-                    <div className="grid gap-8 md:grid-cols-1">
+                    <div className="grid gap-6 md:grid-cols-1">
                         <StaggerItem className="space-y-4 p-8 bg-surface rounded-2xl border border-border">
                             <h3 className="text-2xl font-bold text-text">1. Use of Service</h3>
                             <p className="text-text/70 leading-relaxed">

@@ -12,7 +12,7 @@ import {
   ChevronRight,
   ShieldAlert
 } from 'lucide-react'
-import SectionHeading from '../components/SectionHeading.jsx'
+import Button from '../components/ui/Button.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { showError, showSuccess } from '../utils/toast.jsx'
 import { userApi } from '../services/api.js'
@@ -49,7 +49,7 @@ export default function Settings() {
           photoURL: editPhotoUrl.trim() || null
         })
       } catch (backendError) {
-        console.error('Backend profile update failed:', backendError)
+        showError(backendError.message || 'Profile updated, but failed to sync with server')
       }
 
       showSuccess('Profile updated successfully!')
@@ -70,7 +70,7 @@ export default function Settings() {
       await deleteAccount()
       navigate('/')
     } catch (error) {
-      console.error(error)
+      showError(error.message || 'Failed to delete account')
     } finally {
       setIsDeleting(false)
       setShowDeleteModal(false)
@@ -84,7 +84,7 @@ export default function Settings() {
         <p className="text-text/60">Manage your account and preferences</p>
       </header>
 
-      <div className="grid gap-8 lg:grid-cols-4">
+      <div className="grid gap-6 lg:grid-cols-4">
         {/* Navigation Sidebar inside Settings */}
         <aside className="lg:col-span-1">
           <nav className="flex flex-col gap-1">
@@ -93,10 +93,12 @@ export default function Settings() {
               { id: 'security', label: 'Security', icon: Lock },
               { id: 'danger', label: 'Danger Zone', icon: Trash2, color: 'text-red-500' }
             ].map((section) => (
-              <button
+              <Button
                 key={section.id}
                 onClick={() => setActiveSection(section.id)}
-                className={`flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold transition-all ${activeSection === section.id
+                variant="ghost"
+                size="sm"
+                className={`justify-between rounded-xl px-4 py-3 text-sm font-semibold transition-all ${activeSection === section.id
                     ? 'bg-primary/10 text-primary'
                     : 'text-text/60 hover:bg-light hover:text-text'
                   }`}
@@ -106,7 +108,7 @@ export default function Settings() {
                   {section.label}
                 </div>
                 <ChevronRight size={14} className={activeSection === section.id ? 'opacity-100' : 'opacity-0'} />
-              </button>
+              </Button>
             ))}
           </nav>
         </aside>
@@ -187,14 +189,16 @@ export default function Settings() {
                 </div>
 
                 <div className="flex justify-end pt-4 border-t border-border">
-                  <button
+                  <Button
                     onClick={handleSaveProfile}
                     disabled={isSavingProfile}
-                    className="flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-bold text-surface shadow-lg shadow-primary/20 transition-all active:scale-95 disabled:opacity-50"
+                    variant="primary"
+                    size="sm"
+                    className="rounded-xl px-6 py-3 text-sm font-bold shadow-lg shadow-primary/20 active:scale-95"
                   >
                     <Save size={18} />
                     {isSavingProfile ? 'Saving Changes...' : 'Save Profile'}
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
@@ -244,12 +248,14 @@ export default function Settings() {
                   </ul>
                 </div>
 
-                <button
+                <Button
                   onClick={() => setShowDeleteModal(true)}
-                  className="rounded-xl bg-red-500 px-6 py-3 text-sm font-bold text-surface shadow-lg shadow-red-500/20 transition-all hover:bg-red-600 active:scale-95"
+                  variant="ghost"
+                  size="sm"
+                  className="rounded-xl px-6 py-3 text-sm font-bold text-danger shadow-lg shadow-red-500/10 hover:bg-danger/10 active:scale-95"
                 >
                   Delete My Account
-                </button>
+                </Button>
               </div>
             )}
           </motion.div>
@@ -276,24 +282,27 @@ export default function Settings() {
               placeholder="Type DELETE"
             />
             <div className="mt-8 flex gap-3">
-              <button
+              <Button
                 onClick={() => setShowDeleteModal(false)}
-                className="flex-1 rounded-xl bg-light py-3 text-sm font-bold text-text hover:bg-border transition-colors"
+                variant="outline"
+                size="sm"
+                className="flex-1 rounded-xl py-3 text-sm font-bold"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleDeleteAccount}
                 disabled={isDeleting || deleteConfirmText !== 'DELETE'}
-                className="flex-1 rounded-xl bg-red-500 py-3 text-sm font-bold text-surface shadow-lg shadow-red-500/20 disabled:opacity-50"
+                variant="ghost"
+                size="sm"
+                className="flex-1 rounded-xl py-3 text-sm font-bold text-danger shadow-lg shadow-red-500/10 hover:bg-danger/10"
               >
                 {isDeleting ? 'Deleting...' : 'Delete Forever'}
-              </button>
+              </Button>
             </div>
           </motion.div>
         </div>
       )}
     </div>
   )
-
 }

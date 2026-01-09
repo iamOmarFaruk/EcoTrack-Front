@@ -9,16 +9,14 @@ import {
   Trophy,
   Flame,
   Search,
-  Filter
 } from 'lucide-react'
-import SectionHeading from '../components/SectionHeading.jsx'
+import Button from '../components/ui/Button.jsx'
+import { Card, CardContent } from '../components/ui/Card.jsx'
 import { ChallengeCardSkeleton } from '../components/Skeleton.jsx'
-import { useAuth } from '../context/AuthContext.jsx'
 import { useMyCreatedChallenges, useMyJoinedChallenges } from '../hooks/queries'
 import { containerVariants, itemVariants } from '../utils/animations'
 
 export default function MyActivities() {
-  const { auth } = useAuth()
   const [statusFilter, setStatusFilter] = useState('all')
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -99,6 +97,8 @@ export default function MyActivities() {
   }, [joinedChallenges, createdChallenges, statusFilter, searchQuery])
 
   const loading = loadingJoined || loadingCreated
+  const handleSearchChange = (e) => setSearchQuery(e.target.value)
+  const handleStatusFilter = (status) => setStatusFilter(status)
 
   return (
     <motion.div
@@ -116,19 +116,22 @@ export default function MyActivities() {
           <h1 className="text-3xl font-bold text-heading">My Challenges</h1>
           <p className="text-text/60">Track your eco-journey and achievements</p>
         </div>
-        <Link
+        <Button
+          as={Link}
           to="/challenges"
-          className="flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-surface shadow-lg shadow-primary/20 transition-transform active:scale-95"
+          variant="primary"
+          size="sm"
+          className="rounded-xl shadow-lg shadow-primary/20 active:scale-95"
         >
           Explore More
           <ArrowUpRight size={16} />
-        </Link>
+        </Button>
       </motion.header>
 
       {/* Summary Stats */}
       <motion.div
         variants={containerVariants}
-        className="grid grid-cols-2 gap-4 lg:grid-cols-4"
+        className="grid grid-cols-2 gap-6 lg:grid-cols-4"
       >
         {[
           { label: 'Total', value: summary.total, icon: Activity, color: 'text-primary' },
@@ -139,14 +142,17 @@ export default function MyActivities() {
           <motion.div
             key={stat.label}
             variants={itemVariants}
-            className="rounded-2xl border border-border bg-surface p-5 shadow-sm"
           >
-            <div className="flex items-center justify-between">
-              <stat.icon className={stat.color} size={20} />
-              <div className="h-6 w-1 rounded-full bg-light" />
-            </div>
-            <p className="mt-4 text-2xl font-bold text-heading">{stat.value}</p>
-            <p className="text-xs font-medium text-text/40">{stat.label}</p>
+            <Card className="rounded-2xl shadow-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <stat.icon className={stat.color} size={20} />
+                  <div className="h-6 w-1 rounded-full bg-light" />
+                </div>
+                <p className="mt-4 text-2xl font-bold text-heading">{stat.value}</p>
+                <p className="text-xs font-medium text-text/40">{stat.label}</p>
+              </CardContent>
+            </Card>
           </motion.div>
         ))}
       </motion.div>
@@ -159,20 +165,21 @@ export default function MyActivities() {
             type="text"
             placeholder="Search activities..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearchChange}
             className="w-full rounded-xl border border-border bg-surface py-2.5 pl-10 pr-4 outline-none focus:ring-2 focus:ring-primary/20"
           />
         </div>
         <div className="flex items-center gap-2 rounded-xl border border-border bg-surface p-1">
           {['all', 'active', 'completed'].map((status) => (
-            <button
+            <Button
               key={status}
-              onClick={() => setStatusFilter(status)}
-              className={`rounded-lg px-4 py-1.5 text-xs font-semibold capitalize transition-all ${statusFilter === status ? 'bg-primary text-surface shadow-md' : 'text-text/60 hover:text-text'
-                }`}
+              onClick={() => handleStatusFilter(status)}
+              variant={statusFilter === status ? 'primary' : 'ghost'}
+              size="sm"
+              className={`rounded-lg px-4 text-xs font-semibold capitalize ${statusFilter === status ? 'shadow-md' : 'text-text/60 hover:text-text'}`}
             >
               {status}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -199,7 +206,15 @@ export default function MyActivities() {
             <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-light text-4xl">🌱</div>
             <h3 className="text-xl font-bold text-heading">No activities found</h3>
             <p className="mt-2 text-text/60">Start joining challenges to track your impact!</p>
-            <Link to="/challenges" className="mt-6 text-sm font-bold text-primary hover:underline">Browse Challenges</Link>
+            <Button
+              as={Link}
+              to="/challenges"
+              variant="ghost"
+              size="sm"
+              className="mt-6 text-primary hover:underline"
+            >
+              Browse Challenges
+            </Button>
           </motion.div>
         ) : (
           <motion.div
@@ -213,61 +228,65 @@ export default function MyActivities() {
               <motion.div
                 key={activity._id}
                 variants={itemVariants}
-                className="group relative overflow-hidden rounded-2xl border border-border bg-surface transition-all hover:shadow-xl hover:shadow-primary/5"
               >
-                {activity.challenge?.imageUrl && (
-                  <div className="h-40 overflow-hidden">
-                    <img
-                      src={activity.challenge.imageUrl}
-                      alt={activity.challenge.title}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                  </div>
-                )}
-                <div className="p-5">
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
-                      {activity.challenge?.category}
-                    </span>
-                    <span className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${activity.userProgress?.status === 'Completed' ? 'bg-green-500/10 text-green-500' : 'bg-primary/10 text-primary'
-                      }`}>
-                      {activity.userProgress?.status === 'Completed' ? <CheckCircle2 size={10} /> : <Clock size={10} />}
-                      {activity.userProgress?.status}
-                    </span>
-                  </div>
-                  <h3 className="line-clamp-1 font-bold text-heading">{activity.challenge?.title}</h3>
-
-                  {/* Progress Section */}
-                  <div className="mt-4">
-                    <div className="mb-1.5 flex items-center justify-between text-[11px] font-bold">
-                      <span className="text-text/40">Progress</span>
-                      <span className="text-heading">{activity.userProgress?.progress}%</span>
-                    </div>
-                    <div className="h-1.5 w-full rounded-full bg-light overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${activity.userProgress?.progress}%` }}
-                        transition={{ duration: 1, ease: "easeOut" }}
-                        className="h-full bg-gradient-to-r from-primary to-secondary"
+                <Card className="group relative overflow-hidden rounded-2xl transition-all hover:shadow-xl hover:shadow-primary/5">
+                  {activity.challenge?.imageUrl && (
+                    <div className="h-40 overflow-hidden">
+                      <img
+                        src={activity.challenge.imageUrl}
+                        alt={activity.challenge.title}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
                     </div>
-                  </div>
+                  )}
+                  <CardContent className="p-6">
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
+                        {activity.challenge?.category}
+                      </span>
+                      <span className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${activity.userProgress?.status === 'Completed' ? 'bg-green-500/10 text-green-500' : 'bg-primary/10 text-primary'
+                        }`}>
+                        {activity.userProgress?.status === 'Completed' ? <CheckCircle2 size={10} /> : <Clock size={10} />}
+                        {activity.userProgress?.status}
+                      </span>
+                    </div>
+                    <h3 className="line-clamp-1 font-bold text-heading">{activity.challenge?.title}</h3>
 
-                  <div className="mt-6 flex items-center justify-between">
-                    {activity.userProgress?.impactAchieved > 0 ? (
-                      <div className="flex items-center gap-1 text-xs font-bold text-primary">
-                        <Flame size={14} />
-                        {activity.userProgress.impactAchieved} {activity.challenge?.impactMetric}
+                    {/* Progress Section */}
+                    <div className="mt-4">
+                      <div className="mb-1.5 flex items-center justify-between text-[11px] font-bold">
+                        <span className="text-text/40">Progress</span>
+                        <span className="text-heading">{activity.userProgress?.progress}%</span>
                       </div>
-                    ) : <div />}
-                    <Link
-                      to={`/challenges/${activity.challenge?.slug || activity.challenge?._id}`}
-                      className="rounded-lg bg-light p-2 text-text transition-colors hover:bg-primary hover:text-surface"
-                    >
-                      <ArrowUpRight size={18} />
-                    </Link>
-                  </div>
-                </div>
+                      <div className="h-1.5 w-full rounded-full bg-light overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${activity.userProgress?.progress}%` }}
+                          transition={{ duration: 1, ease: 'easeOut' }}
+                          className="h-full bg-gradient-to-r from-primary to-secondary"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-6 flex items-center justify-between">
+                      {activity.userProgress?.impactAchieved > 0 ? (
+                        <div className="flex items-center gap-1 text-xs font-bold text-primary">
+                          <Flame size={14} />
+                          {activity.userProgress.impactAchieved} {activity.challenge?.impactMetric}
+                        </div>
+                      ) : <div />}
+                      <Button
+                        as={Link}
+                        to={`/challenges/${activity.challenge?.slug || activity.challenge?._id}`}
+                        variant="ghost"
+                        size="sm"
+                        className="rounded-lg p-2 text-text hover:bg-primary hover:text-surface"
+                      >
+                        <ArrowUpRight size={18} />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
               </motion.div>
             ))}
           </motion.div>
@@ -275,5 +294,4 @@ export default function MyActivities() {
       </AnimatePresence>
     </motion.div>
   )
-
 }

@@ -4,28 +4,23 @@ import {
     BookOpen,
     Plus,
     Search,
-    Filter,
     Edit2,
     Trash2,
     Eye,
     EyeOff,
-    MoreVertical,
     ThumbsUp,
-    Clock,
-    CheckCircle2,
-    FileText
+    Clock
 } from 'lucide-react'
-import { useAuth } from '../context/AuthContext.jsx'
 import { useMyTips, useTipMutations } from '../hooks/queries'
 import { containerVariants, itemVariants } from '../utils/animations'
 import { showDeleteConfirmation } from '../utils/toast.jsx'
 import TipModal from '../components/TipModal.jsx'
 import Button from '../components/ui/Button.jsx'
+import { Card, CardContent } from '../components/ui/Card.jsx'
 import { TipCardSkeleton } from '../components/Skeleton.jsx'
 import clsx from 'clsx'
 
 export default function MyTips() {
-    const { user } = useAuth()
     const [searchQuery, setSearchQuery] = useState('')
     const [statusFilter, setStatusFilter] = useState('all') // 'all', 'published', 'draft'
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -94,6 +89,13 @@ export default function MyTips() {
         setIsModalOpen(false)
         setEditingTip(null)
     }
+
+    const handleSearchChange = (e) => setSearchQuery(e.target.value)
+    const handleStatusFilter = (status) => setStatusFilter(status)
+    const handleCreateTip = () => {
+        setEditingTip(null)
+        setIsModalOpen(true)
+    }
     return (
         <motion.div
             key={`my-tips-page-${statusFilter}-${searchQuery}-${tips.length}`}
@@ -111,10 +113,9 @@ export default function MyTips() {
                     <p className="text-text/60">Share your eco-wisdom and manage your contributions</p>
                 </div>
                 <Button
-                    onClick={() => {
-                        setEditingTip(null)
-                        setIsModalOpen(true)
-                    }}
+                    onClick={handleCreateTip}
+                    variant="primary"
+                    size="sm"
                     className="flex items-center gap-2"
                 >
                     <Plus size={18} />
@@ -125,7 +126,7 @@ export default function MyTips() {
             {/* Summary Stats */}
             <motion.div
                 variants={containerVariants}
-                className="grid grid-cols-2 gap-4 lg:grid-cols-4"
+                className="grid grid-cols-2 gap-6 lg:grid-cols-4"
             >
                 {[
                     { label: 'Total Tips', value: stats.total, icon: BookOpen, color: 'text-primary' },
@@ -136,14 +137,17 @@ export default function MyTips() {
                     <motion.div
                         key={stat.label}
                         variants={itemVariants}
-                        className="rounded-2xl border border-border bg-surface p-5 shadow-sm"
                     >
-                        <div className="flex items-center justify-between">
-                            <stat.icon className={stat.color} size={20} />
-                            <div className="h-6 w-1 rounded-full bg-light" />
-                        </div>
-                        <p className="mt-4 text-2xl font-bold text-heading">{stat.value}</p>
-                        <p className="text-xs font-medium text-text/40">{stat.label}</p>
+                        <Card className="rounded-2xl shadow-sm">
+                            <CardContent className="p-6">
+                                <div className="flex items-center justify-between">
+                                    <stat.icon className={stat.color} size={20} />
+                                    <div className="h-6 w-1 rounded-full bg-light" />
+                                </div>
+                                <p className="mt-4 text-2xl font-bold text-heading">{stat.value}</p>
+                                <p className="text-xs font-medium text-text/40">{stat.label}</p>
+                            </CardContent>
+                        </Card>
                     </motion.div>
                 ))}
             </motion.div>
@@ -156,22 +160,24 @@ export default function MyTips() {
                         type="text"
                         placeholder="Search your tips..."
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onChange={handleSearchChange}
                         className="w-full rounded-xl border border-border bg-surface py-2.5 pl-10 pr-4 outline-none focus:ring-2 focus:ring-primary/20"
                     />
                 </div>
                 <div className="flex items-center gap-2 rounded-xl border border-border bg-surface p-1">
                     {['all', 'published', 'draft'].map((status) => (
-                        <button
+                        <Button
                             key={status}
-                            onClick={() => setStatusFilter(status)}
+                            onClick={() => handleStatusFilter(status)}
+                            variant={statusFilter === status ? 'primary' : 'ghost'}
+                            size="sm"
                             className={clsx(
-                                'rounded-lg px-4 py-1.5 text-xs font-semibold capitalize transition-all',
-                                statusFilter === status ? 'bg-primary text-surface shadow-md' : 'text-text/60 hover:text-text'
+                                'rounded-lg px-4 text-xs font-semibold capitalize',
+                                statusFilter === status ? 'shadow-md' : 'text-text/60 hover:text-text'
                             )}
                         >
                             {status}
-                        </button>
+                        </Button>
                     ))}
                 </div>
             </div>
@@ -221,66 +227,73 @@ export default function MyTips() {
                             <motion.div
                                 key={tip.id}
                                 variants={itemVariants}
-                                className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-all hover:shadow-xl hover:shadow-primary/5"
                             >
-                                <div className="p-6 flex-1">
-                                    <div className="mb-4 flex items-center justify-between">
-                                        <span className="rounded-lg bg-primary/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-primary">
-                                            {tip.category || 'General'}
-                                        </span>
-                                        <span className={clsx(
-                                            "flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold",
-                                            tip.status === 'published' ? "bg-green-500/10 text-green-500" : "bg-orange-500/10 text-orange-500"
-                                        )}>
-                                            {tip.status === 'published' ? <Eye size={12} /> : <EyeOff size={12} />}
-                                            {tip.status === 'published' ? 'Published' : 'Draft'}
-                                        </span>
-                                    </div>
-
-                                    <h3 className="text-lg font-bold text-heading group-hover:text-primary transition-colors">
-                                        {tip.title}
-                                    </h3>
-                                    <p className="mt-2 line-clamp-3 text-sm text-text/70 leading-relaxed">
-                                        {tip.content}
-                                    </p>
-
-                                    <div className="mt-6 flex items-center justify-between border-t border-border/50 pt-4">
-                                        <div className="flex items-center gap-4">
-                                            <div className="flex items-center gap-1.5 text-xs font-semibold text-text/40">
-                                                <ThumbsUp size={14} />
-                                                {tip.upvotes || 0}
-                                            </div>
-                                            <div className="flex items-center gap-1.5 text-xs font-semibold text-text/40">
-                                                <Clock size={14} />
-                                                {new Date(tip.updatedAt || tip.createdAt).toLocaleDateString()}
-                                            </div>
+                                <Card className="group relative flex flex-col overflow-hidden rounded-2xl transition-all hover:shadow-xl hover:shadow-primary/5">
+                                    <CardContent className="flex-1 p-6">
+                                        <div className="mb-4 flex items-center justify-between">
+                                            <span className="rounded-lg bg-primary/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-primary">
+                                                {tip.category || 'General'}
+                                            </span>
+                                            <span className={clsx(
+                                                'flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold',
+                                                tip.status === 'published' ? 'bg-green-500/10 text-green-500' : 'bg-orange-500/10 text-orange-500'
+                                            )}>
+                                                {tip.status === 'published' ? <Eye size={12} /> : <EyeOff size={12} />}
+                                                {tip.status === 'published' ? 'Published' : 'Draft'}
+                                            </span>
                                         </div>
 
-                                        <div className="flex items-center gap-1">
-                                            <button
-                                                onClick={() => handleToggleStatus(tip)}
-                                                className="rounded-lg p-2 text-text/40 transition-colors hover:bg-light hover:text-primary"
-                                                title={tip.status === 'published' ? "Make Draft" : "Publish"}
-                                            >
-                                                {tip.status === 'published' ? <EyeOff size={16} /> : <Eye size={16} />}
-                                            </button>
-                                            <button
-                                                onClick={() => handleEdit(tip)}
-                                                className="rounded-lg p-2 text-text/40 transition-colors hover:bg-light hover:text-primary"
-                                                title="Edit Tip"
-                                            >
-                                                <Edit2 size={16} />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(tip.id)}
-                                                className="rounded-lg p-2 text-text/40 transition-colors hover:bg-danger/10 hover:text-danger"
-                                                title="Delete Tip"
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
+                                        <h3 className="text-lg font-bold text-heading group-hover:text-primary transition-colors">
+                                            {tip.title}
+                                        </h3>
+                                        <p className="mt-2 line-clamp-3 text-sm text-text/70 leading-relaxed">
+                                            {tip.content}
+                                        </p>
+
+                                        <div className="mt-6 flex items-center justify-between border-t border-border/50 pt-4">
+                                            <div className="flex items-center gap-4">
+                                                <div className="flex items-center gap-1.5 text-xs font-semibold text-text/40">
+                                                    <ThumbsUp size={14} />
+                                                    {tip.upvotes || 0}
+                                                </div>
+                                                <div className="flex items-center gap-1.5 text-xs font-semibold text-text/40">
+                                                    <Clock size={14} />
+                                                    {new Date(tip.updatedAt || tip.createdAt).toLocaleDateString()}
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center gap-1">
+                                                <Button
+                                                    onClick={() => handleToggleStatus(tip)}
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="rounded-lg p-2 text-text/40 hover:bg-light hover:text-primary"
+                                                    title={tip.status === 'published' ? 'Make Draft' : 'Publish'}
+                                                >
+                                                    {tip.status === 'published' ? <EyeOff size={16} /> : <Eye size={16} />}
+                                                </Button>
+                                                <Button
+                                                    onClick={() => handleEdit(tip)}
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="rounded-lg p-2 text-text/40 hover:bg-light hover:text-primary"
+                                                    title="Edit Tip"
+                                                >
+                                                    <Edit2 size={16} />
+                                                </Button>
+                                                <Button
+                                                    onClick={() => handleDelete(tip.id)}
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="rounded-lg p-2 text-text/40 hover:bg-danger/10 hover:text-danger"
+                                                    title="Delete Tip"
+                                                >
+                                                    <Trash2 size={16} />
+                                                </Button>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
+                                    </CardContent>
+                                </Card>
                             </motion.div>
                         ))}
                     </motion.div>
@@ -298,5 +311,4 @@ export default function MyTips() {
             />
         </motion.div>
     )
-
 }

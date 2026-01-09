@@ -1,16 +1,17 @@
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Link, useNavigate } from 'react-router-dom'
 import Button from '../components/ui/Button.jsx'
 import { StaggerContainer, StaggerItem } from '../components/ui/Stagger.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
-import { useNavigate, Link } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import EcoLoader from '../components/EcoLoader.jsx'
-import { useEffect } from 'react'
 import { defaultImages } from '../config/env.js'
 import Logo from '../components/Logo.jsx'
 import { Typewriter } from '../components/ui/Typewriter.jsx'
+import { showError } from '../utils/toast.jsx'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -42,6 +43,7 @@ export default function Login() {
       sessionStorage.removeItem('redirectTo')
       navigate(redirectTo, { replace: true })
     } catch (e) {
+      showError(e.message || 'Failed to sign in')
     }
   }
 
@@ -52,6 +54,7 @@ export default function Login() {
       sessionStorage.removeItem('redirectTo')
       navigate(redirectTo, { replace: true })
     } catch (e) {
+      showError(e.message || 'Google sign-in failed')
     }
   }
 
