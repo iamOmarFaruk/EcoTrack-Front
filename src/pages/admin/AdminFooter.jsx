@@ -6,23 +6,13 @@ import Button from '../../components/ui/Button.jsx'
 import EcoLoader from '../../components/EcoLoader.jsx'
 import {
     Save, Plus, Trash2, Mail, Phone, MapPin, Globe, Share2, Send,
-    Compass, Link2, Scale, User, ChevronDown,
-    Leaf, Lightbulb, Calendar, Github, Twitter, Instagram, Linkedin,
+    Link2, Scale, User, ChevronDown,
+    Github, Twitter, Instagram, Linkedin,
     Youtube, Facebook, MessageCircle
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const clone = (val) => (typeof structuredClone === 'function' ? structuredClone(val) : JSON.parse(JSON.stringify(val)))
-
-// Icon options for explore links
-const exploreIconOptions = [
-    { value: 'plant', label: 'Plant', icon: Leaf },
-    { value: 'bulb', label: 'Lightbulb', icon: Lightbulb },
-    { value: 'calendar', label: 'Calendar', icon: Calendar },
-    { value: 'compass', label: 'Compass', icon: Compass },
-    { value: 'globe', label: 'Globe', icon: Globe },
-    { value: 'link', label: 'Link', icon: Link2 },
-]
 
 // Icon options for social links
 const socialIconOptions = [
@@ -37,7 +27,6 @@ const socialIconOptions = [
 ]
 
 // Templates for new items
-const emptyExploreLink = { label: '', path: '/', icon: 'plant' }
 const emptyResourceLink = { label: '', path: '/' }
 const emptyLegalLink = { label: '', path: '/' }
 const emptySocialLink = { label: '', href: 'https://', icon: 'github' }
@@ -102,7 +91,7 @@ function CollapsibleSection({ title, icon: Icon, children, defaultOpen = true, b
     const [isOpen, setIsOpen] = useState(defaultOpen)
 
     return (
-        <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 shadow-sm overflow-hidden">
+        <div className="rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 shadow-sm">
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
@@ -129,9 +118,8 @@ function CollapsibleSection({ title, icon: Icon, children, defaultOpen = true, b
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="overflow-hidden"
                     >
-                        <div className="px-6 pb-6 pt-2">
+                        <div className="px-6 pb-6 pt-2 overflow-visible">
                             {children}
                         </div>
                     </motion.div>
@@ -166,7 +154,6 @@ export default function AdminFooter() {
             // Ensure footer object exists with all required nested objects
             const footer = {
                 brand: { title: 'EcoTrack', description: '' },
-                exploreLinks: [],
                 resourceLinks: [],
                 legalLinks: [],
                 contact: { address: '', phone: '', email: '' },
@@ -301,69 +288,6 @@ export default function AdminFooter() {
                             placeholder="Empowering individuals to track their environmental impact..."
                         />
                     </div>
-                </div>
-            </CollapsibleSection>
-
-            {/* Explore Links */}
-            <CollapsibleSection
-                title="Explore Links"
-                icon={Compass}
-                badge={footer.exploreLinks?.length || 0}
-            >
-                <div className="space-y-4">
-                    <AnimatePresence mode="popLayout">
-                        {footer.exploreLinks?.map((link, idx) => (
-                            <motion.div
-                                layout
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                key={`explore-${idx}`}
-                                className="grid grid-cols-1 md:grid-cols-[1fr,1fr,160px,auto] gap-3 p-4 rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50/30 dark:bg-zinc-800/30"
-                            >
-                                <div>
-                                    <label className="text-[10px] font-bold uppercase tracking-wider text-text/40 mb-1.5 block ml-1">Label</label>
-                                    <input
-                                        value={link.label}
-                                        onChange={(e) => updateArrayItem('footer.exploreLinks', idx, 'label', e.target.value)}
-                                        className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm font-medium text-heading focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none"
-                                        placeholder="Challenges"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="text-[10px] font-bold uppercase tracking-wider text-text/40 mb-1.5 block ml-1">Path</label>
-                                    <input
-                                        value={link.path}
-                                        onChange={(e) => updateArrayItem('footer.exploreLinks', idx, 'path', e.target.value)}
-                                        className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm font-medium text-heading focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none"
-                                        placeholder="/challenges"
-                                    />
-                                </div>
-                                <IconPicker
-                                    value={link.icon}
-                                    onChange={(val) => updateArrayItem('footer.exploreLinks', idx, 'icon', val)}
-                                    options={exploreIconOptions}
-                                    label="Icon"
-                                />
-                                <div className="flex items-end">
-                                    <button
-                                        onClick={() => removeItem('footer.exploreLinks', idx)}
-                                        className="p-3 rounded-xl text-text/30 hover:bg-rose-500/10 hover:text-rose-500 transition-all"
-                                    >
-                                        <Trash2 size={18} />
-                                    </button>
-                                </div>
-                            </motion.div>
-                        ))}
-                    </AnimatePresence>
-
-                    <Button
-                        variant="ghost"
-                        onClick={() => addItem('footer.exploreLinks', emptyExploreLink)}
-                        className="w-full flex items-center justify-center gap-2 py-4 border-2 border-dashed border-zinc-200 dark:border-zinc-700 rounded-2xl hover:border-primary hover:bg-primary/5 text-text/50 hover:text-primary transition-all"
-                    >
-                        <Plus size={18} /> Add Explore Link
-                    </Button>
                 </div>
             </CollapsibleSection>
 
