@@ -361,11 +361,14 @@ export default function AdminLayout() {
 
         {/* Main Area */}
         <div className={clsx(
-          "flex-1 flex flex-col min-w-0 transition-all duration-300",
+          "flex-1 flex flex-col min-w-0 min-h-screen transition-all duration-300",
           sidebarCollapsed ? "lg:ml-24" : "lg:ml-72"
         )}>
-          {/* Header */}
-          <header className="sticky top-0 z-40 bg-white/90 dark:bg-black/90 backdrop-blur-xl border-b border-zinc-200/30 dark:border-zinc-800/30 px-6 py-4">
+          {/* Header - Fixed at top */}
+          <header className={clsx(
+            "fixed top-0 right-0 z-40 bg-white/95 dark:bg-black/95 backdrop-blur-xl border-b border-zinc-200/30 dark:border-zinc-800/30 px-6 py-4 shadow-sm transition-all duration-300",
+            sidebarCollapsed ? "left-0 lg:left-24" : "left-0 lg:left-72"
+          )}>
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <button
@@ -429,8 +432,8 @@ export default function AdminLayout() {
             </div>
           </header>
 
-          {/* Page Content */}
-          <main className="flex-1 px-4 py-8 sm:px-8 lg:px-10">
+          {/* Page Content - with top padding to account for fixed header */}
+          <main className="flex-1 px-4 py-8 sm:px-8 lg:px-10 mt-[72px]">
             <div className="max-w-[1600px]">
               <Suspense fallback={<EcoLoader />}>
                 <Outlet />
