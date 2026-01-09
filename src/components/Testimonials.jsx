@@ -2,6 +2,20 @@ import { motion } from 'framer-motion'
 import SectionHeading from './SectionHeading'
 import { useSiteContent } from '../hooks/queries'
 
+// Color palette for auto-assignment (matches backend)
+const colorPalette = [
+    'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300',
+    'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300',
+    'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300',
+    'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-300',
+    'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300',
+    'bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-300',
+    'bg-cyan-100 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-300',
+    'bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-300',
+]
+
+const getColorClass = (index) => colorPalette[index % colorPalette.length]
+
 const defaultTestimonials = [
   {
     id: 1,
@@ -45,10 +59,10 @@ const defaultTestimonials = [
   }
 ]
 
-const TestimonialCard = ({ testimonial }) => (
+const TestimonialCard = ({ testimonial, index }) => (
     <div className="w-[350px] md:w-[400px] flex-shrink-0 p-6 md:p-8 rounded-2xl bg-surface border border-border shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] mx-4">
         <div className="flex items-center mb-4">
-            <div className={`w-12 h-12 rounded-full ${testimonial.colorClass || testimonial.color} flex items-center justify-center font-bold text-lg mr-4`}>
+            <div className={`w-12 h-12 rounded-full ${testimonial.colorClass || getColorClass(index)} flex items-center justify-center font-bold text-lg mr-4`}>
                 {testimonial.initials}
             </div>
             <div>
@@ -105,7 +119,7 @@ export default function Testimonials() {
                         }}
                     >
                         {[...testimonials, ...testimonials].map((testimonial, index) => (
-                            <TestimonialCard key={`${testimonial.id}-${index}`} testimonial={testimonial} />
+                            <TestimonialCard key={`${testimonial.id || index}-${index}`} testimonial={testimonial} index={index % testimonials.length} />
                         ))}
                     </motion.div>
                 </div>
