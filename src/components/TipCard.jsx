@@ -99,7 +99,7 @@ export default function TipCard({
   return (
     <Card className="h-full overflow-hidden flex flex-col">
       <CardHeader className="flex items-center gap-3">
-        <div className="h-10 w-10 overflow-hidden rounded-full bg-muted flex items-center justify-center text-xs font-medium text-text/80">
+        <div className="h-9 w-9 sm:h-10 sm:w-10 overflow-hidden rounded-full bg-muted flex items-center justify-center text-xs font-medium text-text/80">
           {authorInfo.avatar ? (
             <img src={authorInfo.avatar} alt={authorInfo.name} loading="lazy" className="h-full w-full object-cover" />
           ) : (
@@ -134,7 +134,7 @@ export default function TipCard({
         )}
       </CardContent>
       <CardFooter className="flex items-center justify-between mt-auto relative">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20 relative overflow-visible">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2 sm:px-3 py-1 sm:py-1.5 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20 relative overflow-visible">
           <svg className="h-3.5 w-3.5 text-primary" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
             <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
           </svg>

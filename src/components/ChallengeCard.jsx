@@ -12,16 +12,16 @@ export default function ChallengeCard({ challenge }) {
       <img
         src={challenge.imageUrl}
         alt={challenge.title}
-        className="h-48 w-full object-cover"
+        className="h-32 sm:h-40 md:h-48 w-full object-cover"
         loading="lazy"
         onError={(e) => {
           e.target.onerror = null;
           e.target.src = utils.getPlaceholderImage(400, 300, challenge.title);
         }}
       />
-      <CardContent className="p-5 flex flex-col h-[calc(100%-12rem)]">
+      <CardContent className="p-3 sm:p-4 md:p-5 flex flex-col h-[calc(100%-8rem)] sm:h-[calc(100%-10rem)] md:h-[calc(100%-12rem)]">
         <p className="text-xs font-bold tracking-wider text-primary uppercase mb-2">{challenge.category}</p>
-        <h3 className="text-xl font-heading font-bold text-heading mb-2 line-clamp-1">{challenge.title}</h3>
+        <h3 className="text-lg sm:text-xl font-heading font-bold text-heading mb-2 line-clamp-1">{challenge.title}</h3>
 
         <div className="flex items-center text-sm text-text/70 mb-4">
           <svg className="w-4 h-4 mr-2 text-primary/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">

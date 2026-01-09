@@ -1,7 +1,7 @@
 export default function SectionHeading({ title, subtitle, badge, centered = true, subtitleClassName = "" }) {
   return (
-    <div className={`mb-12 ${centered ? 'text-center' : 'text-left'}`}>
-      <div className={`flex flex-col ${centered ? 'items-center' : 'items-start'} space-y-4`}>
+    <div className={`mb-8 sm:mb-10 md:mb-12 ${centered ? 'text-center' : 'text-left'}`}>
+      <div className={`flex flex-col ${centered ? 'items-center' : 'items-start'} space-y-3 sm:space-y-4`}>
         {badge && (
           <span className="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20 backdrop-blur-sm">
             {badge}

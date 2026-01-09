@@ -70,12 +70,12 @@ export default function HowItWorks() {
               return (
                 <div key={step.id || step.title} className="h-full">
                   <Card className="h-full border-border shadow-sm bg-surface/70 backdrop-blur-sm">
-                    <CardContent className="p-8 text-center space-y-6">
-                      <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto transition-colors duration-300">
-                        <IconComponent className="w-8 h-8 text-primary" />
+                    <CardContent className="p-4 sm:p-6 md:p-8 text-center space-y-6">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto transition-colors duration-300">
+                        <IconComponent className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-primary" />
                       </div>
 
-                      <h3 className="text-xl font-heading font-bold text-heading">
+                      <h3 className="text-lg sm:text-xl font-heading font-bold text-heading">
                         {step.title}
                       </h3>
 

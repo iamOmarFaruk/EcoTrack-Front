@@ -106,7 +106,7 @@ export default function Hero({ slides = [], effect = 'fade' }) {
                 </div>
 
                 {/* Content */}
-                <div className="relative z-10 mx-auto flex h-full max-w-7xl items-center px-6 md:px-12">
+                <div className="relative z-10 mx-auto flex h-full max-w-7xl items-center px-4 sm:px-6 md:px-12">
                   <motion.div
                     variants={containerVariants}
                     initial="hidden"
@@ -116,7 +116,7 @@ export default function Hero({ slides = [], effect = 'fade' }) {
                     {/* Badge */}
                     <motion.div
                       variants={itemVariants}
-                      className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-medium text-white ring-1 ring-white/20 backdrop-blur-md"
+                      className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm font-medium text-white ring-1 ring-white/20 backdrop-blur-md"
                     >
                       <span className="relative flex h-2 w-2">
                         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>

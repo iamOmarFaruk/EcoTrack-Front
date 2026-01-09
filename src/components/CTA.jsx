@@ -28,7 +28,7 @@ const itemVariants = {
 
 export default function CTA() {
     return (
-        <section className="relative isolate overflow-hidden h-[50vh] min-h-[400px] flex items-center justify-center">
+        <section className="relative isolate overflow-hidden h-[50vh] min-h-[300px] sm:min-h-[400px] flex items-center justify-center">
             {/* Background image */}
             <div className="absolute inset-0">
                 <img
@@ -44,7 +44,7 @@ export default function CTA() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
             {/* Content */}
-            <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-12 text-center">
+            <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 md:px-12 text-center">
                 <motion.div
                     variants={containerVariants}
                     initial="hidden"
@@ -61,7 +61,7 @@ export default function CTA() {
 
                     <motion.p
                         variants={itemVariants}
-                        className="mb-8 max-w-2xl text-lg text-white/90 md:text-xl lg:text-2xl"
+                        className="mb-8 max-w-2xl text-base sm:text-lg md:text-xl lg:text-2xl text-white/90"
                     >
                         Join thousands of eco-conscious individuals tracking their impact, completing challenges, and building a sustainable future together.
                     </motion.p>
@@ -77,13 +77,13 @@ export default function CTA() {
                                 },
                             },
                         }}
-                        className="flex flex-wrap items-center justify-center gap-4"
+                        className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:gap-4"
                     >
                         <motion.div variants={itemVariants}>
                             <Button
                                 as={Link}
                                 to="/challenges"
-                                className="!px-8 !py-4 text-lg"
+                                className="!px-6 sm:!px-8 !py-3 sm:!py-4 text-base sm:text-lg"
                             >
                                 Explore Challenges
                             </Button>
@@ -93,7 +93,7 @@ export default function CTA() {
                                 as={Link}
                                 to="/tips"
                                 variant="secondary"
-                                className="!px-8 !py-4 text-lg"
+                                className="!px-6 sm:!px-8 !py-3 sm:!py-4 text-base sm:text-lg"
                             >
                                 Share Tips
                             </Button>

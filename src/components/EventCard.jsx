@@ -16,7 +16,7 @@ export default function EventCard({ event }) {
   return (
     <Card className="h-full flex flex-col overflow-hidden group hover:shadow-md transition-shadow duration-300">
       {event.image && (
-        <div className="w-full h-48 overflow-hidden relative">
+        <div className="w-full h-32 sm:h-40 md:h-48 overflow-hidden relative">
           <img
             src={event.image}
             alt={event.title}
@@ -33,7 +33,7 @@ export default function EventCard({ event }) {
         </div>
       )}
       <CardContent className="flex flex-1 flex-col p-5">
-        <h3 className="text-lg font-heading font-bold text-heading leading-tight mb-2 line-clamp-2">
+        <h3 className="text-base sm:text-lg font-heading font-bold text-heading leading-tight mb-2 line-clamp-2">
           {event.title}
         </h3>
 
@@ -44,7 +44,7 @@ export default function EventCard({ event }) {
           </div>
           <div className="flex items-center gap-1.5">
             <MapPin className="w-3.5 h-3.5 text-primary/70" />
-            <span className="truncate max-w-[150px]">{event.location}</span>
+            <span className="truncate max-w-[100px] sm:max-w-[150px]">{event.location}</span>
           </div>
         </div>
 
@@ -55,7 +55,7 @@ export default function EventCard({ event }) {
         </p>
 
         <Button
-          className="mt-auto h-9 self-start px-6"
+          className="mt-auto h-8 sm:h-9 self-start px-4 sm:px-6"
           onClick={handleViewDetails}
         >
           View Details

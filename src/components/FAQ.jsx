@@ -34,9 +34,9 @@ const AccordionItem = ({ question, answer, isOpen, onClick }) => {
         >
             <button
                 onClick={onClick}
-                className="w-full px-6 py-5 text-left flex items-center justify-between gap-4 focus:outline-none"
+                className="w-full px-4 sm:px-6 py-4 sm:py-5 text-left flex items-center justify-between gap-4 focus:outline-none"
             >
-                <span className={`text-lg font-semibold transition-colors ${isOpen ? 'text-primary' : 'text-heading'}`}>
+                <span className={`text-base sm:text-lg font-semibold transition-colors ${isOpen ? 'text-primary' : 'text-heading'}`}>
                     {question}
                 </span>
                 <span className={`flex-shrink-0 ml-4 p-1 rounded-full border transition-all duration-300 ${isOpen ? 'bg-primary text-white border-primary rotate-180' : 'border-border text-text/60'}`}>
@@ -57,7 +57,7 @@ const AccordionItem = ({ question, answer, isOpen, onClick }) => {
                         }}
                         transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
                     >
-                        <div className="px-6 pb-6 text-heading leading-relaxed">
+                        <div className="px-4 sm:px-6 pb-4 sm:pb-6 text-heading leading-relaxed">
                             {answer}
                         </div>
                     </motion.div>

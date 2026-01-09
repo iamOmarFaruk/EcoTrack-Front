@@ -60,13 +60,13 @@ const defaultTestimonials = [
 ]
 
 const TestimonialCard = ({ testimonial, index }) => (
-    <div className="w-[350px] md:w-[400px] flex-shrink-0 p-6 md:p-8 rounded-2xl bg-surface border border-border shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] mx-4">
+    <div className="w-[90vw] sm:w-[320px] md:w-[350px] lg:w-[400px] flex-shrink-0 p-4 sm:p-6 md:p-8 rounded-2xl bg-surface border border-border shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] mx-4">
         <div className="flex items-center mb-4">
-            <div className={`w-12 h-12 rounded-full ${testimonial.colorClass || getColorClass(index)} flex items-center justify-center font-bold text-lg mr-4`}>
+            <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full ${testimonial.colorClass || getColorClass(index)} flex items-center justify-center font-bold text-base sm:text-lg mr-4`}>
                 {testimonial.initials}
             </div>
             <div>
-                <h4 className="font-heading font-bold text-lg text-heading">{testimonial.name}</h4>
+                <h4 className="font-heading font-bold text-base sm:text-lg text-heading">{testimonial.name}</h4>
                 <p className="text-sm text-text/60">{testimonial.role}</p>
             </div>
         </div>
