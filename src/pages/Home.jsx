@@ -142,7 +142,7 @@ export default function Home() {
 
   return (
     <div className="space-y-8">
-      <div className="full-bleed">
+      <div className="full-bleed mb-8 sm:mb-10">
         {loadingFeatured ? (
           <HeroSkeleton />
         ) : featuredChallenges.length > 0 ? (
@@ -401,7 +401,7 @@ export default function Home() {
 
       <FAQ />
 
-      <div className="full-bleed">
+      <div className="full-bleed mb-8 sm:mb-12">
         <CTA />
       </div>
 

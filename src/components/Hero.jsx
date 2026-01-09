@@ -73,7 +73,7 @@ export default function Hero({ slides = [], effect = 'fade' }) {
         navigation
         pagination={{ clickable: true }}
         grabCursor
-        className="h-[52vh] min-h-[360px] w-full sm:h-[56vh] md:h-[72vh] md:min-h-[480px] lg:h-[82vh]"
+        className="h-[70vh] min-h-[420px] w-full sm:h-[56vh] md:h-[72vh] md:min-h-[480px] lg:h-[82vh]"
       >
         {slides.map((item) => (
           <SwiperSlide key={item._id}>
@@ -106,7 +106,7 @@ export default function Hero({ slides = [], effect = 'fade' }) {
                 </div>
 
                 {/* Content */}
-                <div className="relative z-10 mx-auto flex h-full max-w-7xl items-center px-4 sm:px-6 md:px-12">
+                <div className="relative z-10 mx-auto flex h-full max-w-7xl items-start px-6 pt-[100px] pb-10 sm:items-center sm:px-8 sm:py-0 md:px-12">
                   <motion.div
                     variants={containerVariants}
                     initial="hidden"
@@ -160,7 +160,7 @@ export default function Hero({ slides = [], effect = 'fade' }) {
                       <Button
                         as={Link}
                         to={`/challenges/${item.slug || item._id}`}
-                        className="!px-8 !py-4 text-lg"
+                        className="!px-5 !py-2.5 text-sm sm:!px-8 sm:!py-4 sm:text-lg"
                       >
                         View Challenge
                       </Button>
@@ -175,6 +175,3 @@ export default function Hero({ slides = [], effect = 'fade' }) {
     </section>
   )
 }
-
-
-
