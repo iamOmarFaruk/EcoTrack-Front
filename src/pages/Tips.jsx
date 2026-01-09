@@ -305,7 +305,7 @@ export default function Tips() {
                     : 'bg-surface border-border text-text/70 hover:border-text/30 hover:text-text'
                     }`}
                 >
-                  {cat === 'All' ? '🌍 All' : cat}
+                  {cat}
                 </button>
               ))}
             </div>
