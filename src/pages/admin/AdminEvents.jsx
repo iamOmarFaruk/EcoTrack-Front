@@ -73,6 +73,7 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
         duration: event?.duration || '',
         requirements: event?.requirements || '',
         benefits: event?.benefits || '',
+        image: event?.image || '',
         category: event?.category || '',
         status: event?.status || 'active'
     })
@@ -105,7 +106,7 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.95, opacity: 0 }}
-                className="w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200/60 dark:border-zinc-800/60"
+                className="w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200/60 dark:border-zinc-800/60 scrollbar-hide overflow-x-hidden"
                 onClick={e => e.stopPropagation()}
             >
                 <div className="sticky top-0 z-10 flex items-center justify-between p-6 bg-white dark:bg-zinc-900 border-b border-zinc-200/60 dark:border-zinc-800/60">
@@ -113,6 +114,7 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
                     <button
                         onClick={onClose}
                         className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                        title="Close"
                     >
                         <X size={20} />
                     </button>
@@ -139,7 +141,7 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
                                 value={formData.category}
                                 onChange={handleChange}
                                 required
-                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-surface/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                                className="w-full px-4 pr-10 py-2.5 rounded-xl border border-border bg-surface/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.5em_1.5em] bg-[right_0.5rem_center] bg-no-repeat"
                             >
                                 <option value="">Select category</option>
                                 {eventCategories.map(cat => (
@@ -154,7 +156,7 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
                                 name="status"
                                 value={formData.status}
                                 onChange={handleChange}
-                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-surface/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                                className="w-full px-4 pr-10 py-2.5 rounded-xl border border-border bg-surface/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.5em_1.5em] bg-[right_0.5rem_center] bg-no-repeat"
                             >
                                 {Object.entries(statusConfig).map(([key, config]) => (
                                     <option key={key} value={key}>{config.label}</option>
@@ -268,13 +270,35 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
                                 className="w-full px-4 py-2.5 rounded-xl border border-border bg-surface/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all resize-none"
                             />
                         </div>
+
+                        <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-heading mb-2">Image URL</label>
+                            <input
+                                type="url"
+                                name="image"
+                                value={formData.image}
+                                onChange={handleChange}
+                                placeholder="https://example.com/image.jpg"
+                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-surface/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                            />
+                            {formData.image && (
+                                <div className="mt-2 rounded-lg overflow-hidden border border-border">
+                                    <img
+                                        src={formData.image}
+                                        alt="Event preview"
+                                        className="w-full h-32 object-cover"
+                                        onError={(e) => e.target.style.display = 'none'}
+                                    />
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-200/60 dark:border-zinc-800/60">
-                        <Button type="button" variant="ghost" onClick={onClose}>
+                        <Button type="button" variant="ghost" onClick={onClose} title="Cancel editing">
                             Cancel
                         </Button>
-                        <Button type="submit" disabled={isLoading}>
+                        <Button type="submit" disabled={isLoading} title="Save event changes">
                             {isLoading ? 'Saving...' : 'Save Changes'}
                         </Button>
                     </div>
@@ -331,8 +355,8 @@ export default function AdminEvents() {
 
     const fetchEventForEdit = useMutation({
         mutationFn: (id) => adminApi.getEvent(id),
-        onSuccess: (data) => {
-            setEditingEvent(data)
+        onSuccess: (response) => {
+            setEditingEvent(response.data)
         },
         onError: (err) => showError(err.message || 'Failed to load event details')
     })
@@ -428,6 +452,7 @@ export default function AdminEvents() {
                                 ? "border-primary bg-primary/5 text-primary"
                                 : "border-border bg-surface/50 text-text/70 hover:border-primary/50"
                         )}
+                        title={showFilters ? "Hide filters" : "Show filters"}
                     >
                         <Filter size={18} />
                         Filters
@@ -480,6 +505,7 @@ export default function AdminEvents() {
                                                 ? "bg-primary text-white"
                                                 : "bg-zinc-100 dark:bg-zinc-800 text-text/60 hover:bg-zinc-200 dark:hover:bg-zinc-700"
                                         )}
+                                        title={`Filter by ${status} events`}
                                     >
                                         {status}
                                     </button>
@@ -589,7 +615,7 @@ export default function AdminEvents() {
                                                                 ? config.button
                                                                 : "text-text/40 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-text/70"
                                                         )}
-                                                        title={config.label}
+                                                        title={`Mark as ${config.label}`}
                                                     >
                                                         <Icon size={12} />
                                                         <span className="hidden sm:inline">{config.label}</span>
@@ -641,6 +667,7 @@ export default function AdminEvents() {
                                                             ? config.button
                                                             : "bg-zinc-100 dark:bg-zinc-800 text-text/40"
                                                     )}
+                                                    title={`Mark as ${config.label}`}
                                                 >
                                                     <Icon size={12} />
                                                     <span className="hidden xs:inline">{config.label}</span>
