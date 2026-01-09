@@ -132,7 +132,7 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
                                 value={formData.title}
                                 onChange={handleChange}
                                 required
-                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-surface/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                                className="w-full px-4 py-2.5 rounded-xl border border-border dark:border-primary/20 bg-surface/50 dark:bg-zinc-900/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary dark:focus:border-primary transition-all"
                             />
                         </div>
 
@@ -143,7 +143,7 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
                                 value={formData.category}
                                 onChange={handleChange}
                                 required
-                                className="w-full px-4 pr-10 py-2.5 rounded-xl border border-border bg-surface/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.5em_1.5em] bg-[right_0.5rem_center] bg-no-repeat"
+                                className="w-full px-4 pr-10 py-2.5 rounded-xl border border-border dark:border-primary/20 bg-surface/50 dark:bg-zinc-900/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary dark:focus:border-primary transition-all appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.5em_1.5em] bg-[right_0.5rem_center] bg-no-repeat"
                             >
                                 <option value="">Select category</option>
                                 {eventCategories.map(cat => (
@@ -158,7 +158,7 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
                                 name="status"
                                 value={formData.status}
                                 onChange={handleChange}
-                                className="w-full px-4 pr-10 py-2.5 rounded-xl border border-border bg-surface/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.5em_1.5em] bg-[right_0.5rem_center] bg-no-repeat"
+                                className="w-full px-4 pr-10 py-2.5 rounded-xl border border-border dark:border-primary/20 bg-surface/50 dark:bg-zinc-900/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary dark:focus:border-primary transition-all appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[length:1.5em_1.5em] bg-[right_0.5rem_center] bg-no-repeat"
                             >
                                 {Object.entries(statusConfig).map(([key, config]) => (
                                     <option key={key} value={key}>{config.label}</option>
@@ -174,7 +174,7 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
                                 value={formData.date}
                                 onChange={handleChange}
                                 required
-                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-surface/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                                className="w-full px-4 py-2.5 rounded-xl border border-border dark:border-primary/20 bg-surface/50 dark:bg-zinc-900/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary dark:focus:border-primary transition-all"
                             />
                         </div>
 
@@ -186,7 +186,7 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
                                 value={formData.location}
                                 onChange={handleChange}
                                 required
-                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-surface/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                                className="w-full px-4 py-2.5 rounded-xl border border-border dark:border-primary/20 bg-surface/50 dark:bg-zinc-900/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary dark:focus:border-primary transition-all"
                             />
                         </div>
 
@@ -198,7 +198,7 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
                                 value={formData.organizer}
                                 onChange={handleChange}
                                 required
-                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-surface/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                                className="w-full px-4 py-2.5 rounded-xl border border-border dark:border-primary/20 bg-surface/50 dark:bg-zinc-900/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary dark:focus:border-primary transition-all"
                             />
                         </div>
 
@@ -211,7 +211,7 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
                                 onChange={handleChange}
                                 required
                                 min="1"
-                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-surface/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                                className="w-full px-4 py-2.5 rounded-xl border border-border dark:border-primary/20 bg-surface/50 dark:bg-zinc-900/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary dark:focus:border-primary transition-all"
                             />
                         </div>
 
@@ -236,7 +236,7 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
                                 onChange={handleChange}
                                 required
                                 rows={2}
-                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-surface/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all resize-none"
+                                className="w-full px-4 py-2.5 rounded-xl border border-border dark:border-primary/20 bg-surface/50 dark:bg-zinc-900/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary dark:focus:border-primary transition-all resize-none"
                             />
                         </div>
 
@@ -247,7 +247,7 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
                                 value={formData.detailedDescription}
                                 onChange={handleChange}
                                 rows={3}
-                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-surface/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all resize-none"
+                                className="w-full px-4 py-2.5 rounded-xl border border-border dark:border-primary/20 bg-surface/50 dark:bg-zinc-900/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary dark:focus:border-primary transition-all resize-none"
                             />
                         </div>
 
@@ -258,7 +258,7 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
                                 value={formData.requirements}
                                 onChange={handleChange}
                                 rows={2}
-                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-surface/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all resize-none"
+                                className="w-full px-4 py-2.5 rounded-xl border border-border dark:border-primary/20 bg-surface/50 dark:bg-zinc-900/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary dark:focus:border-primary transition-all resize-none"
                             />
                         </div>
 
@@ -281,7 +281,7 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
                                 value={formData.image}
                                 onChange={handleChange}
                                 placeholder="https://example.com/image.jpg"
-                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-surface/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                                className="w-full px-4 py-2.5 rounded-xl border border-border dark:border-primary/20 bg-surface/50 dark:bg-zinc-900/50 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary dark:focus:border-primary transition-all"
                             />
                             {formData.image && (
                                 <div className="mt-2 rounded-lg overflow-hidden border border-border">
