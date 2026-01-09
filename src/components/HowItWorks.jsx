@@ -12,8 +12,6 @@ import {
   FiSmile
 } from 'react-icons/fi'
 import SectionHeading from './SectionHeading.jsx'
-import { motion } from 'framer-motion'
-import { containerVariants, itemVariants } from '../utils/animations'
 import { useSiteContent } from '../hooks/queries'
 
 const defaultSteps = [
@@ -66,43 +64,30 @@ export default function HowItWorks() {
             centered={true}
           />
 
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.2 }}
-            className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
-          >
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {steps.map((step) => {
               const IconComponent = typeof step.icon === 'function' ? step.icon : (iconMap[step.icon] || FiTarget)
               return (
-                <motion.div
-                  key={step.id || step.title}
-                  variants={itemVariants}
-                  className="h-full"
-                >
+                <div key={step.id || step.title} className="h-full">
                   <Card className="h-full border-border shadow-sm bg-surface/70 backdrop-blur-sm">
                     <CardContent className="p-8 text-center space-y-6">
-                      {/* Icon */}
                       <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto transition-colors duration-300">
                         <IconComponent className="w-8 h-8 text-primary" />
                       </div>
 
-                      {/* Title */}
                       <h3 className="text-xl font-heading font-bold text-heading">
                         {step.title}
                       </h3>
 
-                      {/* Description */}
                       <p className="text-text/80 leading-relaxed">
                         {step.description}
                       </p>
                     </CardContent>
                   </Card>
-                </motion.div>
+                </div>
               )
             })}
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>
