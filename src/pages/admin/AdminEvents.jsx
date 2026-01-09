@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminApi } from '../../services/adminApi.js'
 import { showError, showSuccess, showConfirmation, showDeleteConfirmation } from '../../utils/toast.jsx'
 import Button from '../../components/ui/Button.jsx'
+import Tooltip from '../../components/ui/Tooltip.jsx'
 import EcoLoader from '../../components/EcoLoader.jsx'
 import {
     Calendar,
@@ -111,13 +112,14 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
             >
                 <div className="sticky top-0 z-10 flex items-center justify-between p-6 bg-white dark:bg-zinc-900 border-b border-zinc-200/60 dark:border-zinc-800/60">
                     <h2 className="text-xl font-bold text-heading">Edit Event</h2>
-                    <button
-                        onClick={onClose}
-                        className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-                        title="Close"
-                    >
-                        <X size={20} />
-                    </button>
+                    <Tooltip content="Close">
+                        <button
+                            onClick={onClose}
+                            className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                        >
+                            <X size={20} />
+                        </button>
+                    </Tooltip>
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-5">
@@ -295,12 +297,16 @@ function EditEventModal({ event, onClose, onSave, isLoading }) {
                     </div>
 
                     <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-200/60 dark:border-zinc-800/60">
-                        <Button type="button" variant="ghost" onClick={onClose} title="Cancel editing">
-                            Cancel
-                        </Button>
-                        <Button type="submit" disabled={isLoading} title="Save event changes">
-                            {isLoading ? 'Saving...' : 'Save Changes'}
-                        </Button>
+                        <Tooltip content="Cancel editing">
+                            <Button type="button" variant="ghost" onClick={onClose}>
+                                Cancel
+                            </Button>
+                        </Tooltip>
+                        <Tooltip content="Save event changes">
+                            <Button type="submit" disabled={isLoading}>
+                                {isLoading ? 'Saving...' : 'Save Changes'}
+                            </Button>
+                        </Tooltip>
                     </div>
                 </form>
             </motion.div>
@@ -452,7 +458,6 @@ export default function AdminEvents() {
                                 ? "border-primary bg-primary/5 text-primary"
                                 : "border-border bg-surface/50 text-text/70 hover:border-primary/50"
                         )}
-                        title={showFilters ? "Hide filters" : "Show filters"}
                     >
                         <Filter size={18} />
                         Filters
@@ -505,7 +510,6 @@ export default function AdminEvents() {
                                                 ? "bg-primary text-white"
                                                 : "bg-zinc-100 dark:bg-zinc-800 text-text/60 hover:bg-zinc-200 dark:hover:bg-zinc-700"
                                         )}
-                                        title={`Filter by ${status} events`}
                                     >
                                         {status}
                                     </button>
@@ -517,7 +521,7 @@ export default function AdminEvents() {
             </AnimatePresence>
 
             {/* Events Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
                 {events.length > 0 ? (
                     events.map((event, index) => {
                         const capacityPercentage = event.capacity > 0
@@ -599,9 +603,9 @@ export default function AdminEvents() {
 
                                 {/* Card Footer - Actions */}
                                 <div className="px-5 py-3 border-t border-zinc-200/60 dark:border-zinc-800/60">
-                                    <div className="flex items-center justify-between gap-2">
+                                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                                         {/* Status Toggle Buttons */}
-                                        <div className="flex items-center gap-1">
+                                        <div className="flex flex-wrap items-center gap-2">
                                             {Object.entries(statusConfig).slice(0, 2).map(([status, config]) => {
                                                 const Icon = config.icon
                                                 return (
@@ -610,67 +614,65 @@ export default function AdminEvents() {
                                                         onClick={() => handleStatusUpdate(event._id, status)}
                                                         disabled={event.status === status || updateStatus.isPending}
                                                         className={clsx(
-                                                            "flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all",
+                                                            "flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all border border-transparent",
                                                             event.status === status
                                                                 ? config.button
-                                                                : "text-text/40 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-text/70"
+                                                                : "text-text/60 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200/80 dark:hover:bg-zinc-700"
                                                         )}
-                                                        title={`Mark as ${config.label}`}
                                                     >
                                                         <Icon size={12} />
-                                                        <span className="hidden sm:inline">{config.label}</span>
+                                                        <span>{config.label}</span>
                                                     </button>
                                                 )
                                             })}
                                         </div>
 
                                         {/* Action Buttons */}
-                                        <div className="flex items-center gap-1">
+                                        <div className="flex flex-wrap items-center gap-2 sm:justify-end">
                                             <a
                                                 href={`/events/${event.slug || event._id}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="p-1.5 rounded-lg text-text/40 hover:text-primary hover:bg-primary/5 transition-colors"
-                                                title="View Event"
+                                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-primary/20 text-sm font-medium text-primary bg-primary/5 hover:bg-primary/10 transition-colors"
                                             >
                                                 <ExternalLink size={16} />
+                                                <span>View</span>
                                             </a>
                                             <button
                                                 onClick={() => handleEditEvent(event)}
-                                                className="p-1.5 rounded-lg text-text/40 hover:text-blue-500 hover:bg-blue-500/5 transition-colors"
-                                                title="Edit Event"
+                                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-blue-500/20 text-sm font-medium text-blue-500 bg-blue-500/5 hover:bg-blue-500/10 transition-colors"
                                             >
                                                 <Edit3 size={16} />
+                                                <span>Edit</span>
                                             </button>
                                             <button
                                                 onClick={() => handleDeleteEvent(event)}
-                                                className="p-1.5 rounded-lg text-text/40 hover:text-red-500 hover:bg-red-500/5 transition-colors"
-                                                title="Delete Event"
+                                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-red-500/20 text-sm font-medium text-red-500 bg-red-500/5 hover:bg-red-500/10 transition-colors"
                                             >
                                                 <Trash2 size={16} />
+                                                <span>Delete</span>
                                             </button>
                                         </div>
                                     </div>
 
                                     {/* Additional Status Buttons (Mobile) */}
-                                    <div className="mt-2 flex flex-wrap items-center gap-1">
+                                    <div className="mt-3 flex flex-wrap items-center gap-2">
                                         {Object.entries(statusConfig).slice(2).map(([status, config]) => {
                                             const Icon = config.icon
                                             return (
                                                 <button
                                                     key={status}
-                                                        onClick={() => handleStatusUpdate(event._id, status)}
+                                                    onClick={() => handleStatusUpdate(event._id, status)}
                                                     disabled={event.status === status || updateStatus.isPending}
                                                     className={clsx(
-                                                        "flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all",
+                                                        "flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wide transition-all border border-transparent",
                                                         event.status === status
                                                             ? config.button
-                                                            : "bg-zinc-100 dark:bg-zinc-800 text-text/40"
+                                                            : "bg-zinc-100 dark:bg-zinc-800 text-text/60"
                                                     )}
-                                                    title={`Mark as ${config.label}`}
                                                 >
                                                     <Icon size={12} />
-                                                    <span className="hidden xs:inline">{config.label}</span>
+                                                    <span>{config.label}</span>
                                                 </button>
                                             )
                                         })}
