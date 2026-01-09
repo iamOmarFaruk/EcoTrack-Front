@@ -1,5 +1,5 @@
 import { Outlet, NavLink } from 'react-router-dom'
-import { Suspense, useEffect, useRef, useState } from 'react'
+import { Suspense, useEffect, useRef, useState, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import {
   LayoutDashboard,
@@ -16,11 +16,10 @@ import {
   MessageSquare,
   Layers,
   ChevronLeft,
-  ChevronRight,
   ExternalLink
 } from 'lucide-react'
 import clsx from 'clsx'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from "framer-motion";
 import { Player } from '@lordicon/react'
 import { useAdminAuth } from '../context/AdminAuthContext.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
@@ -162,9 +161,7 @@ export default function AdminLayout() {
   const calculateTooltipPosition = () => {
     if (!viewSiteButtonRef.current) return
     const rect = viewSiteButtonRef.current.getBoundingClientRect()
-    const tooltipHeight = 50 // approximate height of tooltip
     const spaceAbove = rect.top
-    const spaceBelow = window.innerHeight - rect.bottom
 
     // If less than 80px space above, position below
     if (spaceAbove < 80) {
@@ -227,20 +224,17 @@ export default function AdminLayout() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                  className={clsx(
-                    "hidden lg:flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-medium text-text/60 hover:text-primary hover:bg-primary/10 transition-all duration-300 border border-transparent hover:border-primary/20 group",
-                    sidebarCollapsed && "lg:px-2"
-                  )}
+                  className="hidden lg:inline-flex items-center justify-center p-2 rounded-lg text-text/50 hover:text-primary hover:bg-primary/10 transition-all duration-300 border border-transparent hover:border-primary/20 group"
                   aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+                  title={sidebarCollapsed ? "Expand" : "Collapse"}
                 >
-                  {sidebarCollapsed ? (
-                    <ChevronRight size={16} className="transition-transform duration-300 group-hover:scale-110" />
-                  ) : (
-                    <>
-                      <ChevronLeft size={16} className="transition-transform duration-300 group-hover:scale-110" />
-                      <span>Collapse</span>
-                    </>
-                  )}
+                  <div className="transition-transform duration-300 group-hover:scale-110" style={{
+                    transform: sidebarCollapsed ? 'rotateY(0deg)' : 'rotateY(180deg)',
+                    transformOrigin: 'center',
+                    transformStyle: 'preserve-3d'
+                  }}>
+                    <ChevronLeft size={16} />
+                  </div>
                 </button>
                 <button
                   onClick={() => setSidebarOpen(false)}
@@ -460,7 +454,7 @@ function SidebarLink({ item, onClick, isCollapsed }) {
   }, [item.lordIcon])
 
   // Play animation on hover
-  const updateTooltipPos = () => {
+  const updateTooltipPos = useCallback(() => {
     const anchorEl = (isCollapsed && iconRef.current)
       ? iconRef.current
       : (navLinkRef.current || linkRef.current)
@@ -475,7 +469,7 @@ function SidebarLink({ item, onClick, isCollapsed }) {
       top: clampedTop,
       left: rect.right + tooltipGap + tooltipXOffset
     })
-  }
+  }, [isCollapsed])
 
   const handleMouseEnter = () => {
     if (playerRef.current) {
@@ -502,7 +496,7 @@ function SidebarLink({ item, onClick, isCollapsed }) {
       window.removeEventListener('scroll', handleScroll, true)
       window.removeEventListener('resize', handleResize)
     }
-  }, [showTooltip])
+  }, [showTooltip, updateTooltipPos])
 
   useEffect(() => {
     if (!showTooltip || !isCollapsed) return
@@ -513,7 +507,7 @@ function SidebarLink({ item, onClick, isCollapsed }) {
     }
     rafId = window.requestAnimationFrame(tick)
     return () => window.cancelAnimationFrame(rafId)
-  }, [showTooltip, isCollapsed])
+  }, [showTooltip, isCollapsed, updateTooltipPos])
 
   return (
     <div className={clsx('relative', isCollapsed && 'lg:w-fit lg:mx-auto')} ref={linkRef}>
