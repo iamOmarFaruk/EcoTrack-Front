@@ -331,13 +331,16 @@ export default function AdminEvents() {
         }
     }, [])
 
-    const { data, isLoading } = useQuery({
+    const { data, isLoading, isInitialLoading, isFetching } = useQuery({
         queryKey: ['admin', 'events', searchQuery, statusFilter],
         queryFn: () => adminApi.getEvents({
             limit: 50,
             search: searchQuery,
             status: statusFilter !== 'all' ? statusFilter : undefined
-        })
+        }),
+        keepPreviousData: true,
+        placeholderData: (prev) => prev,
+        staleTime: 1000
     })
 
     const updateStatus = useMutation({
@@ -410,7 +413,7 @@ export default function AdminEvents() {
         debouncedSearch(value, setSearchQuery)
     }, [debouncedSearch])
 
-    if (isLoading) return <EcoLoader />
+    if (isInitialLoading) return <EcoLoader />
 
     const events = data?.data || data || []
 
@@ -440,13 +443,19 @@ export default function AdminEvents() {
                 <div className="flex flex-wrap items-center gap-3">
                     {/* Search Input */}
                     <div className="relative group">
-                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text/40 group-focus-within:text-primary transition-colors" size={18} />
+                        <Search
+                            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-primary/60 group-focus-within:text-primary transition-colors"
+                            size={18}
+                        />
                         <input
                             type="text"
                             placeholder="Search events..."
                             onChange={handleSearchChange}
-                            className="pl-11 pr-4 py-2.5 rounded-xl border border-border bg-surface/50 backdrop-blur-sm text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all w-64"
+                            className="pl-11 pr-4 py-2.5 rounded-xl border border-border bg-white dark:bg-zinc-900/60 text-sm focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all w-64"
                         />
+                        {isFetching && (
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                        )}
                     </div>
 
                     {/* Filter Button */}
