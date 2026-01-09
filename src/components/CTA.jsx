@@ -28,16 +28,10 @@ const itemVariants = {
 
 export default function CTA() {
     return (
-        <section className="relative isolate overflow-hidden h-[50vh] min-h-[300px] sm:min-h-[400px] flex items-center justify-center">
-            {/* Background image */}
-            <div className="absolute inset-0">
-                <img
-                    src={whyGoGreenImg}
-                    alt="Sustainable lifestyle"
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                />
-            </div>
+        <section
+            className="relative isolate overflow-hidden h-[50vh] min-h-[300px] sm:min-h-[400px] flex items-center justify-center bg-fixed bg-center bg-cover py-[200px] sm:py-0"
+            style={{ backgroundImage: `url(${whyGoGreenImg})` }}
+        >
 
             {/* Overlays */}
             <div className="absolute inset-0 bg-black/60" />
@@ -54,7 +48,7 @@ export default function CTA() {
                 >
                     <motion.h2
                         variants={itemVariants}
-                        className="mb-6 text-3xl font-black tracking-tighter text-white drop-shadow-2xl sm:text-4xl md:text-5xl lg:text-6xl"
+                        className="mb-6 text-xl font-black tracking-tighter text-white drop-shadow-2xl sm:text-4xl md:text-5xl lg:text-6xl"
                     >
                         Ready to Make a Real Difference?
                     </motion.h2>
@@ -83,7 +77,7 @@ export default function CTA() {
                             <Button
                                 as={Link}
                                 to="/challenges"
-                                className="!px-6 sm:!px-8 !py-3 sm:!py-4 text-base sm:text-lg"
+                                className="!px-5 sm:!px-8 !py-2.5 sm:!py-4 text-sm sm:text-lg"
                             >
                                 Explore Challenges
                             </Button>
@@ -93,7 +87,7 @@ export default function CTA() {
                                 as={Link}
                                 to="/tips"
                                 variant="secondary"
-                                className="!px-6 sm:!px-8 !py-3 sm:!py-4 text-base sm:text-lg"
+                                className="!px-5 sm:!px-8 !py-2.5 sm:!py-4 text-sm sm:text-lg"
                             >
                                 Share Tips
                             </Button>
