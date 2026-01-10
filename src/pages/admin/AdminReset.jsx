@@ -21,7 +21,6 @@ const AdminReset = () => {
 
                 navigate('/control-panel')
             } catch (err) {
-                console.error('Reset failed:', err)
                 setError(err.message || 'Failed to reset demo data')
                 toast.error('Failed to reset demo data')
             } finally {

@@ -1,10 +1,10 @@
 import { createContext, useContext, useMemo, useEffect, useState } from 'react'
 import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
-import { 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, 
-  signInWithPopup, 
-  signOut, 
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
   onAuthStateChanged,
   updateProfile,
   sendPasswordResetEmail
@@ -38,12 +38,12 @@ export function AuthProvider({ children }) {
         try {
           await firebaseUser.reload()
         } catch (reloadError) {
-          console.log('Could not reload Firebase user, using cached data')
+          // Could not reload Firebase user, using cached data
         }
-        
+
         // Ensure we capture Google photoURL properly, with fallback to generic Google avatar
         let avatarUrl = firebaseUser.photoURL || ''
-        
+
         // If no photoURL but it's a Google account, try to construct a basic avatar
         if (!avatarUrl && firebaseUser.providerData.some(provider => provider.providerId === 'google.com')) {
           // Use Google's default avatar service with the user's email
@@ -54,7 +54,7 @@ export function AuthProvider({ children }) {
             avatarUrl = `https://www.gravatar.com/avatar/${emailHash}?d=identicon&s=80`
           }
         }
-        
+
         const userInfo = {
           uid: firebaseUser.uid,
           name: firebaseUser.displayName || 'User',
@@ -62,19 +62,19 @@ export function AuthProvider({ children }) {
           avatarUrl: avatarUrl,
         }
         setUser(userInfo)
-        
+
         // Sync with backend - use /auth/me which auto-creates profile
         try {
           const response = await authApi.getMe()
           // response.data contains complete user data
           const userData = response?.data || response
           setUserProfile(userData)
-          
+
           // Fetch user's joined challenges
           try {
             const challengesResponse = await challengeApi.getJoinedChallenges()
             let joinedChallenges = []
-            
+
             // Handle different response structures
             if (Array.isArray(challengesResponse)) {
               joinedChallenges = challengesResponse.map(c => c._id || c.id)
@@ -83,7 +83,7 @@ export function AuthProvider({ children }) {
             } else if (challengesResponse?.challenges && Array.isArray(challengesResponse.challenges)) {
               joinedChallenges = challengesResponse.challenges.map(c => c._id || c.id)
             }
-            
+
             setUserChallenges(joinedChallenges)
           } catch (challengesError) {
             // If fetching challenges fails, set empty array
@@ -94,7 +94,7 @@ export function AuthProvider({ children }) {
           try {
             const eventsResponse = await eventApi.getMyJoined('upcoming')
             let joinedEvents = []
-            
+
             // Handle different response structures
             // Backend always returns _id (MongoDB ObjectId)
             if (Array.isArray(eventsResponse)) {
@@ -104,14 +104,14 @@ export function AuthProvider({ children }) {
             } else if (eventsResponse?.events && Array.isArray(eventsResponse.events)) {
               joinedEvents = eventsResponse.events.map(e => e._id)
             }
-            
+
             setUserEvents(joinedEvents)
           } catch (eventsError) {
             // If fetching events fails, set empty array
             setUserEvents([])
           }
         } catch (error) {
-          console.error('Failed to fetch user data:', error)
+          showError('Failed to fetch user data. Please try refreshing or logging back in.')
           // Fallback to Firebase user info if backend fails
           setUserProfile({
             ...userInfo,
@@ -165,33 +165,31 @@ export function AuthProvider({ children }) {
     async function register({ name, email, password, photoUrl }) {
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-        
+
         // Update the user profile with display name and photo URL
         await updateProfile(userCredential.user, {
           displayName: name,
           photoURL: photoUrl || null,
         })
-        
+
         // Force reload the user to ensure the profile update is reflected
         await userCredential.user.reload()
-        
+
         // Get the updated token with the new profile data
         await userCredential.user.getIdToken(true)
-        
+
         // Now register with backend - it will receive the updated Firebase user data
         try {
           const requestData = {
             displayName: name,
             photoURL: photoUrl || null
           }
-          
+
           await authApi.register(requestData)
         } catch (mongoError) {
-          // Don't throw the error - Firebase registration was successful
-          // Profile will be auto-created on first /auth/me call with updated data
-          console.log('Backend registration skipped, will auto-create on first access')
+          // Backend registration skipped, will auto-create on first access
         }
-        
+
         showSuccess('Account created successfully! Welcome to EcoTrack!')
         return userCredential.user
       } catch (error) {
@@ -205,7 +203,7 @@ export function AuthProvider({ children }) {
     async function loginWithGoogle() {
       try {
         const result = await signInWithPopup(auth, googleProvider)
-        
+
         // Backend will auto-create profile when /auth/me is called
         // No need to explicitly register - the /auth/me endpoint handles this
         showSuccess('Welcome back!')
@@ -232,24 +230,24 @@ export function AuthProvider({ children }) {
 
     async function deleteAccount() {
       let backendDeleted = false
-      
+
       try {
         // First delete the backend profile and data
         const { userApi } = await import('../services/api.js')
         await userApi.deleteProfile()
         backendDeleted = true
-        
+
         // Then delete the Firebase user
         if (auth.currentUser) {
           await auth.currentUser.delete()
         }
-        
+
         // Clear local state
         setUser(null)
         setUserProfile(null)
         setUserChallenges([])
         setUserEvents([])
-        
+
         showSuccess('Your account has been deleted successfully.')
       } catch (error) {
         // If backend was deleted successfully but Firebase deletion failed,
@@ -260,17 +258,17 @@ export function AuthProvider({ children }) {
           } catch (signOutError) {
             // Ignore signout errors
           }
-          
+
           // Clear local state
           setUser(null)
           setUserProfile(null)
           setUserChallenges([])
           setUserEvents([])
-          
+
           showSuccess('Your account has been deleted successfully.')
           return
         }
-        
+
         // Handle re-authentication requirement
         if (error.code === 'auth/requires-recent-login') {
           const err = new Error('For security reasons, please log out and log back in before deleting your account.')
@@ -278,7 +276,7 @@ export function AuthProvider({ children }) {
           showError(err.message)
           throw err
         }
-        
+
         const err = new Error(error.message || 'Failed to delete account. Please try again.')
         err.code = error.code
         showError(err.message)
@@ -305,7 +303,7 @@ export function AuthProvider({ children }) {
             displayName: displayName || auth.currentUser.displayName,
             photoURL: photoURL || auth.currentUser.photoURL,
           })
-          
+
           // Update local state
           setUser(prevUser => ({
             ...prevUser,
@@ -323,14 +321,14 @@ export function AuthProvider({ children }) {
     async function joinChallenge(challengeId) {
       try {
         const response = await challengeApi.join(challengeId)
-        
+
         // Update state based on successful API call
         setUserChallenges((prev) => {
           const set = new Set(prev ?? [])
           set.add(challengeId)
           return Array.from(set)
         })
-        
+
         // Optionally refresh user profile to get updated stats
         try {
           const meResponse = await authApi.getMe()
@@ -339,7 +337,7 @@ export function AuthProvider({ children }) {
         } catch (profileError) {
           // Profile update is optional, don't throw error
         }
-        
+
         return response
       } catch (error) {
         throw error
@@ -349,12 +347,12 @@ export function AuthProvider({ children }) {
     async function leaveChallenge(challengeId) {
       try {
         const response = await challengeApi.leave(challengeId)
-        
+
         // Update state based on successful API call
         setUserChallenges((prev) => {
           return (prev ?? []).filter(id => id !== challengeId)
         })
-        
+
         // Optionally refresh user profile to get updated stats
         try {
           const meResponse = await authApi.getMe()
@@ -363,7 +361,7 @@ export function AuthProvider({ children }) {
         } catch (profileError) {
           // Profile update is optional, don't throw error
         }
-        
+
         return response
       } catch (error) {
         throw error
@@ -373,14 +371,14 @@ export function AuthProvider({ children }) {
     async function joinEvent(eventId) {
       try {
         const response = await eventApi.join(eventId)
-        
+
         // Update state based on successful API call
         setUserEvents((prev) => {
           const set = new Set(prev ?? [])
           set.add(eventId)
           return Array.from(set)
         })
-        
+
         return response
       } catch (error) {
         throw error
@@ -390,12 +388,12 @@ export function AuthProvider({ children }) {
     async function leaveEvent(eventId) {
       try {
         const response = await eventApi.leave(eventId)
-        
+
         // Update state based on successful API call
         setUserEvents((prev) => {
           return (prev ?? []).filter(id => id !== eventId)
         })
-        
+
         return response
       } catch (error) {
         throw error
@@ -433,7 +431,7 @@ export function AuthProvider({ children }) {
       }
     }
 
-    return { 
+    return {
       user,
       loading,
       userProfile,
@@ -444,10 +442,10 @@ export function AuthProvider({ children }) {
         userChallenges,
         userEvents,
       },
-      login, 
+      login,
       register,
       loginWithGoogle,
-      logout, 
+      logout,
       resetPassword,
       updateUserProfile,
       deleteAccount,
@@ -459,7 +457,7 @@ export function AuthProvider({ children }) {
         try {
           const challengesResponse = await challengeApi.getJoinedChallenges()
           let joinedChallenges = []
-          
+
           // Handle different response structures
           if (Array.isArray(challengesResponse)) {
             joinedChallenges = challengesResponse.map(c => c._id || c.id)
@@ -468,7 +466,7 @@ export function AuthProvider({ children }) {
           } else if (challengesResponse?.challenges && Array.isArray(challengesResponse.challenges)) {
             joinedChallenges = challengesResponse.challenges.map(c => c._id || c.id)
           }
-          
+
           setUserChallenges(joinedChallenges)
           return joinedChallenges
         } catch (error) {
@@ -480,7 +478,7 @@ export function AuthProvider({ children }) {
         try {
           const eventsResponse = await eventApi.getMyJoined('upcoming')
           let joinedEvents = []
-          
+
           // Handle different response structures
           // Backend always returns _id (MongoDB ObjectId)
           if (Array.isArray(eventsResponse)) {
@@ -490,7 +488,7 @@ export function AuthProvider({ children }) {
           } else if (eventsResponse?.events && Array.isArray(eventsResponse.events)) {
             joinedEvents = eventsResponse.events.map(e => e._id)
           }
-          
+
           setUserEvents(joinedEvents)
           return joinedEvents
         } catch (error) {

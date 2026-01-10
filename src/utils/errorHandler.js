@@ -14,7 +14,6 @@ export function handleMutationError(error, fallbackMessage = 'Operation failed')
   // Log to error tracking service in production
   if (import.meta.env.PROD) {
     // Example: window.errorTracker?.log(error)
-    console.error('Production error:', error)
   }
 }
 

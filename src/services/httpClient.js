@@ -32,7 +32,7 @@ httpClient.interceptors.request.use(
         config.headers.Authorization = `Bearer ${token}`
       }
     } catch (error) {
-      console.error('Error getting auth token:', error)
+      // Error getting auth token
     }
     return config
   },

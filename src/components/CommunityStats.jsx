@@ -100,7 +100,6 @@ export default function CommunityStats() {
         }
       } catch (err) {
         if (isMounted) {
-          console.error('Failed to load community impact stats:', err)
           setError('Unable to load live stats right now.')
           setStats([])
         }

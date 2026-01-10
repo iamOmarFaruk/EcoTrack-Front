@@ -96,7 +96,6 @@ export default function TipModal({ isOpen, onClose, onSubmit, editTip = null }) 
       onClose()
     } catch (error) {
       // Keep modal open and show error
-      console.error('Error submitting tip:', error)
       setErrors({
         submit: error.message || 'Failed to save tip. Please try again.'
       })
