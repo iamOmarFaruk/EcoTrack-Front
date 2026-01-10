@@ -129,22 +129,35 @@ export default function CommunityStats() {
           className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 px-4 md:px-0"
           variants={stackedContainer}
           initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.1 }}
+          animate={inView ? "show" : "hidden"}
         >
           {loading ? (
             Array.from({ length: 4 }).map((_, i) => (
-              <motion.div key={i} variants={stackedItem}>
+              <motion.div key={`skeleton-${i}`} variants={stackedItem}>
                 <CommunityStatsCardSkeleton />
               </motion.div>
             ))
           ) : error ? (
-            <div className="sm:col-span-2 lg:col-span-4 text-sm text-secondary bg-secondary/10 border border-secondary/40 rounded-lg px-4 py-3 text-center">
+            <motion.div
+              className="sm:col-span-2 lg:col-span-4 text-sm text-secondary bg-secondary/10 border border-secondary/40 rounded-lg px-4 py-3 text-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+            >
               {error}
-            </div>
+            </motion.div>
           ) : (
-            stats?.map((item) => (
-              <motion.div key={item.key} variants={stackedItem}>
+            stats?.map((item, index) => (
+              <motion.div
+                key={item.key}
+                initial={{ opacity: 0, y: 60, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{
+                  duration: 0.8,
+                  delay: index * 0.12,
+                  ease: [0.16, 1, 0.3, 1]
+                }}
+              >
                 <ImpactCard
                   label={item.label}
                   unit={item.unit}
