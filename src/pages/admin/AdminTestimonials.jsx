@@ -74,14 +74,29 @@ export default function AdminTestimonials() {
     }
 
     const handleDeleteItem = (index) => {
+        if (saveMutation.isPending) return
         const item = contentForm.testimonials[index]
+        const previous = clone(contentForm)
         showDeleteConfirmation({
             itemName: item.name ? `"${item.name}"` : 'Testimonial',
             onConfirm: () => {
+                const nextTestimonials = contentForm.testimonials.filter((_, i) => i !== index)
+                const testimonialsWithColors = nextTestimonials.map((t, i) => ({
+                    ...t,
+                    colorClass: getColorClass(i)
+                }))
                 setContentForm((prev) => ({
                     ...prev,
-                    testimonials: prev.testimonials.filter((_, i) => i !== index)
+                    testimonials: testimonialsWithColors
                 }))
+                saveMutation.mutate(
+                    { testimonials: testimonialsWithColors },
+                    {
+                        onError: () => {
+                            setContentForm(previous)
+                        }
+                    }
+                )
             }
         })
     }
