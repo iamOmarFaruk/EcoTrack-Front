@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ShieldCheck, Eye, EyeOff } from 'lucide-react'
+import { ShieldCheck, Eye, EyeOff, Mail, Lock } from 'lucide-react'
 import { useAdminAuth } from '../../context/AdminAuthContext.jsx'
 import Button from '../../components/ui/Button.jsx'
 
 export default function AdminLogin() {
   const { isAuthenticated, login } = useAdminAuth()
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('admin@ecotrack.com')
+  const [password, setPassword] = useState('admin123')
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
@@ -53,27 +53,28 @@ export default function AdminLogin() {
           </div>
 
           <p className="mt-4 text-lg text-white/70">
-            Secure access to content management, moderation, and analytics dashboard.
+            Full oversight for content, publishing, and user safety. Demo credentials are pre-filled for easy access.
           </p>
 
-          <div className="mt-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4">
-            <h3 className="text-sm font-semibold text-emerald-300 uppercase tracking-wide mb-2">
-              Security Features
-            </h3>
-            <ul className="space-y-2 text-sm text-white/70">
-              <li className="flex items-center gap-2">
-                <ShieldCheck size={16} className="text-emerald-300" />
-                <span>Encrypted authentication tokens</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <ShieldCheck size={16} className="text-emerald-300" />
-                <span>Rate-limited login attempts</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <ShieldCheck size={16} className="text-emerald-300" />
-                <span>Secure session management</span>
-              </li>
-            </ul>
+          <div className="mt-6 grid grid-cols-1 gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-emerald-200">
+                <Mail size={18} />
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wide text-white/40">Demo Email</p>
+                <p className="font-semibold text-white">admin@ecotrack.com</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-emerald-200">
+                <Lock size={18} />
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wide text-white/40">Demo Password</p>
+                <p className="font-semibold text-white">admin123</p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -120,6 +121,11 @@ export default function AdminLogin() {
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
+              </div>
+              <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-3">
+                <p className="text-xs text-blue-200/80">
+                  💡 Credentials are pre-filled. Just click "Sign in" to access the admin panel.
+                </p>
               </div>
               <Button
                 type="submit"
