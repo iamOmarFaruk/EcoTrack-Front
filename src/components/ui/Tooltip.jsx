@@ -200,23 +200,6 @@ export default function Tooltip({ children, content, position = 'top', delay = 3
         }
     }
 
-    const getArrowStyles = () => {
-        const base = 'absolute w-2 h-2 bg-zinc-800 dark:bg-zinc-700 rotate-45'
-
-        switch (actualPosition) {
-            case 'top':
-                return `${base} -bottom-1 left-1/2 -translate-x-1/2`
-            case 'bottom':
-                return `${base} -top-1 left-1/2 -translate-x-1/2`
-            case 'left':
-                return `${base} -right-1 top-1/2 -translate-y-1/2`
-            case 'right':
-                return `${base} -left-1 top-1/2 -translate-y-1/2`
-            default:
-                return base
-        }
-    }
-
     return (
         <>
             <div
@@ -234,15 +217,14 @@ export default function Tooltip({ children, content, position = 'top', delay = 3
                     {isVisible && content && (
                         <motion.div
                             ref={tooltipRef}
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            transition={{ duration: 0.15, ease: 'easeOut' }}
+                            initial={{ opacity: 0, y: actualPosition === 'top' ? 4 : -4 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: actualPosition === 'top' ? 4 : -4 }}
+                            transition={{ duration: 0.15 }}
                             style={getTooltipStyles()}
                         >
-                            <div className="relative px-3 py-1.5 text-xs font-medium text-white bg-zinc-800 dark:bg-zinc-700 rounded-lg shadow-xl whitespace-nowrap max-w-xs">
-                                {content}
-                                <div className={getArrowStyles()} />
+                            <div className="bg-white/95 dark:bg-zinc-950/95 text-zinc-900 dark:text-zinc-100 px-3 py-2 rounded-lg shadow-xl border border-zinc-200/70 dark:border-zinc-800/70 backdrop-blur-xl whitespace-nowrap">
+                                <p className="text-sm font-semibold">{content}</p>
                             </div>
                         </motion.div>
                     )}
