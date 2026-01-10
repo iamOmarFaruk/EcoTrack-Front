@@ -135,9 +135,7 @@ export default function AdminLogin() {
               >
                 {loading ? 'Signing in...' : 'Access Control Panel'}
               </Button>
-              <p className="text-center text-[10px] text-white/50 sm:text-xs">
-                Routes and mutations are protected behind the admin token and mirrored in the backend.
-              </p>
+             
             </div>
           </form>
         </div>
