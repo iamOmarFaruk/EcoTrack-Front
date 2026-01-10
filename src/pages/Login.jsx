@@ -107,17 +107,17 @@ export default function Login() {
   return (
     <div className="flex min-h-screen">
       {/* Left side: Hero Image (Hidden on mobile) */}
-      <div className="hidden lg:relative lg:flex lg:w-1/2 lg:min-h-screen">
+      <div className="hidden lg:relative lg:flex lg:w-1/2 lg:min-h-screen overflow-hidden">
         <motion.img
           src={defaultImages.loginHero}
           alt="Eco Energy"
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 z-0 h-full w-full object-cover"
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
           transition={{ duration: 1.5, ease: "easeOut" }}
         />
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
-        <div className="absolute inset-0 flex flex-col justify-between p-12 text-white">
+        <div className="absolute inset-0 z-10 bg-black/40 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 z-20 flex flex-col justify-between p-12 text-white">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
