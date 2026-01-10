@@ -26,6 +26,9 @@ const variants = {
   ghost:
     'text-primary hover:bg-primary/5 rounded-[5px]',
 
+  danger:
+    'bg-danger text-white hover:bg-danger/90 shadow-[0_2px_0_0_rgba(185,28,28,1)] hover:shadow-[0_1px_0_0_rgba(185,28,28,1)] hover:translate-y-[1px] active:translate-y-[2px] active:shadow-none border-0',
+
   // Keep original for back-compat but update radius
   organic:
     'bg-gradient-to-br from-primary to-secondary text-surface shadow-md hover:shadow-xl hover:scale-[1.02] active:scale-100 transition-all duration-300',
@@ -79,4 +82,3 @@ export default function Button({
     </Comp>
   )
 }
-

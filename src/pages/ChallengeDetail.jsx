@@ -368,14 +368,14 @@ export default function ChallengeDetail() {
                         </p>
                       </div>
 
-                      <div className="grid grid-cols-1 gap-3">
-                        <Button onClick={handleEditChallenge} variant="primary" className="w-full shadow-lg shadow-primary/10">
+                      <div className="grid grid-cols-2 gap-3">
+                        <Button onClick={handleEditChallenge} variant="primary" className="w-full">
                           Edit Challenge
                         </Button>
                         <Button
                           onClick={handleDeleteChallenge}
-                          variant="ghost"
-                          className="w-full text-danger hover:bg-danger/10"
+                          variant="danger"
+                          className="w-full"
                         >
                           Delete Permanently
                         </Button>

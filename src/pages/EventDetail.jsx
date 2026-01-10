@@ -311,8 +311,8 @@ export default function EventDetail() {
                           </Button>
                           <Button
                             onClick={handleDeleteEvent}
-                            variant="ghost"
-                            className="w-full text-danger hover:text-danger hover:bg-danger/10"
+                            variant="danger"
+                            className="w-full"
                             disabled={isDeleting}
                           >
                             {isDeleting ? 'Deleting...' : 'Delete'}
