@@ -1,17 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ShieldCheck, Lock, Mail, Eye, EyeOff } from 'lucide-react'
+import { ShieldCheck, Eye, EyeOff } from 'lucide-react'
 import { useAdminAuth } from '../../context/AdminAuthContext.jsx'
 import Button from '../../components/ui/Button.jsx'
-
-const DEMO_EMAIL = 'admin@ecotrack.com'
-const DEMO_PASSWORD = 'Admin#2025'
 
 export default function AdminLogin() {
   const { isAuthenticated, login } = useAdminAuth()
   const navigate = useNavigate()
-  const [email, setEmail] = useState(DEMO_EMAIL)
-  const [password, setPassword] = useState(DEMO_PASSWORD)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
@@ -56,28 +53,27 @@ export default function AdminLogin() {
           </div>
 
           <p className="mt-4 text-lg text-white/70">
-            Full oversight for content, publishing, and user safety. Use the demo credentials below to explore the entire control panel.
+            Secure access to content management, moderation, and analytics dashboard.
           </p>
 
-          <div className="mt-6 grid grid-cols-1 gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-emerald-200">
-                <Mail size={18} />
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-wide text-white/40">Demo Email</p>
-                <p className="font-semibold text-white">{DEMO_EMAIL}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-emerald-200">
-                <Lock size={18} />
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-wide text-white/40">Demo Password</p>
-                <p className="font-semibold text-white">{DEMO_PASSWORD}</p>
-              </div>
-            </div>
+          <div className="mt-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4">
+            <h3 className="text-sm font-semibold text-emerald-300 uppercase tracking-wide mb-2">
+              Security Features
+            </h3>
+            <ul className="space-y-2 text-sm text-white/70">
+              <li className="flex items-center gap-2">
+                <ShieldCheck size={16} className="text-emerald-300" />
+                <span>Encrypted authentication tokens</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <ShieldCheck size={16} className="text-emerald-300" />
+                <span>Rate-limited login attempts</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <ShieldCheck size={16} className="text-emerald-300" />
+                <span>Secure session management</span>
+              </li>
+            </ul>
           </div>
         </div>
 

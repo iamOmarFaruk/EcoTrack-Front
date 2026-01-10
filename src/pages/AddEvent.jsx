@@ -28,6 +28,7 @@ export default function AddEvent() {
 
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [imageError, setImageError] = useState(false)
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -434,14 +435,18 @@ export default function AddEvent() {
                 {/* Image Preview */}
                 {formData.image && (formData.image.startsWith('http://') || formData.image.startsWith('https://')) && (
                   <div className="mt-4 rounded-lg overflow-hidden border-2 border-primary shadow-md">
-                    <img
-                      src={formData.image}
-                      alt="Event preview"
-                      className="w-full h-64 object-cover"
-                      onError={(e) => {
-                        e.target.parentElement.innerHTML = '<div class="w-full h-64 bg-danger/10 flex items-center justify-center"><p class="text-danger text-sm">Failed to load image. Please check the URL.</p></div>'
-                      }}
-                    />
+                    {!imageError ? (
+                      <img
+                        src={formData.image}
+                        alt="Event preview"
+                        className="w-full h-64 object-cover"
+                        onError={() => setImageError(true)}
+                      />
+                    ) : (
+                      <div className="w-full h-64 bg-danger/10 flex items-center justify-center">
+                        <p className="text-danger text-sm">Failed to load image. Please check the URL.</p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

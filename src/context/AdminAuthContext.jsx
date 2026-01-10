@@ -1,51 +1,39 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { adminApi, setAdminToken } from '../services/adminApi.js'
+import { adminApi } from '../services/adminApi.js'
 import { showError, showSuccess } from '../utils/toast.jsx'
 
 const AdminAuthContext = createContext(null)
 
 export function AdminAuthProvider({ children }) {
   const [admin, setAdmin] = useState(null)
-  const [token, setToken] = useState(() => (typeof window !== 'undefined' ? localStorage.getItem('eco-admin-token') : null))
-  const [loading, setLoading] = useState(!!token)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function bootstrap() {
-      if (!token) {
-        setLoading(false)
-        return
-      }
-
-      setAdminToken(token)
       try {
+        // Try to fetch admin info using httpOnly cookie
         const response = await adminApi.me()
         setAdmin(response?.data?.admin || response.admin)
       } catch (error) {
-        // Session invalid - clear auth state
+        // No valid session
         setAdmin(null)
-        setToken(null)
-        setAdminToken(null)
       } finally {
         setLoading(false)
       }
     }
 
     bootstrap()
-  }, [token])
+  }, [])
 
   const value = useMemo(() => ({
     admin,
     loading,
-    isAuthenticated: Boolean(admin && token),
-    token,
+    isAuthenticated: Boolean(admin),
+
     async login({ email, password }) {
       try {
         const response = await adminApi.login({ email, password })
         const data = response?.data || response
-        if (data?.token) {
-          setToken(data.token)
-          setAdminToken(data.token)
-        }
         setAdmin(data?.admin)
         showSuccess('Welcome back, admin!')
         return data
@@ -54,13 +42,19 @@ export function AdminAuthProvider({ children }) {
         throw error
       }
     },
-    logout() {
-      setAdmin(null)
-      setToken(null)
-      setAdminToken(null)
-      showSuccess('Signed out of control panel')
+
+    async logout() {
+      try {
+        await adminApi.logout()
+        setAdmin(null)
+        showSuccess('Signed out of control panel')
+      } catch (error) {
+        // Clear state anyway
+        setAdmin(null)
+        showError('Logout failed, but cleared local session')
+      }
     }
-  }), [admin, loading, token])
+  }), [admin, loading])
 
   return (
     <AdminAuthContext.Provider value={value}>

@@ -1,33 +1,14 @@
 import axios from 'axios'
 import { apiConfig } from '../config/env.js'
 
-const TOKEN_KEY = 'eco-admin-token'
-let adminToken = typeof window !== 'undefined' ? localStorage.getItem(TOKEN_KEY) : null
-
-export function setAdminToken(token) {
-  adminToken = token
-  if (typeof window !== 'undefined') {
-    if (token) {
-      localStorage.setItem(TOKEN_KEY, token)
-    } else {
-      localStorage.removeItem(TOKEN_KEY)
-    }
-  }
-}
-
+// No token management needed - cookies are automatic!
 const adminClient = axios.create({
   baseURL: apiConfig.baseUrl,
   headers: {
     'Content-Type': 'application/json'
   },
+  withCredentials: true, // CRITICAL: Send httpOnly cookies with requests
   timeout: 15000
-})
-
-adminClient.interceptors.request.use((config) => {
-  if (adminToken) {
-    config.headers.Authorization = `Bearer ${adminToken}`
-  }
-  return config
 })
 
 adminClient.interceptors.response.use(
@@ -48,6 +29,7 @@ adminClient.interceptors.response.use(
 
 export const adminApi = {
   login: (credentials) => adminClient.post('/admin/login', credentials),
+  logout: () => adminClient.post('/admin/logout'),
   me: () => adminClient.get('/admin/me'),
   dashboard: () => adminClient.get('/admin/dashboard'),
   getContent: () => adminClient.get('/admin/content'),
