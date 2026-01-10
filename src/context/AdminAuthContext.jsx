@@ -38,7 +38,6 @@ export function AdminAuthProvider({ children }) {
         showSuccess('Welcome back, admin!')
         return data
       } catch (error) {
-        showError(error.message || 'Failed to login as admin')
         throw error
       }
     },

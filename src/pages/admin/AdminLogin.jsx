@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ShieldCheck, Eye, EyeOff, Mail, Lock } from 'lucide-react'
 import { useAdminAuth } from '../../context/AdminAuthContext.jsx'
+import { handleMutationError } from '../../utils/errorHandler.js'
 import Button from '../../components/ui/Button.jsx'
 
 export default function AdminLogin() {
@@ -27,7 +28,7 @@ export default function AdminLogin() {
       const redirectTo = sessionStorage.getItem('adminRedirect') || '/control-panel/dashboard'
       navigate(redirectTo, { replace: true })
     } catch (error) {
-      // handled by context
+      handleMutationError(error, 'Unable to sign in. Please check your credentials and try again.')
     } finally {
       setLoading(false)
     }
@@ -56,8 +57,8 @@ export default function AdminLogin() {
             Full oversight for content, publishing, and user safety. Demo credentials are pre-filled for easy access.
           </p>
 
-          <div className="mt-6 grid grid-cols-1 gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4">
-            <div className="flex items-center gap-3">
+          <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4">
+            <div className="flex min-h-[64px] flex-1 items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-emerald-200">
                 <Mail size={18} />
               </div>
@@ -66,7 +67,7 @@ export default function AdminLogin() {
                 <p className="font-semibold text-white">admin@ecotrack.com</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex min-h-[64px] flex-1 items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/5 text-emerald-200">
                 <Lock size={18} />
               </div>
