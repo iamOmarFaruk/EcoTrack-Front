@@ -51,5 +51,11 @@ export const adminApi = {
   updateTipStatus: (id, payload) => adminClient.patch(`/admin/tips/${id}/status`, payload),
   getActivity: (params = {}) => adminClient.get('/admin/activity', { params }),
   clearActivity: () => adminClient.delete('/admin/activity'),
-  deleteActivity: (id) => adminClient.delete(`/admin/activity/${id}`)
+  deleteActivity: (id) => adminClient.delete(`/admin/activity/${id}`),
+
+  // Demo Reset
+  getResetStatus: () => adminClient.get('/admin/reset/status'),
+  executeReset: () => adminClient.post('/admin/reset/execute'),
+  createSnapshot: () => adminClient.post('/admin/reset/snapshot'),
+  cancelResetTimer: () => adminClient.delete('/admin/reset/timer')
 }

@@ -49,6 +49,7 @@ const AdminHowItWorks = lazy(() => import('./pages/admin/AdminHowItWorks.jsx'))
 const AdminFooter = lazy(() => import('./pages/admin/AdminFooter.jsx'))
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers.jsx'))
 const AdminActivity = lazy(() => import('./pages/admin/AdminActivity.jsx'))
+const AdminReset = lazy(() => import('./pages/admin/AdminReset.jsx'))
 
 export default function App() {
   return (
