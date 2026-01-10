@@ -295,14 +295,6 @@ export default function Profile() {
         >
           <div className="mb-6 flex items-center justify-between">
             <h3 className="text-lg font-bold text-heading">Featured Badges</h3>
-            <Button
-              onClick={() => showSuccess("I didn't develop this feature yet because this is a demo project.")}
-              variant="ghost"
-              size="sm"
-              className="text-primary hover:underline"
-            >
-              View All
-            </Button>
           </div>
 
           <div className="space-y-4">
