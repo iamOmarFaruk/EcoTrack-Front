@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
-import { useEffect, useRef, useState, Suspense } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState, Suspense } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ChevronRight,
@@ -170,47 +170,13 @@ export default function DashboardLayout() {
 
             {/* Navigation Items */}
             <nav className="space-y-1">
-              {navItems.map((item) => {
-                const isActive = location.pathname === item.to
-                return (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    className={clsx(
-                      'group relative flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-300',
-                      isActive
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-text/70 hover:bg-light hover:text-text'
-                    )}
-                  >
-                    <SidebarLordIcon
-                      icon={item.lordIcon}
-                      isActive={isActive}
-                      className={clsx(
-                        'rounded-lg transition-all duration-300',
-                        isActive
-                          ? 'bg-primary text-surface shadow-sm shadow-primary/20'
-                          : 'bg-light text-text/50 group-hover:bg-primary/10 group-hover:text-primary',
-                        isActive ? '-rotate-12' : 'group-hover:-rotate-12'
-                      )}
-                    />
-                    <div className="flex flex-col min-w-0 flex-1">
-                      <span className={clsx('text-sm font-semibold transition-colors', isActive ? 'text-primary' : 'text-heading')}>
-                        {item.label}
-                      </span>
-                      <span className="text-[10px] text-text/50 transition-colors truncate">{item.description}</span>
-                    </div>
-                    {isActive && (
-                      <motion.div
-                        layoutId="active-pill"
-                        className="absolute right-3 text-primary"
-                      >
-                        <ChevronRight size={14} />
-                      </motion.div>
-                    )}
-                  </Link>
-                )
-              })}
+              {navItems.map((item) => (
+                <SidebarNavItem
+                  key={item.to}
+                  item={item}
+                  isActive={location.pathname === item.to}
+                />
+              ))}
             </nav>
 
             {/* Pro Tip - Hidden when collapsed */}
@@ -256,27 +222,24 @@ export default function DashboardLayout() {
   )
 }
 
-function SidebarLordIcon({ icon, isActive, className }) {
+const SidebarLordIcon = forwardRef(function SidebarLordIcon({ icon, isActive, className }, ref) {
   const playerRef = useRef(null)
 
   useEffect(() => {
     playerRef.current?.goToFirstFrame()
   }, [icon])
 
-  const handleMouseEnter = () => {
-    playerRef.current?.playFromBeginning()
-  }
-
-  const handleMouseLeave = () => {
-    playerRef.current?.goToFirstFrame()
-  }
+  useImperativeHandle(ref, () => ({
+    play() {
+      playerRef.current?.playFromBeginning()
+    },
+    reset() {
+      playerRef.current?.goToFirstFrame()
+    }
+  }))
 
   return (
-    <div
-      className={clsx('flex h-10 w-10 items-center justify-center', className)}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
+    <div className={clsx('flex h-10 w-10 items-center justify-center', className)}>
       <Player
         ref={playerRef}
         icon={icon}
@@ -284,5 +247,49 @@ function SidebarLordIcon({ icon, isActive, className }) {
         colorize={isActive ? '#ffffff' : '#10b981'}
       />
     </div>
+  )
+})
+
+function SidebarNavItem({ item, isActive }) {
+  const iconRef = useRef(null)
+
+  return (
+    <Link
+      to={item.to}
+      onMouseEnter={() => iconRef.current?.play()}
+      onMouseLeave={() => iconRef.current?.reset()}
+      className={clsx(
+        'group relative flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-300',
+        isActive
+          ? 'bg-primary/10 text-primary'
+          : 'text-text/70 hover:bg-light hover:text-text'
+      )}
+    >
+      <SidebarLordIcon
+        ref={iconRef}
+        icon={item.lordIcon}
+        isActive={isActive}
+        className={clsx(
+          'rounded-lg transition-all duration-300',
+          isActive
+            ? 'bg-primary text-surface shadow-sm shadow-primary/20'
+            : 'bg-light text-text/50 group-hover:bg-primary/10 group-hover:text-primary'
+        )}
+      />
+      <div className="flex flex-col min-w-0 flex-1">
+        <span className={clsx('text-sm font-semibold transition-colors', isActive ? 'text-primary' : 'text-heading')}>
+          {item.label}
+        </span>
+        <span className="text-[10px] text-text/50 transition-colors truncate">{item.description}</span>
+      </div>
+      {isActive && (
+        <motion.div
+          layoutId="active-pill"
+          className="absolute right-3 text-primary"
+        >
+          <ChevronRight size={14} />
+        </motion.div>
+      )}
+    </Link>
   )
 }
