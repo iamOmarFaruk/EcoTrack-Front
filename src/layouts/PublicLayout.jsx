@@ -3,6 +3,7 @@ import { Suspense } from 'react'
 import Navbar from '../components/Navbar.jsx'
 import Footer from '../components/Footer.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
+import ScrollToTopButton from '../components/ScrollToTopButton.jsx'
 
 export default function PublicLayout() {
   const location = useLocation()
@@ -20,6 +21,7 @@ export default function PublicLayout() {
         </Suspense>
       </main>
       {!isAuthPage && <Footer />}
+      {!isAuthPage && <ScrollToTopButton />}
     </div>
   )
 }
