@@ -86,19 +86,6 @@ export default function Login() {
     }
   }
 
-  const leftPanelVariants = {
-    hidden: { opacity: 0, y: 20, scale: 0.98 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.8,
-        ease: [0.25, 0.46, 0.45, 0.94]
-      }
-    }
-  }
-
   const rightPanelVariants = {
     hidden: { opacity: 0, y: 20, scale: 0.98 },
     visible: {
@@ -120,12 +107,7 @@ export default function Login() {
   return (
     <div className="flex min-h-screen">
       {/* Left side: Hero Image (Hidden on mobile) */}
-      <motion.div
-        className="hidden lg:relative lg:flex lg:w-1/2 lg:min-h-screen"
-        variants={leftPanelVariants}
-        initial="hidden"
-        animate="visible"
-      >
+      <div className="hidden lg:relative lg:flex lg:w-1/2 lg:min-h-screen">
         <motion.img
           src={defaultImages.loginHero}
           alt="Eco Energy"
@@ -173,7 +155,7 @@ export default function Login() {
             © {new Date().getFullYear()} EcoTrack. All rights reserved.
           </motion.div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Right side: Login Form */}
       <motion.div
