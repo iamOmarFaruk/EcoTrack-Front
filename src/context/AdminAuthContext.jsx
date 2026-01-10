@@ -1,28 +1,46 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { adminApi } from '../services/adminApi.js'
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
+import { auth } from '../config/firebase.js'
 import { showError, showSuccess } from '../utils/toast.jsx'
 
 const AdminAuthContext = createContext(null)
+
+const hasAdminAccess = (claims) => Boolean(claims?.admin || claims?.role === 'admin')
 
 export function AdminAuthProvider({ children }) {
   const [admin, setAdmin] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    async function bootstrap() {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (!firebaseUser) {
+        setAdmin(null)
+        setLoading(false)
+        return
+      }
+
       try {
-        // Try to fetch admin info using httpOnly cookie
-        const response = await adminApi.me()
-        setAdmin(response?.data?.admin || response.admin)
+        const tokenResult = await firebaseUser.getIdTokenResult(true)
+        if (!hasAdminAccess(tokenResult?.claims)) {
+          setAdmin(null)
+          setLoading(false)
+          return
+        }
+
+        setAdmin({
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          name: firebaseUser.displayName || 'Admin',
+          role: 'admin'
+        })
       } catch (error) {
-        // No valid session
         setAdmin(null)
       } finally {
         setLoading(false)
       }
-    }
+    })
 
-    bootstrap()
+    return () => unsubscribe()
   }, [])
 
   const value = useMemo(() => ({
@@ -32,11 +50,24 @@ export function AdminAuthProvider({ children }) {
 
     async login({ email, password }) {
       try {
-        const response = await adminApi.login({ email, password })
-        const data = response?.data || response
-        setAdmin(data?.admin)
+        const userCredential = await signInWithEmailAndPassword(auth, email, password)
+        const tokenResult = await userCredential.user.getIdTokenResult(true)
+
+        if (!hasAdminAccess(tokenResult?.claims)) {
+          await signOut(auth)
+          throw new Error('This account does not have admin access.')
+        }
+
+        const adminData = {
+          uid: userCredential.user.uid,
+          email: userCredential.user.email,
+          name: userCredential.user.displayName || 'Admin',
+          role: 'admin'
+        }
+
+        setAdmin(adminData)
         showSuccess('Welcome back, admin!')
-        return data
+        return { admin: adminData }
       } catch (error) {
         throw error
       }
@@ -44,7 +75,7 @@ export function AdminAuthProvider({ children }) {
 
     async logout() {
       try {
-        await adminApi.logout()
+        await signOut(auth)
         setAdmin(null)
         showSuccess('Signed out of control panel')
       } catch (error) {
