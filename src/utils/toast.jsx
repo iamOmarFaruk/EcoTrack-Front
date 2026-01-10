@@ -74,6 +74,7 @@ export const showConfirmation = ({
   type = 'danger', // 'danger' or 'warning'
 }) => {
   const isDanger = type === 'danger'
+  const isWarning = type === 'warning'
 
   return toast(
     (t) => (
@@ -102,7 +103,7 @@ export const showConfirmation = ({
                 toast.dismiss(t.id)
                 if (onCancel) onCancel()
               }}
-              className="px-3 py-1.5 text-sm font-medium bg-muted text-text rounded-md hover:bg-muted transition-colors"
+              className="px-3 py-1.5 text-sm font-medium bg-primary text-white rounded-md hover:bg-primary/90 transition-colors"
             >
               {cancelText}
             </button>
@@ -111,8 +112,8 @@ export const showConfirmation = ({
                 toast.dismiss(t.id)
                 if (onConfirm) await onConfirm()
               }}
-              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${isDanger
-                  ? 'bg-danger/15 text-danger hover:bg-danger/20'
+              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${(isDanger || isWarning)
+                  ? 'bg-danger text-white hover:bg-danger/90'
                   : 'bg-secondary/15 text-secondary hover:bg-secondary/20'
                 }`}
             >
