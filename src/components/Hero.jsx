@@ -1,30 +1,46 @@
 import { Link } from 'react-router-dom'
 import Button from './ui/Button.jsx'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Autoplay,
   Navigation,
   Pagination,
-  EffectCube,
-  EffectCoverflow,
-  EffectFlip,
   EffectFade,
   EffectCreative,
-  EffectCards,
 } from 'swiper/modules'
 
 // Swiper core styles
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
-import 'swiper/css/effect-cube'
-import 'swiper/css/effect-coverflow'
-import 'swiper/css/effect-flip'
 import 'swiper/css/effect-fade'
 import 'swiper/css/effect-creative'
-import 'swiper/css/effect-cards'
 
-export default function Hero({ slides = [], effect = 'coverflow' }) {
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.2,
+    },
+  },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.21, 0.47, 0.32, 0.98],
+    },
+  },
+}
+
+export default function Hero({ slides = [], effect = 'fade' }) {
   return (
     <section className="hero-swiper relative isolate overflow-hidden">
       <Swiper
@@ -32,31 +48,10 @@ export default function Hero({ slides = [], effect = 'coverflow' }) {
           Autoplay,
           Navigation,
           Pagination,
-          EffectCube,
-          EffectCoverflow,
-          EffectFlip,
           EffectFade,
           EffectCreative,
-          EffectCards,
         ]}
         effect={effect}
-        cubeEffect={{
-          shadow: true,
-          slideShadows: true,
-          shadowOffset: 40,
-          shadowScale: 0.9,
-        }}
-        coverflowEffect={{
-          rotate: 32,
-          stretch: 0,
-          depth: 240,
-          modifier: 1,
-          slideShadows: true,
-        }}
-        flipEffect={{
-          slideShadows: true,
-          limitRotation: true,
-        }}
         fadeEffect={{
           crossFade: true,
         }}
@@ -65,85 +60,118 @@ export default function Hero({ slides = [], effect = 'coverflow' }) {
             shadow: true,
             translate: ['-20%', 0, -1],
             rotate: [0, 0, -6],
+            opacity: 0,
           },
           next: {
-            translate: ['20%', 0, -1],
-            rotate: [0, 0, 6],
+            translate: ['100%', 0, 0],
+            opacity: 0,
           },
         }}
-        cardsEffect={{
-          perSlideOffset: 8,
-          perSlideRotate: 2,
-          rotate: true,
-          slideShadows: true,
-        }}
-        autoplay={{ delay: 4200, disableOnInteraction: false }}
-        speed={900}
+        autoplay={{ delay: 5000, disableOnInteraction: false }}
+        speed={1000}
         loop
         navigation
         pagination={{ clickable: true }}
         grabCursor
-        className="h-[52vh] min-h-[360px] w-full sm:h-[56vh] md:h-[72vh] md:min-h-[480px] lg:h-[78vh]"
+        className="h-[70vh] min-h-[420px] w-full sm:h-[56vh] md:h-[58vh] md:min-h-[420px] lg:h-[65vh]"
       >
         {slides.map((item) => (
           <SwiperSlide key={item._id}>
-            <div className="relative h-full w-full">
-              {/* Background image */}
-              <img
-                src={item.imageUrl}
-                alt={item.title}
-                className="absolute inset-0 h-full w-full object-cover"
-                loading="lazy"
-              />
-              {/* Dark overlay + vignette + color wash for readability */}
-              <div className="absolute inset-0 bg-black/35 md:bg-black/45" />
-              <div className="absolute inset-0 bg-gradient-to-tr from-black/70 via-black/30 to-black/0" />
-              <div className="pointer-events-none absolute inset-0 mix-blend-screen">
-                <div className="absolute -left-1/3 top-0 h-[120%] w-[60%] rounded-full bg-emerald-400/20 blur-3xl" />
-                <div className="absolute -right-1/3 bottom-0 h-[120%] w-[60%] rounded-full bg-teal-400/20 blur-3xl" />
-              </div>
+            {({ isActive }) => (
+              <div className="relative h-full w-full overflow-hidden">
+                {/* Background image */}
+                <div className="absolute inset-0">
+                  <motion.img
+                    initial={{ scale: 1.3 }}
+                    animate={{ scale: isActive ? 1 : 1.3 }}
+                    transition={{
+                      duration: 6.5,
+                      ease: "linear"
+                    }}
+                    src={item.imageUrl}
+                    alt={item.title}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
 
-              {/* Content */}
-              <div className="relative z-10 mx-auto flex h-full max-w-6xl items-center px-6 md:px-8">
-                <div className="max-w-2xl">
-                  <div className="mb-3 hidden items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/90 ring-1 ring-white/20 backdrop-blur-md md:inline-flex">
-                    <span className="inline-block h-2 w-2 rounded-full bg-emerald-400" />
-                    <span>
-                      {(() => {
-                        const parsedDays = Number.parseInt(item.duration)
-                        const daysLeftText = Number.isFinite(parsedDays)
-                          ? `${parsedDays} ${parsedDays === 1 ? 'Day' : 'Days'}`
-                          : (item.duration || 'Few days')
-                        const count = typeof item.participants === 'number' ? item.participants : 0
-                        const peopleLabel = count === 1 ? 'person' : 'people'
-                        return `Only ${daysLeftText} left, ${count.toLocaleString()} ${peopleLabel} already joined`
-                      })()}
-                    </span>
-                  </div>
-                  <h1 className="text-balance text-3xl font-extrabold tracking-tight text-white drop-shadow md:text-5xl">
-                    {item.title}
-                  </h1>
-                  {item.description ? (
-                    <p className="mt-3 max-w-prose text-pretty text-white/90 md:text-lg">
-                      {item.description}
-                    </p>
-                  ) : null}
-                  <div className="mt-6 flex flex-wrap items-center gap-3">
-                    <Button as={Link} to={`/challenges/${item.slug || item._id}`}>
-                      View Challenge
-                    </Button>
-                    <Button as={Link} to="/challenges" variant="secondary">
-                      Browse All
-                    </Button>
-                  </div>
+                {/* Overlays */}
+                <div className="absolute inset-0 bg-black/60" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+                {/* Decorative glows */}
+                <div className="pointer-events-none absolute inset-0 mix-blend-screen opacity-50">
+                  <div className="absolute -left-1/4 top-0 h-full w-1/2 rounded-full bg-primary/10 blur-[120px]" />
+                  <div className="absolute -right-1/4 bottom-0 h-full w-1/2 rounded-full bg-secondary/10 blur-[120px]" />
+                </div>
+
+                {/* Content */}
+                <div className="relative z-10 mx-auto flex h-full max-w-7xl items-start px-6 pt-[100px] pb-10 sm:items-center sm:px-8 sm:py-0 md:px-12">
+                  <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate={isActive ? 'visible' : 'hidden'}
+                    className="w-full"
+                  >
+                    {/* Badge */}
+                    <motion.div
+                      variants={itemVariants}
+                      className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm font-medium text-white ring-1 ring-white/20 backdrop-blur-md"
+                    >
+                      <span className="relative flex h-2 w-2">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75"></span>
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-primary"></span>
+                      </span>
+                      <span>
+                        {(() => {
+                          const parsedDays = Number.parseInt(item.duration)
+                          const daysLeftText = Number.isFinite(parsedDays)
+                            ? `${parsedDays} ${parsedDays === 1 ? 'Day' : 'Days'}`
+                            : (item.duration || 'Few days')
+                          const count = typeof item.participants === 'number' ? item.participants : 0
+                          return `Only ${daysLeftText} left • ${count.toLocaleString()} joined`
+                        })()}
+                      </span>
+                    </motion.div>
+
+                    {/* Heading - Refined size, 1 line on desktop */}
+                    <motion.h1
+                      variants={itemVariants}
+                      className="mb-4 max-w-none md:whitespace-nowrap text-3xl font-black tracking-tighter text-white drop-shadow-2xl sm:text-4xl md:text-5xl lg:text-6xl"
+                    >
+                      {item.title}
+                    </motion.h1>
+
+                    {/* Description */}
+                    {item.description && (
+                      <motion.p
+                        variants={itemVariants}
+                        className="mb-8 max-w-2xl text-pretty text-lg text-white/90 md:text-xl lg:text-2xl"
+                      >
+                        {item.description}
+                      </motion.p>
+                    )}
+
+                    {/* Buttons */}
+                    <motion.div
+                      variants={itemVariants}
+                      className="flex flex-wrap items-center gap-4"
+                    >
+                      <Button
+                        as={Link}
+                        to={`/challenges/${item.slug || item._id}`}
+                        className="!px-5 !py-2.5 text-sm sm:!px-8 sm:!py-4 sm:text-lg"
+                      >
+                        View Challenge
+                      </Button>
+                    </motion.div>
+                  </motion.div>
                 </div>
               </div>
-            </div>
+            )}
           </SwiperSlide>
         ))}
       </Swiper>
     </section>
   )
 }
-
-

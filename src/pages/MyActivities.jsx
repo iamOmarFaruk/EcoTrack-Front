@@ -1,287 +1,297 @@
-import { useState, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import SectionHeading from '../components/SectionHeading.jsx'
-import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
-import EcoLoader from '../components/EcoLoader.jsx'
-import { challengeApi } from '../services/api.js'
-import { useAuth } from '../context/AuthContext.jsx'
-import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  Activity,
+  CheckCircle2,
+  Clock,
+  ArrowUpRight,
+  Trophy,
+  Flame,
+  Search,
+} from 'lucide-react'
+import Button from '../components/ui/Button.jsx'
+import { Card, CardContent } from '../components/ui/Card.jsx'
+import { ChallengeCardSkeleton } from '../components/Skeleton.jsx'
+import { useMyCreatedChallenges, useMyJoinedChallenges } from '../hooks/queries'
+import { containerVariants, itemVariants } from '../utils/animations'
 
 export default function MyActivities() {
-  const isLoading = useMinimumLoading(300)
-  const { auth } = useAuth()
-  const [activities, setActivities] = useState([])
-  const [summary, setSummary] = useState(null)
-  const [pagination, setPagination] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [currentPage, setCurrentPage] = useState(1)
   const [statusFilter, setStatusFilter] = useState('all')
+  const [searchQuery, setSearchQuery] = useState('')
 
-  useEffect(() => {
-    fetchActivities()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage, statusFilter])
+  const {
+    data: joinedChallenges = [],
+    isLoading: loadingJoined
+  } = useMyJoinedChallenges({ limit: 50 })
 
-  const fetchActivities = async () => {
-    try {
-      setLoading(true)
-      
-      // Use the new challenges API endpoints
-      const params = {
-        page: currentPage,
-        limit: 12
+  const {
+    data: createdChallenges = [],
+    isLoading: loadingCreated
+  } = useMyCreatedChallenges()
+
+  const { activities, summary } = useMemo(() => {
+    const transformedJoined = Array.isArray(joinedChallenges) ? joinedChallenges.map(challenge => ({
+      _id: challenge.id,
+      challenge: {
+        _id: challenge.id,
+        title: challenge.title,
+        description: challenge.description,
+        category: challenge.category,
+        imageUrl: challenge.imageUrl,
+        impactMetric: challenge.impactMetric,
+        slug: challenge.slug
+      },
+      userProgress: {
+        status: challenge.status === 'completed' ? 'Completed' : 'Active',
+        progress: challenge.progress || 0,
+        impactAchieved: challenge.impactAchieved || 0
       }
-      
-      // Get joined challenges
-      const joinedResponse = await challengeApi.getMyJoined(params)
-      const joinedData = joinedResponse?.data || joinedResponse || []
-      
-      // Get created challenges
-      const createdResponse = await challengeApi.getMyCreated()
-      const createdData = createdResponse?.data || createdResponse || []
-      
-      // Transform data
-      const transformedJoined = Array.isArray(joinedData) ? joinedData.map(challenge => ({
-        _id: challenge.id || challenge._id,
-        challenge: {
-          _id: challenge.id || challenge._id,
-          title: challenge.title,
-          description: challenge.shortDescription || challenge.description,
-          category: challenge.category,
-          imageUrl: challenge.image || challenge.imageUrl,
-          impactMetric: challenge.impact || challenge.impactMetric
-        },
-        userProgress: {
-          status: challenge.status === 'completed' ? 'Completed' : 'Active',
-          progress: 0, // Backend doesn't provide this yet
-          impactAchieved: 0 // Backend doesn't provide this yet
-        }
-      })) : []
-      
-      const transformedCreated = Array.isArray(createdData) ? createdData.map(challenge => ({
-        _id: challenge.id || challenge._id,
-        challenge: {
-          _id: challenge.id || challenge._id,
-          title: challenge.title,
-          description: challenge.shortDescription || challenge.description,
-          category: challenge.category,
-          imageUrl: challenge.image || challenge.imageUrl,
-          impactMetric: challenge.impact || challenge.impactMetric
-        },
-        userProgress: {
-          status: 'Creator',
-          progress: 100,
-          impactAchieved: 0
-        }
-      })) : []
-      
-      // Combine activities
-      const allActivities = [...transformedCreated, ...transformedJoined]
-      
-      // Apply status filter
-      let filteredActivities = allActivities
-      if (statusFilter === 'active') {
-        filteredActivities = allActivities.filter(a => a.userProgress.status === 'Active' || a.userProgress.status === 'Creator')
-      } else if (statusFilter === 'completed') {
-        filteredActivities = allActivities.filter(a => a.userProgress.status === 'Completed')
+    })) : []
+
+    const transformedCreated = Array.isArray(createdChallenges) ? createdChallenges.map(challenge => ({
+      _id: challenge.id,
+      challenge: {
+        _id: challenge.id,
+        title: challenge.title,
+        description: challenge.description,
+        category: challenge.category,
+        imageUrl: challenge.imageUrl,
+        impactMetric: challenge.impactMetric,
+        slug: challenge.slug
+      },
+      userProgress: {
+        status: 'Creator',
+        progress: 100,
+        impactAchieved: 0
       }
-      
-      setActivities(filteredActivities)
-      
-      // Calculate summary
-      setSummary({
-        total: allActivities.length,
-        active: allActivities.filter(a => a.userProgress.status === 'Active' || a.userProgress.status === 'Creator').length,
-        completed: allActivities.filter(a => a.userProgress.status === 'Completed').length
-      })
-      
-      // Set pagination (simplified for now)
-      setPagination(joinedResponse?.pagination || null)
-    } catch (error) {
-      console.error('Failed to fetch activities:', error)
-      showError('Failed to load your activities')
-    } finally {
-      setLoading(false)
+    })) : []
+
+    let all = [...transformedCreated, ...transformedJoined]
+
+    // Search filter
+    if (searchQuery) {
+      all = all.filter(a =>
+        a.challenge.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        a.challenge.category.toLowerCase().includes(searchQuery.toLowerCase())
+      )
     }
-  }
 
-  if (isLoading || loading) {
-    return <EcoLoader />
-  }
+    // Status filter
+    let filtered = all
+    if (statusFilter === 'active') {
+      filtered = all.filter(a => a.userProgress.status === 'Active' || a.userProgress.status === 'Creator')
+    } else if (statusFilter === 'completed') {
+      filtered = all.filter(a => a.userProgress.status === 'Completed')
+    }
+
+    return {
+      activities: filtered,
+      summary: {
+        total: all.length,
+        active: all.filter(a => a.userProgress.status === 'Active' || a.userProgress.status === 'Creator').length,
+        completed: all.filter(a => a.userProgress.status === 'Completed').length,
+        streak: 5 // Mock streak
+      }
+    }
+  }, [joinedChallenges, createdChallenges, statusFilter, searchQuery])
+
+  const loading = loadingJoined || loadingCreated
+  const handleSearchChange = (e) => setSearchQuery(e.target.value)
+  const handleStatusFilter = (status) => setStatusFilter(status)
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <SectionHeading title="My Activities" subtitle="Track your eco-friendly journey and achievements" />
-      
-      {/* Summary Stats */}
-      {summary && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-white p-6 rounded-xl border border-gray-200 text-center">
-            <div className="text-3xl font-bold text-emerald-600">{summary.total}</div>
-            <div className="text-sm text-gray-600 mt-1">Total Challenges</div>
-          </div>
-          <div className="bg-white p-6 rounded-xl border border-gray-200 text-center">
-            <div className="text-3xl font-bold text-blue-600">{summary.active}</div>
-            <div className="text-sm text-gray-600 mt-1">Active Challenges</div>
-          </div>
-          <div className="bg-white p-6 rounded-xl border border-gray-200 text-center">
-            <div className="text-3xl font-bold text-purple-600">{summary.completed}</div>
-            <div className="text-sm text-gray-600 mt-1">Completed</div>
-          </div>
+    <motion.div
+      key={`my-challenges-${statusFilter}-${searchQuery}-${activities.length}`}
+      initial="hidden"
+      animate="show"
+      variants={containerVariants}
+      className="space-y-8 pb-12"
+    >
+      <motion.header
+        variants={itemVariants}
+        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div>
+          <h1 className="text-3xl font-bold text-heading">My Challenges</h1>
+          <p className="text-text/60">Track your eco-journey and achievements</p>
         </div>
-      )}
+        <Button
+          as={Link}
+          to="/challenges"
+          variant="primary"
+          size="sm"
+          className="rounded-xl shadow-lg shadow-primary/20 active:scale-95"
+        >
+          Explore More
+          <ArrowUpRight size={16} />
+        </Button>
+      </motion.header>
 
-      {/* Filter Tabs */}
-      <div className="flex gap-2 mb-6">
-        <button
-          onClick={() => setStatusFilter('all')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            statusFilter === 'all'
-              ? 'bg-emerald-600 text-white'
-              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
-          }`}
-        >
-          All
-        </button>
-        <button
-          onClick={() => setStatusFilter('active')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            statusFilter === 'active'
-              ? 'bg-emerald-600 text-white'
-              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
-          }`}
-        >
-          Active
-        </button>
-        <button
-          onClick={() => setStatusFilter('completed')}
-          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-            statusFilter === 'completed'
-              ? 'bg-emerald-600 text-white'
-              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
-          }`}
-        >
-          Completed
-        </button>
+      {/* Summary Stats */}
+      <motion.div
+        variants={containerVariants}
+        className="grid grid-cols-2 gap-6 lg:grid-cols-4"
+      >
+        {[
+          { label: 'Total', value: summary.total, icon: Activity, color: 'text-primary' },
+          { label: 'Active', value: summary.active, icon: Flame, color: 'text-orange-500' },
+          { label: 'Completed', value: summary.completed, icon: CheckCircle2, color: 'text-green-500' },
+          { label: 'Streak', value: `${summary.streak}d`, icon: Trophy, color: 'text-amber-500' }
+        ].map((stat) => (
+          <motion.div
+            key={stat.label}
+            variants={itemVariants}
+          >
+            <Card className="rounded-2xl shadow-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <stat.icon className={stat.color} size={20} />
+                  <div className="h-6 w-1 rounded-full bg-light" />
+                </div>
+                <p className="mt-4 text-2xl font-bold text-heading">{stat.value}</p>
+                <p className="text-xs font-medium text-text/40">{stat.label}</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </motion.div>
+
+      {/* Filters & Search */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text/40" size={18} />
+          <input
+            type="text"
+            placeholder="Search activities..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className="w-full rounded-xl border border-border bg-surface py-2.5 pl-10 pr-4 outline-none focus:ring-2 focus:ring-primary/20"
+          />
+        </div>
+        <div className="flex items-center gap-2 rounded-xl border border-border bg-surface p-1">
+          {['all', 'active', 'completed'].map((status) => (
+            <Button
+              key={status}
+              onClick={() => handleStatusFilter(status)}
+              variant={statusFilter === status ? 'primary' : 'ghost'}
+              size="sm"
+              className={`rounded-lg px-4 text-xs font-semibold capitalize ${statusFilter === status ? 'shadow-md' : 'text-text/60 hover:text-text'}`}
+            >
+              {status}
+            </Button>
+          ))}
+        </div>
       </div>
 
-      {/* Activities Grid */}
-      {activities.length === 0 ? (
-        <div className="bg-white rounded-xl p-12 border border-gray-200 shadow-sm text-center">
-          <div className="w-24 h-24 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <span className="text-4xl">🌱</span>
-          </div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">No activities yet</h3>
-          <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
-            Start joining challenges to track your eco-friendly journey!
-          </p>
-          <Link
-            to="/challenges"
-            className="inline-block px-6 py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors"
+      {/* Activities Table/Grid */}
+      <AnimatePresence mode="wait">
+        {loading ? (
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
           >
-            Browse Challenges
-          </Link>
-        </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, i) => <ChallengeCardSkeleton key={i} />)}
+          </motion.div>
+        ) : activities.length === 0 ? (
+          <motion.div
+            key="empty"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-border py-20 text-center"
+          >
+            <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-light text-4xl">🌱</div>
+            <h3 className="text-xl font-bold text-heading">No activities found</h3>
+            <p className="mt-2 text-text/60">Start joining challenges to track your impact!</p>
+            <Button
+              as={Link}
+              to="/challenges"
+              variant="ghost"
+              size="sm"
+              className="mt-6 text-primary hover:underline"
+            >
+              Browse Challenges
+            </Button>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="content"
+            initial="hidden"
+            animate="show"
+            variants={containerVariants}
+            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          >
             {activities.map((activity) => (
-              <div
+              <motion.div
                 key={activity._id}
-                className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
+                variants={itemVariants}
               >
-                {activity.challenge?.imageUrl && (
-                  <div className="h-48 bg-gray-200">
-                    <img
-                      src={activity.challenge.imageUrl}
-                      alt={activity.challenge.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded">
-                      {activity.challenge?.category || 'Challenge'}
-                    </span>
-                    <span
-                      className={`text-xs font-medium px-2 py-1 rounded ${
-                        activity.userProgress?.status === 'Completed'
-                          ? 'bg-purple-50 text-purple-600'
-                          : 'bg-blue-50 text-blue-600'
-                      }`}
-                    >
-                      {activity.userProgress?.status || 'Ongoing'}
-                    </span>
-                  </div>
-                  <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">
-                    {activity.challenge?.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                    {activity.challenge?.description}
-                  </p>
-                  
-                  {/* Progress Bar */}
-                  <div className="mb-4">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-gray-600">Progress</span>
-                      <span className="text-xs font-semibold text-gray-900">
-                        {activity.userProgress?.progress || 0}%
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-gradient-to-r from-emerald-500 to-teal-500 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${activity.userProgress?.progress || 0}%` }}
+                <Card className="group relative overflow-hidden rounded-2xl transition-all hover:shadow-xl hover:shadow-primary/5">
+                  {activity.challenge?.imageUrl && (
+                    <div className="h-40 overflow-hidden">
+                      <img
+                        src={activity.challenge.imageUrl}
+                        alt={activity.challenge.title}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
                     </div>
-                  </div>
-
-                  {/* Impact */}
-                  {activity.userProgress?.impactAchieved > 0 && (
-                    <div className="text-sm text-gray-600 mb-3">
-                      <span className="font-semibold text-emerald-600">
-                        {activity.userProgress.impactAchieved}
-                      </span>{' '}
-                      {activity.challenge?.impactMetric || 'impact points'}
-                    </div>
                   )}
+                  <CardContent className="p-6">
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
+                        {activity.challenge?.category}
+                      </span>
+                      <span className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold ${activity.userProgress?.status === 'Completed' ? 'bg-green-500/10 text-green-500' : 'bg-primary/10 text-primary'
+                        }`}>
+                        {activity.userProgress?.status === 'Completed' ? <CheckCircle2 size={10} /> : <Clock size={10} />}
+                        {activity.userProgress?.status}
+                      </span>
+                    </div>
+                    <h3 className="line-clamp-1 font-bold text-heading">{activity.challenge?.title}</h3>
 
-                  <Link
-                    to={`/challenges/${activity.challenge?.slug || activity.challenge?._id}`}
-                    className="block w-full text-center px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg font-medium hover:bg-emerald-100 transition-colors"
-                  >
-                    View Details
-                  </Link>
-                </div>
-              </div>
+                    {/* Progress Section */}
+                    <div className="mt-4">
+                      <div className="mb-1.5 flex items-center justify-between text-[11px] font-bold">
+                        <span className="text-text/40">Progress</span>
+                        <span className="text-heading">{activity.userProgress?.progress}%</span>
+                      </div>
+                      <div className="h-1.5 w-full rounded-full bg-light overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${activity.userProgress?.progress}%` }}
+                          transition={{ duration: 1, ease: 'easeOut' }}
+                          className="h-full bg-gradient-to-r from-primary to-secondary"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-6 flex items-center justify-between">
+                      {activity.userProgress?.impactAchieved > 0 ? (
+                        <div className="flex items-center gap-1 text-xs font-bold text-primary">
+                          <Flame size={14} />
+                          {activity.userProgress.impactAchieved} {activity.challenge?.impactMetric}
+                        </div>
+                      ) : <div />}
+                      <Button
+                        as={Link}
+                        to={`/challenges/${activity.challenge?.slug || activity.challenge?._id}`}
+                        variant="ghost"
+                        size="sm"
+                        className="rounded-lg p-2 text-text hover:bg-primary hover:text-surface"
+                      >
+                        <ArrowUpRight size={18} />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
-          </div>
-
-          {/* Pagination */}
-          {pagination && pagination.totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-8">
-              <button
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={!pagination.hasPrev}
-                className="px-4 py-2 rounded-lg border border-gray-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-              >
-                Previous
-              </button>
-              <span className="px-4 py-2 text-gray-600">
-                Page {pagination.page} of {pagination.totalPages}
-              </span>
-              <button
-                onClick={() => setCurrentPage(p => p + 1)}
-                disabled={!pagination.hasNext}
-                className="px-4 py-2 rounded-lg border border-gray-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-              >
-                Next
-              </button>
-            </div>
-          )}
-        </>
-      )}
-    </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   )
 }

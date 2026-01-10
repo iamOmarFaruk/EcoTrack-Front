@@ -1,185 +1,116 @@
-import { useParams, Link } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import { Leaf, Recycle, Droplets, Zap } from 'lucide-react'
-import { challengeApi } from '../services/api.js'
+import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import {
+  Leaf,
+  Recycle,
+  Droplets,
+  Zap,
+  ChevronLeft,
+  Users,
+  Target,
+  Sparkles,
+  Info,
+  ShieldCheck,
+  Trophy,
+  Calendar,
+  CheckCircle2,
+  Share2,
+  Clock,
+  User
+} from 'lucide-react'
 import { useAuth } from '../context/AuthContext.jsx'
 import Button from '../components/ui/Button.jsx'
+import { Card, CardContent } from '../components/ui/Card.jsx'
 import ChallengeCard from '../components/ChallengeCard.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
-import SubpageHero from '../components/SubpageHero.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { utils } from '../config/env'
 import { formatDate } from '../utils/formatDate.js'
-import { showSuccess, showError, showLoading, dismissToast, showDeleteConfirmation } from '../utils/toast.jsx'
+import { showSuccess, showError, showDeleteConfirmation } from '../utils/toast.jsx'
+import { useChallengeBySlug, useChallenges, useChallengeMutations } from '../hooks/queries'
+import { motion, AnimatePresence } from 'framer-motion'
+import { containerVariants, itemVariants } from '../utils/animations'
+import NotFound from './NotFound.jsx'
 
 export default function ChallengeDetail() {
-  const { slug } = useParams() // Use slug from URL (SEO-friendly)
+  const { slug } = useParams()
   const { auth } = useAuth()
-  const [challenge, setChallenge] = useState(null)
-  const [relatedChallenges, setRelatedChallenges] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [isJoining, setIsJoining] = useState(false)
-  const [isLeaving, setIsLeaving] = useState(false)
-  
+  const navigate = useNavigate()
+  const [isShareTooltipOpen, setIsShareTooltipOpen] = useState(false)
+
+  // Fetch challenge details
+  const {
+    data: challenge,
+    isLoading: loading,
+    error
+  } = useChallengeBySlug(slug)
+
+  // Fetch related challenges (only if we have a category)
+  const { data: relatedChallenges = [] } = useChallenges(
+    challenge?.category
+      ? { category: challenge.category, limit: 3 }
+      : { limit: 0 } // Don't fetch if no category
+  )
+
+  // Filter out current challenge from related
+  const filteredRelated = relatedChallenges
+    .filter(c => c.id !== challenge?.id && c._id !== challenge?._id)
+    .slice(0, 3)
+
   useDocumentTitle(challenge ? challenge.title : 'Challenge Details')
 
-  // Check if current user is the creator of the challenge
+  // Mutations
+  const { joinChallenge, leaveChallenge, deleteChallenge } = useChallengeMutations()
+  const isJoining = joinChallenge.isPending
+  const isLeaving = leaveChallenge.isPending
+
+  // Check ownership
   const isOwner = challenge && auth.user && (
-    challenge.isCreator || 
+    challenge.isCreator ||
     challenge.createdBy === auth.user.uid ||
     challenge.createdById === auth.user.uid
   )
-  
-  // Check if user has joined the challenge
+
   const isJoined = challenge?.isJoined || false
 
-  const handleJoinChallenge = async () => {
+  const handleJoinChallenge = () => {
     if (!auth.isLoggedIn) {
       showError('Please log in to join challenges')
+      navigate('/login')
       return
     }
-
-    setIsJoining(true)
-    try {
-      // Use _id for join operation, not slug
-      await challengeApi.join(challenge._id)
-      showSuccess('Successfully joined the challenge!')
-      
-      // Refresh challenge data using slug
-      const response = await challengeApi.getBySlug(slug)
-      const challengeData = response?.data || response
-      
-      setChallenge(prev => ({
-        ...prev,
-        _id: challengeData._id || challengeData.id || prev._id, // Ensure _id is preserved
-        isJoined: true,
-        participants: challengeData.registeredParticipants || (prev.participants + 1)
-      }))
-    } catch (error) {
-      console.error('Error joining challenge:', error)
-      if (error.message?.includes('already joined')) {
-        showError('You have already joined this challenge')
-      } else if (error.message?.includes('not active')) {
-        showError('This challenge is not currently active')
-      } else {
-        showError('Failed to join challenge. Please try again.')
-      }
-    } finally {
-      setIsJoining(false)
-    }
+    joinChallenge.mutate(challenge.id)
   }
 
-  const handleLeaveChallenge = async () => {
-    setIsLeaving(true)
-    try {
-      // Use _id for leave operation, not slug
-      await challengeApi.leave(challenge._id)
-      showSuccess('Successfully left the challenge')
-      
-      // Refresh challenge data using slug
-      const response = await challengeApi.getBySlug(slug)
-      const challengeData = response?.data || response
-      
-      setChallenge(prev => ({
-        ...prev,
-        _id: challengeData._id || challengeData.id || prev._id, // Ensure _id is preserved
-        isJoined: false,
-        participants: challengeData.registeredParticipants || Math.max(0, prev.participants - 1)
-      }))
-    } catch (error) {
-      console.error('Error leaving challenge:', error)
-      showError('Failed to leave challenge. Please try again.')
-    } finally {
-      setIsLeaving(false)
-    }
+  const handleLeaveChallenge = () => {
+    leaveChallenge.mutate(challenge.id)
   }
 
-  const handleDeleteChallenge = async () => {
+  const handleDeleteChallenge = () => {
     showDeleteConfirmation({
       itemName: 'Challenge',
-      onConfirm: async () => {
-        try {
-          const loadingToast = showLoading('Deleting challenge...')
-          
-          // Use _id for delete operation, not slug
-          await challengeApi.delete(challenge._id)
-          
-          dismissToast(loadingToast)
-          showSuccess('Challenge deleted successfully!')
-          
-          window.location.href = '/challenges'
-        } catch (error) {
-          console.error('Error deleting challenge:', error)
-          showError('Failed to delete challenge. Please try again.')
-        }
+      onConfirm: () => {
+        deleteChallenge.mutate(challenge.id, {
+          onSuccess: () => navigate('/challenges')
+        })
       }
     })
   }
 
   const handleEditChallenge = () => {
-    // Navigate to slug-based edit URL for SEO-friendly routing
     const targetSlug = challenge.slug || slug
-    window.location.href = `/challenges/${targetSlug}/edit`
+    navigate(`/challenges/${targetSlug}/edit`)
   }
 
-  useEffect(() => {
-    const fetchChallengeDetails = async () => {
-      try {
-        setLoading(true)
-        // Fetch challenge by slug (SEO-friendly)
-        const response = await challengeApi.getBySlug(slug)
-        const challengeData = response?.data || response
-        
-        setChallenge({
-          ...challengeData,
-          _id: challengeData._id || challengeData.id, // Ensure _id is set
-          participants: challengeData.registeredParticipants ?? (Array.isArray(challengeData.participants) ? challengeData.participants.length : challengeData.participants) ?? 0
-        })
-
-        // Fetch related challenges
-        try {
-          const relatedResponse = await challengeApi.getAll({ 
-            category: challengeData.category, 
-            limit: 3 
-          })
-          const relatedData = relatedResponse?.data || relatedResponse
-          const challengesArray = relatedData.challenges || relatedData.data || relatedData || []
-          const normalizeId = (value) => value?.toString?.()
-          const currentId = normalizeId(challengeData.id || challengeData._id)
-          
-          setRelatedChallenges(
-            challengesArray
-              .filter(c => normalizeId(c.id || c._id) !== currentId)
-              .slice(0, 3)
-          )
-        } catch (error) {
-          console.error('Error fetching related challenges:', error)
-        }
-      } catch (error) {
-        setError(error.message || 'Failed to load challenge details')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    if (slug) {
-      fetchChallengeDetails()
-    }
-  }, [slug])
-
-  if (loading) {
-    return <EcoLoader />
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href)
+    setIsShareTooltipOpen(true)
+    showSuccess('Link copied to clipboard!')
+    setTimeout(() => setIsShareTooltipOpen(false), 2000)
   }
 
-  if (error || !challenge) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-red-600 mb-4">{error || 'Challenge not found'}</p>
-        <Button as={Link} to="/challenges">Back to Challenges</Button>
-      </div>
-    )
-  }
+  if (loading) return <EcoLoader />
+  if (error || !challenge) return <NotFound />
 
   const {
     title,
@@ -189,8 +120,6 @@ export default function ChallengeDetail() {
     image,
     participants: participantCount,
     duration,
-    impact,
-    co2Saved,
     startDate,
     endDate,
     featured
@@ -213,7 +142,8 @@ export default function ChallengeDetail() {
       value: communityImpact?.co2SavedKg,
       unit: 'kg',
       icon: Leaf,
-      accent: 'bg-emerald-50 text-emerald-600'
+      accent: 'bg-primary/10 text-primary',
+      color: 'emerald'
     },
     {
       key: 'plasticReducedKg',
@@ -221,7 +151,8 @@ export default function ChallengeDetail() {
       value: communityImpact?.plasticReducedKg,
       unit: 'kg',
       icon: Recycle,
-      accent: 'bg-teal-50 text-teal-600'
+      accent: 'bg-secondary/10 text-secondary',
+      color: 'teal'
     },
     {
       key: 'waterSavedL',
@@ -229,7 +160,8 @@ export default function ChallengeDetail() {
       value: communityImpact?.waterSavedL,
       unit: 'L',
       icon: Droplets,
-      accent: 'bg-blue-50 text-blue-600'
+      accent: 'bg-blue-500/10 text-blue-600',
+      color: 'blue'
     },
     {
       key: 'energySavedKwh',
@@ -237,7 +169,8 @@ export default function ChallengeDetail() {
       value: communityImpact?.energySavedKwh,
       unit: 'kWh',
       icon: Zap,
-      accent: 'bg-amber-50 text-amber-600'
+      accent: 'bg-yellow-500/10 text-yellow-600',
+      color: 'yellow'
     }
   ].filter(metric => metric.value !== null && metric.value !== undefined && metric.value !== '')
 
@@ -249,181 +182,318 @@ export default function ChallengeDetail() {
     return numberFormatter.format(numeric)
   }
 
-  const timelineRange = startDate && endDate
-    ? `${formatDate(startDate, { dateStyle: 'long' })} – ${formatDate(endDate, { dateStyle: 'long' })}`
-    : 'Schedule coming soon'
-
   return (
-    <div className="space-y-12">
-      {/* Hero Section */}
-      <div className="full-bleed -mt-8">
-        <SubpageHero
-          backgroundImage={image || utils.getPlaceholderImage(1200, 400, title)}
-          overlayIntensity="dark"
-          height="large"
-        >
-          <div className="flex flex-col gap-4 max-w-3xl">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="inline-flex items-center rounded-full bg-emerald-500/20 px-4 py-1 text-sm font-semibold text-white uppercase tracking-wide">
-              {category}
-            </span>
-            {featured && (
-              <span className="inline-flex items-center rounded-full bg-amber-400/20 px-4 py-1 text-sm font-semibold text-white uppercase tracking-wide">
-                Featured
+    <div className="min-h-screen bg-light pb-20">
+      {/* Immersive Hero Section */}
+      <div className="relative h-[60vh] min-h-[400px] w-full overflow-hidden mb-8">
+        {/* Background Image - Full Bleed */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000 hover:scale-105"
+          style={{
+            backgroundImage: `url(${image || utils.getPlaceholderImage(1200, 400, title)})`,
+          }}
+        />
+
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-black/40" />
+
+        {/* Gradient Overlay - Bottom to Top */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+
+        {/* Content Container - Centered and Constrained */}
+        <div className="container relative mx-auto px-4 h-full flex flex-col justify-end pb-16">
+          <motion.div
+            initial="hidden"
+            animate="show"
+            variants={containerVariants}
+            className="max-w-4xl"
+          >
+            <motion.div variants={itemVariants} className="mb-6 flex items-center gap-3 flex-wrap">
+              <Link
+                to="/challenges"
+                className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full text-sm font-medium hover:bg-white/20"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                Back to Challenges
+              </Link>
+
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/20 backdrop-blur-md text-white text-xs font-bold uppercase tracking-wider border border-white/20">
+                {category}
               </span>
-            )}
-          </div>
 
-            <div className="space-y-3">
-              <h1 className="text-4xl font-bold text-white sm:text-5xl md:text-6xl">
-                {title}
-              </h1>
-              {shortDescription && (
-                <p className="text-lg text-white/90 sm:text-xl">
-                  {shortDescription}
-                </p>
-              )}
-            </div>
-          </div>
-        </SubpageHero>
-      </div>
-
-      {/* Impact Metrics - Full Width */}
-      {impactMetrics.length > 0 && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <p className="text-sm font-semibold text-slate-500">Impact Metrics</p>
-              <h3 className="text-xl font-bold text-slate-900 mt-1">Measured community benefits</h3>
-            </div>
-          </div>
-          <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {impactMetrics.map(metric => {
-              const Icon = metric.icon
-              return (
-                <div key={metric.key} className="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
-                  <div className="flex items-center gap-3">
-                    <div className={`h-12 w-12 rounded-full ${metric.accent} flex items-center justify-center`}> 
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-slate-500">{metric.label}</p>
-                      <p className="text-2xl font-bold text-slate-900">
-                        {formatMetricValue(metric.value)}
-                        <span className="ml-1 text-base font-semibold text-slate-500">{metric.unit}</span>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Challenge Details */}
-      <div className="grid lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
-          <div>
-            <h2 className="text-2xl font-bold mb-4">About This Challenge</h2>
-            <p className="text-lg text-slate-600 mb-4">{shortDescription}</p>
-            {detailedDescription && (
-              <p className="text-slate-600 whitespace-pre-line">{detailedDescription}</p>
-            )}
-          </div>
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-6">
-          <div className="bg-white border-2 border-slate-200 rounded-lg p-6">
-            <h3 className="text-xl font-bold mb-4">Challenge Stats</h3>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center py-2 border-b border-slate-100">
-                <span className="text-slate-600">Participants</span>
-                <span className="font-semibold text-lg">
-                  {participantCount === 0 ? 'No one joined yet' : `${participantCount} ${participantCount === 1 ? 'person' : 'people'} joined`}
+              {isJoined && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20">
+                  <CheckCircle2 className="w-4 h-4" />
+                  Participating
                 </span>
-              </div>
-              <div className="flex justify-between items-center py-2 border-b border-slate-100">
-                <span className="text-slate-600">Start Date</span>
-                <span className="font-semibold text-lg">{startDate ? formatDate(startDate) : 'TBD'}</span>
-              </div>
-              <div className="flex justify-between items-center py-2 border-b border-slate-100">
-                <span className="text-slate-600">End Date</span>
-                <span className="font-semibold text-lg">{endDate ? formatDate(endDate) : 'TBD'}</span>
-              </div>
-              <div className="flex justify-between items-center py-2 border-b border-slate-100">
-                <span className="text-slate-600">Duration</span>
-                <span className="font-semibold text-lg">{duration || 'TBD'}</span>
-              </div>
-              <div className="flex justify-between items-center py-2">
-                <span className="text-slate-600">Status</span>
-                <span className="font-semibold text-emerald-600">Active</span>
-              </div>
-            </div>
-
-            <div className="mt-6 space-y-3">
-              {!isOwner && !isJoined && (
-                <Button
-                  onClick={handleJoinChallenge}
-                  disabled={isJoining}
-                  className="w-full"
-                >
-                  {isJoining ? 'Joining...' : 'Join Challenge'}
-                </Button>
-              )}
-
-              {!isOwner && isJoined && (
-                <Button
-                  onClick={handleLeaveChallenge}
-                  disabled={isLeaving}
-                  variant="outline"
-                  className="w-full"
-                >
-                  {isLeaving ? 'Leaving...' : 'Leave Challenge'}
-                </Button>
               )}
 
               {isOwner && (
-                <>
-                  <Button
-                    onClick={handleEditChallenge}
-                    className="w-full"
-                  >
-                    Edit Challenge
-                  </Button>
-                  <Button
-                    onClick={handleDeleteChallenge}
-                    variant="destructive"
-                    className="w-full"
-                  >
-                    Delete Challenge
-                  </Button>
-                </>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary text-white text-sm font-bold shadow-lg shadow-secondary/20">
+                  <User className="w-4 h-4" />
+                  Creator
+                </span>
               )}
-            </div>
-          </div>
+
+              {featured && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-yellow-500 text-white text-sm font-bold shadow-lg shadow-yellow-500/20">
+                  <Sparkles className="w-4 h-4" />
+                  Featured
+                </span>
+              )}
+            </motion.div>
+
+            <motion.h1
+              variants={itemVariants}
+              className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight tracking-tight drop-shadow-lg"
+            >
+              {title}
+            </motion.h1>
+
+            <motion.p
+              variants={itemVariants}
+              className="text-lg md:text-xl text-white/90 max-w-2xl mb-8 line-clamp-2 drop-shadow-md"
+            >
+              {shortDescription}
+            </motion.p>
+          </motion.div>
         </div>
       </div>
 
-      {/* Related Challenges */}
-      {relatedChallenges.length > 0 && (
-        <div>
-          <h2 className="text-2xl font-bold mb-6">Similar Challenges</h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            {relatedChallenges.map((c) => (
-              <ChallengeCard key={c._id || c.id} challenge={{
-                ...c,
-                imageUrl: c.image || c.imageUrl,
-                description: c.shortDescription || c.description,
-                participants: c.registeredParticipants || c.participants || 0
-              }} />
-            ))}
+      <div className="container mx-auto px-4 relative z-10 -mt-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Main Content Area */}
+          <div className="lg:col-span-8 space-y-8">
+            {/* Impact Metrics Block */}
+            {impactMetrics.length > 0 && (
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
+                className="grid gap-4 grid-cols-2 md:grid-cols-4"
+              >
+                {impactMetrics.map(metric => {
+                  const Icon = metric.icon
+                  return (
+                    <motion.div key={metric.key} variants={itemVariants}>
+                      <Card className="border-none shadow-lg hover:shadow-xl transition-all duration-300">
+                        <CardContent className="p-4 text-center">
+                          <div className={`mx-auto h-10 w-10 rounded-xl ${metric.accent} flex items-center justify-center mb-3`}>
+                            <Icon className="h-5 w-5" />
+                          </div>
+                          <p className="text-[10px] font-bold text-text/40 uppercase tracking-widest mb-1">{metric.label}</p>
+                          <p className="text-xl font-bold text-heading">
+                            {formatMetricValue(metric.value)}
+                            <span className="ml-1 text-xs font-semibold text-text/50">{metric.unit}</span>
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  )
+                })}
+              </motion.div>
+            )}
+
+            <motion.div variants={itemVariants} initial="hidden" animate="show">
+              <Card className="border-none shadow-xl shadow-primary/5 overflow-hidden">
+                <div className="h-2 bg-primary w-full" />
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                      <Info className="w-5 h-5" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-heading">Challenge Details</h2>
+                  </div>
+                  <div className="prose prose-lg dark:prose-invert text-text/80 leading-relaxed max-w-none">
+                    {detailedDescription || shortDescription}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Additional info grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <motion.div variants={itemVariants} initial="hidden" animate="show">
+                <Card className="h-full border-none shadow-lg hover:shadow-xl transition-shadow duration-300">
+                  <CardContent className="p-6 text-center">
+                    <div className="w-12 h-12 mx-auto rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4">
+                      <Users className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-lg font-bold text-heading mb-2">Community Impact</h3>
+                    <p className="text-text/70 text-sm leading-relaxed">
+                      Join {participantCount} others in making a collective difference for our planet.
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              <motion.div variants={itemVariants} initial="hidden" animate="show">
+                <Card className="h-full border-none shadow-lg hover:shadow-xl transition-shadow duration-300">
+                  <CardContent className="p-6 text-center">
+                    <div className="w-12 h-12 mx-auto rounded-full bg-secondary/10 flex items-center justify-center text-secondary mb-4">
+                      <Trophy className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-lg font-bold text-heading mb-2">Completion Goal</h3>
+                    <p className="text-text/70 text-sm leading-relaxed">
+                      Complete all tasks within the {duration} timeframe to earn your eco-badge.
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="lg:col-span-4 space-y-6">
+            <motion.div variants={itemVariants} initial="hidden" animate="show" className="sticky top-24">
+              {/* Action Card */}
+              <Card className="border-none shadow-xl shadow-primary/5 overflow-hidden relative">
+                <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-primary/5 rounded-full blur-2xl" />
+
+                <CardContent className="p-6 space-y-6">
+                  {isOwner ? (
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <ShieldCheck className="w-5 h-5 text-primary" />
+                        <h3 className="font-bold text-lg text-heading">Creator Dashboard</h3>
+                      </div>
+
+                      <div className="p-4 rounded-xl bg-muted/50 border border-border">
+                        <div className="flex justify-between items-center mb-1 text-xs font-bold text-text/40 uppercase tracking-wider">
+                          <span>Participation</span>
+                          <span>Active</span>
+                        </div>
+                        <p className="text-2xl font-bold text-heading">
+                          {participantCount} <span className="text-sm font-medium text-text/50">Joined</span>
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <Button onClick={handleEditChallenge} variant="primary" className="w-full">
+                          Edit Challenge
+                        </Button>
+                        <Button
+                          onClick={handleDeleteChallenge}
+                          variant="danger"
+                          className="w-full"
+                        >
+                          Delete Permanently
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-6">
+                      <div className="text-center">
+                        <h3 className="text-xl font-bold text-heading">
+                          {isJoined ? "Challenge Accepted!" : "Join the Movement"}
+                        </h3>
+                        <p className="text-sm text-text/60 mt-1">
+                          {isJoined ? "You're making a difference. Keep going!" : "Ready to track your eco-impact?"}
+                        </p>
+                      </div>
+
+                      {/* Timeline Stats */}
+                      <div className="space-y-4">
+                        <div className="p-3 rounded-xl bg-muted/30 border border-border/50">
+                          <div className="flex items-center gap-3 mb-2">
+                            <Calendar className="w-4 h-4 text-primary" />
+                            <span className="text-xs font-bold text-heading uppercase">Timeline</span>
+                          </div>
+                          <p className="text-sm font-medium text-text/80">
+                            {startDate && endDate ? `${formatDate(startDate)} - ${formatDate(endDate)}` : 'Duration-based'}
+                          </p>
+                        </div>
+
+                        <div className="p-3 rounded-xl bg-muted/30 border border-border/50">
+                          <div className="flex items-center gap-3 mb-2">
+                            <Clock className="w-4 h-4 text-secondary" />
+                            <span className="text-xs font-bold text-heading uppercase">Duration</span>
+                          </div>
+                          <p className="text-sm font-medium text-text/80">{duration}</p>
+                        </div>
+                      </div>
+
+                      {isJoined ? (
+                        <Button
+                          onClick={handleLeaveChallenge}
+                          variant="ghost"
+                          className="w-full text-danger hover:text-danger hover:bg-danger/10 border-2 border-transparent hover:border-danger/10"
+                          disabled={isLeaving}
+                        >
+                          {isLeaving ? 'Processing...' : 'Leave Challenge'}
+                        </Button>
+                      ) : (
+                        <Button
+                          onClick={handleJoinChallenge}
+                          variant="primary"
+                          className="w-full py-6 text-lg shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform"
+                          disabled={isJoining}
+                        >
+                          {isJoining ? 'Processing...' : 'Start Challenge Now'}
+                        </Button>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Share button */}
+                  <div className="pt-2 border-t border-border mt-6">
+                    <Button variant="outline" className="w-full gap-2 group" onClick={handleShare}>
+                      <Share2 className="w-4 h-4 text-text/60 group-hover:text-primary transition-colors" />
+                      <span className="text-text/60 group-hover:text-text transition-colors">Spread the Word</span>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Eco Motivation Card */}
+              <Card className="mt-6 border-none shadow-lg bg-gradient-to-br from-primary/5 to-transparent">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-2 mb-3 text-primary">
+                    <Leaf className="w-5 h-5" />
+                    <h4 className="font-bold">Eco Tip</h4>
+                  </div>
+                  <p className="text-sm text-text/70 italic leading-relaxed">
+                    "Every small action adds up to a massive global impact. Thank you for being part of the solution."
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
           </div>
         </div>
-      )}
+
+        {/* Similar Challenges Section */}
+        {filteredRelated.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-20"
+          >
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-3xl font-bold text-heading">Similar <span className="text-primary italic">Challenges</span></h2>
+                <p className="text-text/60 mt-1">Keep the momentum going with these related activities.</p>
+              </div>
+              <Link
+                to="/challenges"
+                className="hidden sm:flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all"
+              >
+                Browse All <Target className="w-4 h-4" />
+              </Link>
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredRelated.map((c) => (
+                <ChallengeCard key={c._id || c.id} challenge={{
+                  ...c,
+                  imageUrl: c.image || c.imageUrl,
+                  description: c.shortDescription || c.description,
+                  participants: c.registeredParticipants || c.participants || 0
+                }} />
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </div>
     </div>
   )
 }
-
-

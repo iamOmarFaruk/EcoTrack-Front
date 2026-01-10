@@ -6,7 +6,7 @@ import Button from '../components/ui/Button.jsx'
 import { Card, CardContent } from '../components/ui/Card.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import NotFound from './NotFound.jsx'
-import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
+import { showSuccess, showError } from '../utils/toast.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 
 export default function EditEvent() {
@@ -26,6 +26,7 @@ export default function EditEvent() {
     requirements: '',
     benefits: '',
     image: '',
+    category: '',
     status: 'active'
   })
 
@@ -35,6 +36,7 @@ export default function EditEvent() {
   const [event, setEvent] = useState(null)
   const [notFound, setNotFound] = useState(false)
   const [notAuthorized, setNotAuthorized] = useState(false)
+  const [imageError, setImageError] = useState(false)
 
   useDocumentTitle(event ? `Edit ${event.title}` : 'Edit Event')
 
@@ -80,10 +82,10 @@ export default function EditEvent() {
         requirements: eventData.requirements || '',
         benefits: eventData.benefits || '',
         image: eventData.image || '',
+        category: eventData.category || '',
         status: eventData.status || 'active'
       })
     } catch (error) {
-      console.error('Error fetching event:', error)
       if (error.status === 404) {
         setNotFound(true)
       } else if (error.status === 403) {
@@ -185,6 +187,11 @@ export default function EditEvent() {
       }
     }
 
+    // Category validation
+    if (!formData.category) {
+      newErrors.category = 'Category is required'
+    }
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -214,7 +221,7 @@ export default function EditEvent() {
       const updatedEvent = response?.data?.event || response?.event
 
       showSuccess('Event updated successfully!')
-      
+
       // Navigate to the event detail page using slug (SEO-friendly)
       if (updatedEvent?.slug) {
         navigate(`/events/${updatedEvent.slug}`)
@@ -224,8 +231,6 @@ export default function EditEvent() {
         navigate(`/events/${id}`)
       }
     } catch (error) {
-      console.error('Error updating event:', error)
-      
       // Handle validation errors from backend
       if (error.data?.error?.details) {
         const backendErrors = {}
@@ -256,50 +261,52 @@ export default function EditEvent() {
 
   if (notAuthorized) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-red-50 to-white py-12">
+      <div className="min-h-screen bg-gradient-to-b from-danger/10 to-surface py-12 space-y-8">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="bg-white rounded-2xl shadow-lg p-12">
-            <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-            </div>
-            <h1 className="text-3xl font-bold text-slate-900 mb-3">Access Denied</h1>
-            <p className="text-lg text-slate-600 mb-8">
-              You don't have permission to edit this event
-            </p>
-            <Button onClick={() => navigate('/events')} className="bg-green-600 hover:bg-green-700">
-              Back to Events
-            </Button>
-          </div>
+          <Card className="rounded-2xl shadow-lg">
+            <CardContent className="p-8 md:p-12">
+              <div className="w-20 h-20 bg-danger/15 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg className="w-10 h-10 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h1 className="text-3xl font-bold text-heading mb-3">Access Denied</h1>
+              <p className="text-lg text-text/80 mb-8">
+                You don't have permission to edit this event
+              </p>
+              <Button onClick={() => navigate('/events')} variant="primary">
+                Back to Events
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-12">
+    <div className="min-h-screen bg-gradient-to-b from-primary/10 to-surface py-12 space-y-8">
       {/* Page Header */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-slate-900 mb-3">
+          <h1 className="text-4xl font-bold text-heading mb-3">
             Edit Event
           </h1>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+          <p className="text-lg text-text/80 max-w-2xl mx-auto">
             Update your event details and settings
           </p>
         </div>
       </div>
 
       {/* Form Section */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Card>
-          <CardContent>
+          <CardContent className="p-6">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Title */}
               <div>
-                <label htmlFor="title" className="block text-sm font-medium text-slate-900 mb-2">
-                  Event Title <span className="text-red-500">*</span>
+                <label htmlFor="title" className="block text-sm font-medium text-heading mb-2">
+                  Event Title <span className="text-danger">*</span>
                 </label>
                 <input
                   type="text"
@@ -307,19 +314,41 @@ export default function EditEvent() {
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                    errors.title ? 'border-red-500' : 'border-slate-300'
-                  }`}
                   placeholder="e.g., City Tree Planting Marathon"
                 />
-                {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
-                <p className="mt-1 text-xs text-slate-500">{formData.title.length}/100 characters</p>
+                {errors.title && <p className="mt-1 text-sm text-danger">{errors.title}</p>}
+                <p className="mt-1 text-xs text-text/70">{formData.title.length}/100 characters</p>
+              </div>
+
+              {/* Category */}
+              <div>
+                <label htmlFor="category" className="block text-sm font-medium text-heading mb-2">
+                  Category <span className="text-danger">*</span>
+                </label>
+                <select
+                  id="category"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.category ? 'border-danger' : 'border-border'
+                    }`}
+                >
+                  <option value="">Select a category</option>
+                  <option value="Tree Planting">Tree Planting</option>
+                  <option value="Waste Management">Waste Management</option>
+                  <option value="Ocean Cleanup">Ocean Cleanup</option>
+                  <option value="Solar & Energy">Solar & Energy</option>
+                  <option value="Community Workshop">Community Workshop</option>
+                  <option value="Sustainable Gardening">Sustainable Gardening</option>
+                  <option value="Other">Other</option>
+                </select>
+                {errors.category && <p className="mt-1 text-sm text-danger">{errors.category}</p>}
               </div>
 
               {/* Short Description */}
               <div>
-                <label htmlFor="description" className="block text-sm font-medium text-slate-900 mb-2">
-                  Short Description <span className="text-red-500">*</span>
+                <label htmlFor="description" className="block text-sm font-medium text-heading mb-2">
+                  Short Description <span className="text-danger">*</span>
                 </label>
                 <input
                   type="text"
@@ -327,19 +356,18 @@ export default function EditEvent() {
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                    errors.description ? 'border-red-500' : 'border-slate-300'
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.description ? 'border-danger' : 'border-border'
+                    }`}
                   placeholder="Brief description for event cards (10-200 characters)"
                 />
-                {errors.description && <p className="mt-1 text-sm text-red-500">{errors.description}</p>}
-                <p className="mt-1 text-xs text-slate-500">{formData.description.length}/200 characters</p>
+                {errors.description && <p className="mt-1 text-sm text-danger">{errors.description}</p>}
+                <p className="mt-1 text-xs text-text/70">{formData.description.length}/200 characters</p>
               </div>
 
               {/* Detailed Description */}
               <div>
-                <label htmlFor="detailedDescription" className="block text-sm font-medium text-slate-900 mb-2">
-                  Detailed Description <span className="text-red-500">*</span>
+                <label htmlFor="detailedDescription" className="block text-sm font-medium text-heading mb-2">
+                  Detailed Description <span className="text-danger">*</span>
                 </label>
                 <textarea
                   id="detailedDescription"
@@ -347,21 +375,20 @@ export default function EditEvent() {
                   value={formData.detailedDescription}
                   onChange={handleChange}
                   rows={6}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                    errors.detailedDescription ? 'border-red-500' : 'border-slate-300'
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.detailedDescription ? 'border-danger' : 'border-border'
+                    }`}
                   placeholder="Full description with all details about the event (50-2000 characters)"
                 />
-                {errors.detailedDescription && <p className="mt-1 text-sm text-red-500">{errors.detailedDescription}</p>}
-                <p className="mt-1 text-xs text-slate-500">{formData.detailedDescription.length}/2000 characters</p>
+                {errors.detailedDescription && <p className="mt-1 text-sm text-danger">{errors.detailedDescription}</p>}
+                <p className="mt-1 text-xs text-text/70">{formData.detailedDescription.length}/2000 characters</p>
               </div>
 
               {/* Date and Location Row */}
               <div className="grid gap-6 md:grid-cols-2">
                 {/* Date */}
                 <div>
-                  <label htmlFor="date" className="block text-sm font-medium text-slate-900 mb-2">
-                    Event Date & Time <span className="text-red-500">*</span>
+                  <label htmlFor="date" className="block text-sm font-medium text-heading mb-2">
+                    Event Date & Time <span className="text-danger">*</span>
                   </label>
                   <input
                     type="datetime-local"
@@ -369,17 +396,16 @@ export default function EditEvent() {
                     name="date"
                     value={formData.date}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                      errors.date ? 'border-red-500' : 'border-slate-300'
-                    }`}
+                    className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.date ? 'border-danger' : 'border-border'
+                      }`}
                   />
-                  {errors.date && <p className="mt-1 text-sm text-red-500">{errors.date}</p>}
+                  {errors.date && <p className="mt-1 text-sm text-danger">{errors.date}</p>}
                 </div>
 
                 {/* Location */}
                 <div>
-                  <label htmlFor="location" className="block text-sm font-medium text-slate-900 mb-2">
-                    Location <span className="text-red-500">*</span>
+                  <label htmlFor="location" className="block text-sm font-medium text-heading mb-2">
+                    Location <span className="text-danger">*</span>
                   </label>
                   <input
                     type="text"
@@ -387,19 +413,18 @@ export default function EditEvent() {
                     name="location"
                     value={formData.location}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                      errors.location ? 'border-red-500' : 'border-slate-300'
-                    }`}
+                    className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.location ? 'border-danger' : 'border-border'
+                      }`}
                     placeholder="e.g., Central Park, New York"
                   />
-                  {errors.location && <p className="mt-1 text-sm text-red-500">{errors.location}</p>}
+                  {errors.location && <p className="mt-1 text-sm text-danger">{errors.location}</p>}
                 </div>
               </div>
 
               {/* Duration */}
               <div>
-                <label htmlFor="duration" className="block text-sm font-medium text-slate-900 mb-2">
-                  Duration <span className="text-red-500">*</span>
+                <label htmlFor="duration" className="block text-sm font-medium text-heading mb-2">
+                  Duration <span className="text-danger">*</span>
                 </label>
                 <input
                   type="text"
@@ -407,18 +432,17 @@ export default function EditEvent() {
                   name="duration"
                   value={formData.duration}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                    errors.duration ? 'border-red-500' : 'border-slate-300'
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.duration ? 'border-danger' : 'border-border'
+                    }`}
                   placeholder="e.g., 4 hours"
                 />
-                {errors.duration && <p className="mt-1 text-sm text-red-500">{errors.duration}</p>}
+                {errors.duration && <p className="mt-1 text-sm text-danger">{errors.duration}</p>}
               </div>
 
               {/* Capacity */}
               <div>
-                <label htmlFor="capacity" className="block text-sm font-medium text-slate-900 mb-2">
-                  Maximum Capacity <span className="text-red-500">*</span>
+                <label htmlFor="capacity" className="block text-sm font-medium text-heading mb-2">
+                  Maximum Capacity <span className="text-danger">*</span>
                 </label>
                 <input
                   type="number"
@@ -428,21 +452,20 @@ export default function EditEvent() {
                   onChange={handleChange}
                   min={event?.registeredParticipants || 1}
                   max="10000"
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                    errors.capacity ? 'border-red-500' : 'border-slate-300'
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.capacity ? 'border-danger' : 'border-border'
+                    }`}
                   placeholder="e.g., 100"
                 />
-                {errors.capacity && <p className="mt-1 text-sm text-red-500">{errors.capacity}</p>}
-                <p className="mt-1 text-xs text-slate-500">
+                {errors.capacity && <p className="mt-1 text-sm text-danger">{errors.capacity}</p>}
+                <p className="mt-1 text-xs text-text/70">
                   Maximum participants (1-10000). Current participants: {event?.registeredParticipants || 0}
                 </p>
               </div>
 
               {/* Requirements */}
               <div>
-                <label htmlFor="requirements" className="block text-sm font-medium text-slate-900 mb-2">
-                  Requirements <span className="text-red-500">*</span>
+                <label htmlFor="requirements" className="block text-sm font-medium text-heading mb-2">
+                  Requirements <span className="text-danger">*</span>
                 </label>
                 <textarea
                   id="requirements"
@@ -450,19 +473,18 @@ export default function EditEvent() {
                   value={formData.requirements}
                   onChange={handleChange}
                   rows={3}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                    errors.requirements ? 'border-red-500' : 'border-slate-300'
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.requirements ? 'border-danger' : 'border-border'
+                    }`}
                   placeholder="What participants need to bring or prepare (10-500 characters)"
                 />
-                {errors.requirements && <p className="mt-1 text-sm text-red-500">{errors.requirements}</p>}
-                <p className="mt-1 text-xs text-slate-500">{formData.requirements.length}/500 characters</p>
+                {errors.requirements && <p className="mt-1 text-sm text-danger">{errors.requirements}</p>}
+                <p className="mt-1 text-xs text-text/70">{formData.requirements.length}/500 characters</p>
               </div>
 
               {/* Benefits */}
               <div>
-                <label htmlFor="benefits" className="block text-sm font-medium text-slate-900 mb-2">
-                  Benefits <span className="text-red-500">*</span>
+                <label htmlFor="benefits" className="block text-sm font-medium text-heading mb-2">
+                  Benefits <span className="text-danger">*</span>
                 </label>
                 <textarea
                   id="benefits"
@@ -470,19 +492,18 @@ export default function EditEvent() {
                   value={formData.benefits}
                   onChange={handleChange}
                   rows={3}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                    errors.benefits ? 'border-red-500' : 'border-slate-300'
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.benefits ? 'border-danger' : 'border-border'
+                    }`}
                   placeholder="What participants will receive or gain (10-500 characters)"
                 />
-                {errors.benefits && <p className="mt-1 text-sm text-red-500">{errors.benefits}</p>}
-                <p className="mt-1 text-xs text-slate-500">{formData.benefits.length}/500 characters</p>
+                {errors.benefits && <p className="mt-1 text-sm text-danger">{errors.benefits}</p>}
+                <p className="mt-1 text-xs text-text/70">{formData.benefits.length}/500 characters</p>
               </div>
 
               {/* Image URL */}
               <div>
-                <label htmlFor="image" className="block text-sm font-medium text-slate-900 mb-2">
-                  Event Image URL <span className="text-red-500">*</span>
+                <label htmlFor="image" className="block text-sm font-medium text-heading mb-2">
+                  Event Image URL <span className="text-danger">*</span>
                 </label>
                 <input
                   type="url"
@@ -490,27 +511,30 @@ export default function EditEvent() {
                   name="image"
                   value={formData.image}
                   onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                    errors.image ? 'border-red-500' : 'border-slate-300'
-                  }`}
+                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary ${errors.image ? 'border-danger' : 'border-border'
+                    }`}
                   placeholder="https://images.unsplash.com/photo-... or any valid image URL"
                 />
-                {errors.image && <p className="mt-1 text-sm text-red-500">{errors.image}</p>}
-                <p className="mt-1 text-xs text-slate-500">
+                {errors.image && <p className="mt-1 text-sm text-danger">{errors.image}</p>}
+                <p className="mt-1 text-xs text-text/70">
                   Enter a valid landscape image URL (from Unsplash, Pexels, or any other source)
                 </p>
-                
+
                 {/* Image Preview */}
                 {formData.image && (formData.image.startsWith('http://') || formData.image.startsWith('https://')) && (
-                  <div className="mt-4 rounded-lg overflow-hidden border-2 border-green-200 shadow-md">
-                    <img 
-                      src={formData.image} 
-                      alt="Event preview"
-                      className="w-full h-64 object-cover"
-                      onError={(e) => {
-                        e.target.parentElement.innerHTML = '<div class="w-full h-64 bg-red-50 flex items-center justify-center"><p class="text-red-600 text-sm">Failed to load image. Please check the URL.</p></div>'
-                      }}
-                    />
+                  <div className="mt-4 rounded-lg overflow-hidden border-2 border-primary shadow-md">
+                    {!imageError ? (
+                      <img
+                        src={formData.image}
+                        alt="Event preview"
+                        className="w-full h-64 object-cover"
+                        onError={() => setImageError(true)}
+                      />
+                    ) : (
+                      <div className="w-full h-64 bg-danger/10 flex items-center justify-center">
+                        <p className="text-danger text-sm">Failed to load image. Please check the URL.</p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -527,8 +551,8 @@ export default function EditEvent() {
                 </Button>
                 <Button
                   type="submit"
+                  variant="primary"
                   disabled={isSubmitting}
-                  className="bg-green-600 hover:bg-green-700"
                 >
                   {isSubmitting ? 'Updating Event...' : 'Update Event'}
                 </Button>

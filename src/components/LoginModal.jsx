@@ -98,23 +98,23 @@ export default function LoginModal({ isOpen, onClose }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-dark/50 backdrop-blur-sm"
         onClick={onClose}
       />
       
       {/* Modal */}
-      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-sm mx-4">
+      <div className="relative bg-surface rounded-lg shadow-xl w-full max-w-sm mx-4">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div>
-            <h2 className="text-2xl font-semibold text-gray-900">
+            <h2 className="text-2xl font-semibold text-heading">
               Login to EcoTrack
             </h2>
-            <p className="mt-1 text-sm text-slate-900">Sign in to your account to continue.</p>
+            <p className="mt-1 text-sm text-heading">Sign in to your account to continue.</p>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-500 transition-colors"
+            className="text-text/60 hover:text-text/70 transition-colors"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -138,12 +138,12 @@ export default function LoginModal({ isOpen, onClose }) {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="you@example.com"
-                className={`w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 ${
-                  errors.email ? 'border-red-300' : 'border-gray-300'
+                className={`w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
+                  errors.email ? 'border-danger' : 'border-border'
                 }`}
               />
               {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                <p className="mt-1 text-sm text-danger">{errors.email}</p>
               )}
             </div>
 
@@ -159,12 +159,12 @@ export default function LoginModal({ isOpen, onClose }) {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Enter your password"
-                className={`w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 ${
-                  errors.password ? 'border-red-300' : 'border-gray-300'
+                className={`w-full rounded-md border px-3 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
+                  errors.password ? 'border-danger' : 'border-border'
                 }`}
               />
               {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                <p className="mt-1 text-sm text-danger">{errors.password}</p>
               )}
             </div>
 
@@ -180,7 +180,7 @@ export default function LoginModal({ isOpen, onClose }) {
 
           {/* Divider */}
           <div className="mt-4 text-center">
-            <span className="px-2 text-sm text-slate-500">or</span>
+            <span className="px-2 text-sm text-text/70">or</span>
           </div>
 
           {/* Google Login Button */}
@@ -204,13 +204,13 @@ export default function LoginModal({ isOpen, onClose }) {
           <div className="mt-4 flex items-center justify-between text-sm">
             <button 
               onClick={onClose}
-              className="text-slate-700 hover:text-emerald-700"
+              className="text-text hover:text-primary"
             >
               Create Account
             </button>
             <button 
               onClick={onClose}
-              className="text-slate-700 hover:text-emerald-700"
+              className="text-text hover:text-primary"
             >
               Forgot Password
             </button>

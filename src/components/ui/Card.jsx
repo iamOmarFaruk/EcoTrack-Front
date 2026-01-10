@@ -1,11 +1,11 @@
 import clsx from 'clsx'
 
 export function Card({ className, ...props }) {
-  return <div className={clsx('rounded-lg border bg-white shadow-sm', className)} {...props} />
+  return <div className={clsx('rounded-lg border border-border bg-surface shadow-sm', className)} {...props} />
 }
 
 export function CardHeader({ className, ...props }) {
-  return <div className={clsx('p-3 sm:p-4 border-b', className)} {...props} />
+  return <div className={clsx('p-3 sm:p-4 border-b border-border', className)} {...props} />
 }
 
 export function CardContent({ className, ...props }) {
@@ -13,7 +13,6 @@ export function CardContent({ className, ...props }) {
 }
 
 export function CardFooter({ className, ...props }) {
-  return <div className={clsx('p-3 sm:p-4 border-t', className)} {...props} />
+  return <div className={clsx('p-3 sm:p-4 border-t border-border', className)} {...props} />
 }
-
 

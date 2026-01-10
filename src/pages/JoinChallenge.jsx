@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
-import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
+import { showSuccess, showError } from '../utils/toast.jsx'
 
 export default function JoinChallenge() {
   useDocumentTitle('Joining Challenge')
@@ -17,7 +17,6 @@ export default function JoinChallenge() {
         showSuccess('Successfully joined the challenge!')
         navigate('/my-activities', { replace: true })
       } catch (error) {
-
         showError(error.message || 'Failed to join challenge. Please try again.')
         navigate('/challenges', { replace: true })
       }
@@ -28,5 +27,3 @@ export default function JoinChallenge() {
 
   return null
 }
-
-

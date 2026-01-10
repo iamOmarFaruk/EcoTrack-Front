@@ -1,91 +1,48 @@
 import { useEffect, useRef, useState } from 'react'
 import { Leaf, Recycle, Droplets, Zap } from 'lucide-react'
+import { animate, useInView } from 'framer-motion'
 import SectionHeading from './SectionHeading.jsx'
-import { Card, CardContent } from './ui/Card.jsx'
+import ImpactCard from './ui/ImpactCard.jsx'
 import LazySection from './LazySection.jsx'
 import { CommunityStatsCardSkeleton } from './Skeleton.jsx'
 import { challengeApi } from '../services/api.js'
+import { motion } from 'framer-motion'
+import { stackedContainer, stackedItem } from '../utils/animations'
 
-function formatValue(value) {
-  if (typeof value !== 'number' || !Number.isFinite(value)) return '0'
-  return value.toLocaleString()
-}
-
-// Simple easing for a smoother finish
-function easeOutCubic(t) {
-  return 1 - Math.pow(1 - t, 3)
-}
-
-// Observe element once and flip true when it first enters the viewport
-function useInViewOnce(options) {
-  const ref = useRef(null)
-  const [inView, setInView] = useState(false)
-
-  useEffect(() => {
-    if (!ref.current || inView) return
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0]
-        if (entry.isIntersecting) {
-          setInView(true)
-          observer.disconnect()
-        }
-      },
-      options || { threshold: 0.25 }
-    )
-    observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [inView, options])
-
-  return [ref, inView]
-}
-
-// Animated number that counts from 0 to target when isActive becomes true
+// Animated number using Framer Motion
 function AnimatedNumber({ value, isActive, durationMs = 1600 }) {
-  const [displayValue, setDisplayValue] = useState(0)
-  const rafRef = useRef(null)
-  const startTsRef = useRef(null)
+  const ref = useRef(null)
 
   useEffect(() => {
     if (!isActive) return
-    // Cancel any previous animation
-    if (rafRef.current) {
-      cancelAnimationFrame(rafRef.current)
-    }
-    startTsRef.current = null
 
+    const node = ref.current
     const endValue = Number.isFinite(value) ? value : 0
-    const duration = Math.max(300, durationMs)
 
-    const tick = (ts) => {
-      if (!startTsRef.current) startTsRef.current = ts
-      const elapsed = ts - startTsRef.current
-      const progress = Math.min(1, elapsed / duration)
-      const eased = easeOutCubic(progress)
-      const current = Math.round(eased * endValue)
-      setDisplayValue(current)
-      if (progress < 1) {
-        rafRef.current = requestAnimationFrame(tick)
+    const controls = animate(0, endValue, {
+      duration: durationMs / 1000,
+      ease: 'easeOut',
+      onUpdate: (latest) => {
+        if (node) {
+          node.textContent = Math.round(latest).toLocaleString()
+        }
       }
-    }
+    })
 
-    rafRef.current = requestAnimationFrame(tick)
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
-    }
-    // Only start when flag flips true or value changes
+    return () => controls.stop()
   }, [isActive, value, durationMs])
 
-  return <>{formatValue(displayValue)}</>
+  return <span ref={ref}>0</span>
 }
 
 export default function CommunityStats() {
   const [stats, setStats] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  // Use a small sentinel placed just above the grid so animation starts
-  // when the user actually reaches this section (not on initial page load).
-  const [triggerRef, inView] = useInViewOnce({ rootMargin: '0px 0px -25% 0px', threshold: 0 })
+
+  // Use Framer Motion to detect when the section is in view
+  const triggerRef = useRef(null)
+  const inView = useInView(triggerRef, { once: true, margin: '0px 0px -25% 0px' })
 
   // Fetch live community impact summary from API
   useEffect(() => {
@@ -97,8 +54,6 @@ export default function CommunityStats() {
         setError(null)
 
         const response = await challengeApi.getCommunityImpactSummary()
-
-        // Normalize different possible response shapes
         const root = response?.data || {}
         const payload = root.data || root
 
@@ -115,32 +70,28 @@ export default function CommunityStats() {
             label: 'CO₂ avoided',
             value: co2SavedKg,
             unit: 'kg',
-            icon: Leaf,
-            accent: 'bg-emerald-50 text-emerald-600'
+            icon: Leaf
           },
           {
             key: 'plasticReducedKg',
             label: 'Plastic reduced',
             value: plasticReducedKg,
             unit: 'kg',
-            icon: Recycle,
-            accent: 'bg-teal-50 text-teal-600'
+            icon: Recycle
           },
           {
             key: 'waterSavedL',
             label: 'Water saved',
             value: waterSavedL,
             unit: 'L',
-            icon: Droplets,
-            accent: 'bg-blue-50 text-blue-600'
+            icon: Droplets
           },
           {
             key: 'energySavedKwh',
             label: 'Energy saved',
             value: energySavedKwh,
             unit: 'kWh',
-            icon: Zap,
-            accent: 'bg-amber-50 text-amber-600'
+            icon: Zap
           }
         ]
 
@@ -149,7 +100,6 @@ export default function CommunityStats() {
         }
       } catch (err) {
         if (isMounted) {
-          console.error('Failed to load community impact stats:', err)
           setError('Unable to load live stats right now.')
           setStats([])
         }
@@ -161,70 +111,66 @@ export default function CommunityStats() {
     }
 
     fetchCommunityImpact()
-
-    return () => {
-      isMounted = false
-    }
+    return () => { isMounted = false }
   }, [])
 
   return (
-    <section>
-      <SectionHeading
-        title="Live Community Impact"
-        subtitle="Community-wide impact at a glance"
-      />
-      {/* Invisible sentinel that enters view right before the grid */}
-      <span ref={triggerRef} aria-hidden="true" className="block h-px w-px opacity-0" />
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {!loading && error && (
-          <div className="sm:col-span-2 lg:col-span-4 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
-            {error}
-          </div>
-        )}
+    <section className="bg-light/50">
+      <div className="container mx-auto">
+        <SectionHeading
+          badge="Live Impact"
+          title="Our Community's Contribution"
+          subtitle="Real-time environmental impact tracking across all active challenges"
+        />
 
-        {loading &&
-          Array.from({ length: 4 }).map((_, i) => (
-            <LazySection
-              key={i}
-              fallback={<CommunityStatsCardSkeleton />}
-              minimumLoadingTime={2000}
-            >
-              <div style={{ display: 'none' }}>Hidden while loading</div>
-            </LazySection>
-          ))}
+        <span ref={triggerRef} aria-hidden="true" className="block h-px w-px opacity-0" />
 
-        {!loading && !error &&
-          stats?.map((item) => (
-            <LazySection
-              key={item.key}
-              fallback={<CommunityStatsCardSkeleton />}
-              minimumLoadingTime={2000}
-              intersectionOptions={{
-                threshold: 0.1,
-                rootMargin: '50px'
-              }}
+        <motion.div
+          className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 px-4 md:px-0"
+          variants={stackedContainer}
+          initial="hidden"
+          animate={inView ? "show" : "hidden"}
+        >
+          {loading ? (
+            Array.from({ length: 4 }).map((_, i) => (
+              <motion.div key={`skeleton-${i}`} variants={stackedItem}>
+                <CommunityStatsCardSkeleton />
+              </motion.div>
+            ))
+          ) : error ? (
+            <motion.div
+              className="sm:col-span-2 lg:col-span-4 text-sm text-secondary bg-secondary/10 border border-secondary/40 rounded-lg px-4 py-3 text-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
             >
-              <Card className="h-full">
-                <CardContent className="flex h-full items-center gap-4">
-                  <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ring-1 ring-emerald-100 ${item.accent || 'bg-emerald-50 text-emerald-700'}`}>
-                    {item.icon && (
-                      <item.icon className="h-5 w-5" aria-hidden="true" />
-                    )}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs text-slate-500">{item.label}</p>
-                    <p className="truncate text-xl font-extrabold tracking-tight text-slate-900">
-                      <AnimatedNumber value={item.value} isActive={inView} />{' '}
-                      <span className="text-xs font-semibold text-slate-500 align-middle">{item.unit}</span>
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </LazySection>
-          ))}
+              {error}
+            </motion.div>
+          ) : (
+            stats?.map((item, index) => (
+              <motion.div
+                key={item.key}
+                initial={{ opacity: 0, y: 60, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{
+                  duration: 0.8,
+                  delay: index * 0.12,
+                  ease: [0.16, 1, 0.3, 1]
+                }}
+              >
+                <ImpactCard
+                  label={item.label}
+                  unit={item.unit}
+                  icon={item.icon}
+                  accentColor={item.key === 'co2SavedKg' ? 'primary' : 'secondary'}
+                >
+                  <AnimatedNumber value={item.value} isActive={inView} />
+                </ImpactCard>
+              </motion.div>
+            ))
+          )}
+        </motion.div>
       </div>
     </section>
   )
 }
-
-

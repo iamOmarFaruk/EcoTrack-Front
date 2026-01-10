@@ -197,6 +197,11 @@ export const communityApi = {
   getLeaderboard: (filters = {}) => httpClient.get('/community/leaderboard', { params: filters })
 }
 
+// Site content (public marketing copy)
+export const siteContentApi = {
+  getPublic: () => httpClient.get('/site/content')
+}
+
 // Export the ApiError for error handling
 export { ApiError }
 
@@ -207,5 +212,6 @@ export default {
   user: userApi,
   community: communityApi,
   tips: tipsApi,
-  events: eventApi
+  events: eventApi,
+  site: siteContentApi
 }

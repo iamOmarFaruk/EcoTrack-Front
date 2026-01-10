@@ -1,129 +1,342 @@
-import { useState, useEffect } from 'react'
-import SectionHeading from '../components/SectionHeading.jsx'
-import ProfileAvatar from '../components/ProfileAvatar.jsx'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  Award,
+  Zap,
+  Droplets,
+  Trees,
+  Activity,
+  Clock,
+  Calendar,
+  ChevronRight,
+  ChevronDown,
+  TrendingUp,
+  Target,
+  Leaf,
+  Star
+} from 'lucide-react'
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer
+} from 'recharts'
+import Button from '../components/ui/Button.jsx'
+import { Card, CardContent } from '../components/ui/Card.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
-import { useMinimumLoading } from '../hooks/useMinimumLoading.js'
 import EcoLoader from '../components/EcoLoader.jsx'
-import { authApi } from '../services/api.js'
-import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
+import { useUserProfile } from '../hooks/queries'
+import { containerVariants, itemVariants } from '../utils/animations'
+import { showSuccess } from '../utils/toast.jsx'
+
+// Mock data sets for different metrics
+const impactDataSets = {
+  co2: [
+    { name: 'Mon', value: 40 },
+    { name: 'Tue', value: 30 },
+    { name: 'Wed', value: 65 },
+    { name: 'Thu', value: 45 },
+    { name: 'Fri', value: 90 },
+    { name: 'Sat', value: 70 },
+    { name: 'Sun', value: 85 },
+  ],
+  water: [
+    { name: 'Mon', value: 20 },
+    { name: 'Tue', value: 50 },
+    { name: 'Wed', value: 35 },
+    { name: 'Thu', value: 80 },
+    { name: 'Fri', value: 60 },
+    { name: 'Sat', value: 95 },
+    { name: 'Sun', value: 75 },
+  ],
+  score: [
+    { name: 'Mon', value: 60 },
+    { name: 'Tue', value: 40 },
+    { name: 'Wed', value: 55 },
+    { name: 'Thu', value: 30 },
+    { name: 'Fri', value: 70 },
+    { name: 'Sat', value: 50 },
+    { name: 'Sun', value: 90 },
+  ],
+}
+
+const metricConfigs = {
+  co2: { label: 'CO2 Saved', icon: Leaf, color: 'text-emerald-500', gradient: 'colorCO2', stopColor: '#10b981' },
+  water: { label: 'Water Saved', icon: Droplets, color: 'text-blue-500', gradient: 'colorWater', stopColor: '#3b82f6' },
+  score: { label: 'Activity Score', icon: Zap, color: 'text-amber-500', gradient: 'colorScore', stopColor: '#f59e0b' },
+}
 
 export default function Profile() {
-  const isLoading = useMinimumLoading(300)
   const { auth } = useAuth()
-  const [userData, setUserData] = useState(null)
-  const [fetchingUser, setFetchingUser] = useState(false)
+  const { data: userData, isLoading } = useUserProfile()
+  const [activeMetric, setActiveMetric] = useState('co2')
+  const [hoveredMetric, setHoveredMetric] = useState(null)
 
-  // Fetch current user data from database using /auth/me endpoint
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (!auth.user?.uid) return
-      
-      setFetchingUser(true)
-      try {
-        const response = await authApi.getMe()
-        // response.data contains complete user data with stats, badges, rank
-        const userData = response?.data || response
-        setUserData(userData)
-      } catch (error) {
-        console.error('Failed to fetch user data:', error)
-        showError('Failed to load user data')
-      } finally {
-        setFetchingUser(false)
-      }
-    }
-
-    fetchUserData()
-  }, [auth.user?.uid])
-
-  if (isLoading || fetchingUser) {
+  if (isLoading) {
     return <EcoLoader />
   }
 
+  const user = userData || auth.user || {}
+  const displayName = user.name || user.displayName || 'Eco Warrior'
+  const userRank = user.rank || 'Seedling'
+
+  const stats = [
+    { label: 'CO2 Saved', value: user.stats?.co2Saved || '12.4kg', icon: Zap, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+    { label: 'Water Saved', value: user.stats?.waterSaved || '450L', icon: Droplets, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+    { label: 'Trees Planted', value: user.stats?.treesPlanted || '5', icon: Trees, color: 'text-green-500', bg: 'bg-green-500/10' },
+    { label: 'Activity Score', value: user.stats?.score || '850', icon: Activity, color: 'text-purple-500', bg: 'bg-purple-500/10' },
+  ]
+
   return (
-    <div className="max-w-4xl mx-auto">
-      <SectionHeading title="My Profile" subtitle="Your personal eco-journey dashboard" />
-      
-      <div className="grid gap-6">
-        {/* Profile Card */}
-        <div className="bg-white rounded-xl p-8 border border-gray-200 shadow-sm">
-          <div className="text-center mb-8">
-            {/* Use photoURL from database if available, fallback to auth user avatar */}
-            <div className="w-20 h-20 mx-auto mb-4 rounded-full overflow-hidden bg-emerald-100 flex items-center justify-center relative">
-              {(() => {
-                // Priority: auth.user (Firebase) > userData (database) for most up-to-date info
-                const imageUrl = auth.user?.avatarUrl || userData?.photoURL
-                const displayName = auth.user?.name || userData?.displayName || 'User'
-                
-                if (imageUrl) {
-                  return (
-                    <div 
-                      className="w-full h-full bg-cover bg-center bg-no-repeat"
-                      style={{ backgroundImage: `url(${imageUrl})` }}
-                      title={displayName}
-                    />
-                  )
-                } else {
-                  return (
-                    <div className="w-full h-full bg-emerald-500 flex items-center justify-center text-white text-2xl font-bold">
-                      {displayName.charAt(0).toUpperCase()}
-                    </div>
-                  )
-                }
-              })()}
+    <motion.div
+      key={`profile-page-${user.id || 'loading'}`}
+      initial="hidden"
+      animate="show"
+      variants={containerVariants}
+      className="space-y-8 pb-12"
+    >
+      {/* Premium Hero Section */}
+      <motion.section
+        variants={itemVariants}
+        className="relative overflow-hidden rounded-3xl border border-border bg-surface p-8 shadow-xl"
+      >
+        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-secondary/5 blur-3xl" />
+
+        <div className="relative flex flex-col items-center gap-6 md:flex-row md:items-start md:gap-8">
+          {/* Avatar */}
+          <div className="group relative">
+            <div className="h-24 w-24 overflow-hidden rounded-2xl border-4 border-light/5 shadow-xl transition-transform duration-500 group-hover:scale-105 md:h-32 md:w-32">
+              {user.avatarUrl || user.photoURL ? (
+                <img src={user.avatarUrl || user.photoURL} alt={displayName} className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-primary/10 text-4xl font-bold uppercase text-primary backdrop-blur-md">
+                  {displayName.charAt(0)}
+                </div>
+              )}
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">{auth.user?.name || userData?.displayName || 'Eco User'}</h2>
-            <p className="text-gray-600">{auth.user?.email || userData?.email}</p>
-            <div className="flex items-center justify-center gap-4 mt-2 text-sm text-gray-500">
-              {userData?.membershipDuration && (
-                <span>Member for {userData.membershipDuration}</span>
-              )}
-              {userData?.rank && (
-                <span className="px-3 py-1 bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-700 rounded-full font-medium">
-                  {userData.rank}
-                </span>
-              )}
+            <div className="absolute -bottom-2 -right-2 flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-surface shadow-lg">
+              <Award size={18} />
             </div>
           </div>
-          
-          {/* Badges Section */}
-          {userData?.badges && userData.badges.length > 0 && (
-            <div className="mt-6 p-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-lg">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Badges Earned</h3>
-              <div className="flex flex-wrap gap-3">
-                {userData.badges.map((badge, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm border border-yellow-200"
-                    title={badge.category}
-                  >
-                    <span className="text-2xl">{badge.icon}</span>
-                    <span className="text-sm font-medium text-gray-700">{badge.name}</span>
+
+          <div className="flex-1 text-center md:text-left">
+            <div className="flex flex-col items-center gap-2 md:flex-row md:gap-4">
+              <h1 className="text-3xl font-bold tracking-tight text-heading md:text-4xl">{displayName}</h1>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-4 py-1 text-sm font-semibold text-primary">
+                <Target size={14} />
+                {userRank}
+              </span>
+            </div>
+            <p className="mt-2 text-text/60">{user.email}</p>
+
+            <div className="mt-6 flex flex-wrap justify-center gap-4 md:justify-start">
+              <div className="flex items-center gap-2 rounded-xl bg-light px-4 py-2 text-sm font-semibold text-heading shadow-sm">
+                <Calendar size={16} className="text-primary" />
+                <span>Joined {user.membershipDuration || 'recently'}</span>
+              </div>
+              <div className="flex items-center gap-2 rounded-xl bg-light px-4 py-2 text-sm font-semibold text-heading shadow-sm">
+                <TrendingUp size={16} className="text-primary" />
+                <span>Level 4 Eco Hero</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Stats Grid */}
+      <motion.div
+        variants={containerVariants}
+        className="grid grid-cols-2 gap-6 lg:grid-cols-4"
+      >
+        {stats.map((stat, index) => (
+          <motion.div
+            key={stat.label}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+          >
+            <Card className="rounded-2xl shadow-sm transition-all hover:shadow-md">
+              <CardContent className="p-6">
+                <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl ${stat.bg} ${stat.color}`}>
+                  <stat.icon size={20} />
+                </div>
+                <p className="text-sm font-medium text-text/60">{stat.label}</p>
+                <p className="text-2xl font-bold text-heading">{stat.value}</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </motion.div>
+
+      {/* Main Content Grid */}
+      <motion.div
+        variants={containerVariants}
+        className="grid gap-6 lg:grid-cols-3"
+      >
+        {/* Impact Chart */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="col-span-1 flex flex-col rounded-2xl border border-border bg-surface p-6 shadow-sm lg:col-span-2"
+        >
+          <div className="mb-8 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              <h3 className="text-xl font-bold tracking-tight text-heading">Over Time</h3>
+              <div className="flex items-center gap-1.5 rounded-xl bg-light p-1 shadow-inner">
+                {Object.entries(metricConfigs).map(([key, config]) => (
+                  <div key={key} className="relative">
+                    <Button
+                      onClick={() => setActiveMetric(key)}
+                      onMouseEnter={() => setHoveredMetric(key)}
+                      onMouseLeave={() => setHoveredMetric(null)}
+                      variant="ghost"
+                      size="sm"
+                      className={`h-8 w-8 rounded-lg p-0 transition-all ${activeMetric === key
+                        ? `bg-surface ${config.color} shadow-sm scale-110`
+                        : 'text-text/40 hover:text-text/60 hover:bg-surface/50'
+                        }`}
+                    >
+                      <config.icon size={16} />
+                    </Button>
+
+                    <AnimatePresence>
+                      {hoveredMetric === key && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10, x: '-50%' }}
+                          animate={{ opacity: 1, y: 0, x: '-50%' }}
+                          exit={{ opacity: 0, y: 5, x: '-50%' }}
+                          className="absolute -top-10 left-1/2 z-50 whitespace-nowrap rounded-lg bg-zinc-900 px-2.5 py-1.5 text-[10px] font-bold text-white shadow-2xl dark:bg-zinc-800 dark:border dark:border-white/10"
+                        >
+                          {config.label}
+                          {/* Triangle Pointer */}
+                          <div className="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 bg-zinc-900 dark:bg-zinc-800 dark:border-b dark:border-r dark:border-white/10" />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 ))}
               </div>
             </div>
-          )}
-        </div>
 
-        {/* Coming Soon Card */}
-        <div className="bg-white rounded-xl p-8 border border-gray-200 shadow-sm text-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <span className="text-2xl">🚀</span>
+            <div className="relative group self-end sm:self-auto">
+              <select className="appearance-none rounded-full border border-border bg-surface hover:bg-light/50 pl-5 pr-10 py-2.5 text-sm font-semibold text-heading outline-none transition-all cursor-pointer shadow-sm">
+                <option>Last 7 Days</option>
+                <option>Last 30 Days</option>
+                <option>Last 90 Days</option>
+              </select>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text/60 group-hover:text-primary transition-colors">
+                <ChevronDown size={14} strokeWidth={3} />
+              </div>
+            </div>
           </div>
-          
-          <h3 className="text-xl font-bold text-gray-900 mb-4">More Features Coming Soon</h3>
-          
-          <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-            We're working hard to create an amazing profile experience for you. 
-            This page will include your eco stats, achievements, and personalized dashboard.
-          </p>
-          
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100 text-emerald-700 rounded-full text-sm font-medium">
-            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-            In Development
+          <div className="h-[250px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={impactDataSets[activeMetric]}>
+                <defs>
+                  <linearGradient id="colorMetric" x1="0" y1="0" x2="0" y2="1">
+                    <stop
+                      offset="5%"
+                      stopColor={metricConfigs[activeMetric].stopColor}
+                      stopOpacity={0.3}
+                    />
+                    <stop
+                      offset="95%"
+                      stopColor={metricConfigs[activeMetric].stopColor}
+                      stopOpacity={0}
+                    />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgb(var(--color-border))" />
+                <XAxis
+                  dataKey="name"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: 'rgb(var(--color-text))', fontSize: 12 }}
+                  dy={10}
+                />
+                <YAxis hide />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'rgb(var(--color-surface))',
+                    border: '1px solid rgb(var(--color-border))',
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                  }}
+                  itemStyle={{
+                    color: metricConfigs[activeMetric].stopColor,
+                    fontWeight: 'bold'
+                  }}
+                  formatter={(value) => [`${value} units`, metricConfigs[activeMetric].label]}
+                />
+                <Area
+                  key={activeMetric}
+                  type="monotone"
+                  dataKey="value"
+                  stroke={metricConfigs[activeMetric].stopColor}
+                  strokeWidth={3}
+                  fillOpacity={1}
+                  fill="url(#colorMetric)"
+                  animationDuration={1000}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
-        </div>
-      </div>
-    </div>
+        </motion.div>
+
+        {/* Badges Section */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex flex-col rounded-2xl border border-border bg-surface p-6 shadow-sm"
+        >
+          <div className="mb-6 flex items-center justify-between">
+            <h3 className="text-lg font-bold text-heading">Featured Badges</h3>
+          </div>
+
+          <div className="space-y-4">
+            {(user.badges && user.badges.length > 0 ? user.badges : [
+              { name: 'Eco Pioneer', icon: Leaf, category: 'General', color: 'text-green-500' },
+              { name: 'Water Saver', icon: Droplets, category: 'Resources', color: 'text-blue-500' },
+              { name: 'Elite Member', icon: Star, category: 'Community', color: 'text-amber-500' }
+            ]).slice(0, 3).map((badge, i) => (
+              <div
+                key={i}
+                onClick={() => showSuccess(`The details for "${badge.name}" aren't developed yet as this is a demo project.`)}
+                className="group flex items-center gap-4 rounded-xl border border-transparent p-2 transition-all hover:bg-light hover:border-border cursor-pointer"
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-light shadow-inner group-hover:scale-110 transition-transform">
+                  {typeof badge.icon === 'string' ? (
+                    <span className="text-2xl">{badge.icon}</span>
+                  ) : (
+                    <badge.icon size={20} className={badge.color || 'text-primary'} />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <p className="font-bold text-heading text-sm">{badge.name}</p>
+                  <p className="text-xs text-text/60">{badge.category}</p>
+                </div>
+                <ChevronRight size={16} className="text-text/30" />
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 rounded-xl bg-light p-4">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-text/40">
+              <Clock size={12} />
+              Recent Achievement
+            </div>
+            <p className="mt-2 text-sm font-medium text-heading">Completed "No Plastic Week"</p>
+            <div className="mt-3 h-1.5 w-full rounded-full bg-border overflow-hidden">
+              <div className="h-full w-[85%] bg-primary rounded-full" />
+            </div>
+            <p className="mt-2 text-[10px] text-text/50">85% to Next Milestone</p>
+          </div>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   )
 }

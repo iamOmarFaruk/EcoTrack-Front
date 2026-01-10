@@ -1,52 +1,42 @@
+
 import { Link, NavLink } from 'react-router-dom'
+import { User, Activity, Calendar, Settings as SettingsIcon, LogOut, Sun, Moon, Monitor } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import clsx from 'clsx'
 import { useAuth } from '../context/AuthContext.jsx'
+import { useTheme } from '../context/ThemeContext.jsx'
 import Logo from './Logo.jsx'
 import Button from './ui/Button.jsx'
 import ProfileAvatar from './ProfileAvatar.jsx'
 
 const navItems = [
   { to: '/', label: 'Home' },
+  { to: '/about', label: 'About' },
   { to: '/challenges', label: 'Challenges' },
   { to: '/tips', label: 'Tips' },
   { to: '/events', label: 'Events' },
-  { to: '/about', label: 'About' },
   { to: '/contact', label: 'Contact' },
 ]
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const { auth, logout, loading } = useAuth()
-  const [show, setShow] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
+  const { theme, setTheme } = useTheme()
+  const [isScrolled, setIsScrolled] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const profileRef = useRef(null)
 
   const userName = auth.user?.name || 'Eco User'
 
-  // Simple scroll handler
   useEffect(() => {
-    const controlNavbar = () => {
-      const currentScrollY = window.scrollY
-      
-      if (currentScrollY < 80) {
-        // Always show at top
-        setShow(true)
-      } else if (currentScrollY > lastScrollY) {
-        // Scrolling down - hide
-        setShow(false)
-      } else {
-        // Scrolling up - show
-        setShow(true)
-      }
-      
-      setLastScrollY(currentScrollY)
+    const onScroll = () => {
+      setIsScrolled(window.scrollY > 80)
     }
 
-    window.addEventListener('scroll', controlNavbar)
-    return () => window.removeEventListener('scroll', controlNavbar)
-  }, [lastScrollY])
+    onScroll()
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   useEffect(() => {
     const onKey = (e) => {
@@ -68,25 +58,35 @@ export default function Navbar() {
   return (
     <header
       className={clsx(
-        'fixed top-0 left-0 right-0 z-40 w-full border-b bg-white/95 shadow-sm backdrop-blur transition-transform duration-300',
-        show ? 'translate-y-0' : '-translate-y-full'
+        'fixed top-0 left-0 right-0 z-40 w-full border-b border-border shadow-sm backdrop-blur transition-all duration-500 ease-in-out',
+        isScrolled ? 'bg-surface/100 shadow-md py-0' : 'bg-surface/95 shadow-sm py-1'
       )}
     >
-      <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <Logo className="h-7 w-7 sm:h-8 sm:w-8" />
-          <span className="text-base sm:text-lg font-semibold text-slate-900">EcoTrack</span>
+      <div
+        className={clsx(
+          'container flex items-center justify-between transition-all duration-500 ease-in-out',
+          isScrolled ? 'h-16' : 'h-20'
+        )}
+      >
+        <Link to="/" className="flex items-center gap-2 group">
+          <Logo className={clsx('transition-all duration-500 ease-in-out', isScrolled ? 'h-6 w-6 sm:h-7 sm:w-7' : 'h-7 w-7 sm:h-8 sm:w-8')} />
+          <span className={clsx(
+            'font-heading font-bold text-heading transition-all duration-500 ease-in-out',
+            isScrolled ? 'text-lg sm:text-xl' : 'text-xl sm:text-2xl'
+          )}>
+            EcoTrack
+          </span>
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="hidden items-center gap-8 md:flex">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
                 clsx(
-                  'text-sm font-bold transition-colors hover:text-emerald-700 link-underline-sweep',
-                  isActive ? 'text-emerald-800 link-underline-sweep--active' : 'text-slate-900'
+                  'text-base font-heading font-semibold transition-colors hover:text-primary link-underline-sweep',
+                  isActive ? 'text-primary link-underline-sweep--active' : 'text-heading'
                 )
               }
             >
@@ -98,12 +98,12 @@ export default function Navbar() {
         <div className="hidden items-center gap-3 md:flex">
           {loading ? (
             <div className="flex items-center gap-2">
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent"></div>
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
             </div>
           ) : !auth.isLoggedIn ? (
             <>
-              <Link to="/login" className="text-sm text-slate-900 hover:text-emerald-800">Login</Link>
-              <Button as={Link} to="/register">Register</Button>
+              <Button as={Link} to="/login" variant="outline" size="sm">Login</Button>
+              <Button as={Link} to="/register" size="sm">Register</Button>
             </>
           ) : (
             <div className="relative" ref={profileRef}>
@@ -112,17 +112,17 @@ export default function Navbar() {
                 aria-haspopup="menu"
                 aria-expanded={profileOpen}
                 className={clsx(
-                  'flex items-center gap-2 rounded-md border px-2 py-1.5 transition-colors hover:bg-slate-50',
-                  profileOpen && 'bg-slate-50'
+                  'flex items-center gap-2 rounded-md border border-border px-2 py-1.5 transition-colors hover:bg-light',
+                  profileOpen && 'bg-light'
                 )}
               >
                 <ProfileAvatar user={auth.user} size="md" />
-                <span className="text-sm font-medium text-slate-900">{userName}</span>
+                <span className="text-sm font-medium text-heading">{userName}</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                   fill="currentColor"
-                  className={clsx('h-4 w-4 text-slate-500 transition-transform', profileOpen && 'rotate-180')}
+                  className={clsx('h-4 w-4 text-text/70 transition-transform', profileOpen && 'rotate-180')}
                   aria-hidden="true"
                 >
                   <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.187l3.71-3.955a.75.75 0 111.08 1.04l-4.243 4.52a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z" clipRule="evenodd" />
@@ -131,56 +131,79 @@ export default function Navbar() {
               {profileOpen && (
                 <div
                   role="menu"
-                  className="absolute right-0 mt-2 w-52 overflow-hidden rounded-md border bg-white py-1 shadow-lg"
+                  className="absolute right-0 mt-2 w-52 overflow-hidden rounded-md border border-border bg-surface py-1 shadow-lg"
                 >
                   <Link
                     to="/profile"
                     onClick={() => setProfileOpen(false)}
-                    className="block px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-heading transition-colors hover:bg-primary/10"
                     role="menuitem"
                   >
-                    Profile
+                    <User className="h-4 w-4" />
+                    <span>Profile</span>
                   </Link>
                   <Link
                     to="/my-activities"
                     onClick={() => setProfileOpen(false)}
-                    className="block px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-heading transition-colors hover:bg-primary/10"
                     role="menuitem"
                   >
-                    My Activities
+                    <Activity className="h-4 w-4" />
+                    <span>My Challenges</span>
                   </Link>
                   <Link
                     to="/my-events"
                     onClick={() => setProfileOpen(false)}
-                    className="block px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-heading transition-colors hover:bg-primary/10"
                     role="menuitem"
                   >
-                    My Events
+                    <Calendar className="h-4 w-4" />
+                    <span>My Events</span>
                   </Link>
-                  <hr className="my-1 border-gray-200" />
+                  <hr className="my-1 border-border" />
                   <Link
                     to="/settings"
                     onClick={() => setProfileOpen(false)}
-                    className="block px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50"
+                    className="flex items-center gap-2 px-3 py-2 text-sm text-heading transition-colors hover:bg-primary/10"
                     role="menuitem"
                   >
-                    Settings
+                    <SettingsIcon className="h-4 w-4" />
+                    <span>Settings</span>
                   </Link>
-                  <button
-                    onClick={() => { logout(); setProfileOpen(false) }}
-                    className="block w-full px-3 py-2 text-left text-sm text-slate-900 hover:bg-emerald-50"
-                    role="menuitem"
-                  >
-                    Logout
-                  </button>
+                  <div className="mt-1 border-t border-border p-1">
+                    <button
+                      onClick={() => {
+                        logout()
+                        setProfileOpen(false)
+                      }}
+                      className="flex w-full items-center gap-2 rounded-md bg-danger/5 px-3 py-2 text-left text-sm font-medium text-danger transition-colors hover:bg-danger/10"
+                      role="menuitem"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span>Logout</span>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
           )}
+          <button
+            onClick={() => {
+              if (theme === 'light') setTheme('dark')
+              else if (theme === 'dark') setTheme('system')
+              else setTheme('light')
+            }}
+            className="flex h-9 w-9 items-center justify-center rounded-md border border-border text-heading transition-colors hover:bg-light hover:text-primary dark:hover:bg-primary/20"
+            title={`Current theme: ${theme}`}
+          >
+            {theme === 'light' && <Sun className="h-4 w-4" />}
+            {theme === 'dark' && <Moon className="h-4 w-4" />}
+            {theme === 'system' && <Monitor className="h-4 w-4" />}
+          </button>
         </div>
 
         <button
-          className="inline-flex h-10 w-10 items-center justify-center rounded-md border md:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border md:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
@@ -189,19 +212,19 @@ export default function Navbar() {
           <div className="relative h-5 w-5" aria-hidden="true">
             <span
               className={clsx(
-                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-slate-900 transition-transform duration-300 ease-out',
+                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-heading transition-transform duration-300 ease-out',
                 open ? 'translate-y-0 rotate-45' : '-translate-y-2 rotate-0'
               )}
             />
             <span
               className={clsx(
-                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-slate-900 transition-all duration-300 ease-out',
+                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-heading transition-all duration-300 ease-out',
                 open ? 'opacity-0 scale-x-0' : 'opacity-100 scale-x-100'
               )}
             />
             <span
               className={clsx(
-                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-slate-900 transition-transform duration-300 ease-out',
+                'absolute left-1/2 top-1/2 h-0.5 w-5 -translate-x-1/2 rounded bg-heading transition-transform duration-300 ease-out',
                 open ? 'translate-y-0 -rotate-45' : 'translate-y-2 rotate-0'
               )}
             />
@@ -212,7 +235,7 @@ export default function Navbar() {
       <div
         id="mobile-menu"
         className={clsx(
-          'border-b md:hidden mobile-menu',
+          'border-b border-border md:hidden mobile-menu',
           open ? 'mobile-menu--open' : 'mobile-menu--closed'
         )}
       >
@@ -224,9 +247,9 @@ export default function Navbar() {
               onClick={() => setOpen(false)}
               className={({ isActive }) =>
                 clsx(
-                  'rounded-md px-3 py-2 text-sm font-bold transition-colors hover:bg-emerald-50 mobile-menu-item',
+                  'rounded-md px-3 py-2 text-base font-heading font-semibold transition-colors hover:bg-primary/10 mobile-menu-item',
                   open && 'mobile-menu-item--open',
-                  isActive ? 'text-emerald-800' : 'text-slate-900'
+                  isActive ? 'text-primary' : 'text-heading'
                 )
               }
               style={{ transitionDelay: `${idx * 50}ms` }}
@@ -237,19 +260,21 @@ export default function Navbar() {
           <div className="mt-2 grid gap-1">
             {loading ? (
               <div className="flex items-center justify-center gap-2 py-3">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent"></div>
-                <span className="text-sm text-slate-600">Loading...</span>
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+                <span className="text-sm text-text/80">Loading...</span>
               </div>
             ) : !auth.isLoggedIn ? (
               <>
-                <Link
+                <Button
+                  as={Link}
                   to="/login"
+                  variant="outline"
                   onClick={() => setOpen(false)}
-                  className={clsx('rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  className={clsx('w-full mobile-menu-item', open && 'mobile-menu-item--open')}
                   style={{ transitionDelay: `${navItems.length * 50}ms` }}
                 >
                   Login
-                </Link>
+                </Button>
                 <Button
                   as={Link}
                   to="/register"
@@ -265,49 +290,73 @@ export default function Navbar() {
                 <Link
                   to="/profile"
                   onClick={() => setOpen(false)}
-                  className={clsx('rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  className={clsx('flex items-center gap-2 rounded-md px-3 py-2 text-sm text-heading hover:bg-primary/10 mobile-menu-item', open && 'mobile-menu-item--open')}
                   style={{ transitionDelay: `${navItems.length * 50}ms` }}
                 >
-                  Profile
+                  <User className="h-4 w-4" />
+                  <span>Profile</span>
                 </Link>
                 <Link
                   to="/my-activities"
                   onClick={() => setOpen(false)}
-                  className={clsx('rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  className={clsx('flex items-center gap-2 rounded-md px-3 py-2 text-sm text-heading hover:bg-primary/10 mobile-menu-item', open && 'mobile-menu-item--open')}
                   style={{ transitionDelay: `${navItems.length * 50 + 50}ms` }}
                 >
-                  My Activities
+                  <Activity className="h-4 w-4" />
+                  <span>My Challenges</span>
                 </Link>
                 <Link
                   to="/my-events"
                   onClick={() => setOpen(false)}
-                  className={clsx('rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  className={clsx('flex items-center gap-2 rounded-md px-3 py-2 text-sm text-heading hover:bg-primary/10 mobile-menu-item', open && 'mobile-menu-item--open')}
                   style={{ transitionDelay: `${navItems.length * 50 + 100}ms` }}
                 >
-                  My Events
+                  <Calendar className="h-4 w-4" />
+                  <span>My Events</span>
                 </Link>
                 <Link
                   to="/settings"
                   onClick={() => setOpen(false)}
-                  className={clsx('rounded-md px-3 py-2 text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  className={clsx('flex items-center gap-2 rounded-md px-3 py-2 text-sm text-heading hover:bg-primary/10 mobile-menu-item', open && 'mobile-menu-item--open')}
                   style={{ transitionDelay: `${navItems.length * 50 + 150}ms` }}
                 >
-                  Settings
+                  <SettingsIcon className="h-4 w-4" />
+                  <span>Settings</span>
                 </Link>
-                <button
-                  onClick={() => { logout(); setOpen(false) }}
-                  className={clsx('rounded-md px-3 py-2 text-left text-sm text-slate-900 hover:bg-emerald-50 mobile-menu-item', open && 'mobile-menu-item--open')}
-                  style={{ transitionDelay: `${navItems.length * 50 + 150}ms` }}
+                <div
+                  className={clsx('mt-2 border-t border-border p-1 mobile-menu-item', open && 'mobile-menu-item--open')}
+                  style={{ transitionDelay: `${navItems.length * 50 + 200}ms` }}
                 >
-                  Logout
-                </button>
+                  <button
+                    onClick={() => { logout(); setOpen(false) }}
+                    className="flex w-full items-center gap-2 rounded-md bg-danger/5 px-3 py-2 text-left text-sm font-medium text-danger hover:bg-danger/10"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Logout</span>
+                  </button>
+                </div>
               </>
             )}
+            <div
+              className={clsx('mt-2 border-t border-border p-2 flex justify-center mobile-menu-item', open && 'mobile-menu-item--open')}
+              style={{ transitionDelay: `${navItems.length * 50 + 250}ms` }}
+            >
+              <button
+                onClick={() => {
+                  if (theme === 'light') setTheme('dark')
+                  else if (theme === 'dark') setTheme('system')
+                  else setTheme('light')
+                }}
+                className="flex items-center gap-2 px-4 py-2 rounded-md bg-white dark:bg-black/20 border border-border text-heading shadow-sm"
+              >
+                {theme === 'light' && <><Sun className="h-4 w-4" /> Light Mode</>}
+                {theme === 'dark' && <><Moon className="h-4 w-4" /> Dark Mode</>}
+                {theme === 'system' && <><Monitor className="h-4 w-4" /> System</>}
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </header>
   )
 }
-
-

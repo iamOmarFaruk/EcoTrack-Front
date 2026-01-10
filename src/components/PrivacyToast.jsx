@@ -82,11 +82,11 @@ export default function PrivacyToast() {
       }`}
     >
       <div className="container px-3 sm:px-4 pb-4">
-        <div className="pointer-events-auto mx-auto max-w-5xl rounded-2xl border border-emerald-600/60 bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-700 text-emerald-50 shadow-2xl">
+        <div className="pointer-events-auto mx-auto max-w-5xl rounded-2xl border border-primary/60 bg-gradient-to-r from-primary via-primary to-primary text-surface/90 shadow-2xl">
           <div className="p-4 md:p-5">
             <div className="flex flex-col items-start gap-3 md:flex-row md:items-center md:justify-between">
               <div className="space-y-1">
-                <p className="text-xs font-semibold tracking-wide text-emerald-100/90">
+                <p className="text-xs font-semibold tracking-wide text-surface/85">
                   Privacy & Cookies - session-only consent. It resets when you close your browser.
                 </p>
                 <p id="privacy-toast-desc" className="text-sm leading-relaxed">
@@ -111,5 +111,4 @@ export default function PrivacyToast() {
     </div>
   )
 }
-
 

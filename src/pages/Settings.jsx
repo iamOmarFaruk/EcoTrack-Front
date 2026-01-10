@@ -1,6 +1,18 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import SectionHeading from '../components/SectionHeading.jsx'
+import { motion } from 'framer-motion'
+import {
+  User,
+  Lock,
+  Trash2,
+  Save,
+  Image as ImageIcon,
+  Camera,
+  AlertTriangle,
+  ChevronRight,
+  ShieldAlert
+} from 'lucide-react'
+import Button from '../components/ui/Button.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { showError, showSuccess } from '../utils/toast.jsx'
 import { userApi } from '../services/api.js'
@@ -11,27 +23,12 @@ export default function Settings() {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
   const [isDeleting, setIsDeleting] = useState(false)
-  
-  // Profile editing state
-  const [isEditingProfile, setIsEditingProfile] = useState(false)
+
+  const [activeSection, setActiveSection] = useState('profile')
   const [isSavingProfile, setIsSavingProfile] = useState(false)
   const [editName, setEditName] = useState(user?.name || '')
   const [editPhotoUrl, setEditPhotoUrl] = useState(user?.avatarUrl || '')
   const [imagePreviewError, setImagePreviewError] = useState(false)
-
-  const handleEditProfile = () => {
-    setEditName(user?.name || '')
-    setEditPhotoUrl(user?.avatarUrl || '')
-    setImagePreviewError(false)
-    setIsEditingProfile(true)
-  }
-
-  const handleCancelEdit = () => {
-    setIsEditingProfile(false)
-    setEditName(user?.name || '')
-    setEditPhotoUrl(user?.avatarUrl || '')
-    setImagePreviewError(false)
-  }
 
   const handleSaveProfile = async () => {
     if (!editName.trim()) {
@@ -41,27 +38,22 @@ export default function Settings() {
 
     setIsSavingProfile(true)
     try {
-      // Update Firebase Auth profile
       await updateUserProfile({
         displayName: editName.trim(),
         photoURL: editPhotoUrl.trim() || null
       })
 
-      // Update backend profile
       try {
         await userApi.updateProfile({
           displayName: editName.trim(),
           photoURL: editPhotoUrl.trim() || null
         })
       } catch (backendError) {
-        console.error('Backend profile update failed:', backendError)
-        // Don't fail if backend update fails - Firebase is source of truth
+        showError(backendError.message || 'Profile updated, but failed to sync with server')
       }
 
       showSuccess('Profile updated successfully!')
-      setIsEditingProfile(false)
     } catch (error) {
-      console.error('Profile update error:', error)
       showError(error.message || 'Failed to update profile')
     } finally {
       setIsSavingProfile(false)
@@ -73,14 +65,12 @@ export default function Settings() {
       showError('Please type DELETE to confirm')
       return
     }
-
     setIsDeleting(true)
     try {
       await deleteAccount()
       navigate('/')
     } catch (error) {
-      console.error('Delete account error:', error)
-      // Error already shown by deleteAccount function
+      showError(error.message || 'Failed to delete account')
     } finally {
       setIsDeleting(false)
       setShowDeleteModal(false)
@@ -88,224 +78,229 @@ export default function Settings() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <SectionHeading title="Settings" subtitle="Manage your account" />
-      
-      {/* Account Settings */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
-        <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900">Account Information</h3>
-            <p className="text-sm text-gray-600 mt-1">Your current account details</p>
-          </div>
-          {!isEditingProfile && (
-            <button
-              onClick={handleEditProfile}
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors text-sm"
-            >
-              Edit Profile
-            </button>
-          )}
-        </div>
-        
-        <div className="p-6 space-y-4">
-          <div>
-            <label className="text-sm font-medium text-gray-700">Email</label>
-            <p className="mt-1 text-gray-900">{user?.email}</p>
-            <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
-          </div>
-          
-          {!isEditingProfile ? (
-            <>
-              <div>
-                <label className="text-sm font-medium text-gray-700">Name</label>
-                <p className="mt-1 text-gray-900">{user?.name}</p>
-              </div>
-              {user?.avatarUrl && (
-                <div>
-                  <label className="text-sm font-medium text-gray-700">Profile Picture</label>
-                  <div className="mt-2 flex items-center gap-3">
-                    <img 
-                      src={user.avatarUrl} 
-                      alt="Profile" 
-                      className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
-                      onError={(e) => e.target.style.display = 'none'}
-                    />
-                    <span className="text-xs text-gray-500">Current profile picture</span>
-                  </div>
+    <div className="space-y-8 pb-12">
+      <header>
+        <h1 className="text-3xl font-bold text-heading">Settings</h1>
+        <p className="text-text/60">Manage your account and preferences</p>
+      </header>
+
+      <div className="grid gap-6 lg:grid-cols-4">
+        {/* Navigation Sidebar inside Settings */}
+        <aside className="lg:col-span-1">
+          <nav className="flex flex-col gap-1">
+            {[
+              { id: 'profile', label: 'Profile Info', icon: User },
+              { id: 'security', label: 'Security', icon: Lock },
+              { id: 'danger', label: 'Danger Zone', icon: Trash2, color: 'text-red-500' }
+            ].map((section) => (
+              <Button
+                key={section.id}
+                onClick={() => setActiveSection(section.id)}
+                variant="ghost"
+                size="sm"
+                className={`justify-between rounded-xl px-4 py-3 text-sm font-semibold transition-all ${activeSection === section.id
+                    ? 'bg-primary/10 text-primary'
+                    : 'text-text/60 hover:bg-light hover:text-text'
+                  }`}
+              >
+                <div className="flex items-center gap-3">
+                  <section.icon size={18} className={section.color} />
+                  {section.label}
                 </div>
-              )}
-            </>
-          ) : (
-            <>
-              <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Name</label>
-                <input
-                  type="text"
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="Your name"
-                  disabled={isSavingProfile}
-                />
-              </div>
-              
-              <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Profile Picture URL (Optional)</label>
-                
-                {/* Image Preview */}
-                {editPhotoUrl && (
-                  <div className="mb-3 flex items-center gap-3">
-                    <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-gray-200 bg-gray-100 flex items-center justify-center">
-                      {!imagePreviewError ? (
-                        <img 
-                          src={editPhotoUrl} 
-                          alt="Profile preview" 
-                          className="w-full h-full object-cover"
+                <ChevronRight size={14} className={activeSection === section.id ? 'opacity-100' : 'opacity-0'} />
+              </Button>
+            ))}
+          </nav>
+        </aside>
+
+        {/* Setting Content */}
+        <div className="lg:col-span-3">
+          <motion.div
+            key={activeSection}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="rounded-3xl border border-border bg-surface p-8 shadow-sm"
+          >
+            {activeSection === 'profile' && (
+              <div className="space-y-8">
+                <div>
+                  <h3 className="text-lg font-bold text-heading">Profile Information</h3>
+                  <p className="text-sm text-text/60">Update your public profile details</p>
+                </div>
+
+                <div className="flex flex-col gap-8 md:flex-row md:items-start">
+                  {/* Photo Preview */}
+                  <div className="relative">
+                    <div className="h-28 w-28 overflow-hidden rounded-3xl border-4 border-light bg-light">
+                      {editPhotoUrl && !imagePreviewError ? (
+                        <img
+                          src={editPhotoUrl}
+                          alt="Profile Preview"
+                          className="h-full w-full object-cover"
                           onError={() => setImagePreviewError(true)}
                         />
                       ) : (
-                        <div className="text-gray-400 text-center">
-                          <svg className="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
+                        <div className="flex h-full w-full items-center justify-center text-text/30">
+                          <ImageIcon size={32} />
                         </div>
                       )}
                     </div>
-                    <div className="flex-1">
-                      <p className="text-xs text-gray-600">Profile Picture Preview</p>
-                      {imagePreviewError && (
-                        <p className="text-xs text-amber-600 mt-1">Unable to load image</p>
-                      )}
+                    <div className="absolute -bottom-2 -right-2 rounded-xl bg-primary p-2 text-surface shadow-lg">
+                      <Camera size={14} />
                     </div>
                   </div>
-                )}
-                
-                <input
-                  type="url"
-                  value={editPhotoUrl}
-                  onChange={(e) => {
-                    setEditPhotoUrl(e.target.value)
-                    setImagePreviewError(false)
-                  }}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                  placeholder="https://example.com/photo.jpg"
-                  disabled={isSavingProfile}
-                />
-                <p className="text-xs text-gray-500 mt-1">Enter a URL to an image (leave empty to remove)</p>
-              </div>
-              
-              <div className="flex gap-3 pt-2">
-                <button
-                  onClick={handleCancelEdit}
-                  disabled={isSavingProfile}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSaveProfile}
-                  disabled={isSavingProfile || !editName.trim()}
-                  className="flex-1 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSavingProfile ? 'Saving...' : 'Save Changes'}
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
 
-      {/* Danger Zone */}
-      <div className="bg-white rounded-xl border border-red-200 shadow-sm">
-        <div className="p-6 border-b border-red-200 bg-red-50">
-          <h3 className="text-lg font-semibold text-red-900">Danger Zone</h3>
-          <p className="text-sm text-red-700 mt-1">Irreversible actions</p>
-        </div>
-        
-        <div className="p-6">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <h4 className="text-base font-semibold text-gray-900 mb-1">Delete Account</h4>
-              <p className="text-sm text-gray-600 mb-4">
-                Permanently delete your account and all associated data. This action cannot be undone.
-              </p>
-              <ul className="text-sm text-gray-600 space-y-1 mb-4">
-                <li className="flex items-start">
-                  <span className="text-red-500 mr-2">•</span>
-                  All your challenges and events will be removed
-                </li>
-                <li className="flex items-start">
-                  <span className="text-red-500 mr-2">•</span>
-                  Your tips and contributions will be deleted
-                </li>
-                <li className="flex items-start">
-                  <span className="text-red-500 mr-2">•</span>
-                  Your profile and statistics will be permanently lost
-                </li>
-              </ul>
-            </div>
-          </div>
-          <button
-            onClick={() => setShowDeleteModal(true)}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors"
-          >
-            Delete Account
-          </button>
+                  {/* Form */}
+                  <div className="flex-1 space-y-6">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold uppercase tracking-wider text-text/40">Full Name</label>
+                        <input
+                          type="text"
+                          value={editName}
+                          onChange={(e) => setEditName(e.target.value)}
+                          className="w-full rounded-xl border border-border bg-light/30 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-xs font-bold uppercase tracking-wider text-text/40">Email Address</label>
+                        <input
+                          type="email"
+                          value={user?.email || ''}
+                          disabled
+                          className="w-full cursor-not-allowed rounded-xl border border-border bg-light/50 px-4 py-3 text-sm text-text/50 outline-none"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold uppercase tracking-wider text-text/40">Avatar URL</label>
+                      <input
+                        type="url"
+                        value={editPhotoUrl}
+                        onChange={(e) => {
+                          setEditPhotoUrl(e.target.value)
+                          setImagePreviewError(false)
+                        }}
+                        placeholder="https://images.unsplash.com/..."
+                        className="w-full rounded-xl border border-border bg-light/30 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/20"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end pt-4 border-t border-border">
+                  <Button
+                    onClick={handleSaveProfile}
+                    disabled={isSavingProfile}
+                    variant="primary"
+                    size="sm"
+                    className="rounded-xl px-6 py-3 text-sm font-bold shadow-lg shadow-primary/20 active:scale-95"
+                  >
+                    <Save size={18} />
+                    {isSavingProfile ? 'Saving Changes...' : 'Save Profile'}
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {activeSection === 'security' && (
+              <div className="space-y-8">
+                <div>
+                  <h3 className="text-lg font-bold text-heading">Security Settings</h3>
+                  <p className="text-sm text-text/60">Keep your account safe and secure</p>
+                </div>
+
+                <div className="flex flex-col items-center justify-center py-20 text-center">
+                  <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-light text-primary">
+                    <ShieldAlert size={40} />
+                  </div>
+                  <h4 className="text-lg font-bold text-heading">Social Login Enabled</h4>
+                  <p className="mt-2 max-w-sm text-sm text-text/60">
+                    You are currently using Google/Firebase authentication. Password management is handled through your social provider.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {activeSection === 'danger' && (
+              <div className="space-y-8">
+                <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="rounded-xl bg-red-500 p-3 text-surface">
+                      <AlertTriangle size={24} />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-red-500">Delete Account</h3>
+                      <p className="mt-1 text-sm text-red-500/70 leading-relaxed">
+                        Once you delete your account, there is no going back. Please be certain.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <p className="text-sm font-medium text-heading">This will permanently delete:</p>
+                  <ul className="grid gap-3 text-sm text-text/60 sm:grid-cols-2">
+                    <li className="flex items-center gap-2">• All your eco-statistics</li>
+                    <li className="flex items-center gap-2">• Challenges you created</li>
+                    <li className="flex items-center gap-2">• Participation history</li>
+                    <li className="flex items-center gap-2">• Earned badges & trophies</li>
+                  </ul>
+                </div>
+
+                <Button
+                  onClick={() => setShowDeleteModal(true)}
+                  variant="ghost"
+                  size="sm"
+                  className="rounded-xl px-6 py-3 text-sm font-bold text-danger shadow-lg shadow-red-500/10 hover:bg-danger/10 active:scale-95"
+                >
+                  Delete My Account
+                </Button>
+              </div>
+            )}
+          </motion.div>
         </div>
       </div>
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900">Delete Account</h3>
-            </div>
-            
-            <p className="text-gray-600 mb-4">
-              This action is permanent and cannot be undone. All your data will be deleted.
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-md bg-dark/20">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-md rounded-3xl bg-surface p-8 shadow-2xl border border-border"
+          >
+            <h3 className="text-xl font-bold text-heading">Are you absolutely sure?</h3>
+            <p className="mt-4 text-sm text-text/60 leading-relaxed">
+              To proceed, please type <span className="font-bold text-red-500 uppercase">DELETE</span> below. This action cannot be undone.
             </p>
-            
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Type <span className="font-bold text-red-600">DELETE</span> to confirm:
-              </label>
-              <input
-                type="text"
-                value={deleteConfirmText}
-                onChange={(e) => setDeleteConfirmText(e.target.value)}
-                className="w-full px-4 py-2 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:outline-none"
-                placeholder="Type DELETE"
-                disabled={isDeleting}
-              />
-            </div>
-            
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setShowDeleteModal(false)
-                  setDeleteConfirmText('')
-                }}
-                disabled={isDeleting}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+            <input
+              type="text"
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              className="mt-6 w-full rounded-xl border border-red-500/30 bg-red-500/5 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-red-500/20"
+              placeholder="Type DELETE"
+            />
+            <div className="mt-8 flex gap-3">
+              <Button
+                onClick={() => setShowDeleteModal(false)}
+                variant="outline"
+                size="sm"
+                className="flex-1 rounded-xl py-3 text-sm font-bold"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleDeleteAccount}
                 disabled={isDeleting || deleteConfirmText !== 'DELETE'}
-                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                variant="ghost"
+                size="sm"
+                className="flex-1 rounded-xl py-3 text-sm font-bold text-danger shadow-lg shadow-red-500/10 hover:bg-danger/10"
               >
                 {isDeleting ? 'Deleting...' : 'Delete Forever'}
-              </button>
+              </Button>
             </div>
-          </div>
+          </motion.div>
         </div>
       )}
     </div>

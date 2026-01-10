@@ -4,249 +4,96 @@ import SectionHeading from '../components/SectionHeading.jsx'
 import LazyChallengeCard from '../components/LazyChallengeCard.jsx'
 import LazyTipCard from '../components/LazyTipCard.jsx'
 import LazyEventCard from '../components/LazyEventCard.jsx'
-import { ChallengeCardSkeleton, TipCardSkeleton, EventCardSkeleton } from '../components/Skeleton.jsx'
-import EcoLoader from '../components/EcoLoader.jsx'
+import { ChallengeCardSkeleton, TipCardSkeleton, EventCardSkeleton, HeroSkeleton } from '../components/Skeleton.jsx'
 import CommunityStats from '../components/CommunityStats.jsx'
-import LazySection from '../components/LazySection.jsx'
 import HowItWorks from '../components/HowItWorks.jsx'
+import Testimonials from '../components/Testimonials.jsx'
+import FAQ from '../components/FAQ.jsx'
+import CTA from '../components/CTA.jsx'
 import Button from '../components/ui/Button.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver.js'
 import { defaultImages } from '../config/env'
-import { useState, useEffect } from 'react'
-import { tipsApi, eventApi, challengeApi } from '../services/api.js'
+import { useState } from 'react'
 import { useAuth } from '../context/AuthContext.jsx'
 import TipModal from '../components/TipModal.jsx'
 import LoginModal from '../components/LoginModal.jsx'
-import { showSuccess, showError, showDeleteConfirmation } from '../utils/toast.jsx'
+import { showDeleteConfirmation, showError } from '../utils/toast.jsx'
+import {
+  useFeaturedChallenges,
+  useChallenges,
+  useEvents,
+  useTips,
+  useTipMutations
+} from '../hooks/queries'
+import { motion, AnimatePresence } from 'framer-motion'
+import { stackedContainer, stackedItem } from '../utils/animations'
+import whyGoGreenImg from '../assets/why-go-green.png'
 
 export default function Home() {
   useDocumentTitle('Home')
-  
+
   const { user } = useAuth()
-  
-  // State for real tips from API
-  const [tips, setTips] = useState([])
-  const [loadingTips, setLoadingTips] = useState(true)
-  
+
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingTip, setEditingTip] = useState(null)
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
-  
-  // State for real events from API
-  const [events, setEvents] = useState([])
-  const [loadingEvents, setLoadingEvents] = useState(true)
-  
-  // State for real challenges from API
-  const [challenges, setChallenges] = useState([])
-  const [loadingChallenges, setLoadingChallenges] = useState(true)
-  
-  // State for featured challenges (for hero slider)
-  const [featuredChallenges, setFeaturedChallenges] = useState([])
-  const [loadingFeatured, setLoadingFeatured] = useState(true)
-  
+
   // Intersection observer for Why Go Green section
   const [setWhyGoGreenRef, isWhyGoGreenVisible] = useIntersectionObserver({
     threshold: 0.2,
     rootMargin: '50px',
     triggerOnce: true
   })
-  
-  // Fetch 5 featured challenges for hero slider
-  useEffect(() => {
-    const fetchFeaturedChallenges = async () => {
-      try {
-        setLoadingFeatured(true)
-        const response = await challengeApi.getAll({ 
-          page: 1, 
-          limit: 5,
-          status: 'active',
-          featured: true,
-          sortBy: 'startDate',
-          order: 'asc'
-        })
-        
-        // Handle different API response structures
-        let challengesData = response.data
-        if (response.data?.challenges) {
-          challengesData = response.data.challenges
-        } else if (response.data?.data?.challenges) {
-          challengesData = response.data.data.challenges
-        } else if (response.data?.data) {
-          challengesData = response.data.data
-        }
-        
-        // Ensure we have an array
-        const challengesArray = Array.isArray(challengesData) ? challengesData : Object.values(challengesData || {})
-        
-        // Enhance challenges with proper data structure for Hero slider
-        const enhancedChallenges = challengesArray.map(challenge => ({
-          ...challenge,
-          _id: challenge._id || challenge.id,
-          id: challenge.id || challenge._id,
-          slug: challenge.slug || '', // Store slug for SEO-friendly URLs
-          participants: challenge.registeredParticipants ?? (Array.isArray(challenge.participants) ? challenge.participants.length : challenge.participants) ?? 0,
-          imageUrl: challenge.image || challenge.imageUrl,
-          description: challenge.shortDescription || challenge.description // Map API shortDescription to description for Hero
-        }))
-        
-        setFeaturedChallenges(enhancedChallenges)
-      } catch (error) {
-        console.error('Error fetching featured challenges:', error)
-        setFeaturedChallenges([])
-      } finally {
-        setLoadingFeatured(false)
-      }
-    }
-    
-    fetchFeaturedChallenges()
-  }, [])
-  
-  // Fetch 6 active challenges from API
-  useEffect(() => {
-    const fetchActiveChallenges = async () => {
-      try {
-        setLoadingChallenges(true)
-        const response = await challengeApi.getAll({ 
-          page: 1, 
-          limit: 6,
-          status: 'active',
-          sortBy: 'startDate',
-          order: 'asc'
-        })
-        
-        // Handle different API response structures
-        let challengesData = response.data
-        if (response.data?.challenges) {
-          challengesData = response.data.challenges
-        } else if (response.data?.data?.challenges) {
-          challengesData = response.data.data.challenges
-        } else if (response.data?.data) {
-          challengesData = response.data.data
-        }
-        
-        // Ensure we have an array
-        const challengesArray = Array.isArray(challengesData) ? challengesData : Object.values(challengesData || {})
-        
-        // Enhance challenges with proper data structure
-        const enhancedChallenges = challengesArray.map(challenge => ({
-          ...challenge,
-          _id: challenge._id || challenge.id,
-          id: challenge.id || challenge._id,
-          slug: challenge.slug || '', // Store slug for SEO-friendly URLs
-          participants: challenge.registeredParticipants ?? (Array.isArray(challenge.participants) ? challenge.participants.length : challenge.participants) ?? 0,
-          imageUrl: challenge.image || challenge.imageUrl
-        }))
-        
-        setChallenges(enhancedChallenges)
-      } catch (error) {
-        console.error('Error fetching challenges:', error)
-        setChallenges([])
-      } finally {
-        setLoadingChallenges(false)
-      }
-    }
-    
-    fetchActiveChallenges()
-  }, [])
 
-  // Fetch 4 latest events from API
-  useEffect(() => {
-    const fetchUpcomingEvents = async () => {
-      try {
-        setLoadingEvents(true)
-        const response = await eventApi.getAll({ 
-          page: 1, 
-          limit: 4,
-          sortBy: 'createdAt',
-          order: 'desc'
-        })
-        
-        // Handle different API response structures
-        let eventsData = response.data
-        if (response.data?.events) {
-          eventsData = response.data.events
-        } else if (response.data?.data?.events) {
-          eventsData = response.data.data.events
-        } else if (response.data?.data) {
-          eventsData = response.data.data
-        }
-        
-        // Ensure we have an array
-        const eventsArray = Array.isArray(eventsData) ? eventsData : Object.values(eventsData || {})
-        
-        // Backend always returns _id and slug
-        // No need to enhance, use as-is
-        setEvents(eventsArray)
-      } catch (error) {
-        console.error('Error fetching events:', error)
-        setEvents([])
-      } finally {
-        setLoadingEvents(false)
-      }
-    }
-    
-    fetchUpcomingEvents()
-  }, [])
+  // Queries
+  const {
+    data: featuredChallenges = [],
+    isLoading: loadingFeatured
+  } = useFeaturedChallenges()
 
-  // Fetch 5 most recent tips from API
-  useEffect(() => {
-    const fetchRecentTips = async () => {
-      try {
-        setLoadingTips(true)
-        const response = await tipsApi.getAll({ 
-          page: 1, 
-          limit: 5, 
-          sortBy: 'createdAt', 
-          order: 'desc' 
-        })
-        
-        // Handle different API response structures
-        let tipsData = response.data
-        if (response.data?.tips) {
-          tipsData = response.data.tips
-        } else if (response.data?.data?.tips) {
-          tipsData = response.data.data.tips
-        } else if (response.data?.data) {
-          tipsData = response.data.data
-        }
-        
-        // Ensure we have an array
-        const tipsArray = Array.isArray(tipsData) ? tipsData : Object.values(tipsData || {})
-        
-        // Enhance tips with proper data structure
-        const enhancedTips = tipsArray.map(tip => ({
-          ...tip,
-          id: tip.id || tip._id,
-          upvotes: Number.isFinite(Number(tip.upvoteCount))
-            ? Number(tip.upvoteCount)
-            : (Number.isFinite(Number(tip.upvotes)) ? Number(tip.upvotes) : 0),
-          authorId: tip.authorId || (typeof tip.author === 'string' ? tip.author : tip.author?.uid || tip.author?.id),
-          authorName: tip.authorName || tip.author?.name || 'Anonymous',
-          authorImage: tip.authorImage || tip.authorAvatar || tip.author?.avatarUrl || tip.author?.imageUrl,
-          firebaseId: tip.firebaseId || (typeof tip.author === 'string' ? tip.author : tip.author?.firebaseId)
-        }))
-        
-        setTips(enhancedTips)
-      } catch (error) {
-        console.error('Error fetching tips:', error)
-        setTips([])
-      } finally {
-        setLoadingTips(false)
-      }
-    }
-    
-    fetchRecentTips()
-  }, [])
+  const {
+    data: challenges = [],
+    isLoading: loadingChallenges
+  } = useChallenges({
+    page: 1,
+    limit: 6,
+    status: 'active',
+    sortBy: 'startDate',
+    order: 'asc'
+  })
+
+  const {
+    data: events = [],
+    isLoading: loadingEvents
+  } = useEvents({
+    page: 1,
+    limit: 4,
+    sortBy: 'createdAt',
+    order: 'desc'
+  })
+
+  const {
+    data: tips = [],
+    isLoading: loadingTips
+  } = useTips({
+    page: 1,
+    limit: 4,
+    sortBy: 'createdAt',
+    order: 'desc'
+  })
+
+  // Mutations
+  const { deleteTip, upvoteTip, updateTip } = useTipMutations()
 
   // Check if user can modify a tip (ownership check)
   const canModifyTip = (tip) => {
     if (!user) return false
-    
+
     return (
-      tip.authorId === user.uid || 
-      tip.author?.uid === user.uid || 
+      tip.authorId === user.uid ||
+      tip.author?.uid === user.uid ||
       tip.author?.id === user.uid ||
       tip.author?.firebaseId === user.uid ||
       tip.author === user.uid ||
@@ -264,109 +111,27 @@ export default function Home() {
   const handleDeleteTip = async (tipId) => {
     showDeleteConfirmation({
       itemName: 'Tip',
-      onConfirm: async () => {
-        try {
-          await tipsApi.delete(tipId)
-          setTips(prevTips => prevTips.filter(tip => tip.id !== tipId))
-          showSuccess('Tip deleted successfully')
-        } catch (error) {
-          showError('Failed to delete tip: ' + error.message)
-        }
-      }
+      onConfirm: () => deleteTip.mutate(tipId)
     })
   }
 
   // Handle upvote tip
-  const handleUpvote = async (tipId) => {
-    const originalTip = tips.find(tip => tip.id === tipId)
-    if (!originalTip) return
-
-    try {
-      // Optimistic update
-      setTips(prevTips =>
-        prevTips.map(tip =>
-          tip.id === tipId ? { ...tip, upvotes: tip.upvotes + 1 } : tip
-        )
-      )
-
-      const response = await tipsApi.upvote(tipId)
-      
-      // Update with server response
-      let updatedTip = response.data
-      if (response.data?.tip) {
-        updatedTip = response.data.tip
-      } else if (response.data?.data?.tip) {
-        updatedTip = response.data.data.tip
-      } else if (response.data?.data) {
-        updatedTip = response.data.data
-      }
-
-      const serverUpvotes = updatedTip?.upvotes ?? updatedTip?.upvoteCount ?? null
-
-      setTips(prevTips =>
-        prevTips.map(tip =>
-          tip.id === tipId
-            ? {
-                ...tip,
-                ...updatedTip,
-                upvotes: Number.isFinite(Number(serverUpvotes))
-                  ? Number(serverUpvotes)
-                  : originalTip.upvotes + 1
-              }
-            : tip
-        )
-      )
-    } catch (error) {
-      // Rollback on error
-      setTips(prevTips =>
-        prevTips.map(tip =>
-          tip.id === tipId ? { ...tip, upvotes: originalTip.upvotes } : tip
-        )
-      )
-      showError('Failed to upvote tip: ' + error.message)
-    }
+  const handleUpvote = (tipId) => {
+    upvoteTip.mutate(tipId)
   }
 
   // Handle submit tip (for edit modal)
   const handleSubmitTip = async (tipData) => {
     try {
       if (editingTip) {
-        const response = await tipsApi.update(editingTip.id, tipData)
-        
-        // Handle response
-        let updatedTip = response.data
-        if (response.data?.tip) {
-          updatedTip = response.data.tip
-        } else if (response.data?.data?.tip) {
-          updatedTip = response.data.data.tip
-        } else if (response.data?.data) {
-          updatedTip = response.data.data
-        }
-
-        // Update local state
-        setTips(prevTips =>
-          prevTips.map(tip =>
-            tip.id === editingTip.id
-              ? {
-                  ...tip,
-                  ...tipData,
-                  ...updatedTip,
-                  id: editingTip.id,
-                  upvotes: Number.isFinite(Number(updatedTip?.upvoteCount))
-                    ? Number(updatedTip.upvoteCount)
-                    : (Number.isFinite(Number(updatedTip?.upvotes)) ? Number(updatedTip.upvotes) : tip.upvotes)
-                }
-              : tip
-          )
-        )
-        
-        showSuccess('Tip updated successfully!')
+        // Use mutateAsync to wait for success before closing modal or handling errors locally if needed
+        await updateTip.mutateAsync({ id: editingTip.id, data: tipData })
       }
-      
+
       setIsModalOpen(false)
       setEditingTip(null)
     } catch (error) {
-      throw error
+      showError(error.message || 'Unable to save tip')
     }
   }
 
@@ -374,36 +139,29 @@ export default function Home() {
   const handleLoginRequired = () => {
     setIsLoginModalOpen(true)
   }
-  
-  const isInitialLoading = loadingChallenges && loadingTips && loadingEvents && loadingFeatured
-  const isAnyLoading = loadingChallenges || loadingTips || loadingEvents || loadingFeatured
-
-  if (isInitialLoading) {
-    return <EcoLoader />
-  }
 
   return (
-    <div className="space-y-12">
-      <div className="full-bleed">
+    <div className="space-y-8">
+      <div className="full-bleed mb-8 sm:mb-10">
         {loadingFeatured ? (
-          <div className="relative h-[500px] bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center">
-            <div className="text-center text-white">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-              <p className="text-lg">Loading featured challenges...</p>
-            </div>
-          </div>
+          <HeroSkeleton />
         ) : featuredChallenges.length > 0 ? (
-          <Hero slides={featuredChallenges} effect="creative" />
+          <Hero slides={featuredChallenges} effect="fade" />
         ) : (
-          <div className="relative h-[500px] bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center">
-            <div className="text-center text-white px-4">
-              <svg className="w-16 h-16 mx-auto mb-4 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <h2 className="text-3xl font-bold mb-2">No Featured Challenges Available</h2>
-              <p className="text-lg text-white/90 mb-6">Check back soon for exciting eco-friendly challenges!</p>
-              <Button as={Link} to="/challenges" variant="secondary">
-                Browse All Challenges
+          <div className="relative h-[500px] bg-surface flex items-center justify-center overflow-hidden">
+            {/* Soft decorative glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full pointer-events-none"></div>
+
+            <div className="text-center text-text px-4 relative z-10">
+              <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-primary/10 border border-primary/20 mb-6">
+                <svg className="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+              <h2 className="text-3xl font-heading font-bold mb-3 tracking-tight text-heading">No Featured Challenges Yet</h2>
+              <p className="text-lg text-text/60 mb-8 max-w-md mx-auto">We're currently preparing new exciting eco-challenges for you. Browse our community to see what else is happening!</p>
+              <Button as={Link} to="/challenges" variant="primary" size="lg">
+                Explore All Challenges
               </Button>
             </div>
           </div>
@@ -413,129 +171,239 @@ export default function Home() {
       <CommunityStats />
 
       <section>
-        <SectionHeading title="Active Challenges" subtitle="Happening right now" />
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {loadingChallenges && Array.from({ length: 6 }).map((_, i) => (
-            <LazySection 
-              key={i} 
-              fallback={<ChallengeCardSkeleton />}
-              minimumLoadingTime={2000}
+        <SectionHeading
+          badge="Challenges"
+          title="Active Challenges"
+          subtitle="Happening right now"
+        />
+        <AnimatePresence mode="wait">
+          {loadingChallenges ? (
+            <motion.div
+              key="loading-challenges"
+              variants={stackedContainer}
+              initial="hidden"
+              animate="show"
+              exit="hidden"
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
             >
-              <div style={{ display: 'none' }}>Loading...</div>
-            </LazySection>
-          ))}
-          {!loadingChallenges && challenges?.map((c) => (
-            <LazyChallengeCard key={c._id} challenge={c} />
-          ))}
-        </div>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <motion.div key={`skeleton-${i}`} variants={stackedItem}>
+                  <ChallengeCardSkeleton />
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : challenges.length > 0 ? (
+            <motion.div
+              key="challenges-content"
+              variants={stackedContainer}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.1 }}
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              {challenges.map((c) => (
+                <motion.div key={c._id || c.id} variants={stackedItem}>
+                  <LazyChallengeCard challenge={c} />
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="no-challenges"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="relative h-[200px] bg-surface flex items-center justify-center overflow-hidden rounded-2xl border border-border dashed"
+            >
+              <p className="text-text/60">No active challenges at the moment.</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </section>
 
       <section>
-        <SectionHeading title="Recent Tips" subtitle="Practical, bite-sized advice" />
-        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-          {loadingTips && Array.from({ length: 5 }).map((_, i) => (
-            <LazySection 
-              key={i} 
-              fallback={<TipCardSkeleton />}
-              minimumLoadingTime={2000}
+        <SectionHeading
+          badge="Community Wisdom"
+          title="Recent Tips"
+          subtitle="Practical, bite-sized advice"
+        />
+        <AnimatePresence mode="wait">
+          {loadingTips ? (
+            <motion.div
+              key="loading-tips"
+              variants={stackedContainer}
+              initial="hidden"
+              animate="show"
+              exit="hidden"
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
             >
-              <div style={{ display: 'none' }}>Loading...</div>
-            </LazySection>
-          ))}
-          {!loadingTips && tips?.map((t, i) => (
-            <LazyTipCard 
-              key={i} 
-              tip={t} 
-              showActions={true}
-              canModify={canModifyTip(t)}
-              onEdit={handleEditTip}
-              onDelete={handleDeleteTip}
-              onUpvote={handleUpvote}
-              onLoginRequired={handleLoginRequired}
-            />
-          ))}
-        </div>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <motion.div key={`skeleton-${i}`} variants={stackedItem}>
+                  <TipCardSkeleton />
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : tips.length > 0 ? (
+            <motion.div
+              key="tips-content"
+              variants={stackedContainer}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.1 }}
+              className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+            >
+              {tips.map((t, i) => (
+                <motion.div key={t._id || t.id || i} variants={stackedItem}>
+                  <LazyTipCard
+                    tip={t}
+                    showActions={true}
+                    canModify={canModifyTip(t)}
+                    onEdit={handleEditTip}
+                    onDelete={handleDeleteTip}
+                    onUpvote={handleUpvote}
+                    onLoginRequired={handleLoginRequired}
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="no-tips"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="relative h-[150px] bg-surface flex items-center justify-center overflow-hidden rounded-2xl border border-border dashed"
+            >
+              <p className="text-text/60">No recent tips shared yet.</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </section>
 
-      <section>
-        <SectionHeading title="Upcoming Events" subtitle="Join the community" />
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {loadingEvents && Array.from({ length: 4 }).map((_, i) => (
-            <LazySection 
-              key={i} 
-              fallback={<EventCardSkeleton />}
-              minimumLoadingTime={2000}
-            >
-              <div style={{ display: 'none' }}>Loading...</div>
-            </LazySection>
-          ))}
-          {!loadingEvents && events?.map((e, i) => (
-            <LazyEventCard key={i} event={e} />
-          ))}
-        </div>
-      </section>
-
-      <section className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center" ref={setWhyGoGreenRef}>
-        {/* Left Image */}
-        <div className="order-1">
-          <img
-            src={defaultImages.homeFeature}
-            alt="Hands holding a small plant seedling with soil"
-            className={`w-full h-80 sm:h-96 lg:h-[28rem] object-cover rounded-2xl shadow-lg transition-all duration-1000 ease-out ${
-              isWhyGoGreenVisible 
-                ? 'opacity-100 translate-x-0' 
-                : 'opacity-0 -translate-x-12'
-            }`}
-            loading="lazy"
+      <section className="full-bleed bg-primary/5">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeading
+            badge="Events"
+            title="Upcoming Events"
+            subtitle="Join the community"
           />
+          <AnimatePresence mode="wait">
+            {loadingEvents ? (
+              <motion.div
+                key="loading-events"
+                variants={stackedContainer}
+                initial="hidden"
+                animate="show"
+                exit="hidden"
+                className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+              >
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <motion.div key={`skeleton-${i}`} variants={stackedItem}>
+                    <EventCardSkeleton />
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : events.length > 0 ? (
+              <motion.div
+                key="events-content"
+                variants={stackedContainer}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, amount: 0.1 }}
+                className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+              >
+                {events.map((e, i) => (
+                  <motion.div key={e._id || e.id || i} variants={stackedItem}>
+                    <LazyEventCard event={e} />
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="no-events"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="relative h-[150px] bg-surface flex items-center justify-center overflow-hidden rounded-2xl border border-border dashed"
+              >
+                <p className="text-text/60">No upcoming events scheduled.</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-        
-        {/* Content */}
-        <div className="order-2 space-y-4 sm:space-y-6">
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
-            Why Go Green?
-          </h2>
-          <p className="text-base sm:text-lg leading-relaxed text-slate-600">
-            Sustainable living isn't just good for the planet—it's good for you too. 
-            Discover the amazing benefits of making eco-friendly choices in your daily life.
-          </p>
-          
-          <ul className="space-y-3 text-slate-600">
-            <li className="flex items-start space-x-3">
-              <span className="flex-shrink-0 w-2 h-2 bg-emerald-500 rounded-full mt-2"></span>
-              <span className="text-base sm:text-lg leading-relaxed">
-                <strong className="text-slate-900">Save Money:</strong> Reduce utility bills through energy efficiency and waste reduction
-              </span>
-            </li>
-            <li className="flex items-start space-x-3">
-              <span className="flex-shrink-0 w-2 h-2 bg-emerald-500 rounded-full mt-2"></span>
-              <span className="text-base sm:text-lg leading-relaxed">
-                <strong className="text-slate-900">Better Health:</strong> Cleaner air, organic foods, and active transportation improve well-being
-              </span>
-            </li>
-            <li className="flex items-start space-x-3">
-              <span className="flex-shrink-0 w-2 h-2 bg-emerald-500 rounded-full mt-2"></span>
-              <span className="text-base sm:text-lg leading-relaxed">
-                <strong className="text-slate-900">Protect the Future:</strong> Preserve natural resources for future generations
-              </span>
-            </li>
-            <li className="flex items-start space-x-3">
-              <span className="flex-shrink-0 w-2 h-2 bg-emerald-500 rounded-full mt-2"></span>
-              <span className="text-base sm:text-lg leading-relaxed">
-                <strong className="text-slate-900">Create Community:</strong> Connect with like-minded people who share your values
-              </span>
-            </li>
-            <li className="flex items-start space-x-3">
-              <span className="flex-shrink-0 w-2 h-2 bg-emerald-500 rounded-full mt-2"></span>
-              <span className="text-base sm:text-lg leading-relaxed">
-                <strong className="text-slate-900">Feel Empowered:</strong> Take meaningful action that makes a real difference
-              </span>
-            </li>
-          </ul>
+      </section>
+
+      <section className="full-bleed bg-surface !mt-0">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-8 lg:grid-cols-2 lg:gap-12 items-center" ref={setWhyGoGreenRef}>
+            {/* Left Image */}
+            <div className="order-1 h-full">
+              <img
+                src={whyGoGreenImg}
+                alt="Sustainable lifestyle gardening and eco-friendly home items"
+                className={`w-full h-[30rem] sm:h-[35rem] lg:h-[42rem] object-cover rounded-2xl shadow-xl transition-all duration-1000 ease-out ${isWhyGoGreenVisible
+                  ? 'opacity-100 translate-x-0'
+                  : 'opacity-0 -translate-x-12'
+                  }`}
+                loading="lazy"
+              />
+            </div>
+
+            {/* Content */}
+            <div className="order-2 space-y-6">
+              <SectionHeading
+                badge="Why EcoTrack"
+                title="Why Go Green?"
+                subtitle="Sustainable living isn't just good for the planet—it's good for you too. Discover the amazing benefits of making eco-friendly choices in your daily life."
+                subtitleClassName="text-text/95 font-medium"
+                centered={false}
+              />
+
+              <ul className="space-y-4 text-text/90">
+                <li className="flex items-start space-x-3">
+                  <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2.5"></span>
+                  <span className="text-base sm:text-lg leading-relaxed">
+                    <strong className="text-heading font-bold">Save Money:</strong> Reduce utility bills through energy efficiency and waste reduction
+                  </span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2.5"></span>
+                  <span className="text-base sm:text-lg leading-relaxed">
+                    <strong className="text-heading font-bold">Better Health:</strong> Cleaner air, organic foods, and active transportation improve well-being
+                  </span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2.5"></span>
+                  <span className="text-base sm:text-lg leading-relaxed">
+                    <strong className="text-heading font-bold">Protect the Future:</strong> Preserve natural resources for future generations
+                  </span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2.5"></span>
+                  <span className="text-base sm:text-lg leading-relaxed">
+                    <strong className="text-heading font-bold">Create Community:</strong> Connect with like-minded people who share your values
+                  </span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <span className="flex-shrink-0 w-2 h-2 bg-primary/100 rounded-full mt-2.5"></span>
+                  <span className="text-base sm:text-lg leading-relaxed">
+                    <strong className="text-heading font-bold">Feel Empowered:</strong> Take meaningful action that makes a real difference
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </section>
 
       <HowItWorks />
+
+      <div className="full-bleed">
+        <Testimonials />
+      </div>
+
+      <FAQ />
+
+      <div className="full-bleed mb-8 sm:mb-12">
+        <CTA />
+      </div>
 
       {/* Tip Modal */}
       <TipModal
@@ -556,7 +424,3 @@ export default function Home() {
     </div>
   )
 }
-
-
-
-

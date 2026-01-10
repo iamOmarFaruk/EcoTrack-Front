@@ -1,13 +1,45 @@
 import { useState, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, Link } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  Leaf,
+  Target,
+  Info,
+  Calendar,
+  Image as ImageIcon,
+  Globe,
+  Droplets,
+  Zap,
+  ChevronLeft,
+  CheckCircle2,
+  AlertCircle,
+  Pencil,
+  Sparkles,
+  ShieldCheck,
+  Recycle,
+  Lightbulb,
+  UtensilsCrossed,
+  Users,
+  Sprout
+} from 'lucide-react'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { challengeApi } from '../services/api.js'
 import Button from '../components/ui/Button.jsx'
 import { Card, CardContent } from '../components/ui/Card.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import NotFound from './NotFound.jsx'
-import { showSuccess, showError, showLoading, dismissToast } from '../utils/toast.jsx'
+import { showSuccess, showError } from '../utils/toast.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
+import { containerVariants, itemVariants } from '../utils/animations'
+
+const CATEGORIES = [
+  { id: 'Waste Reduction', label: 'Waste Reduction', icon: Recycle },
+  { id: 'Energy Conservation', label: 'Energy Conservation', icon: Lightbulb },
+  { id: 'Water', label: 'Water Conservation', icon: Droplets },
+  { id: 'Food', label: 'Sustainable Food', icon: UtensilsCrossed },
+  { id: 'Community', label: 'Community Action', icon: Users },
+  { id: 'Biodiversity', label: 'Biodiversity', icon: Sprout }
+]
 
 export default function EditChallenge() {
   const { slug } = useParams()
@@ -38,35 +70,14 @@ export default function EditChallenge() {
   const [challenge, setChallenge] = useState(null)
   const [notFound, setNotFound] = useState(false)
   const [notAuthorized, setNotAuthorized] = useState(false)
+  const [activeTab, setActiveTab] = useState('info')
 
-  useDocumentTitle(challenge ? `Edit ${challenge.title}` : 'Edit Challenge')
+  useDocumentTitle(challenge ? `Edit ${challenge.title} | EcoTrack` : 'Edit Challenge')
 
   useEffect(() => {
     fetchChallenge()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug])
-
-  // Auto-calculate duration based on start and end dates
-  useEffect(() => {
-    if (!formData.startDate || !formData.endDate) return
-
-    const start = new Date(formData.startDate)
-    const end = new Date(formData.endDate)
-    if (isNaN(start) || isNaN(end) || end <= start) return
-
-    const diffMs = end.getTime() - start.getTime()
-    const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24)) + 1
-
-    let durationLabel
-    if (diffDays % 7 === 0) {
-      const weeks = diffDays / 7
-      durationLabel = weeks === 1 ? '1 week' : `${weeks} weeks`
-    } else {
-      durationLabel = diffDays === 1 ? '1 day' : `${diffDays} days`
-    }
-
-    setFormData(prev => ({ ...prev, duration: durationLabel }))
-  }, [formData.startDate, formData.endDate])
 
   const fetchChallenge = async () => {
     try {
@@ -79,7 +90,6 @@ export default function EditChallenge() {
         return
       }
 
-      // Check if user is the creator
       if (challengeData.createdBy !== user?.uid && challengeData.createdById !== user?.uid) {
         setNotAuthorized(true)
         return
@@ -91,7 +101,6 @@ export default function EditChallenge() {
         slug: challengeData.slug || slug
       })
 
-      // Format dates for input fields
       const formatDate = (dateString) => {
         if (!dateString) return ''
         try {
@@ -120,26 +129,39 @@ export default function EditChallenge() {
         }
       })
     } catch (error) {
-      console.error('Error fetching challenge:', error)
-      if (error.status === 404) {
-        setNotFound(true)
-      } else if (error.status === 403) {
-        setNotAuthorized(true)
-      } else {
-        showError('Failed to load challenge')
-      }
+      if (error.status === 404) setNotFound(true)
+      else if (error.status === 403) setNotAuthorized(true)
+      else showError('Failed to load challenge')
     } finally {
       setLoading(false)
     }
   }
 
+  useEffect(() => {
+    if (!formData.startDate || !formData.endDate) return
+
+    const start = new Date(formData.startDate)
+    const end = new Date(formData.endDate)
+    if (isNaN(start) || isNaN(end) || end <= start) return
+
+    const diffMs = end.getTime() - start.getTime()
+    const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24)) + 1
+
+    let durationLabel
+    if (diffDays % 7 === 0) {
+      const weeks = diffDays / 7
+      durationLabel = weeks === 1 ? '1 week' : `${weeks} weeks`
+    } else {
+      durationLabel = diffDays === 1 ? '1 day' : `${diffDays} days`
+    }
+
+    setFormData(prev => ({ ...prev, duration: durationLabel }))
+  }, [formData.startDate, formData.endDate])
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
-    // Clear error for this field
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }))
-    }
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }))
   }
 
   const handleImpactChange = (e) => {
@@ -151,85 +173,18 @@ export default function EditChallenge() {
         [name]: parseFloat(value) || 0
       }
     }))
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }))
   }
 
   const validateForm = () => {
     const newErrors = {}
-
-    // Category validation (required, must be valid)
-    if (!formData.category) {
-      newErrors.category = 'Category is required'
-    }
-
-    // Title validation (5-100 chars, required)
-    if (!formData.title.trim()) {
-      newErrors.title = 'Title is required'
-    } else if (formData.title.length < 5 || formData.title.length > 100) {
-      newErrors.title = 'Title must be between 5 and 100 characters'
-    }
-
-    // Short Description validation (20-250 chars, required)
-    if (!formData.shortDescription.trim()) {
-      newErrors.shortDescription = 'Short description is required'
-    } else if (formData.shortDescription.length < 20 || formData.shortDescription.length > 250) {
-      newErrors.shortDescription = 'Description must be between 20 and 250 characters'
-    }
-
-    // Detailed description (optional, max 2000 chars)
-    if (formData.detailedDescription && formData.detailedDescription.length > 2000) {
-      newErrors.detailedDescription = 'Detailed description must be less than 2000 characters'
-    }
-
-    // Image validation (required, must be valid HTTPS URL)
-    if (!formData.image.trim()) {
-      newErrors.image = 'Image URL is required'
-    } else {
-      try {
-        const url = new URL(formData.image)
-        if (url.protocol !== 'https:') {
-          newErrors.image = 'Image URL must use HTTPS protocol'
-        }
-      } catch {
-        newErrors.image = 'Please enter a valid image URL'
-      }
-    }
-
-    // Duration validation (2-50 chars, required)
-    if (!formData.duration.trim()) {
-      newErrors.duration = 'Duration is required'
-    } else if (formData.duration.length < 2 || formData.duration.length > 50) {
-      newErrors.duration = 'Duration must be between 2 and 50 characters'
-    }
-
-    // Community Impact validation (all fields must be non-negative)
-    if (formData.communityImpact.co2SavedKg < 0) {
-      newErrors.co2SavedKg = 'CO₂ saved must be a positive number'
-    }
-    if (formData.communityImpact.plasticReducedKg < 0) {
-      newErrors.plasticReducedKg = 'Plastic reduced must be a positive number'
-    }
-    if (formData.communityImpact.waterSavedL < 0) {
-      newErrors.waterSavedL = 'Water saved must be a positive number'
-    }
-    if (formData.communityImpact.energySavedKwh < 0) {
-      newErrors.energySavedKwh = 'Energy saved must be a positive number'
-    }
-
-    // Start date validation (required)
-    if (!formData.startDate) {
-      newErrors.startDate = 'Start date is required'
-    }
-
-    // End date validation (required, must be after start date)
-    if (!formData.endDate) {
-      newErrors.endDate = 'End date is required'
-    } else if (formData.startDate && formData.endDate) {
-      const start = new Date(formData.startDate)
-      const end = new Date(formData.endDate)
-      if (end <= start) {
-        newErrors.endDate = 'End date must be after start date'
-      }
-    }
+    if (!formData.category) newErrors.category = 'Required'
+    if (!formData.title.trim() || formData.title.length < 5) newErrors.title = 'Title too short'
+    if (!formData.shortDescription.trim() || formData.shortDescription.length < 20) newErrors.shortDescription = 'Description too short'
+    if (!formData.image.trim()) newErrors.image = 'Image required'
+    if (!formData.startDate) newErrors.startDate = 'Required'
+    if (!formData.endDate) newErrors.endDate = 'Required'
+    if (formData.startDate && formData.endDate && new Date(formData.endDate) <= new Date(formData.startDate)) newErrors.endDate = 'Must be after start'
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -237,441 +192,320 @@ export default function EditChallenge() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
-    if (!user) {
-      showError('You must be logged in to edit a challenge')
-      navigate('/login')
-      return
-    }
-
-    if (!validateForm()) {
-      showError('Please fix the form errors')
-      return
-    }
+    if (!user) return navigate('/login')
+    if (!validateForm()) return showError('Check errors')
 
     setIsSubmitting(true)
-
     try {
-      // Prepare data for API (all fields optional for update)
       const challengeData = {
-        category: formData.category,
-        title: formData.title,
-        shortDescription: formData.shortDescription,
-        image: formData.image,
-        duration: formData.duration,
-        startDate: formData.startDate,
-        endDate: formData.endDate,
-        communityImpact: formData.communityImpact,
-        featured: formData.featured
-      }
-
-      // Add optional fields if provided
-      if (formData.detailedDescription) {
-        challengeData.detailedDescription = formData.detailedDescription
+        ...formData,
+        detailedDescription: formData.detailedDescription || ''
       }
 
       const response = await challengeApi.update(challenge._id, challengeData)
       const updatedChallenge = response?.data || response
+      showSuccess('Updated successfully!')
 
-      showSuccess('Challenge updated successfully!')
-      // Navigate using slug if available, otherwise use _id
-      if (updatedChallenge?.slug) {
-        navigate(`/challenges/${updatedChallenge.slug}`)
-      } else if (challenge?.slug) {
-        navigate(`/challenges/${challenge.slug}`)
-      } else {
-        navigate(`/challenges/${slug}`)
-      }
+      const targetSlug = updatedChallenge?.slug || challenge?.slug || slug
+      navigate(`/challenges/${targetSlug}`)
     } catch (error) {
-      console.error('Error updating challenge:', error)
-      
-      // Handle validation errors from backend
-      if (error.data?.errors) {
-        const backendErrors = {}
-        error.data.errors.forEach(err => {
-          const message = err.toLowerCase()
-          if (message.includes('title')) backendErrors.title = err
-          else if (message.includes('description')) backendErrors.shortDescription = err
-          else if (message.includes('category')) backendErrors.category = err
-          else if (message.includes('image')) backendErrors.image = err
-          else if (message.includes('duration')) backendErrors.duration = err
-          else if (message.includes('start')) backendErrors.startDate = err
-          else if (message.includes('end')) backendErrors.endDate = err
-          else if (message.includes('co2')) backendErrors.co2SavedKg = err
-          else if (message.includes('plastic')) backendErrors.plasticReducedKg = err
-          else if (message.includes('water')) backendErrors.waterSavedL = err
-          else if (message.includes('energy')) backendErrors.energySavedKwh = err
-        })
-        if (Object.keys(backendErrors).length > 0) {
-          setErrors(backendErrors)
-          showError('Please fix the validation errors')
-          return
-        }
-      }
-      
-      showError(error.message || 'Failed to update challenge')
+      showError(error.message || 'Update failed')
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const handleCancel = () => {
-    // Navigate using slug if available, otherwise use _id
-    if (challenge?.slug) {
-      navigate(`/challenges/${challenge.slug}`)
-    } else {
-      navigate(`/challenges/${slug}`)
-    }
-  }
-
-  const getMinDate = () => {
-    const today = new Date()
-    return today.toISOString().split('T')[0]
-  }
-
-  if (loading) {
-    return <EcoLoader />
-  }
-
-  if (notFound) {
-    return <NotFound />
-  }
-
-  if (notAuthorized) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-red-50 to-white py-12">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="bg-white rounded-lg shadow-md p-8">
-            <div className="text-red-600 mb-4">
-              <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h2 className="text-2xl font-bold text-slate-900 mb-4">Not Authorized</h2>
-            <p className="text-slate-600 mb-6">
-              You don't have permission to edit this challenge. Only the creator can make changes.
-            </p>
-            <Button onClick={() => navigate('/challenges')}>Back to Challenges</Button>
+  if (loading) return <EcoLoader />
+  if (notFound) return <NotFound />
+  if (notAuthorized) return (
+    <div className="min-h-screen bg-light flex items-center justify-center p-4">
+      <Card className="max-w-md w-full border-none shadow-2xl">
+        <CardContent className="p-8 text-center">
+          <div className="w-20 h-20 rounded-full bg-danger/10 flex items-center justify-center mx-auto mb-6 text-danger">
+            <AlertCircle className="w-10 h-10" />
           </div>
-        </div>
-      </div>
-    )
-  }
+          <h2 className="text-2xl font-bold text-heading mb-4">Unauthorized Access</h2>
+          <p className="text-text/60 mb-8 leading-relaxed">Only the visionary who created this challenge can modify its destiny. Please check your credentials.</p>
+          <Button onClick={() => navigate('/challenges')} variant="primary" className="w-full">Back to Challenges</Button>
+        </CardContent>
+      </Card>
+    </div>
+  )
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white py-12">
-      {/* Page Header */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-slate-900 mb-3">
-            Edit Challenge
-          </h1>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Update your challenge details
-          </p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-light pb-20 space-y-8">
+      <div className="absolute top-0 left-0 w-full h-[300px] bg-gradient-to-b from-primary/10 via-primary/5 to-transparent pointer-events-none" />
 
-      {/* Form Section */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Card>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Category */}
-              <div>
-                <label htmlFor="category" className="block text-sm font-medium text-slate-900 mb-2">
-                  Category <span className="text-red-500">*</span>
-                </label>
-                <select
-                  id="category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                    errors.category ? 'border-red-500' : 'border-slate-300'
-                  }`}
+      <div className="container max-w-7xl mx-auto pt-8 relative z-10">
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="mb-8">
+          <Link to={`/challenges/${slug}`} className="inline-flex items-center gap-2 text-text/60 hover:text-primary transition-colors group">
+            <div className="w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center group-hover:border-primary/30 group-hover:bg-primary/5 transition-all">
+              <ChevronLeft className="w-4 h-4" />
+            </div>
+            <span className="font-medium text-sm">Back to Challenge</span>
+          </Link>
+        </motion.div>
+
+        <motion.div variants={containerVariants} initial="hidden" animate="show" className="mb-12">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <motion.div variants={itemVariants} className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+                  <Pencil className="w-6 h-6 text-primary" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider w-fit">Edit Mode</span>
+                  <span className="text-xs text-text/40 font-bold mt-1 flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3" /> Managed by You
+                  </span>
+                </div>
+              </motion.div>
+              <motion.h1 variants={itemVariants} className="text-4xl md:text-5xl font-bold text-heading mb-4 tracking-tight">
+                Refine Your <span className="text-primary italic">Challenge</span>
+              </motion.h1>
+              <motion.p variants={itemVariants} className="text-lg text-text/70 max-w-2xl">
+                Keep the momentum going by updating visuals, metrics, or details to better serve the community.
+              </motion.p>
+            </div>
+          </div>
+        </motion.div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="lg:col-span-8 space-y-6">
+            <div className="flex p-1 bg-surface border border-border/50 rounded-xl shadow-sm mb-6 backdrop-blur-sm">
+              {[
+                { id: 'info', label: 'Basics', icon: Info },
+                { id: 'impact', label: 'Impact', icon: Globe },
+                { id: 'details', label: 'Visuals', icon: ImageIcon }
+              ].map((tab) => (
+                <Button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  variant={activeTab === tab.id ? 'primary' : 'ghost'}
+                  size="sm"
+                  className={`flex-1 gap-2 rounded-lg ${activeTab === tab.id ? 'shadow-md' : 'text-text/60 hover:text-text hover:bg-muted/50'
+                    }`}
                 >
-                  <option value="Food">Food</option>
-                  <option value="Waste Reduction">Waste Reduction</option>
-                  <option value="Energy Conservation">Energy Conservation</option>
-                  <option value="Water">Water</option>
-                  <option value="Community">Community</option>
-                </select>
-                {errors.category && <p className="mt-1 text-sm text-red-500">{errors.category}</p>}
-              </div>
+                  <tab.icon className={`w-4 h-4 ${activeTab === tab.id ? 'text-white' : ''}`} />
+                  <span className="hidden sm:inline">{tab.label}</span>
+                </Button>
+              ))}
+            </div>
 
-              {/* Title */}
-              <div>
-                <label htmlFor="title" className="block text-sm font-medium text-slate-900 mb-2">
-                  Challenge Title <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                    errors.title ? 'border-red-500' : 'border-slate-300'
-                  }`}
-                  placeholder="e.g., Plastic-Free Week"
-                />
-                {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title}</p>}
-                <p className="mt-1 text-xs text-slate-500">{formData.title.length}/100 characters</p>
-              </div>
+            <form onSubmit={handleSubmit}>
+              <AnimatePresence mode="wait">
+                {activeTab === 'info' && (
+                  <motion.div key="info" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
+                    <Card className="overflow-hidden border-none shadow-xl shadow-primary/5">
+                      <div className="h-2 bg-primary w-full" />
+                      <CardContent className="p-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="md:col-span-2 space-y-2">
+                            <label className="text-sm font-bold text-heading ml-1">Challenge Title</label>
+                            <input
+                              type="text"
+                              name="title"
+                              value={formData.title}
+                              onChange={handleChange}
+                              className={`w-full rounded-xl border ${errors.title ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading placeholder:text-text/40`}
+                            />
+                            {errors.title && <p className="text-xs text-danger font-medium ml-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.title}</p>}
+                          </div>
 
-              {/* Short Description */}
-              <div>
-                <label htmlFor="shortDescription" className="block text-sm font-medium text-slate-900 mb-2">
-                  Short Description <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  id="shortDescription"
-                  name="shortDescription"
-                  value={formData.shortDescription}
-                  onChange={handleChange}
-                  rows={3}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                    errors.shortDescription ? 'border-red-500' : 'border-slate-300'
-                  }`}
-                  placeholder="Brief description for challenge cards (20-250 characters)"
-                />
-                {errors.shortDescription && <p className="mt-1 text-sm text-red-500">{errors.shortDescription}</p>}
-                <p className="mt-1 text-xs text-slate-500">{formData.shortDescription.length}/250 characters</p>
-              </div>
+                          <div className="md:col-span-2 space-y-2">
+                            <label className="text-sm font-bold text-heading ml-1">Short Description</label>
+                            <textarea
+                              name="shortDescription"
+                              value={formData.shortDescription}
+                              onChange={handleChange}
+                              rows={3}
+                              className={`w-full rounded-xl border ${errors.shortDescription ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading placeholder:text-text/40 resize-none`}
+                            />
+                          </div>
 
-              {/* Detailed Description (Optional) */}
-              <div>
-                <label htmlFor="detailedDescription" className="block text-sm font-medium text-slate-900 mb-2">
-                  Detailed Description <span className="text-slate-500">(Optional)</span>
-                </label>
-                <textarea
-                  id="detailedDescription"
-                  name="detailedDescription"
-                  value={formData.detailedDescription}
-                  onChange={handleChange}
-                  rows={6}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                    errors.detailedDescription ? 'border-red-500' : 'border-slate-300'
-                  }`}
-                  placeholder="Full description with all details about the challenge (max 2000 characters)"
-                />
-                {errors.detailedDescription && <p className="mt-1 text-sm text-red-500">{errors.detailedDescription}</p>}
-                <p className="mt-1 text-xs text-slate-500">{formData.detailedDescription.length}/2000 characters</p>
-              </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold text-heading ml-1">Category</label>
+                            <div className="relative">
+                              <select
+                                name="category"
+                                value={formData.category}
+                                onChange={handleChange}
+                                className="w-full rounded-xl border border-border px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading appearance-none cursor-pointer"
+                              >
+                                {CATEGORIES.map(cat => <option key={cat.id} value={cat.id}>{cat.label}</option>)}
+                              </select>
+                              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text/40">
+                                <Leaf className="w-4 h-4" />
+                              </div>
+                            </div>
+                          </div>
 
-              {/* Date Range */}
-              <div className="grid gap-6 md:grid-cols-2">
-                <div>
-                  <label htmlFor="startDate" className="block text-sm font-medium text-slate-900 mb-2">
-                    Start Date <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="date"
-                    id="startDate"
-                    name="startDate"
-                    value={formData.startDate}
-                    onChange={handleChange}
-                    min={getMinDate()}
-                    className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                      errors.startDate ? 'border-red-500' : 'border-slate-300'
-                    }`}
-                  />
-                  {errors.startDate && <p className="mt-1 text-sm text-red-500">{errors.startDate}</p>}
-                </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold text-heading ml-1">Duration Status</label>
+                            <div className="w-full rounded-xl border border-border px-4 py-3 bg-muted/50 text-text/60 font-medium flex items-center gap-3">
+                              {formData.duration ? <><CheckCircle2 className="w-4 h-4 text-primary" /> <span>{formData.duration}</span></> : <><Calendar className="w-4 h-4 opacity-40" /> <span>Update dates</span></>}
+                            </div>
+                          </div>
 
-                <div>
-                  <label htmlFor="endDate" className="block text-sm font-medium text-slate-900 mb-2">
-                    End Date <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="date"
-                    id="endDate"
-                    name="endDate"
-                    value={formData.endDate}
-                    onChange={handleChange}
-                    min={formData.startDate || getMinDate()}
-                    className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                      errors.endDate ? 'border-red-500' : 'border-slate-300'
-                    }`}
-                  />
-                  {errors.endDate && <p className="mt-1 text-sm text-red-500">{errors.endDate}</p>}
-                </div>
-              </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold text-heading ml-1">Start Date</label>
+                            <div className="relative">
+                              <input
+                                type="date"
+                                name="startDate"
+                                value={formData.startDate}
+                                onChange={handleChange}
+                                className={`w-full rounded-xl border ${errors.startDate ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading`}
+                              />
+                            </div>
+                          </div>
 
-              {/* Duration (Auto-calculated) - Hidden from UI but still sent to API */}
-              <input
-                type="hidden"
-                id="duration"
-                name="duration"
-                value={formData.duration}
-              />
-
-              {/* Community Impact Section */}
-              <div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                  <span className="text-green-600">🌍</span>
-                  Community Impact Metrics
-                </h3>
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div>
-                    <label htmlFor="co2SavedKg" className="block text-sm font-medium text-slate-900 mb-2">
-                      CO₂ Saved (kg)
-                    </label>
-                    <input
-                      type="number"
-                      id="co2SavedKg"
-                      name="co2SavedKg"
-                      value={formData.communityImpact.co2SavedKg}
-                      onChange={handleImpactChange}
-                      min="0"
-                      step="0.1"
-                      className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                        errors.co2SavedKg ? 'border-red-500' : 'border-slate-300'
-                      }`}
-                      placeholder="e.g., 10"
-                    />
-                    {errors.co2SavedKg && <p className="mt-1 text-sm text-red-500">{errors.co2SavedKg}</p>}
-                    <p className="mt-1 text-xs text-slate-500">Estimated CO₂ reduction in kilograms</p>
-                  </div>
-
-                  <div>
-                    <label htmlFor="plasticReducedKg" className="block text-sm font-medium text-slate-900 mb-2">
-                      Plastic Reduced (kg)
-                    </label>
-                    <input
-                      type="number"
-                      id="plasticReducedKg"
-                      name="plasticReducedKg"
-                      value={formData.communityImpact.plasticReducedKg}
-                      onChange={handleImpactChange}
-                      min="0"
-                      step="0.1"
-                      className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                        errors.plasticReducedKg ? 'border-red-500' : 'border-slate-300'
-                      }`}
-                      placeholder="e.g., 5"
-                    />
-                    {errors.plasticReducedKg && <p className="mt-1 text-sm text-red-500">{errors.plasticReducedKg}</p>}
-                    <p className="mt-1 text-xs text-slate-500">Estimated plastic waste reduction in kilograms</p>
-                  </div>
-
-                  <div>
-                    <label htmlFor="waterSavedL" className="block text-sm font-medium text-slate-900 mb-2">
-                      Water Saved (Liters)
-                    </label>
-                    <input
-                      type="number"
-                      id="waterSavedL"
-                      name="waterSavedL"
-                      value={formData.communityImpact.waterSavedL}
-                      onChange={handleImpactChange}
-                      min="0"
-                      step="1"
-                      className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                        errors.waterSavedL ? 'border-red-500' : 'border-slate-300'
-                      }`}
-                      placeholder="e.g., 100"
-                    />
-                    {errors.waterSavedL && <p className="mt-1 text-sm text-red-500">{errors.waterSavedL}</p>}
-                    <p className="mt-1 text-xs text-slate-500">Estimated water conservation in liters</p>
-                  </div>
-
-                  <div>
-                    <label htmlFor="energySavedKwh" className="block text-sm font-medium text-slate-900 mb-2">
-                      Energy Saved (kWh)
-                    </label>
-                    <input
-                      type="number"
-                      id="energySavedKwh"
-                      name="energySavedKwh"
-                      value={formData.communityImpact.energySavedKwh}
-                      onChange={handleImpactChange}
-                      min="0"
-                      step="0.1"
-                      className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                        errors.energySavedKwh ? 'border-red-500' : 'border-slate-300'
-                      }`}
-                      placeholder="e.g., 15"
-                    />
-                    {errors.energySavedKwh && <p className="mt-1 text-sm text-red-500">{errors.energySavedKwh}</p>}
-                    <p className="mt-1 text-xs text-slate-500">Estimated energy conservation in kilowatt-hours</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Image URL */}
-              <div>
-                <label htmlFor="image" className="block text-sm font-medium text-slate-900 mb-2">
-                  Challenge Image URL <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="url"
-                  id="image"
-                  name="image"
-                  value={formData.image}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
-                    errors.image ? 'border-red-500' : 'border-slate-300'
-                  }`}
-                  placeholder="https://images.unsplash.com/photo-... (must be HTTPS)"
-                />
-                {errors.image && <p className="mt-1 text-sm text-red-500">{errors.image}</p>}
-                <p className="mt-1 text-xs text-slate-500">
-                  Enter a valid HTTPS image URL (from Unsplash, Pexels, or any other source)
-                </p>
-                
-                {/* Image Preview */}
-                {formData.image && formData.image.startsWith('https://') && (
-                  <div className="mt-4 rounded-lg overflow-hidden border-2 border-green-200 shadow-md">
-                    <img 
-                      src={formData.image} 
-                      alt="Challenge preview"
-                      className="w-full h-64 object-cover"
-                      onError={(e) => {
-                        e.target.parentElement.innerHTML = '<div class="w-full h-64 bg-red-50 flex items-center justify-center"><p class="text-red-600 text-sm">Failed to load image. Please check the URL.</p></div>'
-                      }}
-                    />
-                  </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold text-heading ml-1">End Date</label>
+                            <div className="relative">
+                              <input
+                                type="date"
+                                name="endDate"
+                                value={formData.endDate}
+                                onChange={handleChange}
+                                className={`w-full rounded-xl border ${errors.endDate ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading`}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
                 )}
-              </div>
 
-              {/* Featured Checkbox */}
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="featured"
-                  name="featured"
-                  checked={formData.featured}
-                  onChange={handleChange}
-                  className="w-4 h-4 text-green-600 border-slate-300 rounded focus:ring-green-500 accent-green-600"
-                />
-                <label htmlFor="featured" className="ml-2 block text-sm text-slate-900">
-                  Mark as featured challenge
-                </label>
-              </div>
+                {activeTab === 'impact' && (
+                  <motion.div key="impact" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
+                    <Card className="border-none shadow-xl shadow-primary/5">
+                      <CardContent className="p-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {[
+                            { name: 'co2SavedKg', label: 'CO₂ Saved (kg)', icon: Target, color: 'emerald' },
+                            { name: 'plasticReducedKg', label: 'Plastic Saved (kg)', icon: Leaf, color: 'teal' },
+                            { name: 'waterSavedL', label: 'Water Saved (L)', icon: Droplets, color: 'blue' },
+                            { name: 'energySavedKwh', label: 'Energy Saved (kWh)', icon: Zap, color: 'yellow' }
+                          ].map((metric) => (
+                            <div key={metric.name} className="p-5 rounded-2xl bg-muted/30 border-2 border-border/50 hover:border-primary/20 transition-all space-y-2">
+                              <label className="text-sm font-bold text-heading ml-1">{metric.label}</label>
+                              <input
+                                type="number"
+                                name={metric.name}
+                                value={formData.communityImpact[metric.name]}
+                                onChange={handleImpactChange}
+                                className="w-full rounded-xl border border-border px-4 py-3 transition-all bg-surface focus:ring-4 focus:ring-primary/10 text-heading placeholder:text-text/40"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                )}
 
-              {/* Form Actions */}
-              <div className="flex gap-4 pt-4 justify-end">
+                {activeTab === 'details' && (
+                  <motion.div key="details" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
+                    <Card className="border-none shadow-xl shadow-primary/5">
+                      <CardContent className="p-8">
+                        <div className="space-y-8">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                              <label className="text-sm font-bold text-heading ml-1">Image URL</label>
+                              <input
+                                type="url"
+                                name="image"
+                                value={formData.image}
+                                onChange={handleChange}
+                                className={`w-full rounded-xl border ${errors.image ? 'border-danger' : 'border-border'} px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading placeholder:text-text/40`}
+                              />
+                              <p className="text-xs text-text/50 leading-relaxed bg-primary/5 p-4 rounded-xl border border-primary/10 italic flex items-start gap-3">
+                                <Sparkles className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                                <span>Keep images high-resolution for professional look.</span>
+                              </p>
+                            </div>
+                            <div className="aspect-video rounded-2xl overflow-hidden border-2 border-border/50 bg-muted/20 relative group">
+                              {formData.image && <img src={formData.image} className="w-full h-full object-cover" alt="Preview" />}
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <label className="text-sm font-bold text-heading ml-1">Detailed Description</label>
+                            <textarea
+                              name="detailedDescription"
+                              value={formData.detailedDescription}
+                              onChange={handleChange}
+                              rows={6}
+                              className="w-full rounded-xl border border-border px-4 py-3 transition-all bg-muted/50 focus:bg-surface focus:ring-4 focus:ring-primary/10 text-heading placeholder:text-text/40 resize-none"
+                            />
+                          </div>
+
+                          <div className="p-6 rounded-2xl bg-primary/5 border border-primary/10">
+                            <label className="flex items-center gap-4 cursor-pointer select-none">
+                              <div className="relative">
+                                <input type="checkbox" name="featured" checked={formData.featured} onChange={handleChange} className="sr-only peer" />
+                                <div className="w-14 h-7 bg-text/10 rounded-full peer peer-checked:bg-primary transition-all duration-300"></div>
+                                <div className="absolute left-1 top-1 w-5 h-5 bg-white rounded-full peer-checked:left-8 transition-all duration-300 shadow-sm"></div>
+                              </div>
+                              <div>
+                                <span className="text-base font-bold text-heading block mb-1">Mark as Featured</span>
+                                <span className="text-xs text-text/60 italic">Showcase this challenge on top placements.</span>
+                              </div>
+                            </label>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <div className="mt-8 flex items-center justify-between bg-surface p-4 rounded-2xl border border-border">
                 <Button
                   type="button"
-                  variant="outline"
-                  onClick={handleCancel}
-                  disabled={isSubmitting}
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => {
+                    if (activeTab === 'impact') setActiveTab('info')
+                    if (activeTab === 'details') setActiveTab('impact')
+                  }}
+                  disabled={activeTab === 'info'}
+                  className={activeTab === 'info' ? 'opacity-0' : 'whitespace-nowrap'}
                 >
-                  Cancel
+                  <ChevronLeft className="w-4 h-4 mr-1" /> Previous
                 </Button>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-green-600 hover:bg-green-700"
-                >
-                  {isSubmitting ? 'Updating Challenge...' : 'Update Challenge'}
-                </Button>
+                <div className="flex gap-4">
+                  {activeTab !== 'details' ? (
+                    <Button type="button" size="sm" variant="primary" onClick={() => activeTab === 'info' ? setActiveTab('impact') : setActiveTab('details')} className="whitespace-nowrap shadow-lg shadow-primary/10">Next</Button>
+                  ) : (
+                    <Button type="submit" size="sm" variant="primary" disabled={isSubmitting} className="px-8 shadow-lg shadow-primary/20 whitespace-nowrap">{isSubmitting ? 'Saving...' : 'Save Changes'}</Button>
+                  )}
+                </div>
               </div>
             </form>
-          </CardContent>
-        </Card>
+          </div>
+
+          <div className="lg:col-span-4">
+            <div className="sticky top-24 space-y-6">
+              <Card className="border-none shadow-xl shadow-primary/5 bg-gradient-to-br from-primary/5 to-transparent">
+                <CardContent className="p-6">
+                  <h4 className="font-bold text-heading mb-4 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-primary" /> Edit Insights
+                  </h4>
+                  <p className="text-xs text-text/60 leading-relaxed mb-4">Editing a challenge allows you to keep participants engaged with fresh details or corrected metrics.</p>
+                  <div className="space-y-4">
+                    <div className="p-3 bg-surface rounded-xl border border-border">
+                      <p className="text-[10px] font-bold text-text/40 uppercase mb-1">Status</p>
+                      <p className="text-sm font-bold text-emerald-600 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Live & Active</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

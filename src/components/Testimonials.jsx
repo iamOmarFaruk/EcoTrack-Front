@@ -1,0 +1,129 @@
+import { motion } from 'framer-motion'
+import SectionHeading from './SectionHeading'
+import { useSiteContent } from '../hooks/queries'
+
+// Color palette for auto-assignment (matches backend)
+const colorPalette = [
+    'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300',
+    'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300',
+    'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300',
+    'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-300',
+    'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300',
+    'bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-300',
+    'bg-cyan-100 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-300',
+    'bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-300',
+]
+
+const getColorClass = (index) => colorPalette[index % colorPalette.length]
+
+const defaultTestimonials = [
+  {
+    id: 1,
+    name: "Sarah Jenkins",
+    role: "Eco Enthusiast",
+    quote: "EcoTrack has completely transformed how I view my daily impact. The challenges are fun and the community is incredibly supportive!",
+    initials: "SJ",
+    colorClass: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300"
+  },
+  {
+    id: 2,
+    name: "Michael Chen",
+    role: "Sustainability Lead",
+    quote: "As a professional in the field, I love how data-driven this platform is. It makes tracking carbon footprint reductions tangible and accurate.",
+    initials: "MC",
+    colorClass: "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300"
+  },
+  {
+    id: 3,
+    name: "Emma Rodriguez",
+    role: "Student",
+    quote: "I started using this for a class project and couldn't stop. It's addictive in the best way possible. Five stars!",
+    initials: "ER",
+    colorClass: "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300"
+  },
+  {
+    id: 4,
+    name: "David Kim",
+    role: "Urban Gardener",
+    quote: "The specific tips for urban living have helped me reduce waste significantly. Highly recommend for city dwellers.",
+    initials: "DK",
+    colorClass: "bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-300"
+  },
+  {
+    id: 5,
+    name: "Jessica Alba",
+    role: "Homeowner",
+    quote: "Finally, an app that doesn't just preach but gives practical steps. My energy bills are down 15% since following the tips.",
+    initials: "JA",
+    colorClass: "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300"
+  }
+]
+
+const TestimonialCard = ({ testimonial, index }) => (
+    <div className="w-[90vw] sm:w-[320px] md:w-[350px] lg:w-[400px] flex-shrink-0 p-4 sm:p-6 md:p-8 rounded-2xl bg-surface border border-border shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] mx-4">
+        <div className="flex items-center mb-4">
+            <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full ${testimonial.colorClass || getColorClass(index)} flex items-center justify-center font-bold text-base sm:text-lg mr-4`}>
+                {testimonial.initials}
+            </div>
+            <div>
+                <h4 className="font-heading font-bold text-base sm:text-lg text-heading">{testimonial.name}</h4>
+                <p className="text-sm text-text/60">{testimonial.role}</p>
+            </div>
+        </div>
+        <div className="mb-4">
+            {/* Star rating decoration */}
+            <div className="flex text-yellow-400 mb-2">
+                {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                ))}
+            </div>
+            <p className="text-text/80 leading-relaxed italic">"{testimonial.quote}"</p>
+        </div>
+    </div>
+)
+
+export default function Testimonials() {
+    const { data } = useSiteContent()
+    const testimonials = data?.testimonials?.length ? data.testimonials : defaultTestimonials
+
+    return (
+        <section className="bg-primary/5 relative overflow-hidden">
+            <div className="container mx-auto px-4 mb-10">
+                <SectionHeading
+                    badge="Community Stories"
+                    title="Loved by Thousands"
+                    subtitle="See what our community members are saying about their journey with EcoTrack"
+                />
+            </div>
+
+            <div className="relative w-full overflow-hidden mask-linear-fade">
+                {/* Gradient overlays for seamless feel edges */}
+                <div className="absolute left-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-r from-light via-light/80 to-transparent dark:from-black dark:via-black/80 z-10 hidden" />
+                <div className="absolute right-0 top-0 bottom-0 w-20 md:w-40 bg-gradient-to-l from-light via-light/80 to-transparent dark:from-black dark:via-black/80 z-10 hidden" />
+
+                <div className="flex">
+                    <motion.div
+                        className="flex py-4"
+                        animate={{
+                            x: ["0%", "-50%"]
+                        }}
+                        transition={{
+                            x: {
+                                repeat: Infinity,
+                                repeatType: "loop",
+                                duration: 40,
+                                ease: "linear",
+                            },
+                        }}
+                    >
+                        {[...testimonials, ...testimonials].map((testimonial, index) => (
+                            <TestimonialCard key={`${testimonial.id || index}-${index}`} testimonial={testimonial} index={index % testimonials.length} />
+                        ))}
+                    </motion.div>
+                </div>
+            </div>
+        </section>
+    )
+}

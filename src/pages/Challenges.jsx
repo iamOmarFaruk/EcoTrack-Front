@@ -1,121 +1,67 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
 import { useAuth } from '../context/AuthContext.jsx'
-import { challengeApi } from '../services/api.js'
 import LazyChallengeCard from '../components/LazyChallengeCard.jsx'
-import EcoLoader from '../components/EcoLoader.jsx'
+import { ChallengeCardSkeleton } from '../components/Skeleton.jsx'
 import SubpageHero from '../components/SubpageHero.jsx'
 import Button from '../components/ui/Button.jsx'
+import FilterSidebar from '../components/FilterSidebar.jsx'
 import { defaultImages } from '../config/env'
-import toast from 'react-hot-toast'
+import { useChallenges } from '../hooks/queries'
+import { motion, AnimatePresence } from 'framer-motion'
+import { containerVariants, itemVariants } from '../utils/animations'
 
 export default function Challenges() {
   useDocumentTitle('Challenges')
   const { auth } = useAuth()
-  const [challenges, setChallenges] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [category, setCategory] = useState('All')
-  const [pagination, setPagination] = useState(null)
+
+  // Filter State
+  const [filterState, setFilterState] = useState({
+    category: 'All',
+    search: '',
+    sortBy: 'createdAt', // Default to Newest
+    order: 'desc',
+    status: '', // All statuses by default
+    featured: false
+  })
+
   const [currentPage, setCurrentPage] = useState(1)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [sortBy, setSortBy] = useState('createdAt')
-  const [order, setOrder] = useState('desc')
+  const [showMobileFilters, setShowMobileFilters] = useState(false)
 
-  // Fetch challenges from API
-  useEffect(() => {
-    const fetchChallenges = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        
-        // Build query parameters
-        const params = {
-          page: currentPage,
-          limit: 12,
-          sortBy,
-          order
-        }
-        
-        if (searchQuery) params.search = searchQuery
-        if (category !== 'All') params.category = category
-        
-        const response = await challengeApi.getAll(params)
-        
-        // Handle new API response structure
-        let challengesData = []
-        let paginationData = null
-        
-        if (response && response.data) {
-          challengesData = response.data
-          paginationData = response.pagination
-        } else if (Array.isArray(response)) {
-          challengesData = response
-        }
-
-        // Check if we have any challenges
-        if (challengesData.length === 0 && currentPage === 1) {
-          setError({ type: 'no-data', message: 'No challenges available at the moment. Check back later for new environmental challenges!' })
-          setChallenges([])
-          setPagination(null)
-          return
-        }
-
-        // Transform API data to match component expectations
-        const transformedChallenges = challengesData.map(challenge => ({
-          _id: challenge.id || challenge._id,
-          slug: challenge.slug || '', // Store slug for SEO-friendly URLs
-          title: challenge.title || 'No data',
-          description: challenge.shortDescription || challenge.description || 'No data',
-          category: challenge.category || 'No data',
-          duration: challenge.duration || 'No data',
-          startDate: challenge.startDate || 'No data',
-          endDate: challenge.endDate || 'No data',
-          status: challenge.status || 'active',
-          imageUrl: challenge.image || challenge.imageUrl || 'No data',
-          participants: challenge.registeredParticipants ?? (Array.isArray(challenge.participants) ? challenge.participants.length : challenge.participants) ?? 0,
-          impactMetric: challenge.impact || challenge.impactMetric || 'No data',
-          co2Saved: challenge.co2Saved || null,
-          featured: challenge.featured || false,
-          isJoined: challenge.isJoined || false,
-          isCreator: challenge.isCreator || false
-        }))
-        
-        setChallenges(transformedChallenges)
-        setPagination(paginationData)
-      } catch (error) {
-        // Set specific error messages based on error type
-        if (error.status === 0) {
-          setError({ 
-            type: 'network', 
-            message: 'Unable to connect to the server. Please check your internet connection and try again.' 
-          })
-        } else if (error.status === 404) {
-          setError({ 
-            type: 'backend', 
-            message: 'Challenge service is currently unavailable. Our team is working to resolve this issue.' 
-          })
-        } else if (error.status === 500) {
-          setError({ 
-            type: 'server', 
-            message: 'Server error occurred while loading challenges. Please try again in a few minutes.' 
-          })
-        } else {
-          setError({ 
-            type: 'general', 
-            message: 'Failed to load challenges. Please refresh the page or try again later.' 
-          })
-        }
-        setChallenges([])
-        setPagination(null)
-      } finally {
-        setLoading(false)
-      }
+  // Build query filters
+  const filters = useMemo(() => {
+    const params = {
+      page: currentPage,
+      limit: 12,
+      sortBy: filterState.sortBy,
+      order: filterState.order
     }
+    if (filterState.search) params.search = filterState.search
+    if (filterState.category !== 'All') params.category = filterState.category
+    if (filterState.status) params.status = filterState.status
+    if (filterState.featured) params.featured = true
 
-    fetchChallenges()
-  }, [currentPage, category, searchQuery, sortBy, order])
+    return params
+  }, [currentPage, filterState])
+
+  // Fetch challenges
+  const {
+    data: challenges = [],
+    isLoading,
+    isFetching,
+    error
+  } = useChallenges(filters)
+
+  // Show skeletons only during initial load (no data yet)
+  const loading = isLoading || (isFetching && challenges.length === 0)
+
+  // Determine pagination (Placeholder logic as useChallenges returns array currently)
+  const pagination = {
+    page: currentPage,
+    pages: 1, // Placeholder
+    total: challenges.length
+  }
 
   // Define valid categories based on backend API
   const categories = useMemo(
@@ -123,8 +69,21 @@ export default function Challenges() {
     []
   )
 
-  if (loading) {
-    return <EcoLoader />
+  const handleSetFilter = (key, value) => {
+    setFilterState(prev => ({ ...prev, [key]: value }))
+    setCurrentPage(1)
+  }
+
+  const clearFilters = () => {
+    setFilterState({
+      category: 'All',
+      search: '',
+      sortBy: 'createdAt',
+      order: 'desc',
+      status: '',
+      featured: false
+    })
+    setCurrentPage(1)
   }
 
   // Error state
@@ -144,15 +103,15 @@ export default function Challenges() {
 
         {/* Error Message */}
         <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-          <div className="mb-6 p-4 rounded-full bg-red-100">
-            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="mb-6 p-4 rounded-full bg-danger/15">
+            <svg className="w-8 h-8 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h3 className="text-xl font-semibold text-slate-900 mb-2">
+          <h3 className="text-xl font-semibold text-heading mb-2">
             {error.type === 'no-data' ? 'No Challenges Available' : 'Unable to Load Challenges'}
           </h3>
-          <p className="text-slate-600 mb-6 max-w-md">
+          <p className="text-text/80 mb-6 max-w-md">
             {error.message}
           </p>
           <Button
@@ -164,28 +123,13 @@ export default function Challenges() {
             </svg>
             Try Again
           </Button>
-          {auth.isLoggedIn && error.type === 'no-data' && (
-            <div className="mt-4">
-              <Button
-                as={Link}
-                to="/challenges/add"
-                variant="outline"
-                className="flex items-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                Create the First Challenge
-              </Button>
-            </div>
-          )}
         </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-12">
       {/* Hero Section */}
       <div className="full-bleed -mt-8">
         <SubpageHero
@@ -197,154 +141,172 @@ export default function Challenges() {
         />
       </div>
 
-      {/* Content Section */}
-      <div className="space-y-6">
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-4 sm:gap-3 md:flex-row md:items-end md:justify-between">
+      {/* Main Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        {/* Left Side: Filter Sidebar (Desktop) */}
+        <aside className="hidden lg:block lg:col-span-3 sticky top-24">
+          <div className="bg-surface rounded-2xl border border-border p-6 shadow-sm">
+            <FilterSidebar
+              filters={filterState}
+              setFilter={handleSetFilter}
+              clearFilters={clearFilters}
+              categories={categories}
+            />
+          </div>
+        </aside>
+
+        {/* Main Content Area (Right) */}
+        <div className="lg:col-span-9 space-y-6">
+
+          {/* Header & Mobile Controls */}
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between px-1">
             <div>
-              <h2 className="text-xl sm:text-2xl font-semibold">Browse Challenges</h2>
-              <p className="mt-1 text-sm sm:text-base text-slate-900">Find and join challenges that match your interests.</p>
+              <h2 className="text-2xl font-bold text-heading">Browse Challenges</h2>
+              <p className="mt-1 text-text">Find and join challenges that match your interests.</p>
             </div>
-            {auth.isLoggedIn && (
+
+            <div className="flex items-center gap-3">
               <Button
-                as={Link}
-                to="/challenges/add"
-                className="flex items-center gap-2 whitespace-nowrap"
+                variant="outline"
+                className="lg:hidden"
+                onClick={() => setShowMobileFilters(!showMobileFilters)}
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                 </svg>
-                Create Challenge
+                Filters
               </Button>
-            )}
+
+              {auth.isLoggedIn && (
+                <Button
+                  as={Link}
+                  to="/challenges/add"
+                  className="flex items-center gap-2 whitespace-nowrap"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  Create Challenge
+                </Button>
+              )}
+            </div>
           </div>
 
-          {/* Filters - Hidden for now */}
-          {/* <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex-1">
-              <input
-                type="text"
-                placeholder="Search challenges..."
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value)
-                  setCurrentPage(1)
-                }}
-                className="w-full rounded-md border border-gray-300 pl-10 pr-4 py-2 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'/%3e%3c/svg%3e")`,
-                  backgroundPosition: 'left 12px center',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundSize: '16px 16px'
-                }}
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-slate-900 whitespace-nowrap">Category</label>
-              <select
-                className="flex-1 sm:flex-initial rounded-md border pl-3 pr-8 py-2 text-sm min-w-0 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white appearance-none"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
-                  backgroundPosition: 'right 8px center',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundSize: '16px 16px'
-                }}
-                value={category}
-                onChange={(e) => {
-                  setCategory(e.target.value)
-                  setCurrentPage(1)
-                }}
+          {/* Mobile Filter Drawer */}
+          <AnimatePresence>
+            {showMobileFilters && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="lg:hidden overflow-hidden"
               >
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-            </div>
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-slate-900 whitespace-nowrap">Sort by</label>
-              <select
-                className="flex-1 sm:flex-initial rounded-md border pl-3 pr-8 py-2 text-sm min-w-0 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white appearance-none"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e")`,
-                  backgroundPosition: 'right 8px center',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundSize: '16px 16px'
-                }}
-                value={sortBy}
-                onChange={(e) => {
-                  setSortBy(e.target.value)
-                  setCurrentPage(1)
-                }}
-              >
-                <option value="createdAt">Newest</option>
-                <option value="startDate">Start Date</option>
-                <option value="endDate">End Date</option>
-                <option value="participants">Most Popular</option>
-              </select>
-            </div>
-          </div> */}
-        </div>
+                <div className="bg-surface rounded-xl border border-border p-4 mb-6 shadow-sm">
+                  <FilterSidebar
+                    filters={filterState}
+                    setFilter={handleSetFilter}
+                    clearFilters={clearFilters}
+                    categories={categories}
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {challenges.length > 0 ? (
-            challenges.map((c) => (
-              <LazyChallengeCard key={c._id} challenge={c} />
-            ))
-          ) : (
-            <div className="col-span-full flex flex-col items-center justify-center py-16 px-4 text-center">
-              <div className="mb-4 p-3 rounded-full bg-slate-100">
-                <svg className="w-6 h-6 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-medium text-slate-900 mb-2">No challenges found</h3>
-              <p className="text-slate-600 mb-4">
-                {category === 'All' && !searchQuery
-                  ? 'No challenges are currently available.'
-                  : `No challenges found matching your filters.`
-                }
-              </p>
-              <Button
-                onClick={() => {
-                  setCategory('All')
-                  setSearchQuery('')
-                }}
-                variant="outline"
-                className="text-sm"
+          {/* Results Grid */}
+          <div className="text-sm text-text/50 mb-2 px-1">
+            Showing {challenges.length} challenges
+          </div>
+
+          <AnimatePresence mode="wait">
+            {loading ? (
+              <motion.div
+                key="loading-skeletons"
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
+                exit="hidden"
+                className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
               >
-                Clear Filters
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <motion.div key={`skeleton-${i}`} variants={itemVariants}>
+                    <ChallengeCardSkeleton />
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : challenges.length > 0 ? (
+              <motion.div
+                key={`challenges-grid-${challenges.length}-${filterState.category}-${filterState.search}-${filterState.sortBy}`}
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
+                className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+              >
+                {challenges.map((c) => (
+                  <motion.div key={c._id || c.id} variants={itemVariants}>
+                    <LazyChallengeCard challenge={c} />
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="no-results"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="col-span-full py-12"
+              >
+                <div className="bg-surface rounded-xl p-12 border border-border dashed text-center max-w-2xl mx-auto">
+                  <div className="mb-6 flex justify-center">
+                    <div className="p-4 rounded-full bg-primary/5">
+                      <svg className="w-12 h-12 text-primary/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                      </svg>
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-heading mb-3">No matches found</h3>
+                  <p className="text-text/70 mb-6">
+                    We couldn't find any challenges matching your current filters.
+                    Try adjusting your search or categories.
+                  </p>
+                  <Button
+                    onClick={clearFilters}
+                    variant="outline"
+                  >
+                    Clear All Filters
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Pagination */}
+          {pagination && pagination.pages > 1 && (
+            <div className="flex items-center justify-center gap-2 pt-8">
+              <Button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                variant="outline"
+                className="px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </Button>
+              <span className="px-4 py-2 text-heading font-medium">
+                Page {pagination.page}
+              </span>
+              <Button
+                onClick={() => setCurrentPage(p => p + 1)}
+                disabled={currentPage >= pagination.pages}
+                variant="outline"
+                className="px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
               </Button>
             </div>
           )}
         </div>
 
-        {/* Pagination */}
-        {pagination && pagination.pages > 1 && (
-          <div className="flex items-center justify-center gap-2 pt-4">
-            <Button
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              variant="outline"
-              className="px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Previous
-            </Button>
-            <span className="px-4 py-2 text-slate-900">
-              Page {pagination.page} of {pagination.pages}
-            </span>
-            <Button
-              onClick={() => setCurrentPage(p => p + 1)}
-              disabled={currentPage >= pagination.pages}
-              variant="outline"
-              className="px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next
-            </Button>
-          </div>
-        )}
       </div>
     </div>
   )
 }
-
-

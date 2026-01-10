@@ -1,12 +1,68 @@
 import typography from '@tailwindcss/typography'
 
+// Helper function for CSS variable-based colors with alpha support
+const withOpacity = (variableName) => {
+  return ({ opacityValue }) => {
+    if (opacityValue !== undefined) {
+      return `rgb(var(${variableName}) / ${opacityValue})`
+    }
+    return `rgb(var(${variableName}))`
+  }
+}
+
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
   theme: {
+    borderRadius: {
+      none: '0px',
+      sm: 'calc(var(--radius) - 4px)',
+      DEFAULT: 'var(--radius)',
+      md: 'calc(var(--radius) + 2px)',
+      lg: 'calc(var(--radius) + 4px)',
+      xl: 'calc(var(--radius) + 8px)',
+      '2xl': 'calc(var(--radius) + 12px)',
+      '3xl': 'calc(var(--radius) + 16px)',
+      full: '9999px',
+    },
     extend: {
+      colors: {
+        primary: {
+          DEFAULT: withOpacity('--color-primary'),
+          darker: withOpacity('--color-primary-darker'),
+        },
+        secondary: {
+          DEFAULT: withOpacity('--color-secondary'),
+        },
+        danger: {
+          DEFAULT: withOpacity('--color-danger'),
+        },
+        text: {
+          DEFAULT: withOpacity('--color-text'),
+        },
+        heading: {
+          DEFAULT: withOpacity('--color-heading'),
+        },
+        surface: {
+          DEFAULT: withOpacity('--color-surface'),
+        },
+        light: {
+          DEFAULT: withOpacity('--color-bg-light'),
+        },
+        muted: {
+          DEFAULT: withOpacity('--color-bg-muted'),
+        },
+        dark: {
+          DEFAULT: withOpacity('--color-bg-dark'),
+        },
+        border: {
+          DEFAULT: withOpacity('--color-border'),
+        },
+      },
       fontFamily: {
-        sans: ['"Nunito"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        heading: ['"Poppins"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       container: {
         center: true,
@@ -56,4 +112,3 @@ export default {
   },
   plugins: [typography],
 }
-
