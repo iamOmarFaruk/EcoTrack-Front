@@ -176,6 +176,7 @@ export default function App() {
               <Route path="/control-panel/footer" element={<AdminFooter />} />
               <Route path="/control-panel/users" element={<AdminUsers />} />
               <Route path="/control-panel/activity" element={<AdminActivity />} />
+              <Route path="/control-panel/reset" element={<AdminReset />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
