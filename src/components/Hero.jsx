@@ -73,7 +73,7 @@ export default function Hero({ slides = [], effect = 'fade' }) {
         navigation
         pagination={{ clickable: true }}
         grabCursor
-        className="h-[70vh] min-h-[420px] w-full sm:h-[56vh] md:h-[72vh] md:min-h-[480px] lg:h-[82vh]"
+        className="h-[70vh] min-h-[420px] w-full sm:h-[56vh] md:h-[58vh] md:min-h-[420px] lg:h-[65vh]"
       >
         {slides.map((item) => (
           <SwiperSlide key={item._id}>
