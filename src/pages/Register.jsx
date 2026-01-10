@@ -135,7 +135,7 @@ export default function Register() {
               <Button
                 type="button"
                 variant="secondary"
-                className="w-full h-11 flex items-center justify-center gap-3 border shadow-sm hover:bg-muted/50 font-semibold"
+                className="w-full h-11 flex items-center justify-center gap-3 border shadow-sm hover:bg-muted/50 font-semibold dark:!bg-surface dark:border-white/10 dark:hover:border-white/20 dark:hover:bg-white/5"
                 onClick={handleGoogleSignup}
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -154,25 +154,33 @@ export default function Register() {
               <div className="h-px flex-1 bg-border" />
             </StaggerItem>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-6">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <StaggerItem>
-                  <label className="mb-1.5 block text-sm font-medium">Full Name</label>
-                  <input className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="John Doe" {...register('name')} />
-                  {errors.name && <p className="mt-1 text-xs text-danger">{errors.name.message}</p>}
+                  <label className="mb-2.5 block text-sm font-semibold text-text/80 tracking-wide">Full Name</label>
+                  <input
+                    className="w-full rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-3.5 text-text placeholder:text-text/40 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary focus:bg-white/10 hover:border-white/20 hover:bg-white/[0.07]"
+                    placeholder="John Doe"
+                    {...register('name')}
+                  />
+                  {errors.name && <p className="mt-1 text-xs text-danger font-medium ml-1">{errors.name.message}</p>}
                 </StaggerItem>
                 <StaggerItem>
-                  <label className="mb-1.5 block text-sm font-medium">Email Address</label>
-                  <input className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="name@example.com" {...register('email')} />
-                  {errors.email && <p className="mt-1 text-xs text-danger">{errors.email.message}</p>}
+                  <label className="mb-2.5 block text-sm font-semibold text-text/80 tracking-wide">Email Address</label>
+                  <input
+                    className="w-full rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-3.5 text-text placeholder:text-text/40 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary focus:bg-white/10 hover:border-white/20 hover:bg-white/[0.07]"
+                    placeholder="name@example.com"
+                    {...register('email')}
+                  />
+                  {errors.email && <p className="mt-1 text-xs text-danger font-medium ml-1">{errors.email.message}</p>}
                 </StaggerItem>
               </div>
 
               <StaggerItem>
-                <label className="mb-1.5 block text-sm font-medium">Photo URL (Optional)</label>
+                <label className="mb-2.5 block text-sm font-semibold text-text/80 tracking-wide">Photo URL (Optional)</label>
                 <div className="flex items-center gap-4">
                   {photoUrl && !errors.photoUrl && (
-                    <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-primary bg-muted shrink-0">
+                    <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-primary bg-muted shrink-0 shadow-lg shadow-primary/10">
                       {!imageError ? (
                         <img
                           src={photoUrl}
@@ -181,7 +189,7 @@ export default function Register() {
                           onError={() => setImageError(true)}
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-text/40">
+                        <div className="w-full h-full flex items-center justify-center text-text/40 bg-white/5 backdrop-blur-sm">
                           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                           </svg>
@@ -189,25 +197,40 @@ export default function Register() {
                       )}
                     </div>
                   )}
-                  <input className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="Avatar URL" {...register('photoUrl')} />
+                  <input
+                    className="w-full rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-3.5 text-text placeholder:text-text/40 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary focus:bg-white/10 hover:border-white/20 hover:bg-white/[0.07]"
+                    placeholder="Avatar URL"
+                    {...register('photoUrl')}
+                  />
                 </div>
-                {errors.photoUrl && <p className="mt-1 text-xs text-danger">{errors.photoUrl.message}</p>}
+                {errors.photoUrl && <p className="mt-1 text-xs text-danger font-medium ml-1">{errors.photoUrl.message}</p>}
               </StaggerItem>
 
               <StaggerItem>
-                <label className="mb-1.5 block text-sm font-medium">Password</label>
-                <input type="password" className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="••••••••" {...register('password')} />
-                <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1">
+                <label className="mb-2.5 block text-sm font-semibold text-text/80 tracking-wide">Password</label>
+                <input
+                  type="password"
+                  className="w-full rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-3.5 text-text placeholder:text-text/40 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary focus:bg-white/10 hover:border-white/20 hover:bg-white/[0.07]"
+                  placeholder="••••••••"
+                  {...register('password')}
+                />
+
+                {/* Password Strength Indicator */}
+                <div className="mt-4 space-y-2.5 px-1">
                   {ruleChecks.map((r) => (
-                    <div key={r.label} className="flex items-center gap-2">
-                      <div className={`h-1 flex-1 rounded-full transition-colors ${r.ok ? 'bg-primary' : 'bg-border'}`} />
-                      <span className={`whitespace-nowrap text-[10px] font-medium uppercase tracking-tight ${r.ok ? 'text-primary' : 'text-text/40'}`}>
-                        {r.label.split(' ')[0]}
+                    <div key={r.label} className="flex items-center gap-3">
+                      <div
+                        className={`h-1.5 w-8 rounded-full transition-all duration-300 ${r.ok ? 'bg-primary shadow-[0_0_8px_rgba(16,185,129,0.4)]' : 'bg-white/10'
+                          }`}
+                      />
+                      <span className={`text-[11px] font-medium tracking-wide transition-colors duration-300 ${r.ok ? 'text-primary' : 'text-text/40'
+                        }`}>
+                        {r.label}
                       </span>
                     </div>
                   ))}
                 </div>
-                {errors.password && <p className="mt-1 text-xs text-danger">{errors.password.message}</p>}
+                {errors.password && <p className="mt-2 text-xs text-danger font-medium ml-1">{errors.password.message}</p>}
               </StaggerItem>
 
               <StaggerItem className="pt-2">

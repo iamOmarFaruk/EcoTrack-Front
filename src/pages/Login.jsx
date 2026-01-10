@@ -203,34 +203,34 @@ export default function Login() {
               <p className="mt-2 text-sm text-text/60">Enter your credentials to access your account.</p>
             </motion.div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6">
               <motion.div variants={itemVariants}>
-                <label className="mb-1.5 block text-sm font-medium">Email Address</label>
+                <label className="mb-2.5 block text-sm font-semibold text-text/80 tracking-wide">Email Address</label>
                 <motion.input
-                  className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                  className="w-full rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-3.5 text-text placeholder:text-text/40 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary focus:bg-white/10 hover:border-white/20 hover:bg-white/[0.07]"
                   placeholder="name@example.com"
                   variants={inputFocusVariants}
                   whileFocus="focus"
                   {...register('email')}
                 />
-                {errors.email && <p className="mt-1 text-xs text-danger">{errors.email.message}</p>}
+                {errors.email && <p className="mt-1 text-xs text-danger font-medium ml-1">{errors.email.message}</p>}
               </motion.div>
               <motion.div variants={itemVariants}>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-sm font-medium">Password</label>
-                  <Link to="/forgot-password" size="sm" className="text-xs text-primary hover:underline">
+                <div className="flex items-center justify-between mb-2.5">
+                  <label className="block text-sm font-semibold text-text/80 tracking-wide">Password</label>
+                  <Link to="/forgot-password" size="sm" className="text-xs text-primary hover:underline font-medium">
                     Forgot password?
                   </Link>
                 </div>
                 <motion.input
                   type="password"
-                  className="w-full rounded-lg border border-border bg-surface px-4 py-2.5 transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                  className="w-full rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-3.5 text-text placeholder:text-text/40 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary focus:bg-white/10 hover:border-white/20 hover:bg-white/[0.07]"
                   placeholder="••••••••"
                   variants={inputFocusVariants}
                   whileFocus="focus"
                   {...register('password')}
                 />
-                {errors.password && <p className="mt-1 text-xs text-danger">{errors.password.message}</p>}
+                {errors.password && <p className="mt-1 text-xs text-danger font-medium ml-1">{errors.password.message}</p>}
               </motion.div>
               <motion.div variants={itemVariants}>
                 <motion.div
@@ -270,7 +270,7 @@ export default function Login() {
                 <Button
                   type="button"
                   variant="secondary"
-                  className="w-full h-11 flex items-center justify-center gap-3 border shadow-sm hover:bg-muted/50"
+                  className="w-full h-11 flex items-center justify-center gap-3 border shadow-sm hover:bg-muted/50 dark:!bg-surface dark:border-white/10 dark:hover:border-white/20 dark:hover:bg-white/5"
                   onClick={handleGoogleLogin}
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
