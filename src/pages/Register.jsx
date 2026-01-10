@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, useNavigate } from 'react-router-dom'
+import { Eye, EyeOff } from 'lucide-react'
 import Button from '../components/ui/Button.jsx'
 import { StaggerContainer, StaggerItem } from '../components/ui/Stagger.jsx'
 import { useDocumentTitle } from '../hooks/useDocumentTitle.js'
@@ -34,6 +35,7 @@ export default function Register() {
     resolver: zodResolver(schema),
   })
   const [imageError, setImageError] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -208,12 +210,23 @@ export default function Register() {
 
               <StaggerItem>
                 <label className="mb-2.5 block text-sm font-semibold text-text/80 tracking-wide">Password</label>
-                <input
-                  type="password"
-                  className="w-full rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-3.5 text-text placeholder:text-text/40 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary focus:bg-white/10 hover:border-white/20 hover:bg-white/[0.07]"
-                  placeholder="••••••••"
-                  {...register('password')}
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    className="w-full rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-3.5 pr-12 text-text placeholder:text-text/40 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-primary/20 focus:border-primary focus:bg-white/10 hover:border-white/20 hover:bg-white/[0.07]"
+                    placeholder="••••••••"
+                    {...register('password')}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text/50 transition-colors hover:text-text"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    aria-pressed={showPassword}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
 
                 {/* Password Strength Indicator */}
                 <div className="mt-4 space-y-2.5 px-1">
