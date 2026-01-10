@@ -24,6 +24,7 @@ import { Player } from '@lordicon/react'
 import { useAdminAuth } from '../context/AdminAuthContext.jsx'
 import EcoLoader from '../components/EcoLoader.jsx'
 import ThemeToggle from '../components/ThemeToggle.jsx'
+import { showConfirmation } from '../utils/toast.jsx'
 
 // Import all lordicon animations
 //import legacyHomeIcon from '../assets/lordicon/legacy-home.json'
@@ -114,6 +115,16 @@ export default function AdminLayout() {
   const [showViewSiteTooltip, setShowViewSiteTooltip] = useState(false)
   const [tooltipPosition, setTooltipPosition] = useState('top')
   const viewSiteButtonRef = useRef(null)
+  const handleLogout = useCallback(() => {
+    showConfirmation({
+      title: 'Log out of control panel?',
+      message: 'You will be signed out and returned to the login screen.',
+      confirmText: 'Log out',
+      cancelText: 'Stay signed in',
+      type: 'warning',
+      onConfirm: logout,
+    })
+  }, [logout])
   
   // Check if we're on desktop on mount and when window resizes
   useEffect(() => {
@@ -336,7 +347,7 @@ export default function AdminLayout() {
             {/* Admin Profile */}
             <div className="mt-auto pt-4 border-t border-zinc-200/30 dark:border-zinc-800/30">
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className={clsx(
                   "w-full flex items-center justify-center py-2.5 rounded-xl text-sm font-semibold text-white bg-danger shadow-sm transition-all duration-300 group hover:bg-danger/90 hover:shadow-danger/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-black",
                   sidebarCollapsed ? "lg:px-2 gap-0" : "gap-2 px-4"
