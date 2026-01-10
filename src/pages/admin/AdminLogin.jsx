@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ShieldCheck, Eye, EyeOff, Mail, Lock } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { useAdminAuth } from '../../context/AdminAuthContext.jsx'
 import { handleMutationError } from '../../utils/errorHandler.js'
 import Button from '../../components/ui/Button.jsx'
@@ -41,19 +42,24 @@ export default function AdminLogin() {
         <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full blur-[120px]" style={{ background: 'radial-gradient(circle, rgba(52,211,153,0.35), transparent)' }}></div>
       </div>
 
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center gap-4 px-3 py-6 sm:gap-6 sm:px-4 sm:py-8 md:flex-row md:gap-8 md:px-6 md:py-12">
-        <div className="hidden w-full max-w-md rounded-2xl border border-white/10 bg-gradient-to-br from-zinc-800 via-zinc-900 to-black p-6 shadow-2xl shadow-emerald-500/10 sm:rounded-3xl md:block md:p-8">
+      <div className="relative z-10 mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center gap-6 px-4 py-8 md:flex-row md:gap-10">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: 'easeOut', delay: 0.05 }}
+          className="flex w-full max-w-md flex-col justify-center rounded-2xl border border-white/10 bg-gradient-to-br from-zinc-800 via-zinc-900 to-black p-6 shadow-2xl shadow-emerald-500/10 sm:rounded-3xl sm:p-8"
+        >
           <div className="flex items-center gap-3 text-white/80">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-300">
-              <ShieldCheck size={26} />
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-300 sm:h-11 sm:w-11 sm:rounded-xl">
+              <ShieldCheck className="h-5 w-5 sm:h-[22px] sm:w-[22px]" />
             </div>
             <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-emerald-300">EcoTrack</p>
-              <h1 className="text-3xl font-bold text-white">Admin Control Center</h1>
+              <p className="mb-0.5 text-[10px] uppercase tracking-[0.25em] text-emerald-300 sm:text-xs">EcoTrack</p>
+              <h1 className="text-lg font-bold text-white sm:text-xl">Admin Control Center</h1>
             </div>
           </div>
 
-          <p className="mt-4 text-lg text-white/70">
+          <p className="mt-4 text-sm text-white/70 sm:text-base">
             Full oversight for content, publishing, and user safety. Demo credentials are pre-filled for easy access.
           </p>
 
@@ -77,17 +83,22 @@ export default function AdminLogin() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="flex w-full max-w-md items-center justify-center">
-          <form onSubmit={handleSubmit} className="w-full rounded-2xl border border-white/10 bg-zinc-950/80 p-4 shadow-2xl shadow-emerald-500/10 backdrop-blur sm:rounded-3xl sm:p-6 md:p-8">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: 'easeOut', delay: 0.12 }}
+          className="flex w-full items-center justify-center"
+        >
+          <form onSubmit={handleSubmit} className="flex w-full flex-col justify-center rounded-2xl border border-white/10 bg-zinc-950/80 p-4 shadow-2xl shadow-emerald-500/10 backdrop-blur sm:rounded-3xl sm:p-8">
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-300 sm:h-11 sm:w-11 sm:rounded-xl">
                 <ShieldCheck className="h-5 w-5 sm:h-[22px] sm:w-[22px]" />
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-[0.25em] text-white/50 sm:text-xs">Secure</p>
-                <h2 className="text-lg font-bold text-white sm:text-2xl">Sign in as Admin</h2>
+                <p className="mb-0.5 text-[10px] uppercase tracking-[0.25em] text-emerald-300 sm:text-xs">Secure</p>
+                <h2 className="text-lg font-bold text-white sm:text-xl">Sign in as Admin</h2>
               </div>
             </div>
 
@@ -139,7 +150,7 @@ export default function AdminLogin() {
              
             </div>
           </form>
-        </div>
+        </motion.div>
       </div>
     </div>
   )
